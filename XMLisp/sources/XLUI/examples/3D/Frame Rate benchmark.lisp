@@ -102,7 +102,7 @@ Rates:
 - PowerBook G4, 1.67 Ghz, Mob Radeon 9700, OS X 10.4.7:        693 fps
 
 CCL 
-- MacBookPro, 2.6 Ghz Core 2 Duo, OS X 1.5.6, CCL 1.3 32bit, GForce 8600 GT     1200 fps
+- MacBookPro, 2.6 Ghz Core 2 Duo, OS X 1.5.6, CCL 1.3 32bit, GForce 8600 GT     2200 fps
 - MacBookPro, 2.6 Ghz Core 2 Duo, OS X 1.5.6, CCL 1.3 64bit, GForce 8600 GT     1080 fps
 
 |#
