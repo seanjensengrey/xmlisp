@@ -9,7 +9,7 @@
 
 ;; edit to point to root folder containing /sources  /resources  etc.
 (setf (logical-pathname-translations "lui")
-      '(("**;*.*" "home:documents;products;XMLisp;**;")))
+      '(("**;*.*" "home:documents;products;XMLisp svn;trunk;XMLisp;**;")))
 
 
 (setq gui::*paren-highlight-background-color*
