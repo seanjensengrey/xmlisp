@@ -1,0 +1,626 @@
+;; XLUI examples
+;; 2/4/09 Alexander Repenning
+;; updated: 4/26/09 native-path
+
+
+(in-package :xlui)
+
+#|
+A XMLisp based Lisp User Interface, XLUI for short, consists of up to 3 pieces:
+
+* Class definitions subclassing exisiting XLUI classes
+* x-expressions representing window and controls layout
+* action methods invoked through LUI interface actions defined by the developer
+
+Below are a number of increasingly complex LUI interface examples. Select the code, including 
+the XML expressions (remember they look like XML expression but ARE lisp s-expressions) and 
+evaluate them.
+|#
+
+
+;;********************************************
+;;*    Windows, Buttons and basic layout     *
+;;********************************************
+
+<application-window x="100" y="100" width="300" height="176" title="valign='middle'"minimizable="false">
+  <row valign="middle">
+    <button text="Stop Global Warming" width="200"/>
+    <bevel-button text="multiple&#10;lines&#10;of&#10;text" x="50" y="50" height="100"/>
+  </row>
+</application-window> 
+
+
+<application-window title="resizable button and window">
+  <bevel-button text="this button&#10;will assume window size&#10;when&#10;you resize the window"/>
+</application-window>
+
+
+<application-window title="align left" width="400">
+  <row width="200" height="200">
+    <bevel-button text="a"/>
+    <bevel-button text="b" width="200"/>
+    <bevel-button text="c"/>
+  </row>
+</application-window>
+
+
+<application-window title="align right">
+  <row width="200" height="200" align="right">
+    <bevel-button text="a"/>
+    <bevel-button text="b"/>
+    <bevel-button text="c"/>
+  </row>
+</application-window>
+
+
+<application-window height="50" title="align=distribute, valign=middle">
+  <row width="200" valign="middle" align="distribute">
+    <bevel-button text="a" width="30"/>
+    <bevel-button text="b" width="30"/>
+    <bevel-button text="c" width="30"/>
+    <bevel-button text="d" width="30"/>
+    <bevel-button text="e" width="30"/>
+    <bevel-button text="f" width="30"/>
+    <bevel-button text="g" width="30"/>
+    <bevel-button text="h" width="30"/>
+  </row>
+</application-window>
+
+
+<application-window title="flex to stretch" width="500" height="100">
+  <row width="200" height="200" align="stretch" valign="stretch">
+    <bevel-button text="a&#10;fixed, flex = 0" width="150"/>
+    <bevel-button text="b&#10;flex = 1" flex="1"/>
+    <bevel-button text="c&#10;flex = 3" flex="3"/>
+  </row>
+</application-window> 
+
+
+<application-window title="valign middle, button b with flex 1">
+  <row width="200" height="200" align="stretch" valign="middle">
+    <bevel-button text="a"/>
+    <bevel-button text="b" flex="1"/>
+    <bevel-button text="c"/>
+  </row>
+</application-window>
+
+
+;; Vertical alignment
+
+<application-window margin="0" title="valign=distribute">
+  <column width="200" height="200" align="center" valign="distribute"> 
+    <bevel-button text="a"/>
+    <bevel-button text="b"/>
+    <bevel-button text="c"/>
+  </column>
+</application-window>
+
+
+<application-window margin="0" title="valign=stretch with button b flex 1">
+  <column width="200" height="200" align="center" valign="stretch"> 
+    <bevel-button text="a"/>
+    <bevel-button text="b" vflex="1"/>
+    <bevel-button text="c"/>
+  </column>
+</application-window>
+
+
+<application-window title="left, center, distribute and right alignment">
+  <column width="200" height="200" align="stretch" valign="distribute">
+    <row align="left" minimize="vertical">
+      <bevel-button text="a"/>
+      <bevel-button text="b"/>
+      <bevel-button text="c"/>
+    </row>
+    <row align="center" minimize="vertical">
+      <bevel-button text="a"/>
+      <bevel-button text="b"/>
+      <bevel-button text="c"/>
+    </row>
+    <row align="distribute" minimize="vertical">
+      <bevel-button text="a"/>
+      <bevel-button text="b"/>
+      <bevel-button text="c"/>
+    </row>
+    <row align="right" minimize="vertical">
+      <bevel-button text="a"/>
+      <bevel-button text="b"/>
+      <bevel-button text="c"/>
+    </row>
+  </column>
+</application-window>
+
+;; OK, cancel buttons
+
+<application-window title="dialog">
+  <column align="stretch" valign="bottom">
+    <row align="right" minimize="vertical">
+      <button text="Cancel"/>
+      <button text="OK" default-button="true"/>
+    </row>
+  </column>
+</application-window> 
+
+
+;;********************************************
+;;*           Interaction                    *
+;;********************************************
+
+
+;; sliders
+
+<application-window title="sliders">
+  <column align="stretch" valign="distribute">
+    <slider/>
+    <slider tick-marks="50"/>
+    <slider tick-marks="5"/>
+  </column>
+</application-window> 
+
+
+;; Color picker 1: just layout
+
+<application-window title="color picker">
+  <column align="stretch" valign="distribute">
+    <row align="stretch" valign="stretch">
+      <column align="stretch" flex="2" valign="top">
+        <slider name="red" tick-marks="10"/>
+        <slider name="green" tick-marks="10"/>
+        <slider name="blue" tick-marks="10"/>
+      </column>
+      <rectangle color="00FF00" flex="1"/>
+    </row>
+      <row align="right" minimize="vertical">
+        <button text="Cancel"/>
+        <button text="OK"/>
+      </row>
+  </column>
+</application-window> 
+
+
+;; color picker 2: with actions
+
+(defclass COLOR-PICKER-WINDOW (application-window)
+  ())
+
+
+(defmethod ADJUST-COLOR-ACTION ((W color-picker-window) (Slider slider))
+  (set-color 
+   (view-named W "color well")
+   :red (value (view-named W "red"))
+   :green (value (view-named W "green"))
+   :blue (value (view-named W "blue")))
+  (display W))
+
+
+<color-picker-window title="color picker">
+  <row align="stretch" valign="stretch">
+    <column align="stretch" flex="2" valign="middle">
+      <slider name="red" action="adjust-color-action" max-value="1.0" tick-marks="10"/>
+      <slider name="green" action="adjust-color-action" max-value="1.0" tick-marks="10"/>
+      <slider name="blue" action="adjust-color-action" max-value="1.0" tick-marks="10"/>
+    </column>
+    <spacer/>
+    <rectangle name="color well" flex="1"/>
+  </row>
+</color-picker-window>
+
+
+;; Color Picker 3 with labels
+
+
+(defclass COLOR-PICKER-WINDOW (application-window)
+  ())
+
+
+(defmethod ADJUST-COLOR-ACTION ((W color-picker-window) (Slider slider))
+  ;; color well update
+  (set-color 
+   (view-named W "color well")
+   :red (value (view-named W "red"))
+   :green (value (view-named W "green"))
+   :blue (value (view-named W "blue")))
+  ;; labels update
+  (setf (text (view-named W "red label")) (format nil "~,2F" (value (view-named W "red"))))
+  (setf (text (view-named W "green label")) (format nil "~,2F" (value (view-named W "green"))))
+  (setf (text (view-named W "blue label")) (format nil "~,2F" (value (view-named W "blue"))))
+  (display W))
+
+
+<color-picker-window title="color picker (resize me!!)" height="130">
+  <row align="stretch" valign="stretch">
+    <column align="stretch" flex="2" valign="middle">
+      <row minimize="vertical" align="stretch">
+         <label text="red" align="right" width="50"/>
+         <slider name="red" action="adjust-color-action" max-value="1.0" tick-marks="10" flex="1"/>
+         <label text="0.0" name="red label" width="40"/>
+      </row>
+      <row minimize="vertical" align="stretch">
+         <label text="green" align="right" width="50"/>
+         <slider name="green" action="adjust-color-action" max-value="1.0" tick-marks="10" flex="1"/>
+         <label text="0.0" name="green label" width="40"/>
+      </row>
+      <row minimize="vertical" align="stretch">
+         <label text="blue" align="right" width="50"/>
+         <slider name="blue" action="adjust-color-action" max-value="1.0" tick-marks="10" flex="1"/>
+         <label text="0.0" name="blue label" width="40"/>
+      </row>
+    </column>
+    <spacer/>
+    <rectangle name="color well" flex="1"/>
+  </row>
+</color-picker-window>
+
+
+;;********************************************
+;;*           Text                           *
+;;********************************************
+
+<application-window title="some text, resize to see alignment">
+  <column align="stretch" valign="distribute">
+    <label text="some text on the left" align="left"/>
+    <label text="some text on the right" align="right"/>
+    <label text="some centered text" align="center"/>
+  </column>
+</application-window> 
+
+
+<application-window title="large text: resize to explore wrapping">
+  <label align="justified" text="A lawyer died and arrived at the pearly gates. To his dismay, there were thousands of people ahead of him in line to see St. Peter. But, to his surprise, St. Peter left his desk at the gate and came down the long line to where the lawyer was standing. St. Peter greeted him warmly. Then St. Peter and one of his assistants took the lawyer by the hands and guided him up to the front of the line into a comfortable chair by his desk.
+
+The lawyer said, 'I don't mind all this attention, but what makes me so special?'
+
+St. Peter replied, 'Well, I've added up all the hours for which you billed your clients, and by my calculation you must be about 193 years old!'"/>
+</application-window> 
+
+
+;; Editable-Text
+
+(defmethod CONVERT-CURRENCY-ACTION ((w application-window) (Button button))
+  (setf (value (view-named w "amount"))
+        (* (value (view-named w "rate"))
+           (value (view-named w "dollars")))))
+
+
+<application-window title="Currency Converter" width="300" height="180">
+  <column align="stretch" valign="stretch" padding="9">
+    <row align="stretch" minimize="vertical" valign="bottom">
+     <label text="Exchange Rate per $1:" align="right" flex="2"/>
+     <editable-number name="rate" text="1.0" flex="1"/>
+    </row>
+    <row align="stretch" minimize="vertical" valign="bottom">
+     <label text="Dollars to Convert:" align="right" flex="2"/>
+     <editable-number name="dollars" text="1.0" flex="1"/>
+    </row>
+    <row align="stretch" minimize="vertical" valign="bottom">
+     <label text="Amount in the other Currency:" align="right" flex="2"/>
+     <editable-number  name="amount" text="1.0" flex="1"/>
+    </row>
+    <row align="right" valign="bottom" vflex="1">
+      <button text="Convert" action="convert-currency-action" default-button="true"/>
+    </row>
+  </column>
+</application-window>
+
+
+;; get string from user
+
+<application-window title="get string" height="100">
+  <column align="stretch" valign="distribute">
+    <editable-text  name="amount"/>
+    <row align="right" minimize="vertical">
+      <button text="Cancel"/>
+      <button text="OK" default-button="true"/>
+    </row>
+  </column>
+</application-window>
+
+
+;;****************************************************
+;; IMAGES  (assumed to be in LUI:resources;images;)  *
+;;****************************************************
+
+<application-window title="project logo">
+  <img src="scalable-game-design.png"/>
+</application-window>
+
+
+;; rows with images containing images
+<application-window title="iPhone" margin="0" height="200">
+  <column align="stretch" valign="stretch">
+    <row src="aqua-gradient.png" align="stretch" valign="middle" height="50" vflex="1">
+      <spacer/>
+      <img src="green-leaves.jpg" width="32" height="32"/>
+      <label text="Tree 1" flex="1"/>
+      <button text="more &gt;"/>
+      <spacer/>
+    </row>
+    <row src="aqua-gradient.png" align="stretch" valign="middle" height="50" vflex="1">>
+      <spacer/>
+      <img src="green-leaves.jpg" width="32" height="32"/>
+      <label text="Tree 2: bla bla" flex="1"/>
+      <button text="more &gt;"/>
+      <spacer/>
+    </row>
+    <row src="aqua-gradient.png" align="stretch" valign="middle" height="50" vflex="1">>
+      <spacer/>
+      <img src="green-leaves.jpg" width="32" height="32"/>
+      <label text="Tree 3: more bla bla" flex="1"/>
+      <button text="more &gt;"/>
+      <spacer/>
+    </row>
+    <row src="aqua-gradient.png" align="stretch" valign="middle" height="50" vflex="1">>
+      <spacer/>
+      <img src="green-leaves.jpg" width="32" height="32"/>
+      <label text="Tree 4: and even more bla bla" flex="1"/>
+      <button text="more &gt;"/>
+      <spacer/>
+    </row>
+  </column>
+</application-window>
+
+
+<application-window title="what a mess!! drawing order exploration">
+  <label text="notice drawing order: one button is below the other one on top of the image"/>
+  <canvas>
+    <button text="below" x="100" y="100"/>
+  </canvas>
+  <column align="stretch" valign="stretch">
+    <img src="scalable-game-design.png" flex="1" vflex="1"/>
+    <img src="scalable-game-design.png"/>
+  </column>
+  <canvas>
+    <button text="on top" x="100" y="140"/>
+  </canvas>
+</application-window>
+
+
+;;********************************************
+;;*           OpenGL (3D)                    *
+;;********************************************
+
+
+;; resize to see how many nano seconds it takes to draw the obbligatory OpenGL triangle
+
+<application-window title="OpenGL 3D" margin="0">
+  <opengl-dialog/>
+</application-window>
+
+
+;; example 2:
+
+(defclass TRIANGLE-OPENGL-DIALOG (opengl-dialog)
+  ())
+
+
+(defmethod DRAW ((Self triangle-opengl-dialog))
+  (glBegin GL_TRIANGLES)
+    (glColor3f (value (view-named (window Self) "red")) 0.0 0.0)
+    (glVertex3f 0.0 0.6 0.0)
+    (glColor3f 0.0 (value (view-named (window Self) "green")) 0.0)
+    (glVertex3f -0.6 -0.3 0.0) 
+    (glColor3f 0.0 0.0 (value (view-named (window Self) "blue")))
+    (glVertex3f 0.6 -0.3 0.0)
+  (glEnd))
+
+
+(defmethod ADJUST-VERTEX-COLOR-ACTION ((W application-window) (S slider))
+  ;; openGL view update
+  (display (view-named W "opengl"))
+  (display (view-named W "opengl2"))
+  (display (view-named W "opengl3"))
+  ;; labels update
+  (setf (text (view-named W "red label")) (format nil "~,2F" (value (view-named W "red"))))
+  (setf (text (view-named W "green label")) (format nil "~,2F" (value (view-named W "green"))))
+  (setf (text (view-named W "blue label")) (format nil "~,2F" (value (view-named W "blue")))))
+
+
+<application-window title="OpenGL 3D" margin="12" width="300" height="300">
+  <column align="stretch" valign="stretch">
+    <row minimize="vertical" align="stretch" valign="middle">
+       <label text="red" align="right" width="50"/>
+       <slider name="red" action="adjust-vertex-color-action" max-value="1.0" flex="1"/>
+       <label text="0.00" name="red label" width="40"/>
+    </row>
+    <row minimize="vertical" align="stretch" valign="middle">
+       <label text="green" align="right" width="50"/>
+       <slider name="green" action="adjust-vertex-color-action" max-value="1.0" flex="1"/>
+       <label text="0.00" name="green label" width="40"/>
+    </row>
+    <row minimize="vertical" align="stretch" valign="middle">
+       <label text="blue" align="right" width="50"/>
+       <slider name="blue" action="adjust-vertex-color-action" max-value="1.0" flex="1"/>
+       <label text="0.00" name="blue label" width="40"/>
+    </row>
+    <spacer height="12"/>
+    <triangle-opengl-dialog name="opengl" vflex="1"/>
+    <spacer height="12"/>
+    <row align="stretch" valign="stretch" vflex="2">
+      <triangle-opengl-dialog name="opengl2" flex="1"/>
+      <spacer height="12" width="12"/>
+      <triangle-opengl-dialog name="opengl3" flex="1"/>
+    </row>
+  </column>
+</application-window>
+
+
+;; ************************
+;; *  WEB BROWSER         *
+;; ************************
+
+;; BE PATIENT: there is no progress report
+
+
+<application-window title="browser" margin="0">
+  <web-browser url="http://www.agentsheets.com"/>
+</application-window> 
+
+
+<application-window title="browser" margin="0">
+  <web-browser url="http://www.opengl.org/documentation/specs/man_pages/hardcopy/GL/html/gl/vertex.html"/>
+</application-window> 
+
+
+<application-window title="4 x News" margin="0">
+  <column align="stretch" valign="stretch">
+    <row align="stretch" valign="stretch" vflex="1">
+      <web-browser url="http://www.cnn.com" flex="1"/>
+      <web-browser url="http://news.bbc.co.uk" flex="1"/>
+    </row>
+    <row align="stretch" valign="stretch" vflex="1">
+      <web-browser url="http://www.sf.tv/sf1/10vor10/" flex="1"/>
+      <web-browser url="http://www.apple.com" flex="1"/>
+    </row>
+  </column>
+</application-window>
+
+;; ****************************************
+;; *  Modal Windows                       *
+;; *    Subclass dialog-window            *
+;; *    have action to call stop-modal    *
+;; ****************************************
+
+;; Example 1: get slider value
+
+
+(defmethod OK-ACTION ((Window dialog-window) (Button button))
+  (stop-modal Window (value (view-named Window "value"))))
+
+
+(defmethod CANCEL-ACTION ((Window dialog-window) (Button button))
+  (cancel-modal Window))
+
+
+<dialog-window height="100" title="get a value between 0 and 100">
+  <column align="stretch" valign="bottom">
+   <slider name="value" tick-marks="5"/>
+    <row align="right" minimize="vertical">
+      <button text="Cancel" action="cancel-action"/>
+      <button text="OK" action="ok-action"/>
+    </row>
+  </column>
+</dialog-window>   
+
+
+;; example 2: modal color picker
+;; Of course one would use a built in color picker (e.g., OS X NSColorPanel) but this
+;; is to illustrate how to return a value and how to set up actions for modal use of a dialog
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defclass COLOR-PICKER-DIALOG (dialog-window)
+  ())
+
+;; actions
+
+(defmethod ADJUST-COLOR-ACTION ((W color-picker-dialog) (Slider slider))
+  ;; color well update
+  (set-color 
+   (view-named W "color well")
+   :red (value (view-named W "red"))
+   :green (value (view-named W "green"))
+   :blue (value (view-named W "blue")))
+  ;; labels update
+  (setf (text (view-named W "red label")) (format nil "~,2F" (value (view-named W "red"))))
+  (setf (text (view-named W "green label")) (format nil "~,2F" (value (view-named W "green"))))
+  (setf (text (view-named W "blue label")) (format nil "~,2F" (value (view-named W "blue"))))
+  (display W))
+
+
+(defmethod OK-ACTION ((D color-picker-dialog) (Button button))
+  (stop-modal D (make-instance 'rgb-color 
+                  :red (value (view-named D "red"))
+                  :green (value (view-named D "green"))
+                  :blue (value (view-named D "blue")))))
+
+
+(defmethod CANCEL-ACTION ((Window color-picker-dialog) (Button button))
+  (cancel-modal Window))
+
+;; may as well return the value as RGB-color object
+
+(defclass RGB-COLOR (xml-serializer)
+  ((red :accessor red :type float :initarg :red)
+   (green :accessor green :type float :initarg :green)
+   (blue :accessor blue :type float :initarg :blue)))
+
+
+<color-picker-dialog title="color picker" height="180">
+ <column align="stretch" valign="bottom">
+  <row align="stretch" valign="stretch">
+    <column align="stretch" flex="2" valign="middle">
+      <row minimize="vertical" align="stretch">
+         <label text="red" align="right" width="50"/>
+         <slider name="red" action="adjust-color-action" max-value="1.0" tick-marks="10" flex="1"/>
+         <label text="0.0" name="red label" width="40"/>
+      </row>
+      <row minimize="vertical" align="stretch">
+         <label text="green" align="right" width="50"/>
+         <slider name="green" action="adjust-color-action" max-value="1.0" tick-marks="10" flex="1"/>
+         <label text="0.0" name="green label" width="40"/>
+      </row>
+      <row minimize="vertical" align="stretch">
+         <label text="blue" align="right" width="50"/>
+         <slider name="blue" action="adjust-color-action" max-value="1.0" tick-marks="10" flex="1"/>
+         <label text="0.0" name="blue label" width="40"/>
+      </row>
+    </column>
+    <spacer/>
+    <rectangle name="color well" flex="1"/>
+  </row>
+    <spacer/>
+    <row align="right" minimize="vertical">
+      <button text="Cancel" action="cancel-action"/>
+      <button text="OK" action="ok-action"/>
+    </row>
+  </column>
+</color-picker-dialog>
+
+
+;; more likely than inlining you would be loading the object from a file. This would return the RGB-Color value
+;; stick the above XML with a valid XML header into a file and load as object:
+(load-object (native-path "lui:resources;windows;" "color-picker-dialog.window"))
+
+;; ****************************************
+;; *  writeme: More Controls              *
+;; ****************************************
+
+#|
+
+Adding a new control to LUI/XLUI with Cocoa is pretty simple. Lets assume you need a check box
+
+1) Create new file checkbox-control.lisp containing control in package :lui, subclassing (most likely) the control class. 
+   This file should not contain any reference to Cocoa, CCL and other platform specific code. 
+   Look at file "LUI.lisp" for examples
+
+2) Create new file checkbox-control-cocoa.lisp in platform specific folder, e.g., Lisp User Interface/Mac CCL/
+   This file uses all the good Cocoa methods. 
+   Look at file "LUI Cocoa.lisp" for examples.
+
+3) Export class and slots that will be relevant to XLUI, i.e., developer controllable at XML level
+
+4) Create new file checkbox.lisp in XLUI/ folder
+   Probably all you need to do is to mix in the xml-layout-interface, e.g.,
+
+   (defclass CHECKBOX (checkbox-control xml-layout-interface)
+     ()
+     (:default-initargs )
+     (:documentation "checkbox"))
+
+   and perhaps deal with initargs or special initialization.
+
+DONE! Use your new element in a layout
+
+   <window   ....>
+     <checkbox selected="true"/>
+   </window>
+
+|#
+
+
+
+
+
+
+
+
+
