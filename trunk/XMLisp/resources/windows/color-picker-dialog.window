@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<color-picker-dialog title="color picker" height="180">
+  <column align="stretch" valign="bottom">
+  <row align="stretch" valign="stretch">
+    <column align="stretch" flex="2" valign="middle">
+      <row minimize="vertical" align="stretch">
+         <label text="red" align="right" width="50"/>
+         <slider name="red" action="adjust-color-action" max-value="1.0" tick-marks="10" flex="1"/>
+         <label text="0.0" name="red label" width="40"/>
+      </row>
+      <row minimize="vertical" align="stretch">
+         <label text="green" align="right" width="50"/>
+         <slider name="green" action="adjust-color-action" max-value="1.0" tick-marks="10" flex="1"/>
+         <label text="0.0" name="green label" width="40"/>
+      </row>
+      <row minimize="vertical" align="stretch">
+         <label text="blue" align="right" width="50"/>
+         <slider name="blue" action="adjust-color-action" max-value="1.0" tick-marks="10" flex="1"/>
+         <label text="0.0" name="blue label" width="40"/>
+      </row>
+    </column>
+    <spacer/>
+    <rectangle name="color well" flex="1"/>
+  </row>
+    <spacer/>
+    <row align="right" minimize="vertical">
+      <button text="Cancel" action="cancel-action"/>
+      <button text="OK" action="ok-action"/>
+    </row>
+  </column>
+</color-picker-dialog>

@@ -1,0 +1,47 @@
+  <column width="250" height="300">
+    <label text="AGENTS" width="150" height="20"/>
+    <row minimize="vertical">
+      <img src="disclosureRight.tiff"/>
+      <spacer/>
+      <img src="folder_generic.png"/>
+      <label text="Frog" width="150"/>
+    </row>
+    <row minimize="vertical">
+      <img src="disclosureDown.tiff"/>
+      <spacer/>
+      <img src="folder_generic.png"/>
+      <label text="Road" width="150"/>
+    </row>
+    <row minimize="vertical">
+      <spacer width="60"/>
+      <img src="file_generic.png"/>
+      <label text="behavior (2 method, 5 rules)" width="400"/>
+    </row>
+    <row minimize="vertical">
+      <img src="disclosureDown.tiff"/>
+      <spacer/>
+      <img src="folder_generic.png"/>
+      <label text="Truck" width="150"/>
+    </row>
+    <row minimize="vertical">
+      <spacer width="60"/>
+      <img src="file_generic.png"/>
+      <label text="behavior (2 method, 5 rules)" width="400"/>
+    </row>
+    <row minimize="vertical" src="sidebar_selection_texture.png">
+      <spacer width="60"/>
+      <img src="file_generic.png"/>
+      <label text="truck moving right" width="400"/>
+    </row>
+    <label text="WORLDS" width="150" height="20"/>
+    <row minimize="vertical">
+      <spacer width="40"/>
+      <img src="file_generic.png"/>
+      <label text="Level1" width="150"/>
+    </row>
+     <row minimize="vertical">
+      <spacer width="40"/>
+      <img src="file_generic.png"/>
+      <label text="Final Level" width="150"/>
+    </row>
+ </column>
