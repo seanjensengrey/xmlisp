@@ -26,11 +26,11 @@
 
 ;; Open
 
-(ed "lui:sources;XLUI;examples;2D;test case examples.lisp")
+;;(ed "lui:sources;XLUI;examples;2D;test case examples.lisp")
 ;; (ed "lui:sources;XLUI;examples;AgentCubes Design.lisp")
 
-(ed "lui:sources;Lisp User Interface;LUI.lisp")
-(ed "lui:sources;Lisp User Interface;specific;Mac CCL;LUI Cocoa.lisp")
+;;(ed "lui:sources;Lisp User Interface;LUI.lisp")
+;;(ed "lui:sources;Lisp User Interface;specific;Mac CCL;LUI Cocoa.lisp")
 
 
 ;;****** OpenGL
