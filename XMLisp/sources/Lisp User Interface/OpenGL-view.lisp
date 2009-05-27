@@ -106,7 +106,7 @@
 
 (defmethod VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER ((Self opengl-view) X Y)
   (declare (ignore X Y))
-  (format t "~%down: ~A, ~A" x y)
+  ;;(format t "~%down: ~A, ~A" x y)
   )
 
 
