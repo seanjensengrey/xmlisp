@@ -74,23 +74,24 @@
   (process-run-function 
    "as we speak"
    #'(lambda ()
-       (with-lock-grabbed (*Speech-Lock*)
-         (unless Synthesizer
-           (unless *Default-Synthesizer* 
-             (setf *Default-Synthesizer* (make-instance 'synthesizer))
-             (setf (native-synthesizer *Default-Synthesizer*) (make-instance 'native-synthesizer :lui-synthesizer *Default-Synthesizer*)))
-           (setq Synthesizer *Default-Synthesizer*))
-         (cond
-          (Voice
-           (unless (#/setVoice: (native-synthesizer Synthesizer) (apple-voice Voice))
-             (unless (member Voice (available-voices) :test #'string=)
-               (error "Voice ~S is not one of ~S" Voice (available-voices)))))
-          (t
-           (#/setVoice: (native-synthesizer Synthesizer) (%null-ptr))))
-         (#/startSpeakingString: (native-synthesizer Synthesizer) (native-string Text))
-         (loop
-           (unless (#/isSpeaking (native-synthesizer Synthesizer)) (return))
-           (sleep 0.1))))))
+       (ccl::with-autorelease-pool
+           (with-lock-grabbed (*Speech-Lock*)
+             (unless Synthesizer
+               (unless *Default-Synthesizer* 
+                 (setf *Default-Synthesizer* (make-instance 'synthesizer))
+                 (setf (native-synthesizer *Default-Synthesizer*) (make-instance 'native-synthesizer :lui-synthesizer *Default-Synthesizer*)))
+               (setq Synthesizer *Default-Synthesizer*))
+             (cond
+              (Voice
+               (unless (#/setVoice: (native-synthesizer Synthesizer) (apple-voice Voice))
+                 (unless (member Voice (available-voices) :test #'string=)
+                   (error "Voice ~S is not one of ~S" Voice (available-voices)))))
+              (t
+               (#/setVoice: (native-synthesizer Synthesizer) (%null-ptr))))
+             (#/startSpeakingString: (native-synthesizer Synthesizer) (native-string Text))
+             (loop
+               (unless (#/isSpeaking (native-synthesizer Synthesizer)) (return))
+               (sleep 0.1)))))))
 
 
 (defun AVAILABLE-VOICES ()
