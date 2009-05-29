@@ -1,5 +1,5 @@
 ;; Look who is talking 
-;; concepts: picking and speech
+;; concepts: picking and selection
 ;; Alexander Repenning, 5/20/09
 
 (in-package :xlui)
@@ -37,36 +37,8 @@
   (display (view Self)))
 
 
-;; to trigger hover handlers the window needs to be track-mouse enabled
 
-<application-window track-mouse="true" title="Hover &amp; Select" margin="0">
-  <agent-3d-view name="scene">
-    <cube texture="crate.png"/>
-    <sphere x="2.0"/>
-    <sphere x="3.0" texture="earth.png"/>
-    <cube size="3.0" z="-3.5" texture="crate.png"/>
-    <cube x="5" roll="45.0"/>
-    <sky-dome pitch="90"/>
-    <cylinder x="3.0" y="3.0" z="-0.6" top-radius="1.0" height="0.6" texture="tiretrack.png"/>
-    <disk x="3.0" y="3" texture="wheel.png"/>
-  </agent-3d-view>
-</application-window>
-
-;; otherwise there is no hovering
-
-<application-window track-mouse="false" title="Select only" margin="0">
-  <agent-3d-view name="scene">
-    <cube texture="crate.png"/>
-    <sphere x="2.0"/>
-    <sphere x="3.0" texture="earth.png"/>
-    <cube size="3.0" z="-3.5" texture="crate.png"/>
-    <cube x="5" roll="45.0"/>
-    <sky-dome pitch="90"/>
-  </agent-3d-view>
-</application-window>
-
-
-<scene-inspector-window track-mouse="true" title="Objects" margin="0">
+<scene-inspector-window track-mouse="true" title="Hover &amp; Select" margin="0">
   <row align="stretch" valign="stretch">
     <agent-3d-view name="scene" flex="3" vflex="1">
       <cube texture="crate.png"/>
@@ -76,7 +48,7 @@
       <cube x="5" roll="45.0"/>
       <sky-dome pitch="90"/>
     </agent-3d-view>
-    <column align="stretch" width="100" valign="stretch" vflex="1">
+    <column align="stretch" width="130" valign="stretch" vflex="1">
       <label name="type" text="" align="left" flex="1"/>
       <spacer height="5"/>
       <row align="stretch" minimize="vertical" valign="bottom">
@@ -106,3 +78,39 @@
     </column>
   </row>
 </scene-inspector-window>
+
+
+#| Examples
+
+
+
+;; to trigger hover handlers the window needs to be track-mouse enabled
+
+<application-window track-mouse="true" title="Hover &amp; Select" margin="0">
+  <agent-3d-view name="scene">
+    <cube texture="crate.png"/>
+    <sphere x="2.0"/>
+    <sphere x="3.0" texture="earth.png"/>
+    <cube size="3.0" z="-3.5" texture="crate.png"/>
+    <cube x="5" roll="45.0"/>
+    <sky-dome pitch="90"/>
+    <cylinder x="3.0" y="3.0" z="-0.6" top-radius="1.0" height="0.6" texture="tiretrack.png"/>
+    <disk x="3.0" y="3" texture="wheel.png"/>
+  </agent-3d-view>
+</application-window>
+
+;; otherwise there is no hovering
+
+<application-window track-mouse="false" title="Select only" margin="0">
+  <agent-3d-view name="scene">
+    <cube texture="crate.png"/>
+    <sphere x="2.0"/>
+    <sphere x="3.0" texture="earth.png"/>
+    <cube size="3.0" z="-3.5" texture="crate.png"/>
+    <cube x="5" roll="45.0"/>
+    <sky-dome pitch="90"/>
+  </agent-3d-view>
+</application-window>
+
+
+|#

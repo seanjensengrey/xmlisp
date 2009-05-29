@@ -78,13 +78,15 @@
     (gluDeleteQuadric Ball)))
 
         
+
+(defparameter Wi 
+  <application-window title="OpenGL 3D" margin="0">
+    <benchmark full-scene-anti-aliasing="true"/>
+  </application-window>)
+
+
 #| Examples:
 
-(setq Wi 
-
-<application-window title="OpenGL 3D" margin="0">
-  <benchmark full-scene-anti-aliasing="no"/>
-</application-window>)
 
 (frame-rate (first (subviews wi)))
 
@@ -103,6 +105,6 @@ Rates:
 
 CCL 
 - MacBookPro, 2.6 Ghz Core 2 Duo, OS X 1.5.6, CCL 1.3 32bit, GForce 8600 GT     2200 fps
-- MacBookPro, 2.6 Ghz Core 2 Duo, OS X 1.5.6, CCL 1.3 64bit, GForce 8600 GT     1080 fps
+- MacBookPro, 2.6 Ghz Core 2 Duo, OS X 1.5.6, CCL 1.3 64bit, GForce 8600 GT     2200 fps
 
 |#

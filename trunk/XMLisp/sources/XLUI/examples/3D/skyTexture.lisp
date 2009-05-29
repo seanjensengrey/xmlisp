@@ -81,11 +81,7 @@
   (glDisable GL_TEXTURE_2D))
   
 
-#| Examples:
-
 <application-window>
   <sky-texture-rect/>
 </application-window>
 
-
-|#
