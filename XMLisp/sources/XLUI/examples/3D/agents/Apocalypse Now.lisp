@@ -1,4 +1,5 @@
 ;;; Lisp User Interface: Chopper
+;;; concepts: agent groups, e.g., chopper containing parts including animated rotors
 ;;; Alexander Repenning
 ;;; 11/24/02 OpenGL for MCL 1.0
 ;;; 10/06/05 OpenGL for MCL 1.6
@@ -11,6 +12,7 @@
 
 (defclass GAME-WINDOW (application-window)
   ())
+
 
 ;; agents
 
@@ -27,6 +29,7 @@
 
 
 (defmethod ANIMATE ((Self chopper) dt)
+  ;; noise functions with low pass filters are used to shake the chopper gently
   ;; http://en.wikipedia.org/wiki/Low-pass_filter#Discrete-time_realization
   (let* ((Alpha (/ dt (+ dt 5.0)))
          (1-Alpha (- 1 Alpha)))
@@ -48,6 +51,8 @@
 (defmethod STOP ((Window game-window) (button bevel-button))
   (stop-animation (view-named Window "war")))
 
+
+;; window with OpenGL view and simulation control
 
 <game-window title="Choppers" track-mouse="true" margin="0">
   <column align="stretch" valign="stretch">

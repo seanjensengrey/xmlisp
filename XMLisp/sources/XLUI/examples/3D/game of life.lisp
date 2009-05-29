@@ -1,7 +1,7 @@
 ;; LUI Game of Life
 ;; Alexander Repenning, 4/28/09
 ;; compare to http://o3d-life.googlecode.com/svn/trunk/life_colors.html
-;; Lisp version is still better than JavaScript
+;; Lisp version is still faster than JavaScript
 
 (in-package :xlui)
 
@@ -105,8 +105,8 @@
   (glClear #.(logior GL_COLOR_BUFFER_BIT GL_DEPTH_BUFFER_BIT)))
 
 
-#| Examples:
 
+;; GUI
 
 (defclass GAME-OF-LIFE-WINDOW (application-window)
   ())
@@ -141,8 +141,3 @@
   </column>
 </game-of-life-window>
 
-
-
-
-
-|#

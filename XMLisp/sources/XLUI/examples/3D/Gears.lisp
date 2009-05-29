@@ -3,6 +3,7 @@
 ;;; 10/06/05 removed macros, fixed camera, removed MCL specific keys
 ;;; 10/16/06 avoid creating double floats
 ;;; 04/01/09 XMlisp version
+;;; concepts: display lists
 
 (in-package :xlui)
 
@@ -212,12 +213,14 @@
 
   (glEnable GL_NORMALIZE)
   ;; optional: FSAA
-  (glenable gl_multisample))
+  (glEnable GL_MULTISAMPLE)
+  ;; Camera
+  (aim-camera (camera Self) :eye-z 15.0))
 
 
 
 
-#| Examples:
+;; GUI
 
 (defclass GEAR-WINDOW (application-window)
   ())
@@ -237,7 +240,7 @@
 
 
 
-(setq Wi 
+(defparameter Wi 
 
 <gear-window title="OpenGL 3D Gears" margin="0">
   <column align="stretch" valign="stretch">
@@ -257,9 +260,9 @@
 )
 
 
+#| Explorations:
 
 (view-named Wi "gears")
-
 
 (frame-rate (view-named Wi "gears"))
 
@@ -267,25 +270,9 @@
 
 (setf (rotation-speed (view-named Wi "gears")) 10.0)
 
-(aim-camera (camera (first (subviews wi)))  :eye-x 1.0d0)
-
 (start-animation (view-named Wi "gears"))
+
 (stop-animation (view-named Wi "gears"))
-
-
-
-
-
-;; 1600 fps on G4 TiBook, 800 Mhz, Radeon Mobile
-
-;; full screen (press ESC to exit, F for frame rate):
-
-
-(defparameter *Gear-Screen* (make-instance 'gear-demo :full-screen-p t))
-
-(begin-full-screen-mode *Gear-Screen* )
-
-(begin-full-screen-mode *Gear-Screen* 800 600)
 
 
 |#

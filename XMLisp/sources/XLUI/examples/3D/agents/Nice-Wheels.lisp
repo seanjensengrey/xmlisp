@@ -4,10 +4,13 @@
 
 (in-package :xlui)
 
+;; Window
 
 (defclass RACE-TRACK-WINDOW (application-window)
   ())
 
+
+;; Agents 
 
 (defclass RACE-CAR (group)
   ())

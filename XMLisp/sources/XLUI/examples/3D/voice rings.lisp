@@ -15,35 +15,35 @@
 (defmethod INIT ((Self ring-view))
   ;; GL setup
   (glClearColor 0.0 0.0 0.0 0.0)
-  (glShadeModel gl_smooth)
-  (glPixelStorei gl_unpack_alignment 1)
+  (glShadeModel GL_SMOOTH)
+  (glPixelStorei GL_UNPACK_ALIGNMENT 1)
   ;; enablers
-  (glDisable gl_lighting)
-  (glDisable gl_depth_test)
-  (glEnable gl_point_smooth)
+  (glDisable GL_LIGHTING)
+  (glDisable GL_DEPTH_TEST)
+  (glEnable GL_POINT_SMOOTH)
   ;; Textures
-  (glenable gl_texture_2d)
+  (glEnable GL_TEXTURE_2D)
   ;; Alpha
-  (glenable gl_blend)
-  (glBlendFunc gl_src_alpha gl_one_minus_src_alpha)
+  (glEnable GL_BLEND)
+  (glBlendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA)
   ;; camera
   (aim-camera (camera Self) :eye-z 2.0 :near 1.0))
     
 
 (defmethod DRAW ((Self ring-view))
-  (gltexenvi gl_texture_env gl_texture_env_mode gl_modulate)
+  (glTexEnvi GL_TEXTURE_ENV GL_TEXTURE_ENV_MODE GL_MODULATE)
   (use-texture Self "voicering.png") 
-  (glnormal3f 0.0 0.0 1.0)
+  (glNormal3f 0.0 0.0 1.0)
   (let ((R (radius Self)) (-R (- (radius Self))))
-    (glDisable gl_depth_test)
+    (glDisable GL_DEPTH_TEST)
     (loop
       (glColor4f 1.0 1.0 1.0 (- 1.0 R))  ;; fade color for large radius
-      (glbegin gl_quads)
-        (gltexcoord2i 0 0) (glvertex2f -r -r)
-        (gltexcoord2i 0 1) (glvertex2f -r  r)
-        (gltexcoord2i 1 1) (glvertex2f  r  r)
-        (gltexcoord2i 1 0) (glvertex2f  r -r)
-      (glend)
+      (glBegin GL_QUADS)
+        (glTexCoord2i 0 0) (glVertex2f -r -r)
+        (glTexCoord2i 0 1) (glVertex2f -r  r)
+        (glTexCoord2i 1 1) (glVertex2f  r  r)
+        (glTexCoord2i 1 0) (glVertex2f  r -r)
+      (glEnd)
       (decf R (growth Self))
       (when (< R 0.0) (return))
       (incf -R (growth Self)))))
@@ -57,10 +57,7 @@
     (incf (radius Self) (* 0.6 Dt))))
 
 
-
-
-#| Examples:
-
+;; GUI
 
 (defclass RING-WINDOW (application-window)
   ())
@@ -94,5 +91,3 @@
   </column>
 </ring-window>
 
-
-|#

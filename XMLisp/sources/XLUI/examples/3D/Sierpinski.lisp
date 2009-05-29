@@ -26,10 +26,8 @@
     (glEnd)))
   
 
-#| Examples:
+;; GUI
 
 <application-window title="Sierpinski Triangles" margin="0">
   <sierpinski iterations="10000"/>
 </application-window>
-
-|#

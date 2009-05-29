@@ -1,4 +1,5 @@
 ;;; LUI Example: Cover Flow
+;;; concepts: camera control through slider; cover flow-like reflections
 ;;; Alexander Repenning 04/25/09
 
 (in-package :xlui)
@@ -21,28 +22,28 @@
 (defmethod INIT ((Self cover-flow-view))
   ;; GL setup
   (glClearColor 0.0 0.0 0.0 0.0)
-  (glShadeModel gl_smooth)
-  (glPixelStorei gl_unpack_alignment 1)
+  (glShadeModel GL_SMOOTH)
+  (glPixelStorei GL_UNPACK_ALIGNMENT 1)
   ;; define material
-  (glmaterialfv gl_front_and_back gl_specular { 0.5 0.5 0.5 0.0 })
-  (glmaterialf gl_front_and_back gl_shininess 128.0)
-  (glmaterialfv gl_front_and_back gl_ambient_and_diffuse { 1.0 1.0 1.0 1.0 })
-  (glEnable gl_color_material)
-  (glColorMaterial gl_front_and_back gl_ambient_and_diffuse)
+  (glmaterialfv GL_FRONT_AND_BACK GL_SPECULAR { 0.5 0.5 0.5 0.0 })
+  (glMaterialf  GL_FRONT_AND_BACK GL_SHININESS 128.0)
+  (glMaterialfv GL_FRONT_AND_BACK GL_AMBIENT_AND_DIFFUSE { 1.0 1.0 1.0 1.0 })
+  (glEnable GL_COLOR_MATERIAL)
+  (glColorMaterial GL_FRONT_AND_BACK GL_AMBIENT_AND_DIFFUSE)
   ;; light
-  (gllightfv gl_light0 gl_position { 3.0 3.0 3.0 1.0 })
-  (gllightfv gl_light0 gl_diffuse { 1.0 1.0 1.0 1.0 })
-  (gllightfv gl_light0 gl_specular { 1.0 1.0 1.0 1.0 })
+  (glLightfv GL_LIGHT0 GL_POSITION { 3.0 3.0 3.0 1.0 })
+  (glLightfv GL_LIGHT0 GL_DIFFUSE { 1.0 1.0 1.0 1.0 })
+  (glLightfv GL_LIGHT0 GL_SPECULAR { 1.0 1.0 1.0 1.0 })
   ;; enablers
-  (gldisable gl_lighting)
-  (glenable gl_light0)
-  (glenable gl_depth_test)
+  (glDisable GL_LIGHTING)
+  (glEnable GL_LIGHT0)
+  (glEnable GL_DEPTH_TEST)
   ;; Alpha
-  (glenable gl_blend)
-  (glBlendFunc gl_src_alpha gl_one_minus_src_alpha)
+  (glEnable GL_BLEND)
+  (glBlendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA)
   ;; texture
-  (glEnable gl_texture_2d)
-  (gltexenvi gl_texture_env gl_texture_env_mode gl_modulate)
+  (glEnable GL_TEXTURE_2D)
+  (glTexEnvi GL_TEXTURE_ENV GL_TEXTURE_ENV_MODE GL_MODULATE)
   ;; camera
   (aim-camera (camera Self) :eye-z 10.0)) 
 
@@ -50,6 +51,15 @@
 (defmethod CLEAR-BACKGROUND ((Self cover-flow-view))
   (glClearColor 0.0 0.0 0.0 1.0)
   (glClear #.(logior GL_COLOR_BUFFER_BIT GL_DEPTH_BUFFER_BIT)))
+
+
+(defmethod INITIALIZE-INSTANCE :after ((Self cover-flow-view) &rest Args)
+  (declare (ignore Args))
+  ;; space covers
+  (let ((X 0.0))
+    (dolist (Agent (agents Self))
+      (setf (x Agent) x)
+      (incf x 1.0))))
 
 ;;-------------------------
 ;; Agent                   |
@@ -65,26 +75,26 @@
   (setf (heading Self) (* 90.0 (sin (+ (x self) (* 1.0 (value (view Self)))))))
   (setf (z Self) (* 2.0 (sin (+ (x self) (* 1.0 (value (view Self)))))))
   (use-texture Self (texture Self))
-  (glbegin gl_quads)
+  (glBegin GL_QUADS)
   ;; Cover 
-  (glnormal3f 0.0 0.0 1.0)
-  (glcolor4f 1.0 1.0 1.0 1.0)
-  (gltexcoord2f 0.0 0.0) (glvertex2f 0.0 0.0)
-  (gltexcoord2f 0.0 1.0) (glvertex2f 0.0 1.0)
-  (gltexcoord2f 1.0 1.0) (glvertex2f 1.0 1.0)
-  (gltexcoord2f 1.0 0.0) (glvertex2f 1.0 0.0)
+  (glNormal3f 0.0 0.0 1.0)
+  (glColor4f 1.0 1.0 1.0 1.0)
+  (glTexCoord2f 0.0 0.0) (glVertex2f 0.0 0.0)
+  (glTexCoord2f 0.0 1.0) (glVertex2f 0.0 1.0)
+  (glTexCoord2f 1.0 1.0) (glVertex2f 1.0 1.0)
+  (glTexCoord2f 1.0 0.0) (glVertex2f 1.0 0.0)
   ;; reflection
-  (glcolor4f 1.0 1.0 1.0 0.5)
-  (gltexcoord2f 0.0 0.0) (glvertex2f 0.0 0.0)
-  (glcolor4f 1.0 1.0 1.0 0.1)
-  (gltexcoord2f 0.0 1.0) (glvertex2f 0.0 -1.0)
-  (gltexcoord2f 1.0 1.0) (glvertex2f 1.0 -1.0)
-  (glcolor4f 1.0 1.0 1.0 0.5)
-  (gltexcoord2f 1.0 0.0) (glvertex2f 1.0 0.0)
+  (glColor4f 1.0 1.0 1.0 0.5)
+  (glTexCoord2f 0.0 0.0) (glVertex2f 0.0 0.0)
+  (glColor4f 1.0 1.0 1.0 0.1)
+  (glTexCoord2f 0.0 1.0) (glVertex2f 0.0 -1.0)
+  (glTexCoord2f 1.0 1.0) (glVertex2f 1.0 -1.0)
+  (glColor4f 1.0 1.0 1.0 0.5)
+  (glTexCoord2f 1.0 0.0) (glVertex2f 1.0 0.0)
   (glEnd))
 
-#| Examples:
 
+;; Actions
 
 (defmethod ADJUST-POSITION ((Window cover-flow-window) (Slider slider))
   (let ((Value (* 10.0 (value Slider))))
@@ -93,13 +103,7 @@
     (display (view-named Window "cover flow view"))))
 
 
-(defmethod initialize-instance :after ((Self cover-flow-view) &rest Args)
-  ;; space covers
-  (let ((X 0.0))
-    (dolist (Agent (agents Self))
-      (setf (x Agent) x)
-      (incf x 1.0))))
-
+;; Window
 
 <cover-flow-window title="Cover Flow" margin="0">
   <column align="stretch" valign="stretch">
@@ -125,7 +129,3 @@
   </column>
 </cover-flow-window>
 
-
-
-
-|#

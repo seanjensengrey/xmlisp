@@ -35,10 +35,14 @@
   (glClearColor 0.0 0.0 0.0 1.0)
   (glClear #.(logior GL_COLOR_BUFFER_BIT GL_DEPTH_BUFFER_BIT)))
 
-#| Examples:
+
 
 <application-window title="Brownian Motion" margin="0">
   <brownian-motion/>
 </application-window>
+
+
+#| Examples:
+
 
 |#
