@@ -17,6 +17,9 @@
 (setq gui::*paren-highlight-background-color*
       (#/retain (#/colorWithCalibratedRed:green:blue:alpha: ns:ns-color 0.9 0.8 0.8 1.0)))
 
+
+(setq GUI::*Editor-keep-backup-files* nil)
+
 ;; Load
 
 ;; IDE
@@ -141,18 +144,69 @@
                    :device (pathname-device heap-image-path))))
 
 
+(defun RESTORE-XMLISP ()
+  (setf (logical-pathname-translations "lui")
+      `(("**;*.*" ,(merge-pathnames "**/*.*" (ccl::ccl-contents-directory))))))
+
+
 (defun BUILD-XMLISP ()
+  (setq *Package* (find-package :xlui))
   (require :build-application)
   ;; load a different init file
   (defmethod ccl::application-init-file ((app ccl::lisp-development-system))
     '("home:xmlisp-init" "home:\\.xmlisp-init"))
   ;; create LUI host pointing to application bundle
-  (defmethod ccl::toplevel-function  ((a ccl::application) init-file)
-    (declare (ignore init-file))
-    (setf (logical-pathname-translations "lui")
-      `(("**;*.*" ,(merge-pathnames "**/*.*" (ccl-contents-directory))))))
+  (pushnew 'restore-xmlisp *restore-lisp-functions*)
+
+  (format t "~%- create directories and files")
+  (multiple-value-bind (Path Exists)
+                       (create-directory (format nil "~ADesktop/XMLisp/" (user-homedir-pathname)))
+    (unless Exists
+      (error "XMLisp folder on desktop already exists")))
+
+  (format t "~%- copy examples")
+  (ccl::recursive-copy-directory
+   (truename "lui:sources;XLUI;examples;")
+   (format nil "~ADesktop/XMLisp/examples/" (user-homedir-pathname)))
+
   (ccl::build-application 
    :name "XMLisp"
-   :directory (format nil "~ADesktop/" (user-homedir-pathname))))
+   :directory (format nil "~ADesktop/XMLisp/" (user-homedir-pathname))))
 
 
+(defun FINISH-XMLISP ()
+  (format t "~%- copy image resources")
+  (ccl::recursive-copy-directory
+   (truename "lui:resources;images;")
+   (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/images/" (user-homedir-pathname)))
+  (format t "~%- copy sounds resources")
+  (ccl::recursive-copy-directory
+   (truename "lui:resources;sounds;")
+   (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/sounds/" (user-homedir-pathname)))
+  (format t "~%- copy texture resources")
+  (ccl::recursive-copy-directory
+   (truename "lui:resources;textures;")
+   (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/textures/" (user-homedir-pathname)))
+  (format t "~%- copy window resources")
+  (ccl::recursive-copy-directory
+   (truename "lui:resources;windows;")
+   (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/windows/" (user-homedir-pathname)))
+  (format t "~%- patch menu resources")
+  (ccl::recursive-copy-directory 
+   (truename "lui:resources;English.lproj;MainMenu.nib;")
+   (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/English.lproj/MainMenu.nib/" (user-homedir-pathname))
+   :if-exists :overwrite)
+  (format t "~%- patch info plist resources")
+  (copy-file 
+   (truename "lui:resources;English.lproj;InfoPlist.strings")
+   (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/English.lproj/InfoPlist.strings" (user-homedir-pathname))
+   :if-exists :overwrite))
+
+#| 
+
+
+(build-xmlisp)
+
+(finish-xmlisp)
+
+|#
