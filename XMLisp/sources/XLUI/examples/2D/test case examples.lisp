@@ -14,7 +14,12 @@ A XMLisp based Lisp User Interface, XLUI for short, consists of up to 3 pieces:
 
 Below are a number of increasingly complex LUI interface examples. Select the code, including 
 the XML expressions (remember they look like XML expression but ARE lisp s-expressions) and 
-evaluate them.
+evaluate them one by one. 
+
+
+NOT RECOMMENDED: if you load the entire buffer at once then you just get a mess of windows (some modal) on the 
+ screen. This will work but you are better off evaluating things selectively.
+
 |#
 
 
@@ -209,11 +214,11 @@ evaluate them.
 ;; Color Picker 3 with labels
 
 
-(defclass COLOR-PICKER-WINDOW (application-window)
+(defclass LABLED-COLOR-PICKER-WINDOW (application-window)
   ())
 
 
-(defmethod ADJUST-COLOR-ACTION ((W color-picker-window) (Slider slider))
+(defmethod ADJUST-COLOR-ACTION ((W labled-color-picker-window) (Slider slider))
   ;; color well update
   (set-color 
    (view-named W "color well")
@@ -227,7 +232,7 @@ evaluate them.
   (display W))
 
 
-<color-picker-window title="color picker (resize me!!)" height="130">
+<labled-color-picker-window title="color picker (resize me!!)" height="130">
   <row align="stretch" valign="stretch">
     <column align="stretch" flex="2" valign="middle">
       <row minimize="vertical" align="stretch">
@@ -249,7 +254,7 @@ evaluate them.
     <spacer/>
     <rectangle name="color well" flex="1"/>
   </row>
-</color-picker-window>
+</labled-color-picker-window>
 
 
 ;;********************************************
