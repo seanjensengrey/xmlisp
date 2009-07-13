@@ -81,7 +81,7 @@
 
 (defparameter Wi 
   <application-window title="OpenGL 3D" margin="0">
-    <benchmark full-scene-anti-aliasing="true"/>
+    <benchmark full-scene-anti-aliasing="false"/>
   </application-window>)
 
 
@@ -89,6 +89,9 @@
 
 
 (frame-rate (first (subviews wi)))
+
+(switch-to-full-screen-mode wi)
+(switch-to-window-mode wi)
 
 
 
