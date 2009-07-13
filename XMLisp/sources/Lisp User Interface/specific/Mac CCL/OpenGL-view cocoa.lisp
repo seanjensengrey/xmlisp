@@ -89,7 +89,7 @@
         Native-Control))))
 
 
-(defmethod DISPLAY ((Self opengl-view))
+(defmethod DISPLAY ((Self opengl-view))  
   (with-glcontext Self
     (clear-background Self)
     (draw Self)))
