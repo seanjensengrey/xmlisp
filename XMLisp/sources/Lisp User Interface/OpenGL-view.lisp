@@ -119,7 +119,7 @@
 ; Textures                      |
 ;_______________________________
 
-(defmethod CREATE-TEXTURE-FROM-FILE ((Self opengl-view) Filename &key Verbose (Build-Mipmaps t) Repeat (Mag-Filter GL_LINEAR)) "
+(defun CREATE-TEXTURE-FROM-FILE (Filename &key Verbose (Build-Mipmaps t) Repeat (Mag-Filter GL_LINEAR)) "
   in:  Filename {string}, 
     &key Verbose {boolean}, Repeat
   out: OpenGL-Texture-Name {int}.
@@ -164,7 +164,7 @@
   (let ((Texture-Id (gethash Texture-Name (textures Self))))
     ;; load texture from file if necessary
     (unless Texture-Id
-      (setq Texture-Id (create-texture-from-file Self (texture-file Self Texture-Name)))
+      (setq Texture-Id (create-texture-from-file (texture-file Self Texture-Name)))
       (setf (gethash Texture-Name (textures Self)) Texture-Id))
     ;; make the texture active (for now assume a 2D texture
     (when Texture-Id
