@@ -269,6 +269,7 @@ Call with most important parameters. Make other paramters accessible through *Cu
    (minimizable :accessor minimizable :initform t :initarg :minimizable :type boolean :documentation "has control to minimize into dock/taskbar")
    (resizable :accessor resizable :initform t :initarg :resizable :type boolean :documentation "has resize control")
    (closeable :accessor closeable :initform t :initarg :closeable :type boolean :documentation "has close control")
+   (full-screen :accessor full-screen :initform nil :initarg :full-screen :type boolean :documentation "is in full screen mode")
    (do-show-immediatly :accessor do-show-immediatly :initarg :do-show-immediatly :initform t :documentation "if true will show window when creating instance")
    (native-window :accessor native-window :initform nil :documentation "native OS window object")
    (native-view :accessor native-view :initform nil :documentation "native OS view object"))
@@ -310,6 +311,12 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defgeneric CANCEL-MODAL (Window)
   (:documentation "Cancel modal mode, close window. Make throw :cancel"))
+
+(defgeneric SWITCH-TO-FULL-SCREEN-MODE (window)
+  (:documentation "Window becomes full screen. Menubar and dock are hidden"))
+
+(defgeneric SWITCH-TO-WINDOW-MODE (window)
+  (:documentation "Reduce full screen to window. Menubar returns. Dock, if enabled, comes back."))
 
 ;;_______________________________
 ;; default implementations       |
