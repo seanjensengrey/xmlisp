@@ -4,8 +4,14 @@
 ;;; Version: 0.2 11/28/08
 ;;;          0.3 03/12/09 CCL 1.3: do not rely on NSstring auto conversion
 ;;;          0.3.1 04/27/09 Raffael Cavallaro, raffaelcavallaro@mac.com web-browser-control fixed
+;;;          0.4   05/30/09 Full Screen Mode
 
 (in-package :LUI)
+
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (ccl:use-interface-dir :carbon) 
+  (open-shared-library "/System/Library/Frameworks/Carbon.framework/Carbon"))
 
 ;;*********************************
 ;; Native -> LUI name converters  *
@@ -254,6 +260,28 @@
                           :event-type (native-to-lui-event-type (#/type event))
                           :native-event Event))))
 
+
+(objc:defmethod (#/constrainFrameRect:toScreen: :<NSR>ect) ((Self native-window) (Rect :<NSR>ect) Screen)
+  (declare (ignore Screen))
+  ;; a nasty hack to be able move windows above the menu bar
+  (if (full-screen (lui-window Self))
+    (let ((Window-Title-Bar-Height 22))
+      (ns:make-ns-rect 
+       0
+       0
+       (pref (#/frame (#/screen Self)) <NSR>ect.size.width)
+       (+ (pref (#/frame (#/screen Self)) <NSR>ect.size.height) Window-Title-Bar-Height)))
+    Rect))
+
+
+#| 
+(objc:defmethod (#/displayIfNeeded :void) ((Self native-window))
+  (call-next-method)
+  (display (lui-window Self))
+  (print "displayIfNeeded"))
+
+|#
+
 ;__________________________________
 ; Window-delegate                   |
 ;__________________________________/
@@ -277,7 +305,10 @@
   (declare (ignore Notification))
   (let ((Window (lui-window Self)))
     (setf (x Window) (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.x)))
-    (setf (y Window) (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.y)))))
+    (setf (y Window) 
+          (- (screen-height (lui-window Self)) 
+             (height (lui-window Self))
+             (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.y))))))
 
 ;__________________________________
 ; window methods                   |
@@ -317,6 +348,11 @@
     (#/setContentSize: (native-window Self) Size)))
 
 
+(defmethod SET-POSITION :after ((Self window) Width Height)
+  (ns:with-ns-size (Position Width (- (screen-height Self)  Height))
+    (#/setFrameTopLeftPoint: (native-window Self) Position)))
+
+
 (defmethod SHOW ((Self window))
   (let ((y (truncate (- (pref (#/frame (#/mainScreen ns:ns-screen)) <NSR>ect.size.height) (y Self) (height Self)))))
     ;; (ns:with-ns-rect (Frame (x Self) y (width Self) (height Self))
@@ -342,6 +378,7 @@
 
 (defvar *Run-Modal-Return-Value* nil "shared valued used to return the run modal values")
 
+;; Modal windows
 
 (defmethod SHOW-AND-RUN-MODAL ((Self window))
   (declare (special *Run-Modal-Return-Value*))
@@ -364,6 +401,29 @@
 (defmethod CANCEL-MODAL ((Self window))
   (setq *Run-Modal-Return-Value* :cancel)
   (#/stopModal (#/sharedApplication ns:ns-application)))
+
+
+;; screen mode
+
+(defvar *Window-Full-Screen-Restore-Sizes* (make-hash-table))
+
+
+(defmethod SWITCH-TO-FULL-SCREEN-MODE ((Self window))
+  (setf (gethash Self *Window-Full-Screen-Restore-Sizes*) (#/frame (native-window Self)))
+  (#_SetSystemUIMode #$kUIModeAllSuppressed #$kUIOptionAutoShowMenuBar)
+  (setf (full-screen Self) t)
+  ;;; random sizing to trigger #/constrainFrameRect:toScreen
+  ;;; (set-size Self 100 100)
+  (#/orderFront: (native-window Self) (native-window Self))
+  (#/makeKeyWindow (native-window Self)))
+
+
+(defmethod SWITCH-TO-WINDOW-MODE ((Self window))
+  (#_SetSystemUIMode #$kUIModeNormal 0)
+  (setf (full-screen Self) nil)
+  (let ((Frame (gethash Self *Window-Full-Screen-Restore-Sizes*)))
+    (when Frame
+      (#/setFrame:display:animate: (native-window Self) Frame #$YES #$NO))))
 
 ;__________________________________
 ; NATIVE-WINDOW-VIEW                |
