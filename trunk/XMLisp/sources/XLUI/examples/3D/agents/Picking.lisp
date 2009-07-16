@@ -37,7 +37,7 @@
   (display (view Self)))
 
 
-
+(defparameter *Track-Mouse-Window* 
 <scene-inspector-window track-mouse="true" title="Hover &amp; Select" margin="0">
   <row align="stretch" valign="stretch">
     <agent-3d-view name="scene" flex="3" vflex="1">
@@ -47,6 +47,9 @@
       <cube size="3.0" z="-3.5" texture="crate.png"/>
       <cube x="5" roll="45.0"/>
       <sky-dome pitch="-90"/>
+      <text-3d text="box" x="1.0" y="3.2" z="-1.5" size="5.0"/>
+      <text-3d text="hello world" y="-2.0" size="5.0"/>
+      <text-3d text="earth" size="2.5" x="2.6" y="-0.8" z="0.2"/>
     </agent-3d-view>
     <column align="stretch" width="130" valign="stretch" vflex="1">
       <label name="type" text="" align="left" flex="1"/>
@@ -78,7 +81,7 @@
     </column>
   </row>
 </scene-inspector-window>
-
+)
 
 #| Examples
 
