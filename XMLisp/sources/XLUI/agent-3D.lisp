@@ -909,6 +909,33 @@
   (glEnd))
 
 
+;_______________________________________
+;  Text 3D                              |
+;_______________________________________
+
+(defclass TEXT-3D (agent-3d)
+  ((text :accessor text :initform "untitled" :initarg :text :type string :documentation "text associated with control")
+   (font :accessor font :initform "geneva" :documentation "font name")
+   (size :accessor size :initform 1.0 :type float :documentation "relative size")
+   (string-shape :accessor string-shape :initform nil))
+  (:documentation "text agent"))
+
+
+(defmethod INITIALIZE-INSTANCE ((Self text-3d) &rest Args)
+  (declare (ignore Args))
+  (call-next-method)
+  (with-glcontext (shared-opengl-view)
+    (setf (string-shape Self) (make-instance 'editable-string-shape 
+                                :str (text Self)
+                                :font (or (get-font *Font-Manager* (font Self))
+                                          (error "missing font: \"~A\"" (font Self)))
+                                :size (size Self)))))
+
+(defmethod DRAW ((Self text-3d))
+  (when (string-shape Self)
+    (draw (string-shape Self))))
+
+
 #| Examples:
 
 
@@ -919,6 +946,17 @@
     <cube x="-1" y="-1" texture="metal1.jpg"/>
   </agent-3d-view>
 </application-window>
+
+
+<application-window title="What is this?" track-mouse="true" margin="0">
+  <agent-3d-view>
+    <cube z="-1.5" texture="metal1.jpg"/>
+    <text-3d text="hello world"/>
+    <text-3d heading="-90" text="hello world"/>
+    <text-3d y="0.5" text="hello world 2" size="4.0" font="comic sans ms"/>
+  </agent-3d-view>
+</application-window>
+
 
 
 <application-window title="Scene" margin="0">
