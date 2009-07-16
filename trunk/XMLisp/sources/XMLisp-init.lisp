@@ -3,6 +3,7 @@
 ;; 5/20/09 + speech
 ;; for CCL 1.3 
 ;; 5/28/09
+;; 07/15/09 + font support
 
 (in-package :cl-user)
 
@@ -50,6 +51,7 @@
   (:use :common-lisp :ccl :opengl)
   (:export 
    "MOUSE-EVENT" "TRACK-MOUSE" "VIEW-MOUSE-MOVED-EVENT-HANDLER" "VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER"
+   "VIEW-LEFT-MOUSE-UP-EVENT-HANDLER"
    "COMMAND-KEY-P" "SHIFT-KEY-P" "ALT-KEY-P" "CONTROL-KEY-P"
    "WINDOW" "VIEW" "X" "Y" "WIDTH" "HEIGHT" "SHOW" "SHOW-AND-RUN-MODAL" "STOP-MODAL" "CANCEL-MODAL" "HIDE" 
    "SWITCH-TO-FULL-SCREEN-MODE" "SWITCH-TO-WINDOW-MODE"
@@ -70,6 +72,7 @@
     "USE-TEXTURE"
     "CREATE-TEXTURE-FROM-FILE"
    "CAMERA" "AIM-CAMERA" "WITH-GLCONTEXT" "RENDER-FOR-SELECTION-MODE"
+   "SHARED-OPENGL-VIEW"
    "NATIVE-PATH"
    ;; Dialogs
    "STANDARD-ALERT-DIALOG"
@@ -127,6 +130,8 @@
 (load "lui:sources;XLUI;controls")      ;; LOTS of undefined functions still!
 (load "lui:sources;XLUI;application-window")
 (load "lui:sources;XLUI;dialog-window")
+(load "lui:sources;XLUI;Font-Manager")
+(load "lui:sources;XLUI;String-Shape")
 (load "lui:sources;XLUI;agent-3D")
 
 
