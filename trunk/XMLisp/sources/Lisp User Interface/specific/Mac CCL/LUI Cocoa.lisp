@@ -348,8 +348,8 @@
     (#/setContentSize: (native-window Self) Size)))
 
 
-(defmethod SET-POSITION :after ((Self window) Width Height)
-  (ns:with-ns-size (Position Width (- (screen-height Self)  Height))
+(defmethod SET-POSITION :after ((Self window) x y)
+  (ns:with-ns-size (Position x (- (screen-height Self)  y))
     (#/setFrameTopLeftPoint: (native-window Self) Position)))
 
 
@@ -457,6 +457,7 @@
 
 (objc:defmethod (#/mouseDragged: :void) ((self native-window-view) event)
   (let ((mouse-loc (#/locationInWindow event)))
+    ;;(format t "~%dragged to ~A, ~A," (pref mouse-loc :<NSP>oint.x) (- (height (lui-window Self)) (pref mouse-loc :<NSP>oint.y)))
     (view-event-handler (lui-window Self) 
                         (make-instance 'mouse-event
                           :x (truncate (pref mouse-loc :<NSP>oint.x))
