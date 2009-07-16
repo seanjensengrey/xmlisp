@@ -4,6 +4,7 @@
 ;;; Version: 0.3 04/10/09
 ;;;  04/26/09 use logical-pathname
 ;;;  05/20/09 mouse-moved events
+;;;  07/15/09 do not confine mouse events to view content to get dragged events outside of window frame
 
 (in-package :LUI)
 
@@ -193,21 +194,27 @@ Call with most important parameters. Make other paramters accessible through *Cu
 (defmethod MOUSE-EVENT-HANDLER ((Self view) X Y DX DY Event)
   (do-subviews (Subview Self)
     ;; forward event with relative coordinates to ALL subviews overlapping click position
-    (when (and (<= (x Subview) x (+ (x Subview) (width Subview)))
-               (<= (y Subview) y (+ (y Subview) (height Subview))))
+    (when t ;;(and (<= (x Subview) x (+ (x Subview) (width Subview)))
+            ;;   (<= (y Subview) y (+ (y Subview) (height Subview))))
       (mouse-event-handler Subview (- x (x Subview)) (- y (y Subview)) DX DY Event)))
   ;; and dispatch event to view
-  (when (and (<= 0 x (width Self))
-             (<= 0 y (height Self)))
+  (when t ;;(and (<= 0 x (width Self))
+          ;;   (<= 0 y (height Self)))
     (case (event-type Event)
       (:left-mouse-down (view-left-mouse-down-event-handler Self x y))
-      (:left-mouse-up nil)
+      (:left-mouse-up (view-left-mouse-up-event-handler Self x y))
       (:left-mouse-dragged (view-left-mouse-dragged-event-handler Self x y dx dy))
       (:mouse-moved (view-mouse-moved-event-handler Self x y dx dy))
       (t (format t "not handling ~A event yet~%" (event-type Event))))))
 
 
 (defmethod VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER ((Self view) X Y)
+  (declare (ignore X Y))
+  ;; nada
+  )
+
+
+(defmethod VIEW-LEFT-MOUSE-UP-EVENT-HANDLER ((Self view) X Y)
   (declare (ignore X Y))
   ;; nada
   )
@@ -360,15 +367,15 @@ after any of the window controls calls stop-modal close window and return value.
 (defmethod MOUSE-EVENT-HANDLER ((Self window) X Y DX DY Event)
   (do-subviews (Subview Self)
     ;; forward event with relative coordinates to ALL subviews overlapping click position
-    (when (and (<= (x Subview) x (+ (x Subview) (width Subview)))
-               (<= (y Subview) y (+ (y Subview) (height Subview))))
+    (when t  ;; (and (<= (x Subview) x (+ (x Subview) (width Subview)))
+             ;;  (<= (y Subview) y (+ (y Subview) (height Subview))))
       (mouse-event-handler Subview (- x (x Subview)) (- y (y Subview)) DX DY Event)))
   ;; and dispatch event to window
-  (when (and (<= 0 x (width Self))
-             (<= 0 y (height Self)))
+  (when t ;;(and (<= 0 x (width Self))
+        ;;     (<= 0 y (height Self)))
     (case (event-type Event)
       (:left-mouse-down (view-left-mouse-down-event-handler Self x y))
-      (:left-mouse-up nil)
+      (:left-mouse-up (view-left-mouse-up-event-handler Self x y))
       (:left-mouse-dragged (view-left-mouse-dragged-event-handler Self x y dx dy))
       (:mouse-moved (view-mouse-moved-event-handler Self x y dx dy))
       (t (format t "not handling ~A event yet~%" (event-type Event))))))
@@ -386,6 +393,12 @@ after any of the window controls calls stop-modal close window and return value.
 
 
 (defmethod VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER ((Self window) X Y)
+  (declare (ignore X Y))
+  ;; nada
+  )
+
+
+(defmethod VIEW-LEFT-MOUSE-UP-EVENT-HANDLER ((Self window) X Y)
   (declare (ignore X Y))
   ;; nada
   )
