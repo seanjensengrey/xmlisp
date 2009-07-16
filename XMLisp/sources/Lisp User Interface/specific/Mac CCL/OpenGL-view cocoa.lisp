@@ -8,10 +8,11 @@
 ;*                http://www.agentsheets.com                         *
 ;* Copyright    : (c) 1996-2009, AgentSheets Inc.                    *
 ;* Filename     : opengl-view cocoa.lisp                             *
-;* Last Update  : 04/18/09                                           *
+;* Last Update  : 07/16/09                                           *
 ;* Version      :                                                    *
 ;*    1.0       : 04/18/09                                           *
 ;*    1.0.1     : 05/15/09 avoid time travel                         *
+;*    1.1       : 07/16/09 implement shared glcontexts               *
 ;* Systems      : G4, OS X 10.5.6                                    *
 ;* Lisps        : CLozure CL 1.3                                     *
 ;* Licence      : LGPL                                               *
@@ -85,6 +86,17 @@
                               :with-frame Frame
                               :pixel-format Pixel-Format
                               :lui-view Self)))
+        ;; sharing  OpenGL context?
+        (let ((View-to-Share (or (and (use-global-glcontext Self) (shared-opengl-view))
+                                 (share-glcontext-of Self))))
+          (when View-to-Share
+            (let ((glContext 
+                   (#/initWithFormat:shareContext: 
+                    (#/openGLContext Native-Control)
+                    Pixel-Format ;; redundant but should be OK
+                    (#/openGLContext (native-view View-to-Share)))))
+              ;; (format t "~%before ~A ~%after ~A" (#/openGLContext Native-Control) glContext)))
+              (unless glContext (error "cannot share OpenGLContext of view ~A" View-to-Share)))))
         (#/release Pixel-Format)
         Native-Control))))
 
