@@ -1,4 +1,4 @@
-;;;-*- Mode: Lisp; Package: ccl -*-
+;;;-*- Mode: Lisp; Package: lui -*-
 ;*********************************************************************
 ;*                                                                   *
 ;*        T R A N S P A R E N T   O P E N   G L   W I N D O W        *
@@ -73,9 +73,9 @@
                                  :style-mask #$NSBorderlessWindowMask
                                  :backing #$NSBackingStoreBuffered
                                  :defer #$NO))
+      (#/setOpaque: (native-window Self) #$NO)
       (#/setAlphaValue: (native-window Self) (gui::cgfloat 0.5))
       (#/setBackgroundColor: (native-window Self) (#/clearColor ns:ns-color))
-      (#/setOpaque: (native-window Self) #$NO)
     (let ((Pixel-Format (#/initWithAttributes: 
                          (#/alloc ns:NS-OpenGL-Pixel-Format)
                          {#$NSOpenGLPFAColorSize 32 
@@ -91,7 +91,7 @@
       (#/release Pixel-Format)
       ;; make surface of OpenGL view transparent
       (#/setValues:forParameter: (#/openGLContext (native-view Self)) {0} #$NSOpenGLCPSurfaceOpacity)
-      ;; (#/setContentView: (native-window Self) (native-view Self))
+      (#/setContentView: (native-window Self) (native-view Self))
       ;; UGLY: the disable/enable is prevents a flicker showing the background briefly. Not clear why needed
       (unwind-protect 
           (progn
@@ -102,18 +102,19 @@
         (#/enableFlushWindow (native-window Self))))))
 
 
+(defmethod SET-POSITION ((Self transparent-opengl-window) X Y)
+  (setf (x Self) X)
+  (setf (y Self) Y)
+  (ns:with-ns-size (Position x (- (truncate (pref (#/frame (or (#/screen (native-window Self))
+                                                               (#/mainScreen ns:ns-screen))) 
+                                                  <NSR>ect.size.height))  y))
+    (#/setFrameTopLeftPoint: (native-window Self) Position)))
+
+
+
 (defmethod DRAW ((Self transparent-opengl-window))
-  (glEnable GL_BLEND)
-  (glBlendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA)
-  ;; the obligatory OpenGL RGB triangle
-  (glBegin GL_TRIANGLES)
-  (glColor3f 1.0 0.0 0.0)
-  (glVertex3f 0.0 0.6 0.0)
-  (glColor3f 0.0 1.0 0.0)
-  (glVertex3f -0.2 -0.3 0.0) 
-  (glColor3f 0.0 0.0 1.0)
-  (glVertex3f 0.2 -0.3 0.0)
-  (glEnd))
+  (when (display-function Self)
+    (funcall (display-function Self))))
 
 
 (defmethod INIT ((Self transparent-opengl-window))
@@ -130,19 +131,74 @@
     (clear-background Self)
     (draw Self)))
 
+
+(defmethod WINDOW-CLOSE ((Self transparent-opengl-window))
+  (#/orderOut: (native-window Self) nil))
+
+
 #| Examples:
 
 
-(defparameter *TOGL-Window* (make-instance 'transparent-opengl-window :x 300))
+(defun EXAMPLE-DISPLAY-FUNCTION ()
+  ;; what is to be drawn into the window and the drag and drop proxy
+  ;; the obligatory OpenGL RGB triangle
+  (glBegin GL_TRIANGLES)
+  (glColor3f 1.0 0.0 0.0)
+  (glVertex3f 0.0 0.6 0.0)
+  (glColor3f 0.0 1.0 0.0)
+  (glVertex3f -0.2 -0.3 0.0) 
+  (glColor3f 0.0 0.0 1.0)
+  (glVertex3f 0.2 -0.3 0.0)
+  (glEnd))
 
-(defparameter *TOGL-Window* (make-instance 'transparent-opengl-window :x 10 :width 500 :height 500))
 
-(display *TOGL-Window*)
+(defparameter *TOGL-Window* (make-instance 'transparent-opengl-window :x 300 :display-function #'example-display-function))
 
 
-(#/orderFront: (native-window *TOGL-Window*) nil)
+(window-close *TOGL-Window*)
 
-(#/orderOut: (native-window *TOGL-Window*) nil)
+
+
+
+;; Drag and Drop
+
+
+(defparameter *DND-Window* nil)
+
+
+(defclass OPENGL-DRAG-and-DROP-VIEW (opengl-view)
+  ((display-function :accessor display-function :initform nil :initarg :display-function :documentation "0 parameter function using OpenGL calls to display content")))
+
+
+(defmethod DRAW ((Self opengl-drag-and-drop-view))
+  (funcall (display-function Self)))
+
+
+(defmethod VIEW-LEFT-MOUSE-DRAGGED-EVENT-HANDLER ((Self opengl-drag-and-drop-view) X Y DX DY)
+  (declare (ignore DX DY))
+  (unless *DND-WINDOW*
+    ;; same size as view containing opengl object to be dragged
+    (setq *Dnd-Window* (make-instance 'transparent-opengl-window :width 340 :height 180 :display-function #'example-display-function)))
+  (set-position 
+   *Dnd-Window*
+   (- (+ x (x Self) (x (window Self))) (truncate (width *Dnd-Window*) 2))
+   (- (+ y (y Self) (y (window Self))) (truncate (height *Dnd-Window*) 2))))
+
+
+(defmethod VIEW-LEFT-MOUSE-UP-EVENT-HANDLER ((Self opengl-drag-and-drop-view) X Y)
+  (declare (ignore x y))
+  (when *DND-WINDOW*
+    (window-close *DND-WINDOW*)
+    (setf *DND-WINDOW* nil)))
+
+
+(defparameter *WI* (make-instance 'window :width 340 :height 180))
+
+(add-subview *WI* (make-instance 'opengl-drag-and-drop-view :width 340 :height 180 :display-function #'example-display-function))
+
+
+
+
 
 |#
 
