@@ -6,7 +6,7 @@
 ;*********************************************************************
    ;* Author    : Ronald Sudomo ronald@agentsheets.com               *
    ;*             http://www.agentsheets.com                         *
-   ;* Copyright : (c) 1996-2007, AgentSheets Inc.                    *
+   ;* Copyright : (c) 1996-2009, AgentSheets Inc.                    *
    ;* Filename  : String-Shape.lisp                                  *
    ;* Updated   : 08/13/07                                           *
    ;* Version   :                                                    *
@@ -15,7 +15,8 @@
    ;*   1.1.1   : 03/05/05 0 garbage in display                      *
    ;*   1.2     : 11/09/05 size                                      *
    ;*   1.3     : 08/13/07 Garbage Collectable arrays (MCL)          *
-   ;* SW/HW     : PowerPC G4, OS X 10.4.10, MCL 5                    *
+   ;*   1.4     : 07/16/09 AR: CCL                                   *
+   ;* SW/HW     : PowerPC G4, OS X 10.5.6, CCL 1.3                   *
    ;* Abstract  : Definition of String-Shape & Editable-String-Shape *
    ;*                                                                *
    ;******************************************************************
@@ -337,7 +338,7 @@
     (glEnd)))
 
 
-(defmethod DISPLAY ((Self string-shape))
+(defmethod DRAW ((Self string-shape))
   (glPushmatrix)
   (glScalef (size Self) (size Self) 1.0)
   (display-vertex-arrays Self)
