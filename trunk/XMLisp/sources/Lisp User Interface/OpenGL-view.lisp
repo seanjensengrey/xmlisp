@@ -11,6 +11,7 @@
 ;* Last Update  : 04/18/09                                           *
 ;* Version      :                                                    *
 ;*    1.0       : 04/18/09                                           *
+;*    1.1       : 07/15/09 shared opengl contexts                    *
 ;* Systems      : G4, OS X 10.5.6                                    *
 ;* Lisps        : CLozure CL 1.3                                     *
 ;* Licence      : LGPL                                               *
@@ -27,15 +28,28 @@
 
 (defclass OPENGL-VIEW (view)
   ((share-glcontext-of :accessor share-glcontext-of :initform nil :initarg :share-glcontext-of :documentation "share the glcontext of this view")
-   (use-global-glcontext :accessor use-global-glcontext :initform nil :initarg :use-global-glcontext :type boolean :documentation "set to t if you want to share the global glcontext")
+   (use-global-glcontext :accessor use-global-glcontext :initform t :initarg :use-global-glcontext :type boolean :documentation "set to t if you want to share the global glcontext")
    (current-font :accessor current-font :initform nil)
    (full-scene-anti-aliasing :accessor full-scene-anti-aliasing :initform t :type boolean :documentation "if true anti alias")
    (camera :accessor camera :initform nil :documentation "camera used")
-   (textures :accessor textures :initform (make-hash-table :test #'equal) :allocation :instance :documentation "table of loaded texture ids")
+   (textures :accessor textures :initform (make-hash-table :test #'equal) :allocation :class :documentation "table of loaded texture ids")
    (animation-time :accessor animation-time :initform 0 :documentation "Time when animation was run last")
    (animated-views :allocation :class :accessor animated-views :initform nil :documentation "class list of animated views")
    (render-mode :accessor render-mode :initform :render :type keyword :documentation "value: :render :select or :feedback"))
   (:documentation "OpenGL View"))
+
+
+(defvar *Shared-OpenGL-View* nil "the GL context of this opengl-view can be share by all windows to share textures and display lists")
+
+
+(defun SHARED-OPENGL-VIEW () "
+  out: OpenGL-View.
+  Return an shared opengl view which can be used to share textures, display list and other objects.
+  This view is usually never visible and not attached to any window.
+  An OpenGL-View will be automtically be created if needed."
+  (or *Shared-OpenGL-View*
+      (setf *Shared-OpenGL-View* (make-instance 'opengl-view :use-global-glcontext nil))))
+
 
 ;**************************
 ;* interface              *
