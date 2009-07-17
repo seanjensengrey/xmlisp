@@ -1,6 +1,6 @@
 ;;; LUI: The open source portable Lisp User Interface
 ;;; Platform specificity: generic
-;;; Alexander Repenning and Andri Ioannidou
+;;; Alexander Repenning and Andri Ioannidou and Joe Blow
 ;;; Version: 0.3 04/10/09
 ;;;  04/26/09 use logical-pathname
 ;;;  05/20/09 mouse-moved events
