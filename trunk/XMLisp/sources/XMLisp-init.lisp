@@ -4,7 +4,7 @@
 ;; for CCL 1.3 
 ;; 5/28/09
 ;; 07/15/09 + font support
-;; 07/17/09 commit test
+
 
 (in-package :cl-user)
 
