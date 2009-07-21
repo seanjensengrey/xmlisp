@@ -35,11 +35,11 @@
 
 ;; Actions
 
-(defmethod START ((Window race-track-window) (button bevel-button))
+(defmethod START-ACTION ((Window race-track-window) (button bevel-button))
   (start-animation (view-named Window "race")))
 
 
-(defmethod STOP ((Window race-track-window) (button bevel-button))
+(defmethod STOP-ACTION ((Window race-track-window) (button bevel-button))
   (stop-animation (view-named Window "race")))
 
 
@@ -58,8 +58,8 @@
 <race-track-window title="Race Track" track-mouse="true" margin="0">
   <column align="stretch" valign="stretch">
     <row minimize="vertical" align="center">
-      <bevel-button text="start" action="start" width="55"/>
-      <bevel-button text="stop" action="stop" width="55"/>
+      <bevel-button text="start" action="start-action" width="55"/>
+      <bevel-button text="stop" action="stop-action" width="55"/>
     </row>
     <agent-3d-view name="race" vflex="1">
       <sky-dome pitch="90"/>
