@@ -44,11 +44,11 @@
 
 ;; Actions
 
-(defmethod START ((Window game-window) (button bevel-button))
+(defmethod START-ACTION ((Window game-window) (button bevel-button))
   (start-animation (view-named Window "war")))
 
 
-(defmethod STOP ((Window game-window) (button bevel-button))
+(defmethod STOP-ACTION ((Window game-window) (button bevel-button))
   (stop-animation (view-named Window "war")))
 
 
@@ -68,8 +68,8 @@
       <sky-dome pitch="90"/>
     </agent-3d-view>
     <row minimize="vertical" align="center">
-      <bevel-button text="start" action="start" width="55"/>
-      <bevel-button text="stop" action="stop" width="55"/>
+      <bevel-button text="start" action="start-action" width="55"/>
+      <bevel-button text="stop" action="stop-action" width="55"/>
     </row>
   </column>
 </game-window>
