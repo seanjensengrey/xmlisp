@@ -105,7 +105,7 @@
 (defmethod SET-POSITION ((Self transparent-opengl-window) X Y)
   (setf (x Self) X)
   (setf (y Self) Y)
-  (ns:with-ns-size (Position x (- (truncate (pref (#/frame (or (#/screen (native-window Self))
+  (ns:with-ns-size (Position x (- (truncate (pref (#/frame (or #| (#/screen (native-window Self)) |#
                                                                (#/mainScreen ns:ns-screen))) 
                                                   <NSR>ect.size.height))  y))
     (#/setFrameTopLeftPoint: (native-window Self) Position)))
@@ -179,10 +179,15 @@
   (unless *DND-WINDOW*
     ;; same size as view containing opengl object to be dragged
     (setq *Dnd-Window* (make-instance 'transparent-opengl-window :width 340 :height 180 :display-function #'example-display-function)))
-  (set-position 
-   *Dnd-Window*
-   (- (+ x (x Self) (x (window Self))) (truncate (width *Dnd-Window*) 2))
-   (- (+ y (y Self) (y (window Self))) (truncate (height *Dnd-Window*) 2))))
+  (let ((Screen-x (+ x (x Self) (x (window Self))))
+        (Screen-y (+ y (y Self) (y (window Self)))))
+    (set-position
+     *Dnd-Window*
+     (- Screen-x (truncate (width *Dnd-Window*) 2))
+     (- Screen-y (truncate (height *Dnd-Window*) 2)))
+    (let ((Target-Window (find-window-at-screen-position Screen-x Screen-y)))
+      (setf (text *text*) (or (write-to-string Target-Window)
+                              "-")))))
 
 
 (defmethod VIEW-LEFT-MOUSE-UP-EVENT-HANDLER ((Self opengl-drag-and-drop-view) X Y)
@@ -192,12 +197,13 @@
     (setf *DND-WINDOW* nil)))
 
 
-(defparameter *WI* (make-instance 'window :width 340 :height 180))
+(defparameter *WI* (make-instance 'window :width 340 :height 360))
 
 (add-subview *WI* (make-instance 'opengl-drag-and-drop-view :width 340 :height 180 :display-function #'example-display-function))
 
+(defparameter *Text* (make-instance 'editable-text-control :y 180 :width 340 :height 180))
 
-
+(add-subview *WI* *text*)
 
 
 |#
