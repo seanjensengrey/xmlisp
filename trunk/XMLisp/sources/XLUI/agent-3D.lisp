@@ -52,7 +52,7 @@
 
 
 (defgeneric FIND-AGENT-AT (agent-3d-view X Y Width Height &optional Agent-Type)
-  (:documentation "Find agent at window coordinate <x, y> with a tolerance of <Width> <Height>. Used to select and pick agents"))
+  (:documentation "Find agent at view coordinate <x, y> with a tolerance of <Width> <Height>. Used to select and pick agents"))
 
 
 (defgeneric BROADCAST-TO-AGENTS (agent-3d-view Function &rest Args)
