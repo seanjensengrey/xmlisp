@@ -425,6 +425,33 @@
     (when Frame
       (#/setFrame:display:animate: (native-window Self) Frame #$YES #$NO))))
 
+
+;__________________________________
+; Window query functions            |
+;__________________________________/
+
+(defun FIND-WINDOW-AT-SCREEN-POSITION (screen-x screen-y &key Type) "
+  Return a LUI window at screen position x, y.
+  If there is no window return nil
+  If there are multiple windows return the topmost one"
+  (multiple-value-bind (x y) (lui-screen-coordinate screen-x screen-y)
+    (let ((Lui-Windows nil)
+          (All-Windows (#/windows (#/sharedApplication ns::ns-application))))
+      (dotimes (i (#/count All-Windows) (first (sort Lui-Windows #'< :key #'(lambda (w) (#/orderedIndex (native-window w))))))
+        (let ((Window (#/objectAtIndex: All-Windows i)))
+          (when (and 
+                 (#/isVisible Window)
+                 (slot-exists-p Window 'lui-window)
+                 (if Type 
+                   (subtypep (type-of (lui-window Window)) (find-class Type))
+                   t))
+            (let ((Frame (#/frame Window)))
+              (when (and (<= (pref Frame <NSR>ect.origin.x) x (+ (pref Frame <NSR>ect.origin.x) (pref Frame <NSR>ect.size.width)))
+                         (<= (pref Frame <NSR>ect.origin.y) y (+ (pref Frame <NSR>ect.origin.y) (pref Frame <NSR>ect.size.height))))
+                (push (lui-window Window) Lui-Windows)))))))))
+
+;; (find-window-at-screen-position 10 100)
+
 ;__________________________________
 ; NATIVE-WINDOW-VIEW                |
 ;__________________________________/
