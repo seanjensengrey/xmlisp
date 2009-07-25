@@ -37,13 +37,13 @@
   (display (view Self)))
 
 
-(defparameter *Track-Mouse-Window* 
+(defparameter *Track-Mouse-Window*
 <scene-inspector-window track-mouse="true" title="Hover &amp; Select" margin="0">
   <row align="stretch" valign="stretch">
     <agent-3d-view name="scene" flex="3" vflex="1">
       <cube texture="crate.png"/>
       <sphere x="2.0"/>
-      <sphere x="3.0" texture="earth.png"/>
+      <sphere x="3.0" texture="earth.png" draggable="true"/>
       <cube draggable="true" size="3.0" z="-3.5" texture="crate.png"/>
       <cube x="5" roll="45.0"/>
       <sky-dome pitch="-90"/>
