@@ -6,7 +6,7 @@
 ;*********************************************************************
 ;* Author       : Alexander Repenning, alexander@agentsheets.com     *
 ;*                http://www.agentsheets.com                         *
-;* Copyright    : (c) 1996-2007, AgentSheets Inc.                    *
+;* Copyright    : (c) 1996-2009, AgentSheets Inc.                    *
 ;* Filename     : game-engine.lisp                                   * 
 ;* Last Update  : 02/07/07                                           *
 ;* Version      :                                                    *
@@ -23,7 +23,8 @@
 ;*    1.5       : 02/07/07 tooltips support                          *
 ;*    1.6       : 03/20/07 projected-window-position reference-point *
 ;*    2.0       : 05/02/09 XLUI: based on game-engine.lisp           *
-;* Systems      : G4, MCL 5.2, OS X 10.4.9                           *
+;*    2.1       : 07/24/09 drag and drop                             *
+;* Systems      : G4, CCL 1.3, OS X 10.5.7                           *
 ;* Abstract     : Animation and scene management                     *
 ;*                                                                   *
 ;*********************************************************************
@@ -39,12 +40,40 @@
 
 
 ;*******************************
+;* DRAG-AND-PROXY-WINDOW       *
+;*******************************
+
+(defclass DRAG-PROXY-WINDOW (transparent-opengl-window)
+  ((drag-and-drop-handler :accessor drag-and-drop-handler :initarg :drag-and-drop-handler :documentation "drag and drop handler"))
+  (:documentation "window rendering proxy representation of agent to be dragged"))
+
+
+(defmethod INIT ((Self drag-proxy-window))
+  (init (source-view (drag-and-drop-handler Self))))
+
+
+(defmethod DRAW ((Self drag-proxy-window))
+  (draw (source-view (drag-and-drop-handler Self))))
+
+;*******************************
+;* DRAG-AND-DROP-HANDLER       *
+;*******************************
+
+(defclass DRAG-AND-DROP-HANDLER ()
+  ((agent-dragged :accessor agent-dragged :initarg :agent-dragged :documentation "the agent being dragged")
+   (source-view :accessor source-view :initarg :source-view :documentation "the view containing the agent being dragged")
+   (drag-proxy-window :accessor drag-proxy-window :initform nil :initarg :drag-proxy-window :documentation "window, typically transparent, rendering potentially animated proxy of agent "))
+  (:documentation "Drag and drop handler managing one drag and drop from mouse dragged event to mouse up"))
+
+
+;*******************************
 ;* AGENT 3D VIEW               *
 ;*******************************
 
 (defclass AGENT-3D-VIEW (opengl-dialog)
   ((agents :accessor agents :initform nil :initarg :agents :documentation "a scence graph based on agents")
    (is-visible :accessor is-visible :initform t :type boolean)
+   (drag-and-drop-handler :accessor drag-and-drop-handler :initform nil :documentation "drag and drop handler")
    (agent-hovered :accessor agent-hovered :initform nil :documentation "the agent currently hovered over")
    (agents-selected :accessor agents-selected :initform nil :documentation "list of agents currenly selected")
    (render-mode :accessor render-mode :initform gl_render :documentation "value: gl_render gl_select or gl_feedback"))
@@ -108,7 +137,7 @@
   (glEnable GL_BLEND)
   (glBlendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA)
   ;; camera
-  (aim-camera (camera Self) :eye-z 10.0 :near 1.0)
+  ;; (aim-camera (camera Self) :eye-z 10.0 :near 1.0)
   ;; compose the scene
   ;;(compose-scene Self)
   )
@@ -236,6 +265,56 @@
       (setf (agents-selected Self) nil)))))
 
 
+;; Drag and Drop
+
+(defmethod VIEW-LEFT-MOUSE-DRAGGED-EVENT-HANDLER ((Self agent-3d-view) X Y DX DY)
+  (declare (ignore DX DY))
+  (let ((Screen-Updates-Disabled nil))
+    ;; if drag beging make drag and drop handler
+    (unless (drag-and-drop-handler Self)
+      (let ((Agent (find-agent-at Self x y *Selection-Tolerance* *Selection-Tolerance*)))
+        (when (and Agent (draggable Agent))
+          (#_DisableScreenUpdates)
+          (setq Screen-Updates-Disabled t)
+          (setf (drag-and-drop-handler Self)
+                (make-instance 'drag-and-drop-handler 
+                  :agent-dragged Agent
+                  :source-view Self))
+          (setf (drag-proxy-window (drag-and-drop-handler Self))
+                (make-instance 'drag-proxy-window 
+                  :width (width Self)
+                  :height (height Self)
+                  :share-context-of Self
+                  :drag-and-drop-handler (drag-and-drop-handler Self))))))
+    (cond
+     ;; dragging
+     ((drag-and-drop-handler Self)
+      ;; update proxy window
+      (let ((Screen-x (+ x (x Self) (x (window Self))))
+            (Screen-y (+ y (y Self) (y (window Self)))))
+        (let ((Proxy-Window (drag-proxy-window (drag-and-drop-handler Self))))
+          (set-position 
+           Proxy-Window
+           (- Screen-x (truncate (width Proxy-Window) 2))
+           (- Screen-y (truncate (height Proxy-Window) 2))))))
+     (t
+      ;; camera control?
+      (call-next-method)))
+    (when Screen-Updates-Disabled (#_EnableScreenUpdates))))
+
+
+
+
+(defmethod VIEW-LEFT-MOUSE-UP-EVENT-HANDLER ((Self agent-3d-view) X Y)
+  (declare (ignore x y))
+  ;; terminate ongoing drag and drop
+  (when (drag-and-drop-handler Self)
+    (when (drag-proxy-window (drag-and-drop-handler Self))
+      (window-close (drag-proxy-window (drag-and-drop-handler Self))))
+    (setf (drag-and-drop-handler Self) nil)
+    ;; avoid update glitches by dislaying self again
+    (display Self)))
+
 ;; Hovering
 
 (defmethod VIEW-MOUSE-MOVED-EVENT-HANDLER ((Self agent-3d-view) x y dx dy)
@@ -283,6 +362,7 @@
    (pitch :accessor pitch :initform 0.0 :initarg :pitch :type short-float)
    (heading :accessor heading :initform 0.0 :initarg :heading :type short-float)
    (reference-id :accessor reference-id :initform (incf *Reference-Id-Counter*) :type integer)
+   (draggable :accessor draggable :initform nil :type boolean :documentation "if true agent can be dragged by user")
    (is-visible :accessor is-visible :initform t :type boolean)
    (is-hovered :accessor is-hovered :initform nil :type boolean :documentation "is mouse hovering over me?")
    (is-selected :accessor is-selected :initform nil :type boolean :documentation "am I one of the selected agents?")
@@ -358,6 +438,31 @@
 
 (defgeneric MOUSE-HOVER-LEAVE-EVENT-HANDLER (agent-3d)
   (:documentation "Mouse has left hover zone above me"))
+
+;; Drag and Drop
+
+(defgeneric IS-DRAG-SOURCE (agent-3d)
+  (:documentation "return non nil if agent can be used as drag source"))
+
+
+(defgeneric DRAG-TRACKING (agent-3d)
+  (:documentation "Drag proxy representation of me on screen and provide drag and drop feedback as long as mouse is down. Return <x> and <y> of final position"))
+
+
+(defgeneric CURRENTLY-DRAGGED-TO (Agent X Y)
+  (:documentation " in: X Y integer.
+  As part of ongoing drag I am currently dragged to screen position <x>, <y>.
+  Send proper events."))
+
+
+(defgeneric COULD-RECEIVE-DROP (Agent1 Agent2)
+  (:documentation "in: Agent1, Agent2. 
+out: Could: boolean; Need-to-Copy boolean; Explanation string. 
+Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explanation string for rejection or aception."))
+
+
+(defgeneric RECEIVE-DROP (Agent1 Agent2)
+  (:documentation "Drop <Agent2> onto <Agent1>"))
 
 ;_______________________________________
 ; Implementation                        |
@@ -592,6 +697,12 @@
   (setf (agents Agent) (append (agents Agent) (list Sub-Agent)))
   (setf (part-of Sub-Agent) Agent))
 
+
+
+
+;****************************************
+;  Main Agent-3d subclasses             *
+;****************************************
 ;_______________________________________
 ;  Sphere                               |
 ;_______________________________________
@@ -618,14 +729,19 @@
 (defmethod DRAW ((Self sphere))
   (glEnable GL_LIGHTING)
   (glTexEnvi GL_TEXTURE_ENV GL_TEXTURE_ENV_MODE GL_MODULATE)
-  (unless (quadric Self) (initialize-quadric Self))  ;; just in time
+ (format t "~%texture ~A time ~A" (texture Self) (hemlock::time-to-run 
+  (unless (quadric Self) (initialize-quadric Self))))  ;; just in time
   (cond
    ((texture Self) 
     (glEnable GL_TEXTURE_2D)
     (use-texture Self (texture Self)))
    (t 
     (glDisable gl_texture_2d)))
-  (gluSphere (quadric Self) (size Self) 20 20)
+  (format t " draw ~A" (hemlock::time-to-run (gluSphere (quadric Self) (size Self) 20 20)))
+  ;; to make the code sharable for drag and drop we need to do the less efficial way
+  ;; reinitializing the quadric every time we draw. Overhead is <= 10%
+  (gluDeleteQuadric (quadric Self))
+  (setf (quadric Self) nil)
   (call-next-method))
 
 
