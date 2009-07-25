@@ -313,10 +313,9 @@
   (declare (ignore x y))
   ;; terminate ongoing drag and drop
   (when (drag-and-drop-handler Self)
-    (let ((Agent (agent-dragged (drag-and-drop-handler Self))))
-      (when (drag-proxy-window (drag-and-drop-handler Self))
-        (window-close (drag-proxy-window (drag-and-drop-handler Self))))
-      (setf (drag-and-drop-handler Self) nil))))
+    (when (drag-proxy-window (drag-and-drop-handler Self))
+      (window-close (drag-proxy-window (drag-and-drop-handler Self))))
+    (setf (drag-and-drop-handler Self) nil)))
       ;; avoid update glitches by dislaying self again
       ;;(broadcast-to-agents Self #'(lambda (Agent) (setf (is-visible Agent) t)))
       ;; (display Self))))
@@ -752,6 +751,7 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 
 
 (defmethod DRAW-BOUNDING-BOX ((Self sphere) Red Green Blue &optional Alpha)
+  (declare (ignore Red Green Blue Alpha))
   (glPushMatrix)
   (let ((Offset (float (- (size Self)) 0.0)))
     (glTranslatef Offset Offset Offset))
@@ -906,6 +906,7 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 
 
 (defmethod DRAW-BOUNDING-BOX ((Self cylinder) Red Green Blue &optional Alpha)
+  (declare (ignore Red Green Blue Alpha))
   (glPushMatrix)
   (let ((Offset (float (- (base-radius Self)) 0.0)))
     (glTranslatef Offset Offset 0.0))
@@ -963,6 +964,7 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 
 
 (defmethod DRAW-BOUNDING-BOX ((Self disk) Red Green Blue &optional Alpha)
+  (declare (ignore Red Green Blue Alpha))
   (glPushMatrix)
   (let ((Offset (float (- (outer-radius Self)) 0.0)))
     (glTranslatef Offset Offset 0.0))
