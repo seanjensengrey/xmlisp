@@ -52,10 +52,10 @@
   (:use :common-lisp :ccl :opengl)
   (:export 
    "MOUSE-EVENT" "TRACK-MOUSE" "VIEW-MOUSE-MOVED-EVENT-HANDLER" "VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER"
-   "VIEW-LEFT-MOUSE-UP-EVENT-HANDLER"
+   "VIEW-LEFT-MOUSE-UP-EVENT-HANDLER" "VIEW-LEFT-MOUSE-DRAGGED-EVENT-HANDLER"
    "COMMAND-KEY-P" "SHIFT-KEY-P" "ALT-KEY-P" "CONTROL-KEY-P"
    "WINDOW" "VIEW" "X" "Y" "WIDTH" "HEIGHT" "SHOW" "SHOW-AND-RUN-MODAL" "STOP-MODAL" "CANCEL-MODAL" "HIDE" 
-   "SWITCH-TO-FULL-SCREEN-MODE" "SWITCH-TO-WINDOW-MODE"
+   "SWITCH-TO-FULL-SCREEN-MODE" "SWITCH-TO-WINDOW-MODE" "WINDOW-CLOSE"
    "FIND-WINDOW-AT-SCREEN-POSITION"
    "SCROLL-VIEW" "HAS-HORIZONTAL-SCROLLER" "HAS-VERTICAL-SCROLLER"
    "SET-SIZE" "SET-POSITION" "DISPLAY" "DRAW" "INIT" "CLEAR-BACKGROUND" "RECURSIVE-MAP-SUBVIEWS"
@@ -110,6 +110,7 @@
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;image-import")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;OpenGL-view Cocoa")
 (load "lui:sources;Lisp User Interface;Camera")
+(load "lui:sources;Lisp User Interface;specific;Mac CCL;Transparent-OpenGL-Window")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;speech")
 
 ;****** XMLisp
