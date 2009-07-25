@@ -36,7 +36,8 @@
 (objc:defmethod (#/prepareOpenGL :void) ((Self native-transparent-opengl-view))
   ;; NSOpenGLView appears to default to some opaque background: need to clear that
   (#/set (#/clearColor ns:ns-color))
-  (#_NSRectFill (#/bounds Self)))
+  (#_NSRectFill (#/bounds Self))
+  (init (lui-window Self)))
 
 
 (objc:defmethod (#/drawRect: :void) ((Self native-transparent-opengl-view) (rect :<NSR>ect))
@@ -56,6 +57,7 @@
    (native-window :accessor native-window :initform nil :documentation "native OS window object")
    (native-view :accessor native-view :initform nil :documentation "native OS view object")
    (share-context-of :accessor share-context-of :initform nil :initarg :share-context-of)
+   (use-global-glcontext :accessor use-global-glcontext :initform t :initarg :use-global-glcontext :type boolean :documentation "set to t if you want to share the global glcontext")
    (x :accessor x :initform 0 :initarg :x :documentation "screen position, pixels")
    (y :accessor y :initform 0 :initarg :y :documentation "screen position, pixels")
    (width :accessor width :initform 170 :initarg :width :documentation "width in pixels")
@@ -88,6 +90,17 @@
                                  :with-frame (#/frame (#/contentView (native-window Self)))
                                  :pixel-format Pixel-Format
                                  :lui-window Self))
+      ;; sharing  OpenGL context?
+      (let ((View-to-Share (or (and (use-global-glcontext Self) (shared-opengl-view))
+                                 (share-glcontext-of Self))))
+          (when View-to-Share
+            (let ((glContext 
+                   (#/initWithFormat:shareContext: 
+                    (#/openGLContext (native-view Self))
+                    Pixel-Format ;; redundant but should be OK
+                    (#/openGLContext (native-view View-to-Share)))))
+              ;; (format t "~%before ~A ~%after ~A" (#/openGLContext Native-Control) glContext)))
+              (unless glContext (error "cannot share OpenGLContext of view ~A" View-to-Share)))))
       (#/release Pixel-Format)
       ;; make surface of OpenGL view transparent
       (#/setValues:forParameter: (#/openGLContext (native-view Self)) {0} #$NSOpenGLCPSurfaceOpacity)
@@ -133,7 +146,7 @@
 
 
 (defmethod WINDOW-CLOSE ((Self transparent-opengl-window))
-  (#/orderOut: (native-window Self) nil))
+  (#/close (native-window Self)))
 
 
 #| Examples:
