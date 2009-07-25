@@ -68,7 +68,9 @@
 (defclass DRAG-AND-DROP-HANDLER ()
   ((agent-dragged :accessor agent-dragged :initarg :agent-dragged :documentation "the agent being dragged")
    (source-view :accessor source-view :initarg :source-view :documentation "the view containing the agent being dragged")
-   (drag-proxy-window :accessor drag-proxy-window :initform nil :initarg :drag-proxy-window :documentation "window, typically transparent, rendering potentially animated proxy of agent "))
+   (drag-proxy-window :accessor drag-proxy-window :initform nil :initarg :drag-proxy-window :documentation "window, typically transparent, rendering potentially animated proxy of agent ")
+   (x-start :accessor x-start :initarg :x-start :documentation "window x coordinate for drag start")
+   (y-start :accessor y-start :initarg :y-start :documentation "window y coordinate for drag start"))
   (:documentation "Drag and drop handler managing one drag and drop from mouse dragged event to mouse up"))
 
 
@@ -264,7 +266,15 @@
       ;; for now selection is a sigleton set
       (setf (agents-selected Self) (list Agent))
       ;; trigger event
-      (mouse-click-event-handler Agent))
+      (mouse-click-event-handler Agent)
+      ;; setup potential drag and drop
+      (when (draggable Agent)
+        (setf (drag-and-drop-handler Self)
+              (make-instance 'drag-and-drop-handler 
+                :agent-dragged Agent
+                :source-view Self
+                :x-start x
+                :y-start y))))
      ;; click into void
      (t
       (broadcast-to-agents Self #'(lambda (Agent) (setf (is-selected Agent) nil)))
@@ -273,40 +283,33 @@
 
 ;; Drag and Drop
 
+(defvar *Drag-and-Drop-pixel-Threshold* 3 "how far does mouse need to move after click to indicate drag and drop?")
+
+
 (defmethod VIEW-LEFT-MOUSE-DRAGGED-EVENT-HANDLER ((Self agent-3d-view) X Y DX DY)
   (declare (ignore DX DY))
-  (let ((Screen-Updates-Disabled nil))
-    ;; if drag beging make drag and drop handler
-    (unless (drag-and-drop-handler Self)
-      (let ((Agent (find-agent-at Self x y *Selection-Tolerance* *Selection-Tolerance*)))
-        (when (and Agent (draggable Agent))
-          (#_DisableScreenUpdates)
-          (setq Screen-Updates-Disabled t)
-          (setf (drag-and-drop-handler Self)
-                (make-instance 'drag-and-drop-handler 
-                  :agent-dragged Agent
-                  :source-view Self))
-          (setf (drag-proxy-window (drag-and-drop-handler Self))
-                (make-instance 'drag-proxy-window 
-                  :width (width Self)
-                  :height (height Self)
-                  :share-context-of Self
-                  :drag-and-drop-handler (drag-and-drop-handler Self))))))
-    (cond
-     ;; dragging
-     ((drag-and-drop-handler Self)
-      ;; update proxy window
-      (let ((Screen-x (+ x (x Self) (x (window Self))))
-            (Screen-y (+ y (y Self) (y (window Self)))))
-        (let ((Proxy-Window (drag-proxy-window (drag-and-drop-handler Self))))
-          (set-position 
-           Proxy-Window
-           (- Screen-x (truncate (width Proxy-Window) 2))
-           (- Screen-y (truncate (height Proxy-Window) 2))))))
-     (t
-      ;; camera control?
-      (call-next-method)))
-    (when Screen-Updates-Disabled (#_EnableScreenUpdates))))
+  (cond
+   ;; dragging in progress
+   ((drag-and-drop-handler Self)
+    ;; JIT proxy window
+    (unless (drag-proxy-window (drag-and-drop-handler Self))
+      (when (or (>= (abs (- x (x-start (drag-and-drop-handler Self)))) *Drag-And-Drop-Pixel-Threshold*)
+                (>= (abs (- y (y-start (drag-and-drop-handler Self)))) *Drag-And-Drop-Pixel-Threshold*))
+        (setf (drag-proxy-window (drag-and-drop-handler Self))
+              (make-instance 'drag-proxy-window 
+                :width (width Self)
+                :height (height Self)
+                :share-context-of Self
+                :drag-and-drop-handler (drag-and-drop-handler Self)))))
+    (when (drag-proxy-window (drag-and-drop-handler Self))
+      ;; position proxy window
+      (set-position 
+       (drag-proxy-window (drag-and-drop-handler Self))
+       (+ (- x (x-start (drag-and-drop-handler Self))) (x Self) (x (window Self)))
+       (+ (- y (y-start (drag-and-drop-handler Self))) (y Self) (y (window Self))))))
+   ;; NOT dragging (probably camera control)
+   (t
+    (call-next-method))))
 
 
 (defmethod VIEW-LEFT-MOUSE-UP-EVENT-HANDLER ((Self agent-3d-view) X Y)
@@ -316,9 +319,7 @@
     (when (drag-proxy-window (drag-and-drop-handler Self))
       (window-close (drag-proxy-window (drag-and-drop-handler Self))))
     (setf (drag-and-drop-handler Self) nil)))
-      ;; avoid update glitches by dislaying self again
-      ;;(broadcast-to-agents Self #'(lambda (Agent) (setf (is-visible Agent) t)))
-      ;; (display Self))))
+
 
 ;; Hovering
 
