@@ -53,7 +53,13 @@
 
 
 (defmethod DRAW ((Self drag-proxy-window))
-  (draw (source-view (drag-and-drop-handler Self))))
+  (let ((View (source-view (drag-and-drop-handler Self))))
+    ;; mask: draw agent dragged only
+    (broadcast-to-agents View #'(lambda (Agent) (setf (is-visible Agent) nil)))
+    (broadcast-to-agents (agent-dragged (drag-and-drop-handler Self))  #'(lambda (Agent) (setf (is-visible Agent) t)))
+    (draw View)
+    ;; unmask: draw all agents again
+    (broadcast-to-agents View #'(lambda (Agent) (setf (is-visible Agent) t)))))
 
 ;*******************************
 ;* DRAG-AND-DROP-HANDLER       *
@@ -303,17 +309,17 @@
     (when Screen-Updates-Disabled (#_EnableScreenUpdates))))
 
 
-
-
 (defmethod VIEW-LEFT-MOUSE-UP-EVENT-HANDLER ((Self agent-3d-view) X Y)
   (declare (ignore x y))
   ;; terminate ongoing drag and drop
   (when (drag-and-drop-handler Self)
-    (when (drag-proxy-window (drag-and-drop-handler Self))
-      (window-close (drag-proxy-window (drag-and-drop-handler Self))))
-    (setf (drag-and-drop-handler Self) nil)
-    ;; avoid update glitches by dislaying self again
-    (display Self)))
+    (let ((Agent (agent-dragged (drag-and-drop-handler Self))))
+      (when (drag-proxy-window (drag-and-drop-handler Self))
+        (window-close (drag-proxy-window (drag-and-drop-handler Self))))
+      (setf (drag-and-drop-handler Self) nil))))
+      ;; avoid update glitches by dislaying self again
+      ;;(broadcast-to-agents Self #'(lambda (Agent) (setf (is-visible Agent) t)))
+      ;; (display Self))))
 
 ;; Hovering
 
@@ -727,17 +733,17 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 
 
 (defmethod DRAW ((Self sphere))
+  (unless (is-visible Self) (return-from draw))
   (glEnable GL_LIGHTING)
   (glTexEnvi GL_TEXTURE_ENV GL_TEXTURE_ENV_MODE GL_MODULATE)
- (format t "~%texture ~A time ~A" (texture Self) (hemlock::time-to-run 
-  (unless (quadric Self) (initialize-quadric Self))))  ;; just in time
+  (unless (quadric Self) (initialize-quadric Self))  ;; just in time
   (cond
    ((texture Self) 
     (glEnable GL_TEXTURE_2D)
     (use-texture Self (texture Self)))
    (t 
     (glDisable gl_texture_2d)))
-  (format t " draw ~A" (hemlock::time-to-run (gluSphere (quadric Self) (size Self) 20 20)))
+  (gluSphere (quadric Self) (size Self) 20 20)
   ;; to make the code sharable for drag and drop we need to do the less efficial way
   ;; reinitializing the quadric every time we draw. Overhead is <= 10%
   (gluDeleteQuadric (quadric Self))
@@ -807,53 +813,54 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 
 (defmethod DRAW ((Self cube))
   (call-next-method)
-  (cond
-   ((texture Self)
-    (glenable gl_texture_2d)
-    (gltexenvi gl_texture_env gl_texture_env_mode gl_modulate)
-    (use-texture Self (texture Self)))
-   (t
-    (glDisable gl_texture_2d)))
-  ;; slow immediate mode to render
-  (glbegin gl_quads)
-  (let ((s (size Self)))
-    ;; front 
-    (glnormal3f 0.0 0.0 1.0)
-    (gltexcoord2f 0.0 0.0) (glvertex3f 0.0 0.0 s)
-    (gltexcoord2f 0.0 1.0) (glvertex3f 0.0  s s)
-    (gltexcoord2f 1.0 1.0) (glvertex3f  s  s s)
-    (gltexcoord2f 1.0 0.0) (glvertex3f  s 0.0 s)
-    ;; back
-    (glnormal3f 0.0 0.0 -1.0)
-    (gltexcoord2f 0.0 0.0) (glvertex3f 0.0 0.0 0.0)
-    (gltexcoord2f 0.0 1.0) (glvertex3f 0.0  s 0.0)
-    (gltexcoord2f 1.0 1.0) (glvertex3f  s  s 0.0)
-    (gltexcoord2f 1.0 0.0) (glvertex3f  s 0.0 0.0)
-    ;; right
-    (glnormal3f  1.0 0.0 0.0)
-    (gltexcoord2f 0.0 0.0) (glvertex3f s 0.0 0.0)
-    (gltexcoord2f 0.0 1.0) (glvertex3f s 0.0  s)
-    (gltexcoord2f 1.0 1.0) (glvertex3f s  s  s)
-    (gltexcoord2f 1.0 0.0) (glvertex3f s  s 0.0)
-    ;; left
-    (glnormal3f -1.0 0.0 0.0)
-    (gltexcoord2f 0.0 0.0) (glvertex3f 0.0 0.0 0.0)
-    (gltexcoord2f 0.0 1.0) (glvertex3f 0.0 0.0  s)
-    (gltexcoord2f 1.0 1.0) (glvertex3f 0.0  s  s)
-    (gltexcoord2f 1.0 0.0) (glvertex3f 0.0  s 0.0)
-    ;; top
-    (glnormal3f 0.0 1.0 0.0)
-    (gltexcoord2f 0.0 0.0) (glvertex3f 0.0  s 0.0)
-    (gltexcoord2f 0.0 1.0) (glvertex3f 0.0  s s)
-    (gltexcoord2f 1.0 1.0) (glvertex3f  s  s s)
-    (gltexcoord2f 1.0 0.0) (glvertex3f  s  s 0.0)
-    ;; bottom
-    (glnormal3f 0.0 -1.0 0.0)
-    (gltexcoord2f 0.0 0.0) (glvertex3f 0.0 0.0 0.0)
-    (gltexcoord2f 0.0 1.0) (glvertex3f 0.0 0.0 s)
-    (gltexcoord2f 1.0 1.0) (glvertex3f  s 0.0 s)
-    (gltexcoord2f 1.0 0.0) (glvertex3f  s 0.0 0.0)
-    (glend)))
+  (when (is-visible Self)
+    (cond
+     ((texture Self)
+      (glenable gl_texture_2d)
+      (gltexenvi gl_texture_env gl_texture_env_mode gl_modulate)
+      (use-texture Self (texture Self)))
+     (t
+      (glDisable gl_texture_2d)))
+    ;; slow immediate mode to render
+    (glbegin gl_quads)
+    (let ((s (size Self)))
+      ;; front 
+      (glnormal3f 0.0 0.0 1.0)
+      (gltexcoord2f 0.0 0.0) (glvertex3f 0.0 0.0 s)
+      (gltexcoord2f 0.0 1.0) (glvertex3f 0.0  s s)
+      (gltexcoord2f 1.0 1.0) (glvertex3f  s  s s)
+      (gltexcoord2f 1.0 0.0) (glvertex3f  s 0.0 s)
+      ;; back
+      (glnormal3f 0.0 0.0 -1.0)
+      (gltexcoord2f 0.0 0.0) (glvertex3f 0.0 0.0 0.0)
+      (gltexcoord2f 0.0 1.0) (glvertex3f 0.0  s 0.0)
+      (gltexcoord2f 1.0 1.0) (glvertex3f  s  s 0.0)
+      (gltexcoord2f 1.0 0.0) (glvertex3f  s 0.0 0.0)
+      ;; right
+      (glnormal3f  1.0 0.0 0.0)
+      (gltexcoord2f 0.0 0.0) (glvertex3f s 0.0 0.0)
+      (gltexcoord2f 0.0 1.0) (glvertex3f s 0.0  s)
+      (gltexcoord2f 1.0 1.0) (glvertex3f s  s  s)
+      (gltexcoord2f 1.0 0.0) (glvertex3f s  s 0.0)
+      ;; left
+      (glnormal3f -1.0 0.0 0.0)
+      (gltexcoord2f 0.0 0.0) (glvertex3f 0.0 0.0 0.0)
+      (gltexcoord2f 0.0 1.0) (glvertex3f 0.0 0.0  s)
+      (gltexcoord2f 1.0 1.0) (glvertex3f 0.0  s  s)
+      (gltexcoord2f 1.0 0.0) (glvertex3f 0.0  s 0.0)
+      ;; top
+      (glnormal3f 0.0 1.0 0.0)
+      (gltexcoord2f 0.0 0.0) (glvertex3f 0.0  s 0.0)
+      (gltexcoord2f 0.0 1.0) (glvertex3f 0.0  s s)
+      (gltexcoord2f 1.0 1.0) (glvertex3f  s  s s)
+      (gltexcoord2f 1.0 0.0) (glvertex3f  s  s 0.0)
+      ;; bottom
+      (glnormal3f 0.0 -1.0 0.0)
+      (gltexcoord2f 0.0 0.0) (glvertex3f 0.0 0.0 0.0)
+      (gltexcoord2f 0.0 1.0) (glvertex3f 0.0 0.0 s)
+      (gltexcoord2f 1.0 1.0) (glvertex3f  s 0.0 s)
+      (gltexcoord2f 1.0 0.0) (glvertex3f  s 0.0 0.0)
+      (glend))))
 
 ;_______________________________________
 ;  Group                                |
@@ -907,6 +914,7 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 
 
 (defmethod DRAW ((Self cylinder))
+  (unless (is-visible Self) (return-from draw))
   ;; setup
   (unless (quadric Self) 
     (setf (quadric Self) (gluNewQuadric))
@@ -963,6 +971,7 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 
 
 (defmethod DRAW ((Self disk))
+  (unless (is-visible Self) (return-from draw))
   ;; setup
   (unless (quadric Self) 
     (setf (quadric Self) (gluNewQuadric))
@@ -1007,6 +1016,7 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 
 
 (defmethod DRAW ((Self tile))
+  (unless (is-visible Self) (return-from draw))
   (call-next-method)
   (cond
    ((texture Self)
@@ -1047,7 +1057,9 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
                                           (error "missing font: \"~A\"" (font Self)))
                                 :size (size Self)))))
 
+
 (defmethod DRAW ((Self text-3d))
+  (unless (is-visible Self) (return-from draw))
   (when (string-shape Self)
     (draw (string-shape Self))))
 
