@@ -333,7 +333,8 @@
         ;; content view
         (#/setContentView: Window (#/autorelease (native-view Self)))
         (#/setTitle: Window (native-string (title Self)))
-        (#/center Window)
+        (ns:with-ns-size (Position (x Self) (- (screen-height Self)  (y Self)))
+          (#/setFrameTopLeftPoint: (native-window Self) Position))
         (when (track-mouse Self) (#/setAcceptsMouseMovedEvents: (native-window Self) #$YES))
         Window)))
 
