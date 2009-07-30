@@ -31,6 +31,7 @@
 
 (in-package :xlui)
 
+
 (export '(sky-dome texture tooltip-event-handler tooltip-text processed-tooltip-text 
           reference-point projected-window-position))
 
@@ -52,6 +53,22 @@
   (init (source-view (drag-and-drop-handler Self))))
 
 
+(defmethod LUI::DRAW-RECT ((Self drag-proxy-window))
+  ;; source view and proxy window share agents -> grab source view lock to avoid
+  ;; asynchronous access issues
+  (with-glcontext (source-view (drag-and-drop-handler Self))
+    (with-glcontext Self
+      (clear-background Self)
+      (draw Self))))
+
+
+(defmethod DISPLAY ((Self drag-proxy-window))
+  ;; source view and proxy window share agents -> grab source view lock to avoid
+  ;; asynchronous access issues
+  (with-glcontext (source-view (drag-and-drop-handler Self))
+    (call-next-method)))
+
+
 (defmethod DRAW ((Self drag-proxy-window))
   (let ((View (source-view (drag-and-drop-handler Self))))
     ;; mask: draw agent dragged only
@@ -60,6 +77,7 @@
     (draw View)
     ;; unmask: draw all agents again
     (broadcast-to-agents View #'(lambda (Agent) (setf (is-visible Agent) t)))))
+
 
 ;*******************************
 ;* DRAG-AND-DROP-HANDLER       *
@@ -283,7 +301,7 @@
 
 ;; Drag and Drop
 
-(defvar *Drag-and-Drop-pixel-Threshold* 3 "how far does mouse need to move after click to indicate drag and drop?")
+(defvar *Drag-Beging-Distance* 3 "how far does mouse need to move after click to indicate drag and drop?")
 
 
 (defmethod VIEW-LEFT-MOUSE-DRAGGED-EVENT-HANDLER ((Self agent-3d-view) X Y DX DY)
@@ -293,13 +311,15 @@
    ((drag-and-drop-handler Self)
     ;; JIT proxy window
     (unless (drag-proxy-window (drag-and-drop-handler Self))
-      (when (or (>= (abs (- x (x-start (drag-and-drop-handler Self)))) *Drag-And-Drop-Pixel-Threshold*)
-                (>= (abs (- y (y-start (drag-and-drop-handler Self)))) *Drag-And-Drop-Pixel-Threshold*))
+      (when (or (>= (abs (- x (x-start (drag-and-drop-handler Self)))) *Drag-Beging-Distance*)
+                (>= (abs (- y (y-start (drag-and-drop-handler Self)))) *Drag-Beging-Distance*))
         (setf (drag-proxy-window (drag-and-drop-handler Self))
-              (make-instance 'drag-proxy-window 
+              (make-instance 'drag-proxy-window
+                :x (+ (x Self) (x (window Self)))
+                :y (+ (y Self) (y (window Self)))
                 :width (width Self)
                 :height (height Self)
-                :share-context-of Self
+                :use-global-glcontext t
                 :drag-and-drop-handler (drag-and-drop-handler Self)))))
     (when (drag-proxy-window (drag-and-drop-handler Self))
       ;; position proxy window
@@ -624,8 +644,8 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 
 (defmethod MOUSE-HOVER-ENTER-EVENT-HANDLER ((Self agent-3d))
   ;; (format t "~%entering: ~A" Self)
-  (display (view Self))) 
-
+  ;;(display (view Self))
+  )
 
 (defmethod MOUSE-HOVER-LEAVE-EVENT-HANDLER ((Self agent-3d))
   ;; (format t "~%leaving: ~A" Self)
@@ -736,7 +756,7 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
   (unless (is-visible Self) (return-from draw))
   (glEnable GL_LIGHTING)
   (glTexEnvi GL_TEXTURE_ENV GL_TEXTURE_ENV_MODE GL_MODULATE)
-  (unless (quadric Self) (initialize-quadric Self))  ;; just in time
+  (initialize-quadric Self)
   (cond
    ((texture Self) 
     (glEnable GL_TEXTURE_2D)
@@ -778,12 +798,22 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 
 
 (defmethod DRAW ((Self sky-dome))
-  (glDisable gl_lighting)
-  (glEnable gl_texture_2d)
-  (glTexenvi gl_texture_env gl_texture_env_mode gl_decal)
-  (unless (quadric Self) (initialize-quadric Self))  ;; just in time
-  (gluQuadricOrientation (quadric Self) glu_inside)
-  (use-texture (view Self) (texture Self))
+  ;; no light, decal texture
+  (unless (is-visible Self) (return-from draw))
+  (glDisable GL_LIGHTING)
+  (initialize-quadric Self)
+  (cond
+   ((texture Self) 
+    (glEnable GL_TEXTURE_2D)
+    (glTexEnvi GL_TEXTURE_ENV GL_TEXTURE_ENV_MODE GL_DECAL)
+    (use-texture Self (texture Self)))
+   (t 
+    (glDisable gl_texture_2d)))
+  (gluSphere (quadric Self) (size Self) 20 20)
+  ;; to make the code sharable for drag and drop we need to do the less efficial way
+  ;; reinitializing the quadric every time we draw. Overhead is <= 10%
+  (gluDeleteQuadric (quadric Self))
+  (setf (quadric Self) nil)
   (call-next-method))
 
 ;_______________________________________
@@ -934,7 +964,10 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
    (t
     (glDisable gl_texture_2d)))
   ;; render cylinder
-  (gluCylinder (quadric Self) (base-radius Self) (top-radius Self) (height Self) 40 4))
+  (gluCylinder (quadric Self) (base-radius Self) (top-radius Self) (height Self) 40 4)
+  (gluDeleteQuadric (quadric Self))
+  (setf (quadric Self) nil))
+
 
 ;_______________________________________
 ;  Disk                                 |
@@ -992,7 +1025,9 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
    (t
     (glDisable gl_texture_2d)))
   ;; render cylinder
-  (gluDisk (quadric Self) (inner-radius Self) (outer-radius Self) 40 2))
+  (gluDisk (quadric Self) (inner-radius Self) (outer-radius Self) 40 2)
+  (gluDeleteQuadric (quadric Self))
+  (setf (quadric Self) nil))
 
 
 ;_______________________________________
