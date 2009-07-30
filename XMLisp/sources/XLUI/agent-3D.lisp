@@ -644,8 +644,8 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 
 (defmethod MOUSE-HOVER-ENTER-EVENT-HANDLER ((Self agent-3d))
   ;; (format t "~%entering: ~A" Self)
-  ;;(display (view Self))
-  )
+  (display (view Self)))
+
 
 (defmethod MOUSE-HOVER-LEAVE-EVENT-HANDLER ((Self agent-3d))
   ;; (format t "~%leaving: ~A" Self)
