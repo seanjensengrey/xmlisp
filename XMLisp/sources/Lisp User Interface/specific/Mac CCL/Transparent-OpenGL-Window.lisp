@@ -68,7 +68,13 @@
 (defmethod INITIALIZE-INSTANCE ((Self transparent-opengl-window) &rest Initargs)
   (declare (ignore Initargs))
   (call-next-method)
-  (ns:with-ns-rect (Frame (x Self) (y Self) (width Self) (height Self))
+  (ns:with-ns-rect (Frame 
+                    (x Self)
+                    ;; replace with more general code
+                    (- (pref (#/frame (#/mainScreen ns:ns-screen)) <NSR>ect.size.height)
+                       (y Self) (height Self))
+                    (width Self)
+                    (height Self))
     (setf (native-window Self) (make-instance 'ns:ns-window
                                  :with-content-rect Frame
                                  :style-mask #$NSBorderlessWindowMask
