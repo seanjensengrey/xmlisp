@@ -14,7 +14,8 @@
    ;*   1.0.1   : 04/05/05 clear depth buffer                        *
    ;*   1.0.2   : 05/07/05 Tiger workaround for AGL_SURFACE_OPACITY  *
    ;*   2.0     : 07/09/09 Cocoa                                     *
-   ;* SW/HW     : PowerPC G4, OS X 10.5.6, CCL 1.2                   *
+   ;*   2.0.1   : 07/29/09 draw-rect method                          *
+   ;* SW/HW     : PowerPC G4, OS X 10.5.7, CCL 1.3                   *
    ;* Abstract  : Window used for Drag and Drop Feedback             *
    ;*                                                                *
    ;******************************************************************
@@ -36,15 +37,13 @@
 (objc:defmethod (#/prepareOpenGL :void) ((Self native-transparent-opengl-view))
   ;; NSOpenGLView appears to default to some opaque background: need to clear that
   (#/set (#/clearColor ns:ns-color))
+  ;; (#/set (#/redColor ns:ns-color))
   (#_NSRectFill (#/bounds Self))
   (init (lui-window Self)))
 
 
 (objc:defmethod (#/drawRect: :void) ((Self native-transparent-opengl-view) (rect :<NSR>ect))
-  (let ((Window (lui-window Self)))
-    (with-glcontext Window
-      (clear-background Window)
-      (draw Window))))
+  (draw-rect (lui-window Self)))
 
 ;____________________________________________
 ; TRANSPARENT-OPENGL-WINDOW                  |
@@ -115,6 +114,13 @@
         (#/enableFlushWindow (native-window Self))))))
 
 
+(defmethod DRAW-RECT ((Self transparent-opengl-window))
+  ;; may need to specialized
+  (with-glcontext Self
+    (clear-background Self)
+    (draw Self)))
+
+
 (defmethod SET-POSITION ((Self transparent-opengl-window) X Y)
   (setf (x Self) X)
   (setf (y Self) Y)
@@ -163,14 +169,6 @@
   (glColor3f 0.0 0.0 1.0)
   (glVertex3f 0.2 -0.3 0.0)
   (glEnd))
-
-
-(defparameter *TOGL-Window* (make-instance 'transparent-opengl-window :x 300 :display-function #'example-display-function))
-
-
-(window-close *TOGL-Window*)
-
-
 
 
 ;; Drag and Drop
