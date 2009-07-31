@@ -55,6 +55,7 @@
 ;; note: agents with textures including transparency, the wheels, must be last in the scene graph to 
 ;; minimize transparency issues
 
+(defparameter *Race-Window*
 <race-track-window title="Race Track" track-mouse="true" margin="0">
   <column align="stretch" valign="stretch">
     <row minimize="vertical" align="center">
@@ -99,3 +100,16 @@
   </column>
 </race-track-window>
 
+)
+
+
+#|
+
+
+(display (view-named *Race-Window* "race"))
+
+(find-agent-at (view-named *Race-Window* "race") 30 30 10 10)
+
+(find-agent-at-screen-position 100 100)
+
+|#
