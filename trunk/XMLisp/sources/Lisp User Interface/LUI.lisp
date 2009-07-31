@@ -156,6 +156,12 @@ Call with most important parameters. Make other paramters accessible through *Cu
 (defgeneric SET-POSITION (view-or-window X Y)
   (:documentation "Set the position"))
 
+(defgeneric WINDOW-X (view)
+  (:documentation "x offset in window containing view"))
+
+(defgeneric WINDOW-Y (view)
+  (:documentation "y offset in window containing view"))
+
 (defgeneric DISPLAY (view-or-window)
   (:documentation "Make the view draw: prepare view (e.g., locking, focusing), draw, finish up (e.g., unlocking)"))
 
@@ -179,6 +185,24 @@ Call with most important parameters. Make other paramters accessible through *Cu
   (setf (y Self) Y))
 
 
+(defmethod WINDOW-X ((Self view))
+  (let ((x 0) (v Self))
+    (loop
+      (let ((Container (part-of v)))
+        (unless Container (return x))
+        (incf x (x v))
+        (setq v Container)))))
+
+
+(defmethod WINDOW-Y ((Self view))
+  (let ((y 0) (v Self))
+    (loop
+      (let ((Container (part-of v)))
+        (unless Container (return y))
+        (incf y (y v))
+        (setq v Container)))))
+
+
 (defmethod INITIALIZE-INSTANCE ((Self view) &rest Args)
   (declare (ignore Args))
   (call-next-method)
@@ -188,6 +212,12 @@ Call with most important parameters. Make other paramters accessible through *Cu
 (defmethod DRAW ((Self view))
   ;; nothing
   )
+
+
+(defun FIND-VIEW-AT-SCREEN-POSITION (screen-x screen-y &key Window-Type)
+  (let ((Window (find-window-at-screen-position screen-x screen-y :type Window-Type)))
+    (when Window
+      (find-view-containing-point Window (- Screen-x (x Window)) (- Screen-y (y Window))))))
 
 ;; Events
 
@@ -325,6 +355,9 @@ after any of the window controls calls stop-modal close window and return value.
 (defgeneric SWITCH-TO-WINDOW-MODE (window)
   (:documentation "Reduce full screen to window. Menubar returns. Dock, if enabled, comes back."))
 
+(defgeneric FIND-VIEW-CONTAINING-POINT (window x y)
+  (:documentation "Return the most deeply nested view containing point x, y"))
+
 ;;_______________________________
 ;; default implementations       |
 ;;_______________________________
@@ -361,6 +394,24 @@ after any of the window controls calls stop-modal close window and return value.
 (defmethod SET-POSITION ((Self Window) X Y)
   (setf (x Self) X)
   (setf (y Self) Y))
+
+
+(defmethod FIND-VIEW-CONTAINING-POINT ((Self window) x y)
+  (labels ((find-view (View Superview x y)
+             (do-subviews (Subview View)
+               (when (and (<= (x Subview) x (+ (x Subview) (width Subview)))
+                          (<= (y Subview) y (+ (y Subview) (height Subview))))
+                 (find-view Subview View (- x (x Subview)) (- y (y Subview)))))
+             ;; I contain point but not my subviews
+             (return-from FIND-VIEW-CONTAINING-POINT View)))
+    (find-view Self nil x y)))
+
+
+(defmethod PART-OF ((Self window))
+  ;; walking the hierarchy up from agent -> view -> window 
+  ;; Window is not a part of anything
+  nil)
+
 
 ;; Events
 
