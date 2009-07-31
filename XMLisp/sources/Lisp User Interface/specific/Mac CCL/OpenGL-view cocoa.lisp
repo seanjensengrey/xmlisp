@@ -40,6 +40,18 @@
          (#_CGLUnlockContext  (#/CGLContextObj ,GLContext)))))))
 
 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+(defmacro WITH-GLCONTEXT-NO-FLUSH (View &rest Forms)
+  (let ((GLContext (gensym "glcontext")))
+    `(let ((,GLContext (#/openGLContext (native-view ,View))))
+       (unwind-protect
+           (progn
+             (#/makeCurrentContext ,GLContext)
+             (#_CGLLockContext (#/CGLContextObj ,GLContext))
+             (progn ,@Forms))
+         (#_CGLUnlockContext  (#/CGLContextObj ,GLContext)))))))
+
+
 (objc:defmethod (#/drawRect: :void) ((Self native-opengl-view) (rect :<NSR>ect))
   (let ((Opengl-View (lui-view Self)))
     (with-glcontext Opengl-View
