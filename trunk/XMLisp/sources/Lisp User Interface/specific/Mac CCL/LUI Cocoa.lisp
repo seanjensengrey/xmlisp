@@ -43,6 +43,17 @@
     (t :undefined-event)))
 
 ;;*********************************
+;; user defined System parameters *
+;;*********************************
+
+(defvar *System-Selection-Color*
+  (let ((Color (#/colorUsingColorSpaceName: 
+                (#/selectedTextBackgroundColor ns::ns-color)
+                #@"NSCalibratedRGBColorSpace")))
+    (list (#/redComponent Color) (#/greenComponent Color) (#/blueComponent Color)))
+  "system color defined by user used for selections, e.g., selected text background color")
+
+;;*********************************
 ;; Native -> LUI Coordinates      *
 ;;*********************************
 
@@ -426,7 +437,6 @@
     (when Frame
       (#/setFrame:display:animate: (native-window Self) Frame #$YES #$NO))))
 
-
 ;__________________________________
 ; Window query functions            |
 ;__________________________________/
@@ -452,6 +462,9 @@
                 (push (lui-window Window) Lui-Windows)))))))))
 
 ;; (find-window-at-screen-position 10 100)
+
+
+
 
 ;__________________________________
 ; NATIVE-WINDOW-VIEW                |
