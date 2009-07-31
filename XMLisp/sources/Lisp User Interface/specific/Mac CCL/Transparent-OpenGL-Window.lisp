@@ -143,7 +143,8 @@
 
 
 (defmethod INIT ((Self transparent-opengl-window))
-  (print "init"))
+  ;; (print "init")
+  )
 
 
 (defmethod CLEAR-BACKGROUND ((Self transparent-opengl-window))
@@ -202,8 +203,8 @@
      *Dnd-Window*
      (- Screen-x (truncate (width *Dnd-Window*) 2))
      (- Screen-y (truncate (height *Dnd-Window*) 2)))
-    (let ((Target-Window (find-window-at-screen-position Screen-x Screen-y)))
-      (setf (text *text*) (or (write-to-string Target-Window)
+    (let ((Target-View (find-view-at-screen-position Screen-x Screen-y)))
+      (setf (text *text*) (or (write-to-string Target-View)
                               "-")))))
 
 
@@ -222,6 +223,9 @@
 
 (add-subview *WI* *text*)
 
+(find-view-containing-point *WI* 5 5)
+(find-view-containing-point *WI* 5 181)
+(find-view-containing-point *WI* 5 2000)
 
 |#
 
