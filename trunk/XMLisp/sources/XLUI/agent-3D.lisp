@@ -92,6 +92,33 @@
   (:documentation "Drag and drop handler managing one drag and drop from mouse dragged event to mouse up"))
 
 
+(defgeneric DRAGGED-TO (drag-and-drop-handler x y)
+  (:documentation "called when mouse moved to new screen coordinate x, y in current drag"))
+
+
+(defun FIND-AGENT-AT-SCREEN-POSITION (X Y) "
+  in:  X, Y int.
+  out: Agent agent; View view;
+  Return the <agent> and the view containing it at screen coordinates <x,y>."
+  (let ((View (find-view-at-screen-position x y)))
+    (unless View (return-from find-agent-at-screen-position))
+    (when (subtypep (type-of View) 'agent-3d-view)
+      (values
+       (find-agent-at
+        View
+        (- x (window-x View) (x (window View)))
+        (- y (window-y View) (y (window View)))
+        5 5)
+       View))))
+
+
+(defmethod DRAGGED-TO ((Self drag-and-drop-handler) X Y)
+  (when (drag-proxy-window Self)
+    (set-position (drag-proxy-window Self) (- x (x-start Self)) (- y (y-start Self))))
+  (print (type-of (find-agent-at-screen-position x y)))
+  ;;(print (hemlock::time-to-run (find-agent-at-screen-position x y)))
+  )
+
 ;*******************************
 ;* AGENT 3D VIEW               *
 ;*******************************
@@ -244,7 +271,7 @@
 
 (defmethod FIND-AGENT-AT ((Self agent-3d-view) X Y Width Height &optional Agent-Type)
   (unless (agents Self) (return-from find-agent-at))
-  (with-glcontext Self
+  (with-glcontext-no-flush Self
     (with-vector-of-size (&Selection-Array bufsize)
       (not-in-render-mode-error-check) ;; this should never happen
       (let ((Agent nil))
@@ -259,12 +286,13 @@
               ;; render agents
               (dolist (Agent (agents Self))
                 (draw Agent))
-              (glFinish))
+              ;;(glFinish)  ;; flushing causes big overhead
+              )
           ;; search buffer, get rid of buffer and switch mode back
           (let ((Hit-Number (glRenderMode GL_RENDER)))
             (when (= Hit-Number -1) (error "Selection hit record overflow"))
             (setq Agent (unless (= Hit-Number 0) (find-closest-agent-in-hit-record Self Hit-Number &Selection-Array Agent-Type))))
-          (glFinish) ;; make sure this is done before we leave this section
+          ;; (glFinish) ;; flush causes big overhead ;; make sure this is done before we leave this section
           (setf (render-mode Self) GL_RENDER))
         Agent))))
 
@@ -322,11 +350,10 @@
                 :use-global-glcontext t
                 :drag-and-drop-handler (drag-and-drop-handler Self)))))
     (when (drag-proxy-window (drag-and-drop-handler Self))
-      ;; position proxy window
-      (set-position 
-       (drag-proxy-window (drag-and-drop-handler Self))
-       (+ (- x (x-start (drag-and-drop-handler Self))) (x Self) (x (window Self)))
-       (+ (- y (y-start (drag-and-drop-handler Self))) (y Self) (y (window Self))))))
+      (dragged-to
+       (drag-and-drop-handler Self)
+       (+ x (x Self) (x (window Self)))
+       (+ y (y Self) (y (window Self))))))
    ;; NOT dragging (probably camera control)
    (t
     (call-next-method))))
@@ -560,7 +587,7 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 
 (defmethod DRAW ((Self agent-3d))
   (cond
-   ((is-selected Self) (draw-bounding-box Self 1.0 1.0 0.0))
+   ((is-selected Self) (draw-bounding-box Self (first *System-Selection-Color*) (second *System-Selection-Color*) (third *System-Selection-Color*)))
    ((is-hovered Self) (draw-bounding-box Self 0.5 0.5 0.5)))
   ;; draw all subagents
   (dolist (Agent (agents Self))
