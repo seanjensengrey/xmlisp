@@ -41,6 +41,18 @@
 
 
 ;*******************************
+;* Cursor Support              *
+;*******************************
+
+(defun SET-DRAG-AND-DROP-CURSOR (Type) "
+  in: Type keyword.
+  Set the screen cursor for drag and drop feedback. Type values: :arrow :not-allowed :copy"
+ (case Type
+   (:arrow (#_SetThemeCursor #$kThemeArrowCursor))
+   (:not-allowed (#_SetThemeCursor #$kThemeNotAllowedCursor))
+   (:copy (#_SetThemeCursor #$kThemeCopyArrowCursor))))
+
+;*******************************
 ;* DRAG-AND-PROXY-WINDOW       *
 ;*******************************
 
@@ -73,7 +85,7 @@
   (let ((View (source-view (drag-and-drop-handler Self))))
     ;; mask: draw agent dragged only
     (broadcast-to-agents View #'(lambda (Agent) (setf (is-visible Agent) nil)))
-    (broadcast-to-agents (agent-dragged (drag-and-drop-handler Self))  #'(lambda (Agent) (setf (is-visible Agent) t)))
+    (broadcast-to-agents (source-agent (drag-and-drop-handler Self))  #'(lambda (Agent) (setf (is-visible Agent) t)))
     (draw View)
     ;; unmask: draw all agents again
     (broadcast-to-agents View #'(lambda (Agent) (setf (is-visible Agent) t)))))
@@ -84,7 +96,8 @@
 ;*******************************
 
 (defclass DRAG-AND-DROP-HANDLER ()
-  ((agent-dragged :accessor agent-dragged :initarg :agent-dragged :documentation "the agent being dragged")
+  ((source-agent :accessor source-agent :initarg :source-agent :documentation "the agent being dragged")
+   (destination-agent :accessor destination-agent :initform nil :initarg :destination-agent :documentation "the agent potentially receiving a drop")
    (source-view :accessor source-view :initarg :source-view :documentation "the view containing the agent being dragged")
    (drag-proxy-window :accessor drag-proxy-window :initform nil :initarg :drag-proxy-window :documentation "window, typically transparent, rendering potentially animated proxy of agent ")
    (x-start :accessor x-start :initarg :x-start :documentation "window x coordinate for drag start")
@@ -94,6 +107,10 @@
 
 (defgeneric DRAGGED-TO (drag-and-drop-handler x y)
   (:documentation "called when mouse moved to new screen coordinate x, y in current drag"))
+
+
+(defgeneric CONCLUDE-DRAG (drag-and-drop-handler)
+  (:documentation "called then user releases mouse. Drag should be accepted or rejected"))
 
 
 (defun FIND-AGENT-AT-SCREEN-POSITION (X Y) "
@@ -113,11 +130,47 @@
 
 
 (defmethod DRAGGED-TO ((Self drag-and-drop-handler) X Y)
+  ;; move proxy window
   (when (drag-proxy-window Self)
     (set-position (drag-proxy-window Self) (- x (x-start Self)) (- y (y-start Self))))
-  (print (type-of (find-agent-at-screen-position x y)))
-  ;;(print (hemlock::time-to-run (find-agent-at-screen-position x y)))
-  )
+  ;; identify agent drop targets 
+  (multiple-value-bind (Agent Destination-View)
+                       (find-agent-at-screen-position x y)
+    (declare (ignore Destination-View))
+    (cond
+     ;; drag into new agent
+     ((and Agent (not (eq Agent (source-agent Self))) (not (eq Agent (destination-agent Self))))
+      (multiple-value-bind (Acceptable Need-To-Copy Explanation)
+                           (could-receive-drop Agent (source-agent Self))
+        (declare (ignore Explanation))
+        ;; found new valid target
+        (cond
+         ;; looking good
+         (Acceptable
+          (if Need-To-Copy
+            (set-drag-and-drop-cursor :copy)
+            (set-drag-and-drop-cursor :arrow))
+          (mouse-drag-enter-event-handler Agent (source-agent Self)))
+         (t ;; not a valid target
+          (set-drag-and-drop-cursor :not-allowed)))
+        (when (destination-agent Self) 
+          (mouse-drag-leave-event-handler (destination-agent Self) (source-agent Self)))
+        (setf (destination-agent Self) Agent)))
+     ;; drag out
+     ((and (not Agent) (destination-agent Self))
+      (mouse-drag-leave-event-handler (destination-agent Self) (source-agent Self))
+      (set-drag-and-drop-cursor :arrow)
+      (setf (destination-agent Self) nil)))))
+
+
+(defmethod CONCLUDE-DRAG ((Self drag-and-drop-handler))
+  ;; get rid of drag and drop feedback
+  (when (drag-proxy-window Self)
+    (window-close (drag-proxy-window Self)))
+  ;; deal with drop
+  (when (and (source-agent Self) (destination-agent Self))
+    (receive-drop (destination-agent Self) (source-agent Self))))
+
 
 ;*******************************
 ;* AGENT 3D VIEW               *
@@ -270,6 +323,10 @@
 
 
 (defmethod FIND-AGENT-AT ((Self agent-3d-view) X Y Width Height &optional Agent-Type)
+  ;; GL_SELECT is getting dated: very convenient but no longer working well
+  ;; on some hardware. Beware of this. This could manifest itself it large overhead where
+  ;; rendering time with GL_SELECT is significanly larger than rendering in GL_RENDER mode
+  ;; http://www.opengl.org/discussion_boards/ubbthreads.php?ubb=showflat&Number=235603 
   (unless (agents Self) (return-from find-agent-at))
   (with-glcontext-no-flush Self
     (with-vector-of-size (&Selection-Array bufsize)
@@ -317,7 +374,7 @@
       (when (draggable Agent)
         (setf (drag-and-drop-handler Self)
               (make-instance 'drag-and-drop-handler 
-                :agent-dragged Agent
+                :source-agent Agent
                 :source-view Self
                 :x-start x
                 :y-start y))))
@@ -361,10 +418,9 @@
 
 (defmethod VIEW-LEFT-MOUSE-UP-EVENT-HANDLER ((Self agent-3d-view) X Y)
   (declare (ignore x y))
-  ;; terminate ongoing drag and drop
+  ;; conclude drag and terminate hander
   (when (drag-and-drop-handler Self)
-    (when (drag-proxy-window (drag-and-drop-handler Self))
-      (window-close (drag-proxy-window (drag-and-drop-handler Self))))
+    (conclude-drag (drag-and-drop-handler Self))
     (setf (drag-and-drop-handler Self) nil)))
 
 
@@ -517,6 +573,15 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 (defgeneric RECEIVE-DROP (Agent1 Agent2)
   (:documentation "Drop <Agent2> onto <Agent1>"))
 
+
+(defgeneric MOUSE-DRAG-ENTER-EVENT-HANDLER (Agent1 Agent2)
+  (:documentation "<Agent2> was dragged onto me"))
+
+
+(defgeneric MOUSE-DRAG-LEAVE-EVENT-HANDLER (Agent1 Agent2)
+  (:documentation "<Agent2> was dragged away from me"))
+
+
 ;_______________________________________
 ; Implementation                        |
 ;_______________________________________
@@ -588,6 +653,7 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 (defmethod DRAW ((Self agent-3d))
   (cond
    ((is-selected Self) (draw-bounding-box Self (first *System-Selection-Color*) (second *System-Selection-Color*) (third *System-Selection-Color*)))
+   ((is-drag-entered Self) (draw-bounding-box Self 1.0 1.0 0.0))
    ((is-hovered Self) (draw-bounding-box Self 0.5 0.5 0.5)))
   ;; draw all subagents
   (dolist (Agent (agents Self))
@@ -686,6 +752,31 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
     (dolist (Agent (agents Self))
       (let ((Result (find-agent-by-reference-id Agent Reference-Id)))
         (when Result (return Result))))))
+
+
+;; drag and drop
+
+(defmethod COULD-RECEIVE-DROP ((Agent1 agent-3d) (Agent2 agent-3d))
+  (values
+   t
+   nil
+   "generic drag and drop"))
+
+
+(defmethod MOUSE-DRAG-ENTER-EVENT-HANDLER ((Agent1 agent-3d) (Agent2 agent-3d))
+  (format t "~%drag enter: ~A onto ~A" (type-of Agent2) (type-of Agent1))
+  (setf (is-drag-entered Agent1) t)
+  (unless (is-animated (view Agent1)) (display (view Agent1))))
+
+
+(defmethod MOUSE-DRAG-LEAVE-EVENT-HANDLER ((Agent1 agent-3d) (Agent2 agent-3d))
+  (format t "~%drag leave: ~A from ~A" (type-of Agent2) (type-of Agent1))
+  (setf (is-drag-entered Agent1) nil)
+  (unless (is-animated (view Agent1)) (display (view Agent1))))
+
+
+(defmethod RECEIVE-DROP ((Agent1 agent-3d) (Agent2 agent-3d))
+  (format t "~%received drop: ~A onto ~A" (type-of Agent2) (type-of Agent1)))
 
 ;; tooltips
 
@@ -1062,8 +1153,8 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 ;_______________________________________
 
 (defclass TILE (agent-3d)
-  ((width :accessor width :initform 1.0 :type float :documentation "width")
-   (height :accessor height :initform 1.0 :type float :documentation "height")
+  ((width :accessor width :initform 1.0 :type float :initarg :width :documentation "width")
+   (height :accessor height :initform 1.0 :type float :initarg :height :documentation "height")
    (texture :accessor texture :initform nil :initarg :texture :documentation "texture file name"))
   (:documentation "Tile"))
 
