@@ -80,8 +80,9 @@
 ;*    3.5       : 12/03/08 early instantiation model (see below)     *
 ;*    3.5.1     : 12/10/08 string-upcase symbol codec, float codec   *
 ;*    3.5.2     : 12/16/08 read-return-value fixed, keyword CODEC    *
-;* Systems      : G4, OS X 10.5.5                                    *
-;* Lisps        : MCL 5.0, MCL 5.2, LispWorks 4.3.7, CCL 1.2         *
+;*    3.5.3     : 08/04/09 :is-created-by-xml-reader slot            *
+;* Systems      : G4, OS X 10.5.7                                    *
+;* Lisps        : MCL 5.0, MCL 5.2, LispWorks 4.3.7, CCL 1.3         *
 ;*                CLISP 2.33.83, CMUCL, AGL                          *
 ;* Licence      : LGPL                                               *
 ;* Based on     : XML by Andri Ioannidou                             *
@@ -562,7 +563,8 @@
 ;*******************************
 
 (defclass XML-SERIALIZER ()
-  ((content :accessor content :initarg :content :initform nil :documentation "content not wrapped up as tag or attribute, e.g. the link name of <a> tag"))
+  ((content :accessor content :initarg :content :initform nil :documentation "content not wrapped up as tag or attribute, e.g. the link name of <a> tag")
+   (is-created-by-xml-reader :accessor is-created-by-xml-reader :initform nil :initarg :is-created-by-xml-reader :documentation "true if this instance was create by the xml reader: important for initialization"))
   (:documentation "Mixin to serialize objects as XML looking things"))
 
 
@@ -1578,14 +1580,14 @@
         (Element-Class-Name
          ;; if this name is in the table we should interpret lack of class to be an error
          (if (find-class Element-Class-Name nil)
-           (make-instance Element-Class-Name)
+           (make-instance Element-Class-Name :is-created-by-xml-reader t)
            (error "element \"~A\" cannot produce instance of class \"~A\" because that class does not exist" String Element-Class-Name)))
         ;; 2) Original Case matches class name
         ((and Original-Case-Symbol (find-class Original-Case-Symbol nil))
-         (make-instance Original-Case-Symbol))
+         (make-instance Original-Case-Symbol :is-created-by-xml-reader t))
         ;; 3) readtable translated case matches class name
         ((find-class Symbol nil)
-         (make-instance Symbol))
+         (make-instance Symbol :is-created-by-xml-reader t))
         ;; 4) xml-content
         (t
          (make-instance 
@@ -1593,7 +1595,8 @@
                (or (funcall *fallback-class-name-for-element-name-hook* Symbol)
                    'xml-content)
                'xml-content)
-           :name Symbol)))))))
+           :name Symbol
+           :is-created-by-xml-reader t)))))))
 
 
 
@@ -1729,7 +1732,7 @@
   (call-next-method)
   ;; if this instance has been created through the XML reader then 
   ;; read its attributes and set its slots
-  (when (boundp '|$xml-stream$|)
+  (when (is-created-by-xml-reader Self)
     (read-xmlisp-attributes Self |$xml-stream$|))
   Self)
 
@@ -1738,7 +1741,7 @@
   (declare (ignore Args) (special |$xml-stream$|))
   ;; if this instance has been created through the XML reader then
   ;; read its content & sub elements if there are any
-  (when (boundp '|$xml-stream$|)
+  (when (is-created-by-xml-reader Self)
     (read-xmlisp-element Self |$xml-stream$|))
   Self)
 
