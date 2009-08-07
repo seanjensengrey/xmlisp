@@ -1,13 +1,13 @@
 ;;-*- Mode: Lisp; Package: XLUI -*-
 ;*********************************************************************
 ;*                                                                   *
-;*            A G E N T   3 D                                        *
+;*           O P E N   A G E N T   E N G I N E                       *
 ;*                                                                   *
 ;*********************************************************************
 ;* Author       : Alexander Repenning, alexander@agentsheets.com     *
 ;*                http://www.agentsheets.com                         *
 ;* Copyright    : (c) 1996-2009, AgentSheets Inc.                    *
-;* Filename     : game-engine.lisp                                   * 
+;* Filename     : Open-Agent-Engine.lisp                             * 
 ;* Last Update  : 02/07/07                                           *
 ;* Version      :                                                    *
 ;*    1.0       : 11/20/02                                           *
@@ -24,8 +24,10 @@
 ;*    1.6       : 03/20/07 projected-window-position reference-point *
 ;*    2.0       : 05/02/09 XLUI: based on game-engine.lisp           *
 ;*    2.1       : 07/24/09 drag and drop                             *
+;* todos:       : implement withhout using glBegin/End for OpenGL 3x *
 ;* Systems      : G4, CCL 1.3, OS X 10.5.7                           *
-;* Abstract     : Animation and scene management                     *
+;* Abstract     : engine with agents, animation, rendering, picking  *
+;*                scene management, drag and drop.                   *
 ;*                                                                   *
 ;*********************************************************************
 
@@ -183,7 +185,7 @@
    (agent-hovered :accessor agent-hovered :initform nil :documentation "the agent currently hovered over")
    (agents-selected :accessor agents-selected :initform nil :documentation "list of agents currenly selected")
    (render-mode :accessor render-mode :initform gl_render :documentation "value: gl_render gl_select or gl_feedback"))
-  (:documentation "Contains agents"))
+  (:documentation "View containing agents"))
 
 
 (defgeneric FIND-AGENT-AT (agent-3d-view X Y Width Height &optional Agent-Type)
@@ -476,8 +478,8 @@
    (is-hovered :accessor is-hovered :initform nil :type boolean :documentation "is mouse hovering over me?")
    (is-selected :accessor is-selected :initform nil :type boolean :documentation "am I one of the selected agents?")
    (is-drag-entered :accessor is-drag-entered :initform nil :type boolean :documentation "true if another agent is currently being dragged on my")
-   (agents :accessor agents :initform nil :initarg :agents)))
-
+   (agents :accessor agents :initform nil :initarg :agents))
+  (:documentation "Open Agent Engine agent base class"))
 
 ;_______________________________________
 ; Specification                         |
@@ -709,12 +711,6 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
   (incf (velocity-z Self) (* Time (acceleration-z Self))))
 
 
-(defmethod ATTACH ((Self agent-3d) Agent)
-  ;; attach subgent to this agent
-  (push Agent (agents Self))
-  (setf (part-of Agent) Agent))
-
-
 (defmethod BROADCAST-TO-AGENTS ((Self agent-3d) Function &rest Args)
   ;; me
   (apply Function Self Args)
@@ -830,6 +826,13 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
   (attach Agent Sub-Agent))
 
 
+(defmethod ATTACH ((Self agent-3d) Agent)
+  ;; attach subgent to this agent
+  (push Agent (agents Self))
+  (setf (part-of Agent) Agent)
+  (setf (view Agent) (view Self)))
+
+
 (defmethod ATTACH ((Self agent-3d-view) (Agent agent-3d))
   (setf (agents Self) (append (agents Self) (list Agent)))
   ;; make all sub agents views point to world
@@ -839,8 +842,8 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 
 (defmethod ATTACH ((Agent agent-3d) (Sub-Agent agent-3d))
   (setf (agents Agent) (append (agents Agent) (list Sub-Agent)))
-  (setf (part-of Sub-Agent) Agent))
-
+  (setf (part-of Sub-Agent) Agent)
+  (setf (view Sub-Agent) (view Agent)))
 
 
 
