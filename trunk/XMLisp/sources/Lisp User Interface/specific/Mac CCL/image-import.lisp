@@ -52,27 +52,27 @@
     ;; outside-in swap top with bottom until reaching middle
     (dotimes (Row (truncate Rows 2))
       ;; 1) row from above into row buffer
-      (#_BlockMove
-       (%inc-ptr Buffer (* Row Bytes-per-Row))
+      (#_memmove
        Row-Buffer
+       (%inc-ptr Buffer (* Row Bytes-per-Row))
        Bytes-per-Row)
       ;; 2) row from below into row above 
-      (#_BlockMove
-       (%inc-ptr Buffer (* (- Rows Row 1) Bytes-per-Row))
+      (#_memmove
        (%inc-ptr Buffer (* Row Bytes-per-Row))
+       (%inc-ptr Buffer (* (- Rows Row 1) Bytes-per-Row))
        Bytes-per-Row)
       ;; 2) row buffer into row below 
-      (#_BlockMove
-       Row-Buffer
+      (#_memmove
        (%inc-ptr Buffer (* (- Rows Row 1) Bytes-per-Row))
+       Row-Buffer
        Bytes-per-Row))
     (#_DisposePtr Row-Buffer)))
 
 
 (defun CREATE-IMAGE-FROM-FILE (Filename &key Verbose Forced-Depth (Flip-Vertical t)) "
-  in: Filename string-or-pathname, &key Verbose boolean, Forced-Depth int,
+  in:  Filename string-or-pathname, &key Verbose boolean, Forced-Depth int, 
   out: Pixels byte-vector,
-  Width Height Forced-Depth int; Has-Alpha boolean.
+       Width Height Forced-Depth int; Has-Alpha boolean.
   Create an image buffer from <Filename>
   - File must be 32 bit ARGB compatible, e.g., .png with mask or 24 bit RGB."
   (when Verbose (format t "CREATE-IMAGE-FROM-FILE: ~A~%" Filename))
@@ -84,11 +84,11 @@
       (return-from create-image-from-file))
     ;; do the OpenGL vertical image flip
     (when Flip-Vertical
-      (flip-vertical-buffer
-       (#/bitmapData Image-Representation)
+      (flip-vertical-buffer 
+       (#/bitmapData Image-Representation) 
        (* (#/bytesPerRow Image-Representation) (#/pixelsHigh Image-Representation))
        (#/bytesPerRow Image-Representation)))
-    (values
+    (values 
      (#/bitmapData Image-Representation)
      (#/pixelsWide Image-Representation)
      (#/pixelsHigh Image-Representation)
