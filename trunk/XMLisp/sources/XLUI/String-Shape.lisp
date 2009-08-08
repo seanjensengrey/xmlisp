@@ -16,6 +16,7 @@
    ;*   1.2     : 11/09/05 size                                      *
    ;*   1.3     : 08/13/07 Garbage Collectable arrays (MCL)          *
    ;*   1.4     : 07/16/09 AR: CCL                                   *
+   ;*   1.4.1   : 08/08/09 64 bit use _memmove                       *
    ;* SW/HW     : PowerPC G4, OS X 10.5.6, CCL 1.3                   *
    ;* Abstract  : Definition of String-Shape & Editable-String-Shape *
    ;*                                                                *
@@ -45,7 +46,7 @@
     #-ccl (error "MEMORY-DEALLOC not implemented"))
 
   (defmacro MEMORY-COPY (Src Dest Size)
-    #+ccl `(#_BlockMove ,Src ,Dest ,Size)
+    #+ccl `(#_memmove ,Dest ,Src ,Size)
     #-ccl (error "MEMORY-COPY not implemented"))
 
   (defmacro MEMORY-PUT-FLOAT (Buffer Value Index)
