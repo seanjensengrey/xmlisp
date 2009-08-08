@@ -111,6 +111,10 @@
   (:documentation "called when mouse moved to new screen coordinate x, y in current drag"))
 
 
+(defgeneric SNAP-BACK (drag-and-drop-handler)
+  (:documentation "Deal with drag proxy window in case that drop was rejected"))
+
+
 (defgeneric CONCLUDE-DRAG (drag-and-drop-handler)
   (:documentation "called then user releases mouse. Drag should be accepted or rejected"))
 
@@ -165,13 +169,29 @@
       (setf (destination-agent Self) nil)))))
 
 
-(defmethod CONCLUDE-DRAG ((Self drag-and-drop-handler))
-  ;; get rid of drag and drop feedback
+(defmethod SNAP-BACK ((Self drag-and-drop-handler))
   (when (drag-proxy-window Self)
     (window-close (drag-proxy-window Self)))
-  ;; deal with drop
+  #+(and :ccl :darwin) (hemlock::beep))
+
+
+(defmethod CONCLUDE-DRAG ((Self drag-and-drop-handler))
   (when (and (source-agent Self) (destination-agent Self))
-    (receive-drop (destination-agent Self) (source-agent Self))))
+    (setf (is-drag-entered (destination-agent Self)) nil)
+    (multiple-value-bind (Acceptable Need-To-Copy Explanation)
+                         (could-receive-drop (destination-agent Self) (source-agent Self))
+      (declare (ignore Need-To-Copy Explanation))
+      (cond
+       ;; All is good
+       (Acceptable
+        (when (drag-proxy-window Self)
+          (window-close (drag-proxy-window Self)))
+        (receive-drop (destination-agent Self) (source-agent Self)))
+       ;; problems
+       (t
+        (snap-back Self)))
+      ;; cleanup
+      (set-drag-and-drop-cursor :arrow))))
 
 
 ;*******************************
