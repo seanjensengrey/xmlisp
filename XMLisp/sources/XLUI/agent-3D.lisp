@@ -177,7 +177,9 @@
 
 
 (defmethod CONCLUDE-DRAG ((Self drag-and-drop-handler))
-  (when (and (source-agent Self) (destination-agent Self))
+  (cond
+   ;; potential drop
+   ((and (source-agent Self) (destination-agent Self))
     (setf (is-drag-entered (destination-agent Self)) nil)
     (multiple-value-bind (Acceptable Need-To-Copy Explanation)
                          (could-receive-drop (destination-agent Self) (source-agent Self))
@@ -190,10 +192,12 @@
         (receive-drop (destination-agent Self) (source-agent Self)))
        ;; problems
        (t
-        (snap-back Self)))
-      ;; cleanup
-      (set-drag-and-drop-cursor :arrow))))
-
+        (snap-back Self)))))
+   (t
+    ;; something missing
+    (snap-back Self)))
+  ;; cleanup
+  (set-drag-and-drop-cursor :arrow))
 
 ;*******************************
 ;* AGENT 3D VIEW               *
