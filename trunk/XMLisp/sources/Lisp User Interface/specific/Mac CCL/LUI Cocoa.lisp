@@ -50,7 +50,7 @@
   (let ((Color (#/colorUsingColorSpaceName: 
                 (#/selectedTextBackgroundColor ns::ns-color)
                 #@"NSCalibratedRGBColorSpace")))
-    (list (#/redComponent Color) (#/greenComponent Color) (#/blueComponent Color)))
+    (list (float (#/redComponent Color) 0.0) (float (#/greenComponent Color) 0.0) (float (#/blueComponent Color) 0.0)))
   "system color defined by user used for selections, e.g., selected text background color")
 
 ;;*********************************
