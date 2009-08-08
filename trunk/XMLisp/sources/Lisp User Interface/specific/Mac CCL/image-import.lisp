@@ -70,34 +70,31 @@
 
 
 (defun CREATE-IMAGE-FROM-FILE (Filename &key Verbose Forced-Depth (Flip-Vertical t)) "
-  in:  Filename string-or-pathname, &key Verbose boolean, Forced-Depth int, 
+  in: Filename string-or-pathname, &key Verbose boolean, Forced-Depth int,
   out: Pixels byte-vector,
-       Width Height Forced-Depth int; Has-Alpha boolean.
+  Width Height Forced-Depth int; Has-Alpha boolean.
   Create an image buffer from <Filename>
   - File must be 32 bit ARGB compatible, e.g., .png with mask or 24 bit RGB."
   (when Verbose (format t "CREATE-IMAGE-FROM-FILE: ~A~%" Filename))
   (let* ((Image-Representation (#/imageRepWithContentsOfFile: ns:NS-Image-Rep (native-string Filename))))
     ;; should massage data: GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV for best performance
     ;; http://developer.apple.com/documentation/graphicsimaging/Conceptual/OpenGL-MacProgGuide/opengl_texturedata/opengl_texturedata.html
+    (when (%null-ptr-p Image-Representation)
+      (format t "~%missing texture ~S" Filename)
+      (return-from create-image-from-file))
     ;; do the OpenGL vertical image flip
     (when Flip-Vertical
-      (flip-vertical-buffer 
-       (#/bitmapData Image-Representation) 
+      (flip-vertical-buffer
+       (#/bitmapData Image-Representation)
        (* (#/bytesPerRow Image-Representation) (#/pixelsHigh Image-Representation))
        (#/bytesPerRow Image-Representation)))
-    (cond
-     ((%null-ptr-p Image-Representation)
-      (format t "~%missing texture ~S" Filename)
-      nil)
-     (t 
-      ;; should copy the data, vertical swap, and release
-      (values 
-       (#/bitmapData Image-Representation)
-       (#/pixelsWide Image-Representation)
-       (#/pixelsHigh Image-Representation)
-       (#/bitsPerPixel Image-Representation)
-       (#/hasAlpha Image-Representation)
-       (#/bitmapFormat Image-Representation))))))
+    (values
+     (#/bitmapData Image-Representation)
+     (#/pixelsWide Image-Representation)
+     (#/pixelsHigh Image-Representation)
+     (#/bitsPerPixel Image-Representation)
+     (#/hasAlpha Image-Representation)
+     (#/bitmapFormat Image-Representation))))
 
 
 #| Examples:
