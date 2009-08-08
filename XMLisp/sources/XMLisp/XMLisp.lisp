@@ -143,6 +143,8 @@
           load-object save-object finished-reading finished-reading-attributes read-typed-attribute-value
           read-return-value without-xml-reader
           attribute-name->slot-name
+          ;; instantiation
+          duplicate
           ;; do not export "File"
 	  ;; file
           ;; variables
@@ -564,8 +566,13 @@
 
 (defclass XML-SERIALIZER ()
   ((content :accessor content :initarg :content :initform nil :documentation "content not wrapped up as tag or attribute, e.g. the link name of <a> tag")
-   (is-created-by-xml-reader :accessor is-created-by-xml-reader :initform nil :initarg :is-created-by-xml-reader :documentation "true if this instance was create by the xml reader: important for initialization"))
+   (is-created-by-xml-reader :accessor is-created-by-xml-reader :initform t :initarg :is-created-by-xml-reader :type boolean :documentation "true if this instance was create by the xml reader: important for initialization"))
+  (:default-initargs :is-created-by-xml-reader nil)
   (:documentation "Mixin to serialize objects as XML looking things"))
+
+
+(defgeneric DUPLICATE (Xml-Serializer &optional Package)
+  (:documentation "Copy agent through XML serialization/deserialization: only print slots will be copied."))
 
 
 (defgeneric SAVE-OBJECT (Xml-Serializer Filename &key Verbose If-Exists Xml-Header)
@@ -709,6 +716,13 @@
 ;____________________________
 ;  default implementations   |
 ;____________________________
+
+(defmethod DUPLICATE ((Self xml-serializer) &optional (Package *Package*))
+  ;; a relatively slow way of doing it
+  ;; also this depends on *Package*
+  (let ((*Package* Package))
+    (read-from-string (write-to-string Self))))
+
 
 ;; names and print names
 
