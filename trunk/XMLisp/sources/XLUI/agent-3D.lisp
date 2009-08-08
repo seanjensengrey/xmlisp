@@ -50,9 +50,10 @@
   in: Type keyword.
   Set the screen cursor for drag and drop feedback. Type values: :arrow :not-allowed :copy"
  (case Type
-   (:arrow (#_SetThemeCursor #$kThemeArrowCursor))
-   (:not-allowed (#_SetThemeCursor #$kThemeNotAllowedCursor))
-   (:copy (#_SetThemeCursor #$kThemeCopyArrowCursor))))
+   ;; for 64 bit need to create custom cursors 
+   (:arrow #-:64-BIT-TARGET (#_SetThemeCursor #$kThemeArrowCursor))
+   (:not-allowed #-:64-BIT-TARGET (#_SetThemeCursor #$kThemeNotAllowedCursor))
+   (:copy #-:64-BIT-TARGET (#_SetThemeCursor #$kThemeCopyArrowCursor))))
 
 ;*******************************
 ;* DRAG-AND-PROXY-WINDOW       *
