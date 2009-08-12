@@ -83,6 +83,8 @@
    ;; Multimedia
    "PLAY-SOUND"
    "SYNTHESIZER" "SPEAK" "WILL-SPEAK-WORD" "WILL-SPEAK-PHONEME" "DID-FINISH-SPEAKING" "AVAILABLE-VOICES"
+   ;; native support
+   "NATIVE-STRING"
    ))
 
 
@@ -137,6 +139,7 @@
 (load "lui:sources;XLUI;dialog-window")
 (load "lui:sources;XLUI;Font-Manager")
 (load "lui:sources;XLUI;String-Shape")
+(load "lui:sources;XLUI;Cursor-Manager")
 (load "lui:sources;XLUI;agent-3D")
 
 
