@@ -198,6 +198,7 @@
 </gear-box-window>
 
 
+(defparameter *Gears*
 <gear-box-window title="...into this window" track-mouse="true" margin="0" x="400" y="50" width="400" height="800">
   <column align="stretch" valign="stretch">
     <row minimize="vertical" align="center">
@@ -205,6 +206,7 @@
       <bevel-button text="stop" action="stop-action" width="55"/>
     </row>
     <gear-view name="gear box" vflex="1">
+      <camera eye-z="10" eye-x="2.0" eye-y="4.6" center-x="2.0" center-y="4.6"/>
       <sky-dome pitch="-90"/>
       <cog-mount-grid rows="10" columns="5"/>
     </gear-view>
@@ -214,5 +216,7 @@
        <label text="0.0 [deg/s]" name="speed label" width="80"/>
     </row>
   </column>
-</gear-box-window>
+</gear-box-window> )
 
+
+;; (camera (view-named *Gears* "gear box"))
