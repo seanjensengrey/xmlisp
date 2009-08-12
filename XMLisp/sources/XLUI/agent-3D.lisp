@@ -43,19 +43,6 @@
 
 
 ;*******************************
-;* Cursor Support              *
-;*******************************
-
-(defun SET-DRAG-AND-DROP-CURSOR (Type) "
-  in: Type keyword.
-  Set the screen cursor for drag and drop feedback. Type values: :arrow :not-allowed :copy"
- (case Type
-   ;; for 64 bit need to create custom cursors 
-   (:arrow #-:64-BIT-TARGET (#_SetThemeCursor #$kThemeArrowCursor))
-   (:not-allowed #-:64-BIT-TARGET (#_SetThemeCursor #$kThemeNotAllowedCursor))
-   (:copy #-:64-BIT-TARGET (#_SetThemeCursor #$kThemeCopyArrowCursor))))
-
-;*******************************
 ;* DRAG-AND-PROXY-WINDOW       *
 ;*******************************
 
@@ -155,18 +142,18 @@
          ;; looking good
          (Acceptable
           (if Need-To-Copy
-            (set-drag-and-drop-cursor :copy)
-            (set-drag-and-drop-cursor :arrow))
+            (set-cursor "CopyArrow")
+            (set-cursor "ArrowCursor"))
           (mouse-drag-enter-event-handler Agent (source-agent Self)))
          (t ;; not a valid target
-          (set-drag-and-drop-cursor :not-allowed)))
+          (set-cursor "NotAllowed")))
         (when (destination-agent Self) 
           (mouse-drag-leave-event-handler (destination-agent Self) (source-agent Self)))
         (setf (destination-agent Self) Agent)))
      ;; drag out
      ((and (not Agent) (destination-agent Self))
       (mouse-drag-leave-event-handler (destination-agent Self) (source-agent Self))
-      (set-drag-and-drop-cursor :arrow)
+      (set-cursor "ArrowCursor")
       (setf (destination-agent Self) nil)))))
 
 
@@ -197,7 +184,7 @@
     ;; something missing
     (snap-back Self)))
   ;; cleanup
-  (set-drag-and-drop-cursor :arrow))
+  (set-cursor "ArrowCursor"))
 
 ;*******************************
 ;* AGENT 3D VIEW               *
