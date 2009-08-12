@@ -1234,12 +1234,40 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
   (when (string-shape Self)
     (draw (string-shape Self))))
 
+;*********************************
+;* Agent Camera                  *
+;*********************************
+
+(defclass AGENT-CAMERA (xml-serializer camera)
+  ()
+  (:documentation "Main camera saveable to file"))
+
+
+(def-element-class-name camera agent-camera)
+
+
+(defmethod PRINT-DEFAULT-VALUE-ATTRIBUTES-P ((Self agent-camera))
+  ;; better be explicit
+  t)
+
+
+(defmethod PRINT-SLOTS ((Self agent-camera))
+  '(eye-x eye-y eye-z center-x center-y center-z  up-x up-y up-z fovy aspect near far
+    azimuth zenith))  ;; these two should be derived: consider removing and recompute as needed
+
+
+(defmethod ADD-SUBOBJECT ((View agent-3d-view) (Camera agent-camera)) 
+  ;; just replace current camera
+  (setf (camera View) Camera))
+
+
 
 #| Examples:
 
 
 <application-window title="What is this?" margin="0">
   <agent-3d-view>
+    <camera eye-z="2.0"/>
     <cube texture="metal1.jpg"/>
     <cylinder top-radius="0.2" texture="metal1.jpg"/>
     <cube x="-1" y="-1" texture="metal1.jpg"/>
