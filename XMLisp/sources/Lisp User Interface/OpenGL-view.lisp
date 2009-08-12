@@ -81,7 +81,8 @@
 ;**************************
 
 (defmethod INITIALIZE-INSTANCE :after ((Self opengl-view) &rest Args)
-  (setf (camera Self) (make-instance 'camera :view Self)))
+  (unless (camera Self)
+    (setf (camera Self) (make-instance 'camera :view Self))))
 
 
 (defmethod CLEAR-BACKGROUND ((Self opengl-view))
