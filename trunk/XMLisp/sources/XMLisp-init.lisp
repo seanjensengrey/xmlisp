@@ -38,6 +38,12 @@
 ;;(ed "lui:sources;Lisp User Interface;specific;Mac CCL;LUI Cocoa.lisp")
 
 
+;;****** INFIX
+
+(defpackage :INFIX
+  (:use :common-lisp))
+
+
 ;;****** OpenGL
 
 (defpackage :OPENGL
@@ -143,7 +149,11 @@
 (load "lui:sources;XLUI;String-Shape")
 (load "lui:sources;XLUI;Cursor-Manager")
 (load "lui:sources;XLUI;agent-3D")
-
+;; Agent Warp Engine
+(load "lui:sources;XLUI;AWE;infix")
+(load "lui:sources;XLUI;AWE;VAT-Formulas")
+(load "lui:sources;XLUI;AWE;Equation")
+(load "lui:sources;XLUI;AWE;Morph")
 
 ;******** Multimedia
 
@@ -177,7 +187,8 @@
   (format t "~%- create directories and files")
   (multiple-value-bind (Path Exists)
                        (create-directory (format nil "~ADesktop/XMLisp/" (user-homedir-pathname)))
-    (unless Exists
+    (declare (ignore Path))
+   (unless Exists
       (error "XMLisp folder on desktop already exists")))
 
   (format t "~%- copy examples")
