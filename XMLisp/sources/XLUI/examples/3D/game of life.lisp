@@ -112,11 +112,11 @@
   ())
 
 
-(defmethod START ((Window game-of-life-window) (button bevel-button))
+(defmethod START-ACTION ((Window game-of-life-window) (button bevel-button))
   (start-animation (view-named Window "life")))
 
 
-(defmethod STOP ((Window game-of-life-window) (button bevel-button))
+(defmethod STOP-ACTION ((Window game-of-life-window) (button bevel-button))
   (stop-animation (view-named Window "life")))
 
 
@@ -133,8 +133,8 @@
   <column align="stretch" valign="stretch">
     <game-of-life name="life" vflex="1"/>
       <row minimize="vertical" align="center">
-        <bevel-button text="start" action="start" width="55"/>
-        <bevel-button text="stop" action="stop" width="55"/>
+        <bevel-button text="start" action="start-action" width="55"/>
+        <bevel-button text="stop" action="stop-action" width="55"/>
         <bevel-button text="frame rate" action="compute-frame-rate" width="100"/>
         <bevel-button text="randomize" action="new-random-setup" width="100"/>
       </row>
