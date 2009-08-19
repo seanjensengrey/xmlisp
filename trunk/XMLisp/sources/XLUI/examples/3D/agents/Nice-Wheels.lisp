@@ -56,13 +56,14 @@
 ;; minimize transparency issues
 
 (defparameter *Race-Window*
-<race-track-window title="Race Track" track-mouse="true" margin="0">
+<race-track-window title="Race Track" track-mouse="true" margin="0" width="400" height="300" >
   <column align="stretch" valign="stretch">
     <row minimize="vertical" align="center">
       <bevel-button text="start" action="start-action" width="55"/>
       <bevel-button text="stop" action="stop-action" width="55"/>
     </row>
     <agent-3d-view name="race" vflex="1">
+     <camera eye-x="5.2" eye-y="5.7" eye-z="11.7" center-x="6.6" center-y="2.0" center-z="-0.15"/>
       <sky-dome pitch="-90"/>
       <race-car>
         <cube draggable="true" size="4.0"texture="crate.png"/>
@@ -105,6 +106,7 @@
 
 #|
 
+(camera (view-named *Race-Window* "race"))
 
 (display (view-named *Race-Window* "race"))
 
