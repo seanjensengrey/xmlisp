@@ -68,11 +68,11 @@
   (setf (text (view-named Window "speed label")) (format nil "~,2F" (value Slider))))
 
 
-(defmethod START ((Window ring-window) (button bevel-button))
+(defmethod START-ACTION ((Window ring-window) (button bevel-button))
   (start-animation (view-named Window "rings")))
 
 
-(defmethod STOP ((Window ring-window) (button bevel-button))
+(defmethod STOP-ACTION ((Window ring-window) (button bevel-button))
   (stop-animation (view-named Window "rings")))
 
 
@@ -85,8 +85,8 @@
          <label text="0.0" name="speed label" width="50"/>
       </row>
       <row minimize="vertical" align="center">
-        <bevel-button text="start" action="start" width="55"/>
-        <bevel-button text="stop" action="stop" width="55"/>
+        <bevel-button text="start" action="start-action" width="55"/>
+        <bevel-button text="stop" action="stop-action" width="55"/>
       </row>
   </column>
 </ring-window>
