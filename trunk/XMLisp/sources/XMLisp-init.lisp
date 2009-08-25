@@ -214,6 +214,14 @@
   (ccl::recursive-copy-directory
    (truename "lui:resources;textures;")
    (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/textures/" (user-homedir-pathname)))
+  (format t "~%- copy font resources")
+  (ccl::recursive-copy-directory
+   (truename "lui:resources;fonts;")
+   (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/fonts/" (user-homedir-pathname)))
+  (format t "~%- copy cursor resources")
+  (ccl::recursive-copy-directory
+   (truename "lui:resources;cursors;")
+   (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/cursors/" (user-homedir-pathname)))
   (format t "~%- copy window resources")
   (ccl::recursive-copy-directory
    (truename "lui:resources;windows;")
