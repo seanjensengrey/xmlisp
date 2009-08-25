@@ -496,9 +496,13 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
   (cancel-modal Window))
 
 
+(defmethod ADJUST-VALUE-ACTION ((Window dialog-window) (Slider slider))
+  (format t "~%value of slider = ~A" (value Slider)))
+
+
 <dialog-window height="100" title="get a value between 0 and 100">
   <column align="stretch" valign="bottom">
-   <slider name="value" tick-marks="5"/>
+   <slider name="value" action="adjust-value-action" tick-marks="5"/>
     <row align="right" minimize="vertical">
       <button text="Cancel" action="cancel-action"/>
       <button text="OK" action="ok-action"/>
@@ -583,7 +587,7 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
 
 ;; more likely than inlining you would be loading the object from a file. This would return the RGB-Color value
 ;; stick the above XML with a valid XML header into a file and load as object:
-(load-object (native-path "lui:resources;windows;" "color-picker-dialog.window"))
+;; (load-object (native-path "lui:resources;windows;" "color-picker-dialog.window"))
 
 ;; ****************************************
 ;; *  writeme: More Controls              *
