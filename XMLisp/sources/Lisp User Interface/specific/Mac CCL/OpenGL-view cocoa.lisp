@@ -172,12 +172,14 @@
   #-windows-target
   (let ((Time (#_mach_absolute_time)))
     (prog1
-        (float (* 0.000000001
-                  (- Time (animation-time Self))
-                  #.(ccl::rlet ((info #>mach_timebase_info))
-                      (#_mach_timebase_info info)
-                      (/ (ccl::pref info #>mach_timebase_info.numer)
-                         (ccl::pref info #>mach_timebase_info.denom)))))
+        (if (zerop (animation-time Self))
+          0.0                           ;First time through
+          (float (* 0.000000001
+                    (- Time (animation-time Self))
+                    #.(ccl::rlet ((info #>mach_timebase_info))
+                        (#_mach_timebase_info info)
+                        (/ (ccl::pref info #>mach_timebase_info.numer)
+                           (ccl::pref info #>mach_timebase_info.denom))))))
       (setf (animation-time Self) Time)))
   #+windows-target
   (let ((Time (rlet ((now #>FILETIME))
@@ -186,7 +188,9 @@
 		     (byte 32 32)
 		     (pref now #>FILETIME.dwLowDateTime)))))
     (prog1
-	(float (* 0.0000001 (- Time (animation-time Self))))
+	(if (zerop (animation-time Self))
+          0.0                           ;First time through
+          (float (* 0.0000001 (- Time (animation-time Self)))))
       (setf (animation-time Self) Time))))
 
 
