@@ -9,13 +9,23 @@
 (defclass GAME-OF-LIFE (opengl-dialog)
   ((size :accessor size :initform 100 :type integer)
    (world1 :accessor world1 :initform nil)
-   (world2 :accessor world2 :initform nil)))
+   (world2 :accessor world2 :initform nil)
+   (image :accessor image :initform nil)))
 
+(defmethod initialize-instance :after ((Self game-of-life) &key)
+  (let ((image (make-vector-of-size (* 128 128 4))))
+    (dotimes (i (* 128 128))
+      (set-byte image 40 (+ (* 3 i) 0))
+      (set-byte image 40 (+ (* 3 i) 1))
+      (set-byte image 40 (+ (* 3 i) 2)))
+    (setf (image Self) image)))
 
 (defmethod RANDOMIZE ((Self game-of-life))
   (dotimes (i (size Self))
     (dotimes (j (size Self))
-      (setf (aref (world1 Self) i j) (random 2)))))
+      (setf (aref (world1 Self) i j) (random 2))))
+  (with-glcontext Self
+    (draw Self)))
 
 
 (defmethod COUNT-LIFE ((Self game-of-life) i j)
@@ -45,15 +55,6 @@
   (randomize Self))
 
 
-(defparameter *Image* (make-vector-of-size (* 128 128 4)))
-
-
-(dotimes (i (* 128 128))
-  (set-byte *Image* 40 (+ (* 3 i) 0))
-  (set-byte *Image* 40 (+ (* 3 i) 1))
-  (set-byte *Image* 40 (+ (* 3 i) 2)))
-
-
 (defmethod DRAW ((Self game-of-life))
   ;; Texture
   (use-texture Self "black.png")  ;; this texture needs to be >=  than the worlds
@@ -76,10 +77,10 @@
               (t (setf (aref (world2 Self) i j) 0)))))
           ;; update image
           (let ((Index (* 3 (+ i (* 128 j)))))
-            (set-byte *Image* (case (aref (world2 Self) i j) (0 0) (t (- 255 (* Count 60)))) Index)  ; red
-            (set-byte *Image* (case (aref (world2 Self) i j) (0 0) (t (* Count 40))) (1+ Index)))))) ; green
+            (set-byte (image Self) (case (aref (world2 Self) i j) (0 0) (t (- 255 (* Count 60)))) Index)  ; red
+            (set-byte (image Self) (case (aref (world2 Self) i j) (0 0) (t (* Count 40))) (1+ Index)))))) ; green
     ;; insert subimage
-    (glTexSubImage2D GL_TEXTURE_2D 0 0 0 s s GL_RGB GL_UNSIGNED_BYTE *Image*)
+    (glTexSubImage2D GL_TEXTURE_2D 0 0 0 s s GL_RGB GL_UNSIGNED_BYTE (image Self))
     ;; render
     (glBegin GL_QUADS)
     (glColor4f 1.0 1.0 1.0 1.0)

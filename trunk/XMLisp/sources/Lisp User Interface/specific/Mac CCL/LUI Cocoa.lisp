@@ -9,6 +9,7 @@
 (in-package :LUI)
 
 
+#-cocotron
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (ccl:use-interface-dir :carbon) 
   (open-shared-library "/System/Library/Frameworks/Carbon.framework/Carbon"))
@@ -23,19 +24,19 @@
     (#.#$NSLeftMouseUp :left-mouse-up)
     (#.#$NSRightMouseDown :rignt-mouse-down)
     (#.#$NSRightMouseUp :right-mouse-up)
-    (#.#$NSOtherMouseDown :other-mouse-down)
-    (#.#$NSOtherMouseUp :other-mouse-up)
+    #-cocotron (#.#$NSOtherMouseDown :other-mouse-down)
+    #-cocotron (#.#$NSOtherMouseUp :other-mouse-up)
     (#.#$NSMouseMoved :mouse-moved)
     (#.#$NSLeftMouseDragged :left-mouse-dragged)
     (#.#$NSRightMouseDragged :right-mouse-dragged)
-    (#.#$NSOtherMouseDragged :other-mouse-dragged)
+    #-cocotron (#.#$NSOtherMouseDragged :other-mouse-dragged)
     (#.#$NSMouseEntered :mouse-entered)
     (#.#$NSMouseExited :mouse-exited)
     (#.#$NSKeyDown :key-down)
     (#.#$NSKeyUp :key-up)
     (#.#$NSFlagsChanged :flags-changed)
-    (#.#$NSAppKitDefined :app-kit-defined)
-    (#.#$NSSystemDefined :system-defined)
+    #-cocotron (#.#$NSAppKitDefined :app-kit-defined)
+    #-cocotron (#.#$NSSystemDefined :system-defined)
     (#.#$NSApplicationDefined :application-defined)
     (#.#$NSPeriodic :periodic)
     (#.#$NSCursorUpdate :cursor-update)
@@ -47,10 +48,13 @@
 ;;*********************************
 
 (defvar *System-Selection-Color*
+  #-cocotron
   (let ((Color (#/colorUsingColorSpaceName: 
                 (#/selectedTextBackgroundColor ns::ns-color)
                 #@"NSCalibratedRGBColorSpace")))
     (list (float (#/redComponent Color) 0.0) (float (#/greenComponent Color) 0.0) (float (#/blueComponent Color) 0.0)))
+  ;; Cocotron doesn't implement #@"NSCalibratedRGBColorSpace" nor #/redComponent, etc.
+  #+cocotron (list 0.654139 0.793225 0.9990845)
   "system color defined by user used for selections, e.g., selected text background color")
 
 ;;*********************************
@@ -114,11 +118,12 @@
 
 
 (defmethod SUBVIEWS ((Self subview-manager-interface))
-  (let* ((Subviews (#/subviews (native-view Self)))
-         (Count (#/count Subviews))
-         (Subview-List nil))
-    (dotimes (i Count Subview-List)
-      (push (lui-view (#/objectAtIndex: Subviews (- Count 1 i))) Subview-List))))
+  (when (native-view Self)              ;Allows tracing MAKE-NATIVE-OBJECT
+    (let* ((Subviews (#/subviews (native-view Self)))
+           (Count (#/count Subviews))
+           (Subview-List nil))
+      (dotimes (i Count Subview-List)
+        (push (lui-view (#/objectAtIndex: Subviews (- Count 1 i))) Subview-List)))))
 
 
 ;**********************************
@@ -325,17 +330,31 @@
 ; window methods                   |
 ;__________________________________/
 
+(defmacro in-main-thread (() &body body)
+  (let ((thunk (gensym))
+        (done (gensym))
+        (result (gensym)))
+    `(let ((,done nil)
+           (,result nil))
+       (flet ((,thunk ()
+                (setq ,result (multiple-value-list (progn ,@body))
+                      ,done t)))
+         (gui::execute-in-gui #',thunk)
+         (process-wait "Main thread" #'(lambda () ,done))
+         (values-list ,result)))))
+
 (defmethod MAKE-NATIVE-OBJECT ((Self window))
-  (ccl::with-autorelease-pool
+  (in-main-thread ()
+    (ccl::with-autorelease-pool
       (let ((Window (make-instance 'native-window
-                      :lui-window Self
-                      :with-content-rect (ns:make-ns-rect 0 0 (width Self) (height Self))
-                      :style-mask (logior (if (title Self) #$NSTitledWindowMask 0)
-                                          (if (closeable Self) #$NSClosableWindowMask 0)
-                                          (if (resizable Self) #$NSResizableWindowMask 0)
-                                          (if (minimizable Self) #$NSMiniaturizableWindowMask 0))
-                      :backing #$NSBackingStoreBuffered
-                      :defer t)))
+                        :lui-window Self
+                        :with-content-rect (ns:make-ns-rect 0 0 (width Self) (height Self))
+                        :style-mask (logior (if (title Self) #$NSTitledWindowMask 0)
+                                            (if (closeable Self) #$NSClosableWindowMask 0)
+                                            (if (resizable Self) #$NSResizableWindowMask 0)
+                                            (if (minimizable Self) #$NSMiniaturizableWindowMask 0))
+                        :backing #$NSBackingStoreBuffered
+                        :defer t)))
         (setf (native-window Self) Window)  ;; need to have this reference for the delegate to be in place
         (setf (native-view Self) (make-instance 'native-window-view :lui-window Self))
         ;; setup delegate
@@ -347,12 +366,13 @@
         (ns:with-ns-size (Position (x Self) (- (screen-height Self)  (y Self)))
           (#/setFrameTopLeftPoint: (native-window Self) Position))
         (when (track-mouse Self) (#/setAcceptsMouseMovedEvents: (native-window Self) #$YES))
-        Window)))
+        Window))))
 
 
 (defmethod DISPLAY ((Self window))
   ;; excessive?  
-  (#/display (native-view Self)))
+  (in-main-thread ()
+    (#/display (native-view Self))))
 
 
 (defmethod SET-SIZE :after ((Self window) Width Height)
@@ -366,14 +386,16 @@
 
 
 (defmethod SHOW ((Self window))
-  (let ((y (truncate (- (pref (#/frame (#/mainScreen ns:ns-screen)) <NSR>ect.size.height) (y Self) (height Self)))))
-    ;; (ns:with-ns-rect (Frame (x Self) y (width Self) (height Self))
-    ;;  (#/setFrame:display: (native-window Self) Frame t)))
-  (#/orderFront: (native-window Self) nil))  )
+  (in-main-thread ()
+    ;; (let ((y (truncate (- (pref (#/frame (#/mainScreen ns:ns-screen)) <NSR>ect.size.height) (y Self) (height Self)))))
+    ;;   (ns:with-ns-rect (Frame (x Self) y (width Self) (height Self))
+    ;;   (#/setFrame:display: (native-window Self) Frame t)))
+    (#/orderFront: (native-window Self) nil)))
 
 
 (defmethod HIDE ((Self window))
-  (#/orderOut: (native-window Self) nil))
+  (in-main-thread ()
+    (#/orderOut: (native-window Self) nil)))
 
 
 (defmethod SCREEN-WIDTH ((Self window))
@@ -397,9 +419,11 @@
   (setq *Run-Modal-Return-Value* nil)
   (when (#/isVisible (native-window Self))
     (error "cannot run modal a window that is already visible"))
-  (let ((Code (#/runModalForWindow: (#/sharedApplication ns:ns-application) (native-window Self))))
+  (let ((Code (in-main-thread () 
+                (#/runModalForWindow: (#/sharedApplication ns:ns-application)
+                                      (native-window Self)))))
     ;; ignore Code for now
-    (#/close (native-window Self))
+    (in-main-thread () (#/close (native-window Self)))
     (case *Run-Modal-Return-Value*
       (:cancel (throw :cancel nil))
       (t *Run-Modal-Return-Value*))))
@@ -422,7 +446,7 @@
 
 (defmethod SWITCH-TO-FULL-SCREEN-MODE ((Self window))
   (setf (gethash Self *Window-Full-Screen-Restore-Sizes*) (#/frame (native-window Self)))
-  (#_SetSystemUIMode #$kUIModeAllSuppressed #$kUIOptionAutoShowMenuBar)
+  #-cocotron (#_SetSystemUIMode #$kUIModeAllSuppressed #$kUIOptionAutoShowMenuBar)
   (setf (full-screen Self) t)
   ;;; random sizing to trigger #/constrainFrameRect:toScreen
   ;;; (set-size Self 100 100)
@@ -431,7 +455,7 @@
 
 
 (defmethod SWITCH-TO-WINDOW-MODE ((Self window))
-  (#_SetSystemUIMode #$kUIModeNormal 0)
+  #-cocotron (#_SetSystemUIMode #$kUIModeNormal 0)
   (setf (full-screen Self) nil)
   (let ((Frame (gethash Self *Window-Full-Screen-Restore-Sizes*)))
     (when Frame
@@ -606,7 +630,7 @@
       (#/setMinValue: Native-Control (float (min-value Self) 0d0))
       (#/setMaxValue: Native-Control (float (max-value Self) 0d0))
       (#/setNumberOfTickMarks: Native-Control (truncate (tick-marks Self)))
-      (#/setTitle: Native-Control (native-string (text Self))))  ;; depreciated: use separate label
+      #-cocotron (#/setTitle: Native-Control (native-string (text Self))))  ;; depreciated: use separate label
     Native-Control))
 
 
@@ -704,8 +728,11 @@
        ((src Self)
         ;; consider caching image with the same file, there is a good chance
         ;; that some image files, e.g., buttons are used frequently
-        (let ((Image (#/initByReferencingFile: (#/alloc ns:ns-image) (native-string (file Self)))))
-          (unless (#/isValid Image) (error "cannot create image from file ~S" (file Self)))
+        (let ((Image #-cocotron (#/initByReferencingFile: (#/alloc ns:ns-image) (native-string (file Self)))
+                     #+cocotron (#/initWithContentsOfFile: (#/alloc ns:ns-image) (native-string (file Self)))))
+          (unless #-cocotron (#/isValid Image)
+                  #+cocotron (not (ccl:%null-ptr-p Image))
+            (error "cannot create image from file ~S" (file Self)))
           ;; if size 0,0 use original size
           (when (and (zerop (width Self)) (zerop (height Self)))
             (let ((Size (#/size Image)))
@@ -725,10 +752,13 @@
 ; Web Browser                      |
 ;__________________________________/
 
+#-cocotron
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (objc:load-framework "WebKit" :webkit))
 
 
+#-cocotron
+(progn
 (defclass native-web-browser (ns:web-view)
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
@@ -793,5 +823,6 @@
         (print-dom Subview (1+ Level))))))
 
 ;; (lui::print-dom (lui::native-view <web-browser url="http://www.agentsheets.com"/>))
+)
 
 

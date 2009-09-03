@@ -106,11 +106,9 @@
   (glMatrixMode GL_PROJECTION)
   (glLoadIdentity)
   ;; Selection
-  ;; !!!!! USE Memory functions NOT Carbon calls!!!
-  (let ((&viewport (#_NewPtr 16)))
+  (%stack-block ((&viewport 16))
     (glGetIntegerv GL_VIEWPORT &viewport)
-    (gluPickMatrix (float x 0d0) (float (- (%get-long &Viewport 12) y) 0d0)  (float Width 0d0) (float Height 0d0) &Viewport)
-    (#_DisposePtr &Viewport))
+    (gluPickMatrix (float x 0d0) (float (- (%get-long &Viewport 12) y) 0d0)  (float Width 0d0) (float Height 0d0) &Viewport))
   ;; setup camera frustrum
   (gluPerspective (fovy Self) (aspect Self) (near Self) (far Self))
   (glMatrixMode GL_MODELVIEW)

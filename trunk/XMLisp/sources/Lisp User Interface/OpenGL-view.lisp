@@ -23,7 +23,8 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (ccl:use-interface-dir :GL)
-  (open-shared-library "/System/Library/Frameworks/OpenGL.framework/OpenGL"))
+  #-windows-target (open-shared-library "/System/Library/Frameworks/OpenGL.framework/OpenGL")
+  #+windows-target (open-shared-library "opengl32.dll"))
 
 
 (defclass OPENGL-VIEW (view)
@@ -32,7 +33,7 @@
    (current-font :accessor current-font :initform nil)
    (full-scene-anti-aliasing :accessor full-scene-anti-aliasing :initform t :type boolean :documentation "if true anti alias")
    (camera :accessor camera :initform nil :documentation "camera used")
-   (textures :accessor textures :initform (make-hash-table :test #'equal) :allocation :class :documentation "table of loaded texture ids")
+   (textures :accessor textures :initform (make-hash-table :test #'equal) :allocation #-cocotron :class #+cocotron :instance :documentation "table of loaded texture ids")
    (animation-time :accessor animation-time :initform 0 :documentation "Time when animation was run last")
    (animated-views :allocation :class :accessor animated-views :initform nil :documentation "class list of animated views")
    (render-mode :accessor render-mode :initform :render :type keyword :documentation "value: :render :select or :feedback"))

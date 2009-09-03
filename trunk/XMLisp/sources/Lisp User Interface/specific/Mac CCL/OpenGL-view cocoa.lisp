@@ -29,27 +29,33 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
 (defmacro WITH-GLCONTEXT (View &rest Forms)
-  (let ((GLContext (gensym "glcontext")))
-    `(let ((,GLContext (#/openGLContext (native-view ,View))))
+  (let ((GLContext (gensym "glcontext"))
+        (CGLContext (gensym "cglcontext")))
+    `(let* ((,GLContext (#/openGLContext (native-view ,View)))
+            (,CGLContext (#/CGLContextObj ,GLContext)))
        (unwind-protect
-           (progn
-             (#/makeCurrentContext ,GLContext)
-             (#_CGLLockContext (#/CGLContextObj ,GLContext))
-             (progn ,@Forms))
+            (progn
+              (#_CGLLockContext ,CGLContext)
+              (#/makeCurrentContext ,GLContext)
+              (progn ,@Forms))
          (#/flushBuffer ,GLContext)
-         (#_CGLUnlockContext  (#/CGLContextObj ,GLContext)))))))
+         (#/clearCurrentContext ns:ns-opengl-context)
+         (#_CGLUnlockContext  ,CGLContext))))))
 
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
 (defmacro WITH-GLCONTEXT-NO-FLUSH (View &rest Forms)
-  (let ((GLContext (gensym "glcontext")))
-    `(let ((,GLContext (#/openGLContext (native-view ,View))))
+  (let ((GLContext (gensym "glcontext"))
+        (CGLContext (gensym "cglcontext")))
+    `(let* ((,GLContext (#/openGLContext (native-view ,View)))
+            (,CGLContext (#/CGLContextObj ,GLContext)))
        (unwind-protect
            (progn
+             (#_CGLLockContext ,CGLContext)
              (#/makeCurrentContext ,GLContext)
-             (#_CGLLockContext (#/CGLContextObj ,GLContext))
              (progn ,@Forms))
-         (#_CGLUnlockContext  (#/CGLContextObj ,GLContext)))))))
+         (#/clearCurrentContext ns:ns-opengl-context)
+         (#_CGLUnlockContext  ,CGLContext))))))
 
 
 (objc:defmethod (#/drawRect: :void) ((Self native-opengl-view) (rect :<NSR>ect))
@@ -81,18 +87,28 @@
     (let ((Pixel-Format (#/initWithAttributes: 
                           (#/alloc ns:NS-OpenGL-Pixel-Format) 
                           (if (full-scene-anti-aliasing Self)
-                            {#$NSOpenGLPFAColorSize 32 
-                            #$NSOpenGLPFADoubleBuffer 
-                            #$NSOpenGLPFADepthSize 32
-                            #$NSOpenGLPFASampleBuffers 1
-                            #$NSOpenGLPFASamples 4
-                            #$NSOpenGLPFANoRecovery
-                            0}
-                            {#$NSOpenGLPFAColorSize 32 
-                            #$NSOpenGLPFADoubleBuffer 
-                            #$NSOpenGLPFADepthSize 32
-                            #$NSOpenGLPFANoRecovery
-                            0}))))
+			    ;;--- Can't use conditionals inside {} (Sigh)
+                            #+cocotron {#$NSOpenGLPFAColorSize 32 
+                                        #$NSOpenGLPFADoubleBuffer 
+                                        #$NSOpenGLPFADepthSize 32
+                                        0}
+                            #-cocotron {#$NSOpenGLPFAColorSize 32 
+                                        #$NSOpenGLPFADoubleBuffer 
+                                        #$NSOpenGLPFADepthSize 32
+                                        #$NSOpenGLPFASampleBuffers 1
+                                        #$NSOpenGLPFASamples 4
+                                        #$NSOpenGLPFANoRecovery
+                                        0}
+                            ;;--- Can't use conditionals inside {} (Sigh)
+                            #+cocotron {#$NSOpenGLPFAColorSize 32 
+                                        #$NSOpenGLPFADoubleBuffer 
+                                        #$NSOpenGLPFADepthSize 32
+                                        0}
+                            #-cocotron {#$NSOpenGLPFAColorSize 32 
+                                        #$NSOpenGLPFADoubleBuffer 
+                                        #$NSOpenGLPFADepthSize 32
+                                        #$NSOpenGLPFANoRecovery
+                                        0}))))
       (unless Pixel-Format (error "Bad OpenGL pixelformat"))
       (let ((Native-Control (make-instance 'native-opengl-view
                               :with-frame Frame
@@ -122,25 +138,26 @@
 (defmethod FRAME-RATE ((Self opengl-view))
   (with-glcontext Self
     (let ((Frame-Count 0)
-          (Stop-Time (+ (get-internal-real-time) (* 1.0 internal-time-units-per-second))))
+          (Stop-Time (+ (get-internal-real-time) internal-time-units-per-second)))
       (loop
         (clear-background Self)
         (draw Self)
         (#/flushBuffer (#/openGLContext (native-view Self)))
         (incf Frame-Count)
         (when (>= (get-internal-real-time) Stop-Time)
-          (return Frame-Count))))))
+          (return (values Frame-Count (- (get-internal-real-time)
+                                         (- Stop-Time internal-time-units-per-second)))))))))
 
 
 ;;; (defmethod SET-SIZE :around ((Self opengl-view) Width Height)  )
 
 (defmethod SET-SIZE :after ((Self opengl-view) Width Height)
-  (with-glcontext Self
-    (glflush)
-    (glViewport 0 0 Width Height)
-    (when (camera Self)
-      (aim-camera (camera Self) :aspect (float (/ Width Height))))))
-
+  (in-main-thread ()
+    (with-glcontext Self
+      (glflush)
+      (glViewport 0 0 Width Height)
+      (when (camera Self)
+        (aim-camera (camera Self) :aspect (float (/ Width Height)))))))
 
 ;------------------------------
 ; Animation                    |
@@ -152,6 +169,7 @@
 (defmethod DELTA-TIME ((Self opengl-view)) "
   Return time in seconds passed since last animation."
   #+:X8632-target (declare (optimize (safety 2))) ;; avoid 2^32 nano second time warps in CCL 32bit
+  #-windows-target
   (let ((Time (#_mach_absolute_time)))
     (prog1
         (float (* 0.000000001
@@ -160,6 +178,15 @@
                       (#_mach_timebase_info info)
                       (/ (ccl::pref info #>mach_timebase_info.numer)
                          (ccl::pref info #>mach_timebase_info.denom)))))
+      (setf (animation-time Self) Time)))
+  #+windows-target
+  (let ((Time (rlet ((now #>FILETIME))
+		(#_GetSystemTimeAsFileTime now)
+		(dpb (pref now #>FILETIME.dwHighDateTime)
+		     (byte 32 32)
+		     (pref now #>FILETIME.dwLowDateTime)))))
+    (prog1
+	(float (* 0.0000001 (- Time (animation-time Self))))
       (setf (animation-time Self) Time))))
 
 
@@ -193,13 +220,14 @@
            '(:name "OpenGL Animations" :priority 0)
            #'(lambda ()
                (loop
-                 (cond
-                  ;; at least one view to be animated
-                  ((animated-views Self)
-                   (animate-opengl-views-once Self))
-                  ;; nothing to animate: keep process but use little CPU
-                  (t
-                   (sleep 0.5)))))))))
+                  (cond
+                    ;; at least one view to be animated
+                    ((animated-views Self)
+                     (ccl::with-autorelease-pool
+                       (animate-opengl-views-once Self)))
+                    ;; nothing to animate: keep process but use little CPU
+                    (t
+                     (sleep 0.5)))))))))
 
 
 (defmethod STOP-ANIMATION ((Self opengl-view))

@@ -15,18 +15,20 @@
       '(("**;*.*" "home:working copies;XMLisp svn;trunk;XMLisp;**;")))
 
 
+#-cocotron
 (setq gui::*paren-highlight-background-color*
       (#/retain (#/colorWithCalibratedRed:green:blue:alpha: ns:ns-color 0.9 0.8 0.8 1.0)))
 
+#-cocotron
 (setq GUI::*Editor-keep-backup-files* nil)
 
 ;; Load
 
 ;; IDE
 
-(load "lui:sources;IDE;specific;Mac CCL;anticipat-symbol-complete")
-(load "lui:sources;IDE;specific;Mac CCL;ns timer")
-(load "lui:sources;IDE;specific;Mac CCL;hemlock extensions")
+#-cocotron (load "lui:sources;IDE;specific;Mac CCL;anticipat-symbol-complete")
+#-cocotron (load "lui:sources;IDE;specific;Mac CCL;ns timer")
+#-cocotron (load "lui:sources;IDE;specific;Mac CCL;hemlock extensions")
 
 
 ;; Open
@@ -110,7 +112,8 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (ccl:use-interface-dir :GL)
-  (open-shared-library "/System/Library/Frameworks/OpenGL.framework/OpenGL"))
+  #-windows-target (open-shared-library "/System/Library/Frameworks/OpenGL.framework/OpenGL")
+  #+windows-target (open-shared-library "opengl32.dll"))
 
 
 ;; files
@@ -155,6 +158,7 @@
 (load "lui:sources;XLUI;AWE;Equation")
 (load "lui:sources;XLUI;AWE;Morph")
 
+
 ;******** Multimedia
 
 (defpackage :sound
@@ -171,16 +175,25 @@
 
 
 (defun RESTORE-XMLISP ()
-  (setf (logical-pathname-translations "lui")
-      `(("**;*.*" ,(merge-pathnames "**/*.*" (ccl::ccl-contents-directory))))))
+  (let* ((contents-dir (ccl::ccl-contents-directory))
+         (toplevel-dir (make-pathname :directory (butlast (pathname-directory contents-dir) 2)
+                                      :device (pathname-device contents-dir))))
+    (setf (logical-pathname-translations "lui")
+          `(("examples;**;*.*" ,(merge-pathnames "examples/**/*.*" toplevel-dir))
+            ("**;*.*" ,(merge-pathnames "**/*.*" contents-dir))))))
+
+
+(defclass xmlisp-application (gui::cocoa-application)
+  ())
+
+(defmethod ccl::application-init-file ((app xmlisp-application))
+  '("home:xmlisp-init" "home:\\.xmlisp-init"))
 
 
 (defun BUILD-XMLISP ()
   (setq *Package* (find-package :xlui))
   (require :build-application)
   ;; load a different init file
-  (defmethod ccl::application-init-file ((app ccl::lisp-development-system))
-    '("home:xmlisp-init" "home:\\.xmlisp-init"))
   ;; create LUI host pointing to application bundle
   (pushnew 'restore-xmlisp *restore-lisp-functions*)
 
@@ -196,9 +209,13 @@
    (truename "lui:sources;XLUI;examples;")
    (format nil "~ADesktop/XMLisp/examples/" (user-homedir-pathname)))
 
+  (finish-xmlisp)
+
   (ccl::build-application 
    :name "XMLisp"
-   :directory (format nil "~ADesktop/XMLisp/" (user-homedir-pathname))))
+   :directory (format nil "~ADesktop/XMLisp/" (user-homedir-pathname))
+   :application-class 'xmlisp-application
+   :nibfiles '("lui:resources;English.lproj;MainMenu.nib")))
 
 
 (defun FINISH-XMLISP ()
@@ -226,22 +243,14 @@
   (ccl::recursive-copy-directory
    (truename "lui:resources;windows;")
    (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/windows/" (user-homedir-pathname)))
-  (format t "~%- patch menu resources")
-  (ccl::recursive-copy-directory 
-   (truename "lui:resources;English.lproj;MainMenu.nib;")
-   (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/English.lproj/MainMenu.nib/" (user-homedir-pathname))
-   :if-exists :overwrite)
   (format t "~%- patch info plist resources")
   (copy-file 
    (truename "lui:resources;English.lproj;InfoPlist.strings")
    (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/English.lproj/InfoPlist.strings" (user-homedir-pathname))
-   :if-exists :overwrite))
+   :if-exists :supersede))
 
 #| 
 
-
 (build-xmlisp)
-
-(finish-xmlisp)
 
 |#

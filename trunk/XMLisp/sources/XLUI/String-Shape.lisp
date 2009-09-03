@@ -38,11 +38,13 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   
   (defmacro MEMORY-ALLOC (Size)
-    #+ccl `(#_NewPtr ,Size)
+    #+(and ccl (not windows-target)) `(#_NewPtr ,Size)
+    #+(and ccl windows-target) `(#_HeapAlloc (#_GetProcessHeap) 0 ,Size)
     #-ccl (error "MEMORY-ALLOC not implemented"))
   
   (defmacro MEMORY-DEALLOC (Buffer)
-    #+ccl `(#_DisposePtr ,Buffer)
+    #+(and ccl (not windows-target)) `(#_DisposePtr ,Buffer)
+    #+(and ccl windows-target) `(#_HeapFree (#_GetProcessHeap) 0 ,Buffer)
     #-ccl (error "MEMORY-DEALLOC not implemented"))
 
   (defmacro MEMORY-COPY (Src Dest Size)

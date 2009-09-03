@@ -47,7 +47,8 @@
   ;; should be fairly fast: rows * 3 blockmoves
   (unless (zerop (mod Number-of-Bytes Bytes-per-Row))
     (error "cannot flip buffer: rowsize inconsistent with buffersize"))
-  (let ((Row-Buffer (#_NewPtr Bytes-per-Row))
+  (let ((Row-Buffer #-windows-target (#_NewPtr Bytes-per-Row)
+		    #+windows-target (#_HeapAlloc (#_GetProcessHeap) 0 Bytes-per-Row))
         (Rows (truncate Number-of-Bytes Bytes-per-Row)))
     ;; outside-in swap top with bottom until reaching middle
     (dotimes (Row (truncate Rows 2))
@@ -66,8 +67,18 @@
        (%inc-ptr Buffer (* (- Rows Row 1) Bytes-per-Row))
        Row-Buffer
        Bytes-per-Row))
-    (#_DisposePtr Row-Buffer)))
+    #-windows-target (#_DisposePtr Row-Buffer)
+    #+windows-target (#_HeapFree (#_GetProcessHeap) 0 Row-Buffer)))
 
+
+(defun ns-image-rep-from-file (native-filename)
+  ;; Cocotron doesn't implement #/imageRepWithContentsOfFile: (Issue 376)
+  #+cocotron
+  (let* ((images (#/imageRepsWithContentsOfFile: ns:NS-Image-Rep native-filename)))
+    (if (> (#/count images) 0)
+      (#/objectAtIndex: images 0)
+      +null-ptr+))
+  #-cocotron (#/imageRepWithContentsOfFile: ns:NS-Image-Rep native-filename))
 
 (defun CREATE-IMAGE-FROM-FILE (Filename &key Verbose Forced-Depth (Flip-Vertical t)) "
   in:  Filename string-or-pathname, &key Verbose boolean, Forced-Depth int, 
@@ -76,7 +87,7 @@
   Create an image buffer from <Filename>
   - File must be 32 bit ARGB compatible, e.g., .png with mask or 24 bit RGB."
   (when Verbose (format t "CREATE-IMAGE-FROM-FILE: ~A~%" Filename))
-  (let* ((Image-Representation (#/imageRepWithContentsOfFile: ns:NS-Image-Rep (native-string Filename))))
+  (let* ((Image-Representation (ns-image-rep-from-file (native-string Filename))))
     ;; should massage data: GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV for best performance
     ;; http://developer.apple.com/documentation/graphicsimaging/Conceptual/OpenGL-MacProgGuide/opengl_texturedata/opengl_texturedata.html
     (when (%null-ptr-p Image-Representation)

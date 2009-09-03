@@ -85,11 +85,17 @@
       (#/setBackgroundColor: (native-window Self) (#/clearColor ns:ns-color))
     (let ((Pixel-Format (#/initWithAttributes: 
                          (#/alloc ns:NS-OpenGL-Pixel-Format)
-                         {#$NSOpenGLPFAColorSize 32 
-                         #$NSOpenGLPFADoubleBuffer 
-                         #$NSOpenGLPFADepthSize 32
-                         #$NSOpenGLPFANoRecovery
-                         0})))
+			 ;;--- I'd like to simply #-cocotron the #$NSOpenGLPFANoRecovery
+			 ;;--- but the {} reader barfs when I try that.
+                         #-cocotron {#$NSOpenGLPFAColorSize 32 
+                                     #$NSOpenGLPFADoubleBuffer 
+                                     #$NSOpenGLPFADepthSize 32
+			             #$NSOpenGLPFANoRecovery
+                                     0}
+                         #+cocotron {#$NSOpenGLPFAColorSize 32 
+                                     #$NSOpenGLPFADoubleBuffer 
+                                     #$NSOpenGLPFADepthSize 32
+                                     0})))
       (unless Pixel-Format (error "Bad OpenGL pixelformat"))
       (setf (native-view Self) (make-instance 'native-transparent-opengl-view
                                  :with-frame (#/frame (#/contentView (native-window Self)))
@@ -108,7 +114,7 @@
               (unless glContext (error "cannot share OpenGLContext of view ~A" View-to-Share)))))
       (#/release Pixel-Format)
       ;; make surface of OpenGL view transparent
-      (#/setValues:forParameter: (#/openGLContext (native-view Self)) {0} #$NSOpenGLCPSurfaceOpacity)
+      #-cocotron (#/setValues:forParameter: (#/openGLContext (native-view Self)) {0} #$NSOpenGLCPSurfaceOpacity)
       (#/setContentView: (native-window Self) (native-view Self))
       ;; UGLY: the disable/enable is prevents a flicker showing the background briefly. Not clear why needed
       (unwind-protect 

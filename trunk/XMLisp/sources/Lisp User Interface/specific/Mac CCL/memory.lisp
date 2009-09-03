@@ -30,7 +30,21 @@
   Return an Universally Unique Identifier (UUID). An UUID is an identifier standard 
   used in software construction, standardized by the Open Software Foundation (OSF) as
   part of the Distributed Computing Environment (DCE)"
-  (ccl::lisp-string-from-nsstring (#_CFUUIDCreateString (%null-ptr) (#_CFUUIDCreate (%null-ptr)))))
+  #-windows-target (ccl::lisp-string-from-nsstring (#_CFUUIDCreateString (%null-ptr) (#_CFUUIDCreate (%null-ptr))))
+  #+windows-target (rlet ((uuid :<UUID>))
+		     (#_UuidCreate uuid)
+		     (format nil "~8,'0X-~4,'0X-~4,'0X-~4,'0X-~12,'0X"
+			     (pref uuid :<UUID>.<D>ata1)
+			     (pref uuid :<UUID>.<D>ata2)
+			     (pref uuid :<UUID>.<D>ata3)
+			     (dpb (%get-unsigned-byte (pref uuid :<UUID>.<D>ata4) 0)
+				  (byte 8 8)
+				  (%get-unsigned-byte (pref uuid :<UUID>.<D>ata4) 1))
+			     (dpb (dpb (%get-unsigned-word (pref uuid :<UUID>.<D>ata4) 1)
+				       (byte 16 16)
+				       (%get-unsigned-word (pref uuid :<UUID>.<D>ata4) 2))
+				  (byte 32 32)
+				  (%get-unsigned-word (pref uuid :<UUID>.<D>ata4) 3)))))
 
 ;;_____________________
 ;; Sizeof             |
@@ -49,7 +63,8 @@
 (defmethod SIZEOF ((Type (eql 'fixnum))) 4)
 
 (defmethod SIZEOF ((Self macptr))
-  (#_GetPtrSize Self))
+  #-windows-target (#_GetPtrSize Self)
+  #+windows-target (#_HeapSize (#_GetProcessHeap) 0 Self))
 
 ;;_____________________
 ;; Memory Vectors      |
@@ -62,7 +77,8 @@
   Vector is not automatically deallocated."
   (let* ((Index 0)
          (Size (reduce #'+ Values :key #'sizeof))
-         (&Vector (#_NewPtr Size)))
+         (&Vector #-windows-target (#_NewPtr Size)
+		  #+windows-target (#_HeapAlloc (#_GetProcessHeap) 0 Size)))
     (dolist (Value Values &Vector)
       (etypecase Value
         (fixnum (setf (%get-long &Vector Index) Value))
@@ -75,7 +91,8 @@
   in: Size int.
   out: Vector.
   Make vector of byte size"
-  (#_NewPtr Size))
+  #-windows-target (#_NewPtr Size)
+  #+windows-target (#_HeapAlloc (#_GetProcessHeap) 0 Size))
 
 
 (defun MAKE-BYTE-VECTOR (&rest Values)"
@@ -84,7 +101,8 @@
   Create a vector initialized with <Values>.
   Vector is not automatically deallocated."
   (let* ((Index 0)
-         (&Vector (#_NewPtr (length Values))))
+         (&Vector #-windows-target (#_NewPtr (length Values))
+		  #+windows-target (#_HeapAlloc (#_GetProcessHeap) 0 (length Values))))
     (dolist (Value Values &Vector)
       (setf (%get-byte &Vector Index) Value)
       (incf Index))))
@@ -93,7 +111,8 @@
 (defun DISPOSE-VECTOR (Vector) "
   in: Vector.
   Dispose of vector."
- (#_DisposePtr Vector))
+ #-windows-target (#_DisposePtr Vector)
+ #+windows-target (#_HeapFree (#_GetProcessHeap) 0 Vector))
 
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -194,7 +213,7 @@
           (#\} (return `(get-cached-vector 
                          ',(intern (universally-unique-identifier) :STATIC-VECTORS) 
                          ,@(reverse Numbers))))
-          ((#\Space  #\Newline))
+          ((#\Space #\Tab #\Newline))
           (t (unread-char Char Stream)
              (push (read-number Stream) Numbers)))))))
 
