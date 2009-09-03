@@ -1,6 +1,6 @@
 /* Localized versions of Info.plist keys */
 
 CFBundleName = "XMLisp";
-CFBundleShortVersionString = "Clozure Common Lisp version 0.1";
-CFBundleGetInfoString = "Clozure Common Lisp version 0.1, Copyright 2002-2007 Clozure Associates and contributors.";
-NSHumanReadableCopyright = "Copyright 2002-2007 Clozure Associates and contributors.";
+CFBundleShortVersionString = "Version 1.4-dev";
+CFBundleGetInfoString = "Clozure Common Lisp version 1.4, Copyright 2002-2009 Clozure Associates and contributors.";
+NSHumanReadableCopyright = "Copyright 2002-2009 Clozure Associates and contributors.";

@@ -19,6 +19,9 @@
 
 (in-package :lui)
 
+#-cocotron
+(progn
+
 ;;___________________________________
 ;; Native SYNTHESIZER               |
 ;;___________________________________
@@ -157,3 +160,4 @@
 (available-voices)
 
 |#
+)
