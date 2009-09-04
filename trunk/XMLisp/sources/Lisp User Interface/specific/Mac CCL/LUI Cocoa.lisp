@@ -630,7 +630,10 @@
       (#/setMinValue: Native-Control (float (min-value Self) 0d0))
       (#/setMaxValue: Native-Control (float (max-value Self) 0d0))
       (#/setNumberOfTickMarks: Native-Control (truncate (tick-marks Self)))
-      #-cocotron (#/setTitle: Native-Control (native-string (text Self))))  ;; depreciated: use separate label
+      #-cocotron (#/setTitle: Native-Control (native-string (text Self)))  ;; depreciated: use separate label
+      ;; Make sure the slider's indicator/thumb is positioned properly based on
+      ;; control's initial value
+      (#/setFloatValue: Native-Control (slot-value Self 'value)))
     Native-Control))
 
 
