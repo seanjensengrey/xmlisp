@@ -180,7 +180,8 @@
                                       :device (pathname-device contents-dir))))
     (setf (logical-pathname-translations "lui")
           `(("examples;**;*.*" ,(merge-pathnames "examples/**/*.*" toplevel-dir))
-            ("**;*.*" ,(merge-pathnames "**/*.*" contents-dir))))))
+            ("**;*.*" ,(merge-pathnames "**/*.*" contents-dir)))))
+  #+windows-target (open-shared-library "opengl32.dll"))
 
 
 (defclass xmlisp-application (gui::cocoa-application)
