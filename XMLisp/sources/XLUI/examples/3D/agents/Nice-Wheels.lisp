@@ -18,9 +18,10 @@
 
 (defmethod ANIMATE ((Self race-car) dt)
   ;; implement digital low pass filter: http://en.wikipedia.org/wiki/Low-pass_filter#Discrete-time_realization
-  (let* ((Alpha (/ dt (+ dt (value (view-named (window Self) "delay")))))
-         (Position (value (view-named (window Self) "position"))))
-    (setf (x Self) (+ (* Alpha Position) (* (- 1 Alpha) (x Self)))))
+  (when (> dt 0.0)
+    (let* ((Alpha (/ dt (+ dt (value (view-named (window Self) "delay")))))
+           (Position (value (view-named (window Self) "position"))))
+      (setf (x Self) (+ (* Alpha Position) (* (- 1 Alpha) (x Self))))))
   (call-next-method))
 
 
