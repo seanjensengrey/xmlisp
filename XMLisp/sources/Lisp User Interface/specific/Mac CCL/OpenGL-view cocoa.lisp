@@ -153,11 +153,20 @@
 
 (defmethod SET-SIZE :after ((Self opengl-view) Width Height)
   (in-main-thread ()
-    (with-glcontext Self
-      (glflush)
-      (glViewport 0 0 Width Height)
-      (when (camera Self)
-        (aim-camera (camera Self) :aspect (float (/ Width Height)))))))
+    ;; Avoid drawing under Cocotron if the window isn't visible as that tends
+    ;; to fix the positions of the window's views.  (This behavior is noted in
+    ;; Cocotron issue 405.  It's not clear if this is the same issue or not.)
+    (if #+cocotron (#/isVisible (#/window (native-view Self)))
+        #-cocotron t
+      (with-glcontext Self
+        (glflush)
+        (glViewport 0 0 Width Height)
+        (when (camera Self)
+          (aim-camera (camera Self) :aspect (float (/ Width Height)))))
+      (progn
+        (when (camera Self)
+          (aim-camera (camera Self) :aspect (float (/ Width Height))))
+        (#/setNeedsDisplay: (native-view Self) #$YES)))))
 
 ;------------------------------
 ; Animation                    |
