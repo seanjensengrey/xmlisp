@@ -583,7 +583,9 @@
       (when (default-button Self)
         (#/setKeyEquivalent: Native-Control  #@#.(string #\return)))
       (#/setImagePosition: Native-Control #$NSNoImage)
-      (#/setBezelStyle: Native-Control #$NSRoundedBezelStyle)
+      ;; Until Cocotron issue 366 is fixed, don't set the bezel style
+      ;; as it causes the button to be invisible
+      #-cocotron (#/setBezelStyle: Native-Control #$NSRoundedBezelStyle)
       (#/setTitle: Native-Control (native-string (text Self))))
     Native-Control))
 
