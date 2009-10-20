@@ -579,6 +579,7 @@
   (let ((Native-Control (make-instance 'native-button :lui-view Self)))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
       (#/initWithFrame: Native-Control Frame)
+
       (#/setButtonType: Native-Control #$NSMomentaryPushInButton)
       (when (default-button Self)
         (#/setKeyEquivalent: Native-Control  #@#.(string #\return)))
@@ -614,6 +615,276 @@
 
 
 (defmethod (setf text) :after (Text (Self bevel-button-control))
+  (#/setTitle: (native-view Self) (native-string Text)))
+
+;__________________________________
+; Tab-View                         |
+;__________________________________/
+
+(defclass native-tab-view (ns:ns-tab-view)
+  ((lui-view :accessor lui-view :initarg :lui-view))
+  (:metaclass ns:+ns-object))
+
+(defmethod make-native-object ((Self tab-view-control))
+  (let ((Native-Control (make-instance 'native-tab-view :lui-view Self)))
+    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+      (#/initWithFrame: Native-Control Frame)
+
+  
+      )
+    Native-Control))
+
+
+(defmethod ADD-TAB-VIEW-ITEM ((Self tab-view-control) text)
+  (let ((tabViewItem (make-instance 'ns:ns-tab-view-item
+                       :with-identifier (native-string text))))
+    (#/setLabel: tabViewItem (Native-String text))
+    (#/addTabViewItem: (native-view self) tabViewItem)))
+
+(defmethod initialize-event-handling ((Self tab-view-control))
+  (declare (ignore self)))
+
+(defmethod MAP-SUBVIEWS ((Self tab-view-control) Function &rest Args)
+  (declare (ignore Function Args))
+  ;; no Cocoa digging
+  )
+
+;__________________________________
+; Tab-View-Item                    |
+;__________________________________/
+
+(defclass native-tab-view (ns:ns-tab-view-item)
+  ((lui-view :accessor lui-view :initarg :lui-view))
+  (:metaclass ns:+ns-object))
+
+(defmethod make-native-object ((Self tab-view-item-control))
+  (let ((Native-Control (make-instance 'ns:ns-tab-view-item
+                       :with-identifier (native-string (text self)))))
+    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+     ; (#/initWithFrame: Native-Control Frame)
+#|      
+(let ((tab-view (make-instance 'ns:ns-view)))
+        (#/initWithFrame: tab-view Frame)
+        (#/setView: Native-Control tab-view)
+      )
+|#
+    Native-Control)))
+
+(defmethod initialize-event-handling ((Self tab-view-item-control))
+  (declare (ignore self)))
+
+(defmethod ADD-TAB-VIEW-ITEM-VIEW ((Self tab-view-item-control) view)
+  (#/setView: (Native-View self) (native-view view)))
+
+
+
+;__________________________________
+; CHECKBOX BUTTON                 |
+;__________________________________/
+
+
+(defclass native-checkbox (ns:ns-button)
+  ((lui-view :accessor lui-view :initarg :lui-view))
+  (:metaclass ns:+ns-object))
+
+
+(defmethod make-native-object ((Self checkbox-control))
+  (let ((Native-Control (make-instance 'native-checkbox :lui-view Self)))
+    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+      (#/initWithFrame: Native-Control Frame)
+      (#/setButtonType: Native-Control #$NSSwitchButton)
+      (#/setImagePosition: Native-Control #$NSImageLeft)
+      (if (start-checked self)
+        (#/setState: Native-Control #$NSOnState))
+      (if (image-on-right self)
+        (#/setImagePosition: Native-Control #$NSImageRight)
+        (#/setImagePosition: Native-Control #$NSImageLeft))
+      ;(#/setBezelStyle: Native-Control #$NSRoundedBezelStyle)
+      (#/setTitle: Native-Control (native-string (text Self))))
+    Native-Control))
+
+
+(defmethod VALUE ((self checkbox-control))
+  (if (eql (#/state (Native-View self)) #$NSOnState)
+    't
+    nil))
+
+(defmethod (setf text) :after (Text (Self checkbox-control))
+  (#/setTitle: (native-view Self) (native-string Text)))
+
+
+;__________________________________
+;  Image Button                    |
+;__________________________________/
+
+
+(defclass native-button-image (ns:ns-button)
+  ((lui-view :accessor lui-view :initarg :lui-view))
+  (:metaclass ns:+ns-object))
+
+
+(defmethod make-native-object ((Self image-button-control))
+  (let ((Native-Control (make-instance 'native-button-image :lui-view Self)))
+    (let ((NS-Image (#/alloc ns:ns-image)))
+      (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+        (let ((Path (native-path "lui:resources;buttons;" (image Self))))
+          (unless (probe-file Path) (error "no such image file for button ~A" (image Self)))
+          (#/initWithContentsOfFile: NS-Image  (native-string (native-path "lui:resources;buttons;" (image Self))))
+          (#/initWithFrame: Native-Control Frame)
+          (#/setButtonType: Native-Control #$NSMomentaryPushInButton)
+         ; (#/setImagePosition: Native-Control #$NSNoImage)
+        ;  (if (probe-file Path)
+            (#/setImagePosition: Native-Control #$NSImageOnly)
+            (#/setImage: Native-Control NS-Image);)
+           
+          (#/setBezelStyle: Native-Control #$NSThickerSquareBezelStyle)
+          (#/setTitle: Native-Control (native-string (text Self)))))
+      Native-Control)))
+
+
+(defmethod (setf text) :after (Text (Self image-button-control))
+  (#/setTitle: (native-view Self) (native-string Text)))
+
+;__________________________________
+; RADIO BUTTON                     |
+;__________________________________/
+
+
+(defclass native-radio-button (ns:ns-matrix)
+  ((lui-view :accessor lui-view :initarg :lui-view))
+  (:metaclass ns:+ns-object))
+
+
+(defmethod make-native-object ((Self radio-button-control))
+  (let ((Native-Control (make-instance 'native-radio-button :lui-view Self))
+        (prototype (#/init (#/alloc ns:ns-button-cell))))
+    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+      (#/setTitle: prototype (native-string "Option"))
+      (#/setButtonType: prototype #$NSRadioButton)
+      (#/initWithFrame:mode:prototype:numberOfRows:numberOfColumns: Native-Control Frame #$NSRadioModeMatrix prototype 3 1)
+      (let ((cells (#/cells Native-Control))
+            (cell (#/init (#/alloc ns:ns-button-cell))))
+        (#/setTitle: cell (native-string "options3"))
+        (#/setButtonType: cell #$NSRadioButton)       
+        (#/setTitle: (#/objectAtIndex: cells '0) #@"Option1")
+        (#/putCell:atRow:column: Native-Control cell '1 '0)
+        ))
+    Native-Control))
+
+
+(defmethod (setf text) :after (Text (Self radio-button-control))
+  (#/setTitle: (native-view Self) (native-string Text)))
+
+
+(defmethod INITIALIZE-INSTANCE :after ((Self radio-button-control) &rest Args)
+  (declare (ignore Args)
+           (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+             (let (
+                   (prototype (#/init (#/alloc ns:ns-button-cell))))
+               (#/initWithFrame:mode:prototype:numberOfRows:numberOfColumns: (Native-Control Self) Frame #$NSRadioModeMatrix prototype '4 '1)))))
+
+
+(defmethod GET-SELECTED-ACTION ((Self radio-button-control))
+  (elt (actions self)  (#/indexOfObject: (elements Self) (#/selectedCell (native-view self)))))
+
+
+(defmethod FINALIZE-CLUSTER ((Self radio-button-control))
+  (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+    (let ((prototype (#/init (#/alloc ns:ns-button-cell))))
+      (#/setTitle: prototype (native-string "Option"))
+      (#/setButtonType: prototype #$NSRadioButton)
+      (#/initWithFrame:mode:prototype:numberOfRows:numberOfColumns: (Native-View Self) Frame #$NSRadioModeMatrix prototype (#/count (elements Self)) 1)
+      (dotimes (i (#/count (elements Self)))
+        (let ((element (#/objectAtIndex: (elements Self) i)))
+          (#/putCell:atRow:column: (Native-View Self) element i 0))))))
+
+
+(defmethod ADD-ITEM ((Self radio-button-control) text action)
+  (let ((item (#/init (#/alloc ns:ns-button-cell))))
+    (#/setTitle: item (native-string text))
+    (#/setButtonType: item  #$NSRadioButton)   
+    (setf (actions Self) (append (actions Self) (list action)))
+    (setf (elements Self) (#/arrayByAddingObject: (elements Self) item))))
+
+;__________________________________
+; Popup Button                     |
+;__________________________________/
+
+(defclass native-popup-button (ns:ns-pop-up-button)
+  ((lui-view :accessor lui-view :initarg :lui-view))
+  (:metaclass ns:+ns-object))
+
+
+(defmethod make-native-object ((Self popup-button-control))
+  (let ((Native-Control (make-instance 'native-popup-button :lui-view Self)))
+    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+      (#/initWithFrame:pullsDown: Native-Control Frame #$NO)
+    Native-Control)))
+
+
+(defmethod VALUE ((self popup-button-control))
+  (#/title (#/selectedItem (native-view self))))
+
+
+(defmethod GET-SELECTED-ACTION ((Self popup-button-control))
+  (elt (actions self)  (#/indexOfSelectedItem (native-view self))))
+
+
+(defmethod ADD-ITEM ((Self popup-button-control) Text Action)
+  (if (equal (#/indexOfItemWithTitle: (native-view Self) (native-string Text)) -1)
+    (progn
+      (#/addItemWithTitle: (native-view Self) (native-string Text))
+      (setf (actions Self) (append (actions Self) (list Action))))
+    (warn "Cannot add items of the same name")))
+
+
+;__________________________________
+; Choice Button                   |
+;__________________________________/
+
+(defclass native-choice-button (ns:ns-pop-up-button)
+  ((lui-view :accessor lui-view :initarg :lui-view))
+  (:metaclass ns:+ns-object))
+
+
+(defmethod make-native-object ((Self choice-button-control))
+  (let ((Native-Control (make-instance 'native-choice-button :lui-view Self)))
+    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+      (#/initWithFrame:pullsDown: Native-Control Frame #$NO)
+    Native-Control)))
+
+
+(defmethod GET-SELECTED-ACTION ((Self choice-button-control))
+  (elt (actions self)  (#/indexOfSelectedItem (native-view self))))
+
+
+(defmethod ADD-MENU-ITEM ((Self choice-button-control) text action Image-pathname)
+  (#/addItemWithTitle: (native-view Self) (native-string Text))
+  (unless (equal image-pathname nil)
+    (let ((image (#/alloc ns:ns-image)))
+          (#/initWithContentsOfFile: image (native-string(native-path "lui:resources;" image-pathname)))
+          (#/setImage: (#/itemWithTitle: (native-view Self) (native-string text)) Image)))
+  (setf (actions Self) (append (actions Self) (list Action))))
+
+;__________________________________
+; Seperator                        |
+;__________________________________/
+
+(defclass native-seperator (ns:ns-box)
+  ((lui-view :accessor lui-view :initarg :lui-view))
+  (:metaclass ns:+ns-object))
+
+
+(defmethod make-native-object ((Self seperator-control))
+  (let ((Native-Control (make-instance 'native-seperator :lui-view Self)))
+    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+      (#/initWithFrame: Native-Control Frame)
+      (#/setBorderType: Native-Control #$NSLineBorder)
+      (#/setBoxType: Native-Control #$NSBoxSeparator)
+      Native-Control)))
+
+
+(defmethod (setf text) :after (Text (Self seperator-control))
   (#/setTitle: (native-view Self) (native-string Text)))
 
 ;__________________________________
@@ -752,6 +1023,69 @@
               (#/initWithFrame: Native-Control Frame))))
       Native-Control))
 
+;__________________________________
+; Color Well                       |
+;__________________________________/
+
+
+(defclass native-color-well (ns:ns-color-well)
+  ((lui-view :accessor lui-view :initarg :lui-view))
+  (:metaclass ns:+ns-object))
+
+(defmethod make-native-object ((Self color-well-control))
+  (let ((Native-Control (make-instance 'native-color-well :lui-view Self)))
+    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+      (multiple-value-bind (Red Blue Green)
+                           (parse-rgb-from-hex self (color self))
+        ;(setf (color self) (concatenate (write-to-string Red) (write-to-string 
+        (let ((nscolor (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color (/ red 255.0) (/ blue 255.0) (/ green 255.0)  1.0 )))                
+          (#/initWithFrame: Native-Control Frame)
+          (#/setColor: Native-Control nscolor)))
+      Native-Control)))
+
+(defmethod PARSE-RGB-FROM-HEX((Self color-well-control) string)
+  (values
+   (read-from-string (concatenate 'string "#x" (subseq string 0 2)))   ;Red
+   (read-from-string (concatenate 'string "#x" (subseq string 2 4)))   ;Blue
+   (read-from-string (concatenate 'string "#x" (subseq string 4 6))))) ;Green
+
+(defmethod GET-RED((self color-well-control))
+     (let ((nscolor (#/color (Native-View self)))) 
+      (rlet ((r integer)
+           (g #>CGFloat)
+           (b #>CGFloat)
+           (a #>CGFloat))
+      (#/getRed:green:blue:alpha: nscolor r g b a)
+        (flet ((scale (f)
+                 (floor (* 255 f))))
+          (let* ((rr (scale (pref r #>CGFloat))))
+            rr)))))
+
+(defmethod GET-GREEN((self color-well-control))
+     (let ((nscolor (#/color (Native-View self)))) 
+      (rlet ((r integer)
+           (g #>CGFloat)
+           (b #>CGFloat)
+           (a #>CGFloat))
+      (#/getRed:green:blue:alpha: nscolor r g b a)
+        (flet ((scale (f)
+                 (floor (* 255 f))))
+          (let* (
+                 (gg (scale (pref g #>CGFloat))))
+            gg)))))
+
+(defmethod GET-BLUE((self color-well-control))
+     (let ((nscolor (#/color (Native-View self)))) 
+      (rlet ((r integer)
+           (g #>CGFloat)
+           (b #>CGFloat)
+           (a #>CGFloat))
+      (#/getRed:green:blue:alpha: nscolor r g b a)
+        (flet ((scale (f)
+                 (floor (* 255 f))))
+          (let* (
+                 (bb (scale (pref b #>CGFloat))))
+            bb)))))
 
 ;__________________________________
 ; Web Browser                      |
@@ -806,7 +1140,22 @@
        (wait-on-semaphore s)
        v))))
 
+(export '(load-url))
 
+(defmethod LOAD-URL ((Self web-browser-control) url)
+  (let* ((webframe (#/mainFrame (Native-View Self)))
+         (request (#/requestWithURL:
+                   ns:ns-url-request
+                   (ccl::with-autorelease-pool
+                       (#/retain (#/URLWithString: ns:ns-url (ccl::%make-nsstring (string url ))))))))
+    ;; Failing to wait until the main thread has
+    ;; initiated the request seems to cause
+    ;; view-locking errors.  Maybe that's just
+    ;; an artifact of some other problem.
+    (#/performSelectorOnMainThread:withObject:waitUntilDone:
+     webframe (ccl::@selector #/loadRequest:) request t)
+    ))
+  
 (defmethod MAP-SUBVIEWS ((Self web-browser-control) Function &rest Args)
   (declare (ignore Function Args))
   ;; no DOM digging

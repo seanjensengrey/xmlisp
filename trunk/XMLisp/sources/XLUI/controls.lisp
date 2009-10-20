@@ -32,7 +32,7 @@
 
 ;________________________________________________
 ; Rectangle                                      |
-;   colored rectangle                            |
+;   colored rectangle                            |fcolor
 ;   Examples: color picker                       |
 ;                                                |
 ;  <rectangle color="FF0000"/>                   |
@@ -113,28 +113,58 @@
   (:default-initargs )
   (:documentation "Toolbar, adjustable height & widht button"))
 
+
+
 ;_______________________________________________
 ;  Image Button                                 |
 ;                                               |
 ;    <image-button image="redo-button.png"/>    |
 ;_______________________________________________|
 
-(defclass IMAGE-BUTTON (bevel-image-button-dialog-item xml-dialog-interface)
-  ((image :accessor image :initform nil :documentation "filename"))
+
+(defclass IMAGE-BUTTON (image-button-control xml-layout-interface)
+  ()
   (:default-initargs
       :width 20
     :height 20)
   (:documentation "Compact button containing image"))
 
-
 (defmethod FINISHED-READING ((Self image-button) Stream)
-  (declare (ignore Stream))
-  (setf (on-image-pathname Self) (format nil "ad3d:resources;buttons;~A" (image Self)))
-  ;; setup image importer
-  (unless (on-importer Self)
-    (setf (on-importer Self) (get-graphics-importer Self (on-image-pathname Self))))
-  ;; and set bounds
-  (center-image-bounds Self))
+  ;do nothing
+(declare (ignore Stream)))
+
+;______________________________________________________________________________________________________
+; PopUp Button                                                                                        |
+;                                                                                                     |
+; <application-window title="resizable button and window">                                            |
+;  <column  align="center" valign="middle" flex="3">                                                  |
+;    <pop-up width="200" >                                                                            |
+;      <pop-up-item text="on ground" action="test" />                                                 |
+;      <pop-up-item text="upright" action="test2"/>                                                   | 
+;      <pop-up-item text="wrap around cube" action="test3"/>                                          |
+;    </pop-up>                                                                                        | 
+;  </column>                                                                                          |
+;</application-window>                                                                                |
+;______________________________________________________________________________________________________
+
+(defclass POP-UP (popup-button-control xml-layout-interface)
+  ()
+  (:default-initargs
+      :width 20
+    :height 25)
+  (:documentation "Compact button containing image"))
+
+(defclass POP-UP-ITEM (xml-serializer)
+  ((text :accessor text :initform "untitled")
+   (action :accessor action :initform 'default-action  :type symbol :documentation "method: window dialog"))
+  (:documentation "a pop up menu item"))
+
+(defmethod ADD-SUBOBJECT ((Button popup-button-control) (Item pop-up-item))
+  (add-item Button (text Item) (action Item)))
+
+(defmethod DEFAULT-ACTION ((window window)(self pop-up))
+  (declare (ignore window))
+  (declare (ignore self)))
 
 ;______________________________________________________________________________________________________
 ; Choice Image Button                                                                                  |
@@ -147,57 +177,21 @@
 ;     </choice-image-button>                                                                           |
 ;______________________________________________________________________________________________________
 
-(defclass CHOICE-IMAGE-BUTTON-MENU (pop-up-image-menu)
+(defclass CHOICE-IMAGE-BUTTON (choice-button-control xml-layout-interface)
   ()
-  (:documentation "menu for choice image buttons"))
-
-
-(defmethod IMAGE-NAME-PATHNAME ((Self choice-image-button-menu) Name)
-  ;; Name needs to include extension
-  (pathname (format nil "ad3d:resources;buttons;~A" Name)))
-
-
-(defclass CHOICE-IMAGE-BUTTON (image-choice-image-button-dialog-item xml-dialog-interface)
-  ((actions :accessor actions :initform nil :documentation "list of choice image name, action")
-   (pop-up-menu-class :accessor pop-up-menu-class :initform 'choice-image-button-menu :initarg :pop-up-menu-class :allocation :class))
   (:default-initargs
-    :width 20
-    :height 20
-    :action 'no-action)   ;; let the choices do the actions
-  (:documentation "Select from different image based choices"))
+      :width 20
+    :height 25)
+  (:documentation "Compact button containing image"))
 
+(defclass CHOICE-BUTTON-ITEM (xml-serializer)
+  ((text :accessor text :initform "untitled")
+   (image-path :accessor image-path :initform  nil)
+   (action :accessor action :initform 'print-window-and-dialog-action  :type symbol :documentation "method: window dialog"))
+  (:documentation "a pop up menu item"))
 
-(defmethod INVOKE-ACTION ((Self choice-image-button))
-  (call-next-method)
-  (let ((Action (rest (assoc (selected-choice Self) (actions Self)))))
-    (when Action (funcall Action (view-window Self) Self))))
-
-
-(defmethod FINISHED-READING ((Self choice-image-button) Stream)
-  (declare (ignore Stream))
-  ;; on image pathname is derived from first choice
-  (setf (on-image-pathname Self)
-        (image-name-pathname (pop-up-image-menu Self) (first (choice-strings-of (choices Self)))))
-  ;; make importer
-  ;; setup image importer
-  (unless (on-importer Self)
-    (setf (on-importer Self) (get-graphics-importer Self (on-image-pathname Self))))
-  ;; and set bounds
-  (center-image-bounds Self)
-  ;; set choices of menu
-  (setf (image-names (pop-up-image-menu Self)) (choice-strings-of (choices Self))))
-
-
-(defclass IMAGE-CHOICE (xml-serializer)
-  ((image :accessor image :initform nil :documentation "filename")
-   (action :accessor action :initform 'print-window-and-dialog-action :type layout-value :documentation "method: window dialog"))
-  (:documentation "a choice-image-button choice"))
-
-
-(defmethod ADD-SUBOBJECT ((Button choice-image-button) (Choice image-choice))
-  ;; do not add choice itself but add its components to button 
-  (setf (choices Button) (append (choices Button) (list (image Choice))))
-  (setf (actions Button) (append (actions Button) (list (cons (image Choice) (action Choice))))))
+(defmethod ADD-SUBOBJECT ((Button choice-button-control) (Item choice-button-item))
+  (add-menu-item Button (text Item) (action Item)(image-path Item)))
 
 ;__________________________________________________________________________________________________
 ; Image Button Segment                                                                             |
@@ -243,48 +237,44 @@
 
 
 ;_____________________________________________________________________
-; Radio Button Cluster  & Radio Button                                |
+; Radio Button Cluster                                                |
 ;                                                                     |
-;  <radio-button-cluster minimize="vertical" size="200 300">          |
-;    <radio-button text="front" radio-button-pushed-p="true"/>        |
-;    <radio-button text="front &amp; back"/>                          |
-;    <radio-button text="front &amp; back, connected"/>               |
-;  </radio-button-cluster>                                            |
+;<application-window title="resizable button and window">             |
+;  <column  align="left" valign="center" flex="3">                    |
+;    <radio-button-cluster width="300" height="100">                  |
+;      <radio-item text="text1" action="a1"/>                         |
+;      <radio-item text="text2" action="a1"/>                         |
+;      <radio-item text="text3" action="a1"/>                         |
+;    </radio-button-cluster>                                          |
+;  </column>                                                          |
+;</application-window>                                                |
+;                                                                     |
 ;_____________________________________________________________________
 
-(defclass RADIO-BUTTON-CLUSTER (column)
-  ((cluster-id :accessor cluster-id :initform 0 :allocation :class :documentation "internal value: unique per cluster"))
+
+(defclass RADIO-BUTTON-CLUSTER (radio-button-control xml-layout-interface)
+  ()
+  (:default-initargs
+      :width 40
+    :height 25)
   (:documentation "contains radio buttons"))
 
 
 (defmethod INITIALIZE-INSTANCE :after ((Self radio-button-cluster) &rest Args)
-  (declare  (ignore Args))
-  (incf (cluster-id Self)))  ;; make unique cluser id
+  (declare  (ignore Args)))
 
 
-(defclass RADIO-BUTTON (radio-button-dialog-item xml-dialog-interface)
-  ((radio-button-pushed-p :type boolean))  ;;; this type restriction does not appear to work yet: XMLisp bug or MCL 5?
-  (:default-initargs
-    :width 200
-    :height 20)
-  (:documentation "a radio button to make a 1 out of n choice. A radio button must be contained in a radio button cluster"))
+(defclass RADIO-ITEM (xml-serializer)
+  ((text :accessor text :initform "option")
+   (action :accessor action :initform 'print-window-and-dialog-action  :type symbol :documentation "method: window dialog"))
+  (:documentation "a radio button item"))
 
+(defmethod FINISHED-READING ((Self radio-button-cluster) Stream)
+  (declare (ignore Stream))
+  (finalize-cluster Self))
 
-(defmethod ADD-SUBOBJECT :after ((Cluster radio-button-cluster) (Button radio-button))
-  (setf (radio-button-cluster Button) (cluster-id Cluster)))
-
-
-#+:MCL
-(defmethod INSTALL-VIEW-IN-WINDOW :after ((Self radio-button) Window)
-  (declare (ignore Window)) 
-  ;; make me MINI
-  (rlet ((&controlSize :controlsize))
-    (%put-word &controlSize $kControlSizeMini)
-    (#_setControlData (dialog-item-handle Self) 0 #$kControlSizeTag (ccl::record-field-length :controlsize)  &controlSize)))
-
-#+:MCL
-(defmethod VIEW-DEFAULT-FONT ((View radio-button))
-  '("Lucida Grande" 11 :srccopy :plain (:color-index 0)))
+(defmethod ADD-SUBOBJECT ((radio-control radio-button-cluster) (Item radio-item))
+  (add-item radio-control (text Item) (action Item)))
 
 
 ;____________________________________________
@@ -293,7 +283,7 @@
 ; <color-well action="color-well-action"/>   |
 ;____________________________________________
 
-(defclass COLOR-WELL (color-swatch-dialog-item xml-dialog-interface)
+(defclass COLOR-WELL (color-well-control xml-layout-interface)
   ()
   (:default-initargs
     :width 20
@@ -303,11 +293,12 @@
 
 (defmethod INITIALIZE-INSTANCE :after ((Self color-well) &rest Args)
   ;; need to invoke the dialog action without color
-  (declare (ignore Args))
-  (setf (on-color-changed Self)
-        #'(lambda (Item Color)
-            (declare (ignore Color))
-            (invoke-action Item))))
+  (declare (ignore Args)))
+
+
+(defmethod PRINT-SLOTS ((Self color-well-control))
+  '(color x y width height))
+
 
 ;______________________________________________
 ; Slider                                       |
@@ -322,6 +313,43 @@
 
 (defmethod PRINT-SLOTS ((Self slider))
   '(max-value min-value tick-marks x y width height))
+;__________________________________________________________________
+; Tab-View                                                         |
+;                                                                  |
+;                                                                  |
+;__________________________________________________________________
+
+(defclass TAB-VIEW (tab-view-control xml-layout-interface)
+  (title :accessor )
+  (:default-initargs
+    :width 100 
+    :height 15))
+
+
+(defmethod PRINT-SLOTS ((self tab-view-control))
+  '(x y width height))
+
+(defclass TAB-ITEM (xml-serializer view)
+  ((text :accessor text :initform "option")
+   )
+  (:documentation "a radio button item"))
+
+(defmethod ADD-SUBOBJECT ((tab-view-control tab-view) (Item tab-item))
+  (add-tab-view-item tab-view-control (text Item) ))
+
+(defclass TAB-VIEW-ITEM (tab-view-item-control xml-layout-interface)
+  (title :accessor )
+  (:default-initargs
+    :width 100 
+    :height 15))
+
+(defmethod ADD-SUBOBJECT ((tab-view-control tab-view) (Item tab-view-item))
+  (add-tab-view-item tab-view-control (text Item) ))
+
+
+
+(defmethod ADD-SUBOBJECT ((tab-view-item tab-view-item) (tab-view view))
+  (add-tab-view-item-view tab-view-item  tab-view) )
 
 ;__________________________________________________________________
 ; Check Box                                                        |
@@ -329,20 +357,13 @@
 ; <check-box text="important" action="snap-sound" width="90"/>     |
 ;__________________________________________________________________
 
-(defclass CHECK-BOX (check-box-dialog-item xml-dialog-interface)
-  ()
+(defclass CHECK-BOX (checkbox-control xml-layout-interface)
+  (title :accessor )
   (:default-initargs
-    :width 15 
+    :width 100 
     :height 15))
 
 
-#+:MCL 
-(defmethod INSTALL-VIEW-IN-WINDOW :after ((Self check-box) Window)
-  (declare (ignore Window)) 
-  ;; make me MINI
-  (rlet ((&controlSize :controlsize))
-    (%put-word &controlSize $kControlSizeMini)
-    (#_setControlData (dialog-item-handle Self) 0 #$kControlSizeTag (ccl::record-field-length :controlsize)  &controlSize)))
 
 ;__________________________________________________________________
 ; Editable-Text                                                    |
@@ -425,26 +446,18 @@
 ;__________________________________________________________________
 ; Separator                                                        |
 ;                                                                  |
-; <separator size="200 24"/>                                       |
+; <separator width="200"/>                                         |
 ;__________________________________________________________________
 
-(defclass SEPARATOR (xml-layout-interface)
+(defclass SEPARATOR (SEPERATOR-CONTROL xml-layout-interface)
   ()
   (:default-initargs 
-    :width 100
-    :height 24)
+    :width 1
+    :height 1)
   (:documentation "separator line. If separator is wider than it is tall, the separator line is horizontal; otherwise it is vertical"))
 
 
-#|
-(defmethod VIEW-DRAW-CONTENTS ((Self separator))
-  (rlet ((&rect :rect
-                :topleft #@(0 0)
-                :bottomright (view-size Self)))
-    (with-focused-view Self
-      #+:MCL (#_DrawThemeSeparator &rect #$kThemeStateActive))))
 
-|#
 
 ;__________________________________________________________________
 ; Label                                                            |
@@ -476,42 +489,7 @@
   (set-view-size Self (width Self) (point-v (view-size Self))))
     
 
-;__________________________________________________________________
-; Pop Up                                                           |
-;                                                                  |
-; <pop-up width="200">                                             |
-;   <pop-up-item text="on ground" action="mode-on-ground-action"/> |
-;   <pop-up-item text="upright" action="snap-sound"/>              |
-;   <pop-up-item text="wrap around cube" action="snap-sound"/>     |
-; </pop-up>                                                        |
-;__________________________________________________________________
 
-(defclass POP-UP (pop-up-menu xml-dialog-interface)
-  ((dialog-item-action-function :accessor dialog-item-action-function :documentation "unused"))
-  (:default-initargs
-    :view-font '("Lucida Grande" 9)
-    :control-size $kControlSizeMini))
-
-
-#+:MCL  ;; the MCL pop-up-menu has a print-object method that needs to be specialized
-(defmethod PRINT-OBJECT ((Self pop-up) Stream)
-  (funcall (slot-value (find-method #'print-object '() (mapcar #'find-class '(xml-serializer t))) 'function) Self Stream))
-
-
-(defclass POP-UP-ITEM (xml-serializer)
-  ((text :accessor text :initform "untitled")
-   (action :accessor action :initform 'print-window-and-dialog-action :type layout-value :documentation "method: window dialog"))
-  (:documentation "a pop up menu item"))
-
-
-(defmethod ADD-SUBOBJECT ((Menu pop-up-menu) (Item pop-up-item))
-  (add-menu-items Menu (make-instance 'menu-item
-                         :menu-item-title (text Item)
-                         :menu-item-action #'(lambda () 
-                                               (when (action Item)
-                                                 (funcall (action Item) 
-                                                          (view-window Menu)
-                                                          Item))))))
   
 ;;***********************************************
 ;;*    Web Browser                              *
