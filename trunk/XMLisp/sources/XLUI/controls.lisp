@@ -287,6 +287,7 @@
 (defclass COLOR-WELL (color-well-control xml-layout-interface)
   ()
   (:default-initargs
+      :action 'default-action
     :width 22
     :height 22)
   (:documentation "Color Well"))
@@ -299,6 +300,10 @@
 
 (defmethod PRINT-SLOTS ((Self color-well-control))
   '(color x y width height))
+
+
+(defmethod color-action ((window window) (self COLOR-WELL-Control))
+  (declare (ignore self)))
 
 
 ;______________________________________________
