@@ -208,7 +208,8 @@
   ((selected-button :accessor selected-button :initform nil :documentation "currently selected button"))
   (:default-initargs
     :padding -1
-    :minimize 'box)
+    :action 'default-action
+    :minimize :box)
   (:documentation "a row of image-buttons. Pressing button will select it and unselect all others in same segment."))
 
 
@@ -220,21 +221,13 @@
   (setf (selected-button Self) Button))
         
 
-
-(defmethod ADD-SUBOBJECT ((Segment image-button-segment) (Button image-button))
-  (call-next-method)
-  (setf (dialog-item-action-function Button) 
-        #'(lambda (Item) 
-            (select-button Segment Item)
-            (invoke-action Item))))
+(defmethod DEFAULT-ACTION ((Window window) (Self image-button-segment))
+  (select-button Segment Item)
+  (invoke-action Item))
 
 
-(defmethod ADD-SUBOBJECT ((Segment image-button-segment) (Button choice-image-button))
-  (call-next-method)
-  (setf (dialog-item-action-function Button) 
-        #'(lambda (Item) 
-            (select-button Segment Item)
-            (invoke-action Item))))
+
+
 
 
 ;_____________________________________________________________________
