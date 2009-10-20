@@ -33,7 +33,7 @@
 (defmethod INITIALIZE-INSTANCE :after ((Self application-window) &rest Args)
   (declare (ignore Args))
   (do-subviews (Subview Self)
-    (set-size Subview (- (width Self) (margin Self) (margin Self)) (- (height Self) (margin Self) (margin Self)))
+               (set-size Subview (- (width Self) (margin Self) (margin Self)) (- (height Self) (margin Self) (margin Self)))
     (set-position Subview (margin Self) (margin Self)))
   (register-named-views Self)
   (show Self))
