@@ -487,6 +487,7 @@ after any of the window controls calls stop-modal close window and return value.
 (defgeneric VALUE (control)
   (:documentation "Return the control value"))
 
+
 (defgeneric DISABLE (control)
   (:documentation "Disable: control is faded out"))
 
@@ -508,6 +509,10 @@ after any of the window controls calls stop-modal close window and return value.
   (call-next-method)
   (unless (target Self) (setf (target Self) Self)) ;; make me default target
   (initialize-event-handling Self))
+
+
+(defmethod VALUE ((self control))
+  (text self))
 
 
 (defmethod control-default-action ((Window window) (Target Control))
@@ -545,6 +550,96 @@ after any of the window controls calls stop-modal close window and return value.
   (:default-initargs 
     :width 72
     :height 32))
+
+(defclass CHECKBOX-CONTROL (control)
+  ((start-checked :accessor start-checked :initform nil :initarg :start-checked )
+   (image-on-right :accessor image-on-right :initform nil :initarg :image-on-right))
+  (:documentation "Checkbox")
+  (:default-initargs 
+      :action 'default-action))
+
+
+
+(defmethod DEFAULT-ACTION((window window) (self checkbox-control))
+  (declare (ignore window))
+  (declare (ignore self)))
+
+
+(defclass IMAGE-BUTTON-CONTROL (control)
+  ((image :accessor image :initform nil :initarg :image :documentation "filename"))
+  (:default-initargs
+      :text "")
+  (:documentation "Button Image"))
+
+
+(defmethod DEFAULT-ACTION((window window) (self image-button-control))
+  (declare (ignore window))
+  (declare (ignore self)))
+
+
+(defclass POPUP-BUTTON-CONTROL (control)
+  ((actions :initarg :actions :accessor actions  :initform ()
+            :documentation "list of actions"))
+  (:default-initargs
+      :text ""
+    :action 'popup-action)
+  (:documentation "Popup Button"))
+
+
+(defmethod POPUP-ACTION((window window) (self popup-Button-Control))
+  (let ((action (get-selected-action self)))
+    (funcall action Window Self)))
+
+
+(defclass RADIO-BUTTON-CONTROL (control)
+  ((elements :initarg :elements :accessor elements :initform (#/init (#/alloc ns:ns-mutable-array)))
+   (actions :initarg :actions :accessor actions  :initform ()
+            :documentation "list of actions"))
+  (:default-initargs
+      :text ""
+   :action 'radio-action)
+  (:documentation "radio-button"))
+
+
+(defmethod RADIO-ACTION ((window window) (self Radio-Button-Control))
+  (let ((action (get-selected-action self)))
+    (funcall action Window Self)))
+
+
+(defclass CHOICE-BUTTON-CONTROL (control)
+  ((actions :initarg :actions :accessor actions  :initform ()
+            :documentation "list of actions"))
+  (:default-initargs
+      :text ""
+    :action 'choice-button-action)
+  (:documentation "Popup Button"))
+
+
+(defmethod CHOICE-BUTTON-ACTION ((window window) (self choice-button-Control))
+  (let ((action (get-selected-action self)))
+    (funcall action Window Self)))
+
+;__________________________________
+; Seperator                        |
+;__________________________________/
+
+(defclass SEPERATOR-CONTROL (control)
+  ()
+  (:documentation "Seperator")
+  (:default-initargs 
+ 
+    :width 20
+    :height 1))
+
+
+(defmethod INITIALIZE-INSTANCE :after ((Self seperator-control) &rest Args)
+  (declare (ignore Args)))
+
+               
+(defmethod initialize-event-handling ((Self seperator-control))
+  ;; not clickable
+  )
+
 
 ;__________________________________
 ; Sliders                          |
@@ -614,7 +709,48 @@ after any of the window controls calls stop-modal close window and return value.
 (defmethod initialize-event-handling ((Self image-control))
   ;; not clickable
   )
+;__________________________________
+; Color Well                       |
+;__________________________________/
 
+(defclass COLOR-WELL-CONTROL (control)
+  ((color :accessor color :initform "FF0000" :type string :documentation "Hex RBB value for color e.g. FF0000 = RED")
+   (user-action :accessor user-action :initform 'default-action2 :type symbol :documentation "The action that will be called once the default-action adjusts the color accessor"))
+  (:default-initargs
+      :text ""
+    :action 'color-well-action)
+  (:documentation "Color Well"))
+
+
+(defmethod initialize-instance ((Self color-well-control) &rest Args)
+  (declare (ignore Args))
+  (call-next-method)
+  (setf (user-action self) (action self))
+  (setf (action self) 'color-well-action)
+  (unless (target Self) (setf (target Self) Self)) ;; make me default target
+  (initialize-event-handling Self))
+
+
+(defgeneric GET-RED (color-well-control)
+  (:documentation "Returns the red value of the RGB stored as a byte"))
+
+
+(defgeneric GET-BLUE (color-well-control)
+  (:documentation "Returns the blue value of the RGB stored as a byte"))
+
+
+(defgeneric GET-GREEN (color-well-control)
+  (:documentation "Returns the green value of the RGB stored as a byte"))
+
+
+(defgeneric GET-ALPHA (color-well-control)
+  (:documentation "Returns the alpha value stored as a byte"))
+
+
+(defmethod color-well-action ((window window) (self COLOR-WELL-Control))
+  (setf (color self) (concatenate 'string (write-to-string (get-red self) :base 16) (concatenate 'string (write-to-string (get-green self):base 16) (write-to-string (get-blue self):base 16))))
+  (funcall (user-action self) window self))
+  
 ;__________________________________
 ; Web                              |
 ;__________________________________/
@@ -627,9 +763,6 @@ after any of the window controls calls stop-modal close window and return value.
 (defmethod initialize-event-handling ((Self web-browser-control))
   ;; not clickable
   )
-
-
-
 
 #| Examples:
 

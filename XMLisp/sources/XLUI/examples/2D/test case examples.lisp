@@ -479,6 +479,71 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
   </column>
 </application-window>
 
+
+|#
+More functional browser example
+#|
+
+(defmethod GO-TO-URL ((w application-window) (button image-button))
+  (let ((url (value (view-named w "url"))))
+    (setf  (url (view-named w "browser")) url)
+    (print url)
+    (load-url (view-named w "browser") url)
+    ))
+
+(defmethod load-yahoo ((w application-window) (button choice-image-button))
+  (setf (url (view-named w "browser")) "http://www.yahoo.com")
+  (load-url (view-named w "browser") "http://www.yahoo.com"))
+
+(defmethod load-espn ((w application-window) (button choice-image-button))
+  (setf (url (view-named w "browser")) "http://www.espn.com")
+  (load-url (view-named w "browser") "http://www.espn.com"))
+
+(defmethod load-digg ((w application-window) (button choice-image-button))
+  (setf (url (view-named w "browser")) "http://www.digg.com")
+  (load-url (view-named w "browser") "http://www.digg.com"))
+  
+(defmethod load-new-york-times ((w application-window) (button choice-image-button))
+  (setf (url (view-named w "browser")) "http://www.newyorktimes.com")
+  (load-url (view-named w "browser") "http://www.newyorktimes.com"))  
+        
+<application-window title="browser" height="600" width="800" margin="0">
+  <column align="stretch" height="400" valign="stretch">
+    <row height="20" align="stretch" valign="stretch">
+      <choice-image-button width="140" >                                             
+        <choice-button-item text="Yahoo" action="load-yahoo" image-path="images/excited2.jpg"/>   
+        <choice-button-item text="ESPN" action="load-espn" image-path="images/ESPN.jpg"/>             
+        <choice-button-item text="DIGG" action="load-digg" image-path="images/diggin3.jpg"/> 
+        <choice-button-item text="New York Times" action="load-new-york-times" image-path="images/NYtimes.jpg"/>      
+      </choice-image-button>  
+      <image-button image="arrow.jpg" height="25" action="go-to-url" width="60" />
+      <editable-text width="600" name="url" height="20" text="http://www.google.com"/>  
+    </row>
+    <web-browser height="800"  name="browser"  url="http://www.google.com"/>
+  </column>
+</application-window> 
+
+#|
+opengl documentation browser
+|#
+
+(defmethod GO-TO-URL ((w application-window) (button image-button))
+  (let ((gl-command (value (view-named w "gl-command"))))
+    ;(setf  (url (view-named w "browser")) gl-command)
+    ;(print url)
+    (load-url (view-named w "browser") (concatenate 'string "http://www.opengl.org/sdk/docs/man/xhtml/" gl-command ".xml"))
+    ))
+
+<application-window title="browser" height="600" width="800" margin="0">
+  <column align="stretch" height="400" valign="stretch">
+    <row height="20" align="stretch" valign="stretch">
+      <image-button image="arrow.jpg" height="25" action="go-to-url" width="60" />
+      <editable-text width="600" name="gl-command" height="20" text="glVertex"/>  
+    </row>
+    <web-browser height="800"  name="browser"  url="http://www.opengl.org/sdk/docs/man/xhtml/glVertex.xml"/>
+  </column>
+</application-window> 
+
 ;; ****************************************
 ;; *  Modal Windows                       *
 ;; *    Subclass dialog-window            *

@@ -12,7 +12,7 @@
 
 ;; edit to point to root folder containing /sources  /resources  etc.
 (setf (logical-pathname-translations "lui")
-      '(("**;*.*" "home:working copies;XMLisp svn;trunk;XMLisp;**;")))
+      '(("**;*.*" "ccl:XMLisp2;**;")))
 
 
 #-cocotron
@@ -28,6 +28,7 @@
 
 #-cocotron (load "lui:sources;IDE;specific;Mac CCL;anticipat-symbol-complete")
 #-cocotron (load "lui:sources;IDE;specific;Mac CCL;ns timer")
+#-cocotron (load "lui:sources;IDE;specific;Mac CCL;GLDocs")
 #-cocotron (load "lui:sources;IDE;specific;Mac CCL;hemlock extensions")
 
 
@@ -76,11 +77,23 @@
    "LABEL-CONTROL" "TEXT" "ALIGN"
    "EDITABLE-TEXT-CONTROL"
    "VALUE"
-   "IMAGE-CONTROL" "SRC" "FILE"
+     "IMAGE-CONTROL" "SRC" "FILE"
+   "RADIO-BUTTON-CONTROL"
+   "DEFAULT-ACTION"
+   "CHECKBOX-CONTROL" "START-CHECKED" "IMAGE-ON-RIGHT"
+   "IMAGE-BUTTON-CONTROL" "IMAGE" 
+   "RADIO-BUTTON-CONTROL" "ADD-ITEM" "FINALIZE-CLUSTER" "RADIO-ACTION"
+   "POPUP-BUTTON-CONTROL" "add-item" "get-selected-action" "POPUP-ACTION"
+   "TAB-VIEW-CONTROL" "ADD-TAB-VIEW-ITEM"
+   "TAB-VIEW-ITEM-CONTROL" "ADD-TAB-VIEW-ITEM-VIEW"
+   "CHOICE-BUTTON-CONTROL" "ADD-MENU-ITEM" "GET-SELECTED-ACTION" "CHOICE-BUTTON-ACTION"
+   "COLOR-WELL-CONTROL" "COLOR" "GET-RED" "GET-GREEN" "GET-BLUE"
    "WEB-BROWSER-CONTROL" "URL"
    "OPENGL-VIEW" "FRAME-RATE" "ANIMATE" "START-ANIMATION" "STOP-ANIMATION" "IS-ANIMATED" "FULL-SCENE-ANTI-ALIASING"
     "USE-TEXTURE"
     "CREATE-TEXTURE-FROM-FILE"
+    "SEPERATOR-CONTROL"
+    "native-view"
    "CAMERA" "EYE-X" "EYE-Y" "EYE-Z" "CENTER-X" "CENTER-Y" "CENTER-Z"  "UP-X" "UP-Y" "UP-Z"
    "FOVY" "ASPECT" "NEAR" "FAR" "AZIMUTH" "ZENITH"
    "AIM-CAMERA" "WITH-GLCONTEXT" "WITH-GLCONTEXT-NO-FLUSH" "RENDER-FOR-SELECTION-MODE"
