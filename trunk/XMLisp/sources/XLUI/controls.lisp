@@ -125,9 +125,10 @@
 (defclass IMAGE-BUTTON (image-button-control xml-layout-interface)
   ()
   (:default-initargs
-      :width 20
-    :height 20)
+      :width 22
+    :height 22)
   (:documentation "Compact button containing image"))
+
 
 (defmethod FINISHED-READING ((Self image-button) Stream)
   ;do nothing
@@ -286,8 +287,8 @@
 (defclass COLOR-WELL (color-well-control xml-layout-interface)
   ()
   (:default-initargs
-    :width 20
-    :height 20)
+    :width 22
+    :height 22)
   (:documentation "Color Well"))
 
 
