@@ -617,9 +617,13 @@
 (defmethod (setf text) :after (Text (Self bevel-button-control))
   (#/setTitle: (native-view Self) (native-string Text)))
 
+#|
+
 ;__________________________________
 ; Tab-View                         |
 ;__________________________________/
+
+
 
 (defclass native-tab-view (ns:ns-tab-view)
   ((lui-view :accessor lui-view :initarg :lui-view))
@@ -676,7 +680,7 @@
 (defmethod ADD-TAB-VIEW-ITEM-VIEW ((Self tab-view-item-control) view)
   (#/setView: (Native-View self) (native-view view)))
 
-
+|#
 
 ;__________________________________
 ; CHECKBOX BUTTON                 |
@@ -737,7 +741,7 @@
             (#/setImagePosition: Native-Control #$NSImageOnly)
             (#/setImage: Native-Control NS-Image);)
            
-          (#/setBezelStyle: Native-Control #$NSThickerSquareBezelStyle)
+          (#/setBezelStyle: Native-Control #$NSShadowlessSquareBezelStyle)
           (#/setTitle: Native-Control (native-string (text Self)))))
       Native-Control)))
 
