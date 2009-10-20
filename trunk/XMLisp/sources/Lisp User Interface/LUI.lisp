@@ -484,6 +484,10 @@ after any of the window controls calls stop-modal close window and return value.
   (:documentation "LUI Control: when clicked will call the action method of its target, maintains a value"))
 
 
+(defmethod INVOKE-ACTION ((self control))
+  (funcall (action (lui-control Self)) (window (lui-control Self)) (target (lui-control Self))))
+
+
 (defgeneric VALUE (control)
   (:documentation "Return the control value"))
 
