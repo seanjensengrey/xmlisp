@@ -1032,12 +1032,12 @@
 ;__________________________________/
 
 
-(defclass native-color-well (ns:ns-color-well)
+(defclass NATIVE-COLOR-WELL (ns:ns-color-well)
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
 
 
-(defmethod make-native-object ((Self color-well-control))
+(defmethod MAKE-NATIVE-OBJECT ((Self color-well-control))
   (let ((Native-Control (make-instance 'native-color-well :lui-view Self)))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
       (multiple-value-bind (Red Blue Green)
@@ -1046,6 +1046,8 @@
         (let ((nscolor (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color (/ red 255.0) (/ blue 255.0) (/ green 255.0)  1.0 )))                
           (#/initWithFrame: Native-Control Frame)
           (#/setColor: Native-Control nscolor)))
+      ;; setup alpha control but keep in mind color panel is shared -> cannot mix alpha / no alpha
+      (#/setShowsAlpha: (#/sharedColorPanel ns:ns-color-panel) (if (show-alpha Self) #$YES #$NO))
       Native-Control)))
 
 
@@ -1081,6 +1083,15 @@
          (a #>CGFloat))
     (#/getRed:green:blue:alpha: (#/color (Native-View self)) r g b a)
     (truncate (* (pref b #>CGFloat) 255))))
+
+
+(defmethod GET-ALPHA ((self color-well-control))
+  (rlet ((r #>CGFloat)
+         (g #>CGFloat)
+         (b #>CGFloat)
+         (a #>CGFloat))
+    (#/getRed:green:blue:alpha: (#/color (Native-View self)) r g b a)
+    (truncate (* (pref a #>CGFloat) 255))))
 
 ;__________________________________
 ; Web Browser                      |
