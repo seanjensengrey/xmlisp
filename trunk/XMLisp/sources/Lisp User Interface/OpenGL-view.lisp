@@ -138,7 +138,7 @@
 (defun CREATE-TEXTURE-FROM-FILE (Filename &key Verbose (Build-Mipmaps t) Repeat (Mag-Filter GL_LINEAR)) "
   in:  Filename {string}, 
     &key Verbose {boolean}, Repeat
-  out: OpenGL-Texture-Name {int}.
+  out: OpenGL-Texture-Name {int}, width, height, depth
   Load the <Filename> texture inside the texture directory.
   - Ideal file should be 32 bit ARGB compatible, e.g., .png with mask or 24 bit RGB
  - 8 bit and 16 bit image will work too 
@@ -147,29 +147,32 @@
   (rlet ((&texName :long))
     (multiple-value-bind (&Image Width Height Depth) (create-image-from-file Filename :verbose Verbose :flip-vertical t)
       (unless &Image (return-from create-texture-from-file nil))
-      (glPixelStorei gl_unpack_row_length Width)  ; Set proper unpacking row length for image
-      (glPixelStorei gl_unpack_alignment 1)       ; Set byte aligned unpacking (needed for 3-byte-per-pixel image)
+      (glPixelStorei GL_UNPACK_ROW_LENGTH Width)  ; Set proper unpacking row length for image
+      (glPixelStorei GL_UNPACK_ALIGNMENT 1)       ; Set byte aligned unpacking (needed for 3-byte-per-pixel image)
       (glGenTextures 1 &texName)
       ; Specify the texture's properties.
-      (glBindTexture gl_texture_2d (%get-long &texName))
-      (glTexParameteri gl_texture_2d gl_texture_wrap_s (if Repeat gl_repeat gl_clamp_to_edge))
-      (glTexParameteri gl_texture_2d gl_texture_wrap_t (if Repeat gl_repeat gl_clamp_to_edge))
+      (glBindTexture GL_TEXTURE_2D (%get-long &texName))
+      (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_WRAP_S (if Repeat GL_REPEAT GL_CLAMP_TO_EDGE))
+      (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_WRAP_T (if Repeat GL_REPEAT GL_CLAMP_TO_EDGE))
       (glTexParameteri gl_texture_2d gl_texture_mag_filter Mag-Filter)   ;; make textures look smooth (can be costly)
       ;; Mipmaps: make texture look good at different sizes
       (if Build-Mipmaps
-        (glTexParameteri gl_texture_2d gl_texture_min_filter gl_linear_mipmap_nearest)
-        (gltexparameteri gl_texture_2d gl_texture_min_filter gl_linear))
-      (let ((PixelFormat (ecase Depth (32 gl_rgba) (24 gl_rgb)))
+        (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_MIN_FILTER GL_LINEAR_MIPMAP_NEAREST)
+        (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_MIN_FILTER GL_LINEAR))
+      (let ((PixelFormat (ecase Depth (32 GL_RGBA) (24 GL_RGB)))
             (InternalFormat (ecase Depth (32 GL_RGBA8) (24 GL_RGB8))))
-        (glTexImage2D gl_texture_2d 0 GL_RGB width height 0 PixelFormat gl_unsigned_byte &Image)
+        (glTexImage2D GL_TEXTURE_2D 0 GL_RGB width height 0 PixelFormat GL_UNSIGNED_BYTE &Image)
         (when Build-Mipmaps
           (when Verbose (format t "~%Building Mipmaps~%"))
           (unless 
-              (zerop (gluBuild2DMipmaps gl_texture_2d InternalFormat width height PixelFormat gl_unsigned_byte &Image))
+              (zerop (gluBuild2DMipmaps GL_TEXTURE_2D InternalFormat width height PixelFormat GL_UNSIGNED_BYTE &Image))
             (error "could not create mipmaps"))
           (when Verbose (format t "Completed Mipmaps~%"))))
-      ;;(dispose-vector &Image)
-      (%get-long &texName))))
+      (values
+       (%get-long &texName)
+       Width 
+       Height
+       Depth))))
 
 
 (defmethod TEXTURE-FILE ((Self opengl-view) Texture-Name)
