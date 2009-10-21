@@ -19,7 +19,8 @@
 
 (in-package :lui)
 
-(export '(sizeof make-vector with-vector with-vector-of-size dispose-vector make-byte-vector get-byte set-byte make-vector-of-size))
+(export '(sizeof make-vector with-vector with-vector-of-size dispose-vector 
+                 make-byte-vector get-byte set-byte make-vector-of-size get-long))
 
 ;;______________________________________________________________
 ;; Universally Unique Identifier (UUID)                         |
