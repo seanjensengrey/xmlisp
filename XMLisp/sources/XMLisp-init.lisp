@@ -12,7 +12,7 @@
 
 ;; edit to point to root folder containing /sources  /resources  etc.
 (setf (logical-pathname-translations "lui")
-      '(("**;*.*" "ccl:XMLisp2;**;")))
+      '(("**;*.*" "home:working copies;XMLisp svn;trunk;XMLisp;**;")))
 
 
 #-cocotron
@@ -21,6 +21,8 @@
 
 #-cocotron
 (setq GUI::*Editor-keep-backup-files* nil)
+
+(setq ccl::*verbose-eval-selection* t)
 
 ;; Load
 
@@ -73,6 +75,7 @@
    "SCREEN-WIDTH" "SCREEN-HEIGHT" "CONTROL" "VALUE" "INITIALIZE-EVENT-HANDLING" "SIZE-CHANGED-EVENT-HANDLER"
    "ACTION" "SUBVIEWS" "DO-SUBVIEWS" "MAP-SUBVIEWS" "ADD-SUBVIEW" "ADD-SUBVIEWS" "SET-FRAME"
    "BUTTON-CONTROL" "DEFAULT-BUTTON"
+   "INVOKE-ACTION"
    "BEVEL-BUTTON-CONTROL" "SLIDER-CONTROL" "TICK-MARKS" "MIN-VALUE" "MAX-VALUE"
    "LABEL-CONTROL" "TEXT" "ALIGN"
    "EDITABLE-TEXT-CONTROL"
@@ -165,6 +168,10 @@
 (load "lui:sources;XLUI;String-Shape")
 (load "lui:sources;XLUI;Cursor-Manager")
 (load "lui:sources;XLUI;agent-3D")
+(load "lui:sources;XLUI;image editor;selection-mask")
+(load "lui:sources;XLUI;image editor;image-editor")
+
+
 ;; Agent Warp Engine
 (load "lui:sources;XLUI;AWE;infix")
 (load "lui:sources;XLUI;AWE;VAT-Formulas")
