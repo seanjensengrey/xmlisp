@@ -330,7 +330,7 @@
 ; window methods                   |
 ;__________________________________/
 
-(defmacro in-main-thread (() &body body)
+(defmacro IN-MAIN-THREAD (() &body body)
   (let ((thunk (gensym))
         (done (gensym))
         (result (gensym)))
@@ -342,6 +342,7 @@
          (gui::execute-in-gui #',thunk)
          (process-wait "Main thread" #'(lambda () ,done))
          (values-list ,result)))))
+
 
 (defmethod MAKE-NATIVE-OBJECT ((Self window))
   (in-main-thread ()
@@ -487,9 +488,6 @@
 
 ;; (find-window-at-screen-position 10 100)
 
-
-
-
 ;__________________________________
 ; NATIVE-WINDOW-VIEW                |
 ;__________________________________/
@@ -550,7 +548,7 @@
 
 (objc:defmethod (#/activateAction :void) ((self native-target))
   ;; dispatch action to window + target
-  (funcall (action (lui-control Self)) (window (lui-control Self)) (target (lui-control Self))))
+  (invoke-action (lui-control Self)))
 
 
 (defmethod initialize-event-handling ((Self control))
@@ -1036,6 +1034,7 @@
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
 
+
 (defmethod make-native-object ((Self color-well-control))
   (let ((Native-Control (make-instance 'native-color-well :lui-view Self)))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
@@ -1047,49 +1046,39 @@
           (#/setColor: Native-Control nscolor)))
       Native-Control)))
 
-(defmethod PARSE-RGB-FROM-HEX((Self color-well-control) string)
+
+(defmethod PARSE-RGB-FROM-HEX ((Self color-well-control) string)
   (values
    (read-from-string (concatenate 'string "#x" (subseq string 0 2)))   ;Red
    (read-from-string (concatenate 'string "#x" (subseq string 2 4)))   ;Blue
    (read-from-string (concatenate 'string "#x" (subseq string 4 6))))) ;Green
 
-(defmethod GET-RED((self color-well-control))
-     (let ((nscolor (#/color (Native-View self)))) 
-      (rlet ((r integer)
-           (g #>CGFloat)
-           (b #>CGFloat)
-           (a #>CGFloat))
-      (#/getRed:green:blue:alpha: nscolor r g b a)
-        (flet ((scale (f)
-                 (floor (* 255 f))))
-          (let* ((rr (scale (pref r #>CGFloat))))
-            rr)))))
 
-(defmethod GET-GREEN((self color-well-control))
-     (let ((nscolor (#/color (Native-View self)))) 
-      (rlet ((r integer)
-           (g #>CGFloat)
-           (b #>CGFloat)
-           (a #>CGFloat))
-      (#/getRed:green:blue:alpha: nscolor r g b a)
-        (flet ((scale (f)
-                 (floor (* 255 f))))
-          (let* (
-                 (gg (scale (pref g #>CGFloat))))
-            gg)))))
+(defmethod GET-RED ((self color-well-control))
+  (rlet ((r #>CGFloat)
+         (g #>CGFloat)
+         (b #>CGFloat)
+         (a #>CGFloat))
+    (#/getRed:green:blue:alpha: (#/color (Native-View self)) r g b a)
+    (truncate (* (pref r #>CGFloat) 255))))
 
-(defmethod GET-BLUE((self color-well-control))
-     (let ((nscolor (#/color (Native-View self)))) 
-      (rlet ((r integer)
-           (g #>CGFloat)
-           (b #>CGFloat)
-           (a #>CGFloat))
-      (#/getRed:green:blue:alpha: nscolor r g b a)
-        (flet ((scale (f)
-                 (floor (* 255 f))))
-          (let* (
-                 (bb (scale (pref b #>CGFloat))))
-            bb)))))
+
+(defmethod GET-GREEN ((self color-well-control))
+  (rlet ((r #>CGFloat)
+         (g #>CGFloat)
+         (b #>CGFloat)
+         (a #>CGFloat))
+    (#/getRed:green:blue:alpha: (#/color (Native-View self)) r g b a)
+    (truncate (* (pref g #>CGFloat) 255))))
+
+
+(defmethod GET-BLUE ((self color-well-control))
+  (rlet ((r #>CGFloat)
+         (g #>CGFloat)
+         (b #>CGFloat)
+         (a #>CGFloat))
+    (#/getRed:green:blue:alpha: (#/color (Native-View self)) r g b a)
+    (truncate (* (pref b #>CGFloat) 255))))
 
 ;__________________________________
 ; Web Browser                      |
