@@ -1,4 +1,4 @@
-;;; MAC CCL Window
+;;; MAC CCL Windoinvow
 ;;; LUI: Lisp User Interface
 ;;; Andri Ioannidou and Alexander Repenning
 ;;; Version: 0.2 11/28/08
@@ -548,7 +548,9 @@
 
 (objc:defmethod (#/activateAction :void) ((self native-target))
   ;; dispatch action to window + target
-  (invoke-action (lui-control Self)))
+  ;; catch errors to avoid total crash of CCL
+  (handler-case (invoke-action (lui-control Self))
+     (error (condition) (format t "~%invoke control action error ~%  control: ~A ~%  error: ~A" (lui-control Self) Condition))))
 
 
 (defmethod initialize-event-handling ((Self control))
