@@ -722,6 +722,7 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defclass COLOR-WELL-CONTROL (control)
   ((color :accessor color :initform "FF0000" :type string :documentation "Hex RBB value for color e.g. FF0000 = RED")
+   (show-alpha :accessor show-alpha :initform t :type boolean :documentation "If true include alpha controls in color picker")
    (user-action :accessor user-action :initform 'default-action2 :type symbol :documentation "The action that will be called once the default-action adjusts the color accessor"))
   (:default-initargs
       :text ""
@@ -729,7 +730,7 @@ after any of the window controls calls stop-modal close window and return value.
   (:documentation "Color Well"))
 
 
-(defmethod initialize-instance ((Self color-well-control) &rest Args)
+(defmethod INITIALIZE-INSTANCE ((Self color-well-control) &rest Args)
   (declare (ignore Args))
   (call-next-method)
   (setf (user-action self) (action self))
@@ -754,7 +755,7 @@ after any of the window controls calls stop-modal close window and return value.
   (:documentation "Returns the alpha value stored as a byte"))
 
 
-(defmethod color-well-action ((window window) (self COLOR-WELL-Control))
+(defmethod COLOR-WELL-ACTION ((window window) (self COLOR-WELL-Control))
   (setf (color self) (concatenate 'string (write-to-string (get-red self) :base 16) (concatenate 'string (write-to-string (get-green self):base 16) (write-to-string (get-blue self):base 16))))
   (funcall (user-action self) window self))
   
