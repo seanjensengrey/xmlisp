@@ -7,7 +7,7 @@
 ;*                Alexander Repenning (alex@agentsheets.com)                 *
 ;*                Travis Offtermatt (Travis.Offtermatt@colorado.edu)         *
 ;*                http://www.agentsheets.com                                 *
-;* Copyright    : (c) 2007, AgentSheets Inc.                                 *
+;* Copyright    : (c) 2009, AgentSheets Inc.                                 *
 ;* Version      :                                                            *
 ;*    1.0       : 06/14/06 initial implementation                            *
 ;*    1.0.1     : 06/26/06 comments added                                    *
@@ -34,7 +34,8 @@
 ;*                                         window-save-as                    *
 ;*    1.0.11    : 01/04/07 AR: make-me-the-current-context in save-image     *
 ;*    1.0.12    : 08/16/07 AR: make-me-the-current-context -> delete-texture *
-;* Abstract     : Simple image editor.                                       *
+;*    2.0       : 08/21/09 AR: CCL                                           *
+;* Abstract     : Simple OpenGL based image editor.                          *
 ;*                                                                           *
 ;*****************************************************************************
 
@@ -42,7 +43,7 @@
 ;;; - always create 32-bit texture (otherwise problem with get/set-color)
 ;;; - bug: texture doesn't quite align with the view
 
-(in-package :ad3d)
+(in-package :xlui)
 
 
 ;**************************************
@@ -51,20 +52,19 @@
 
 (defun CREATE-EMPTY-TEXTURE (Width Height &optional (Depth 32))
   ;; (format t "create-empty-texture: ~A ~A ~A~%" Width Height Depth)
-  (let* ((Bytes-Per-Pixel (truncate Depth 8))
-         (&Texture (#_NewPtr (* Width Height Bytes-Per-Pixel))))
-    (fill-buffer &Texture 0) ; clear memory
-    ;; create the OpenGL texture (hopefully in accelerator memory) and define parameters
-    (rlet ((&texName :long))
-          (glGenTextures 1 &texName)
-          (glBindTexture gl_texture_2d (%get-long &texName))
-          (let ((Format (ecase Bytes-Per-Pixel (4 gl_rgba) (3 gl_rgb))))
-            (glTexImage2D gl_texture_2d 0 Bytes-Per-Pixel Width Height 0 Format gl_unsigned_byte &Texture))
-          (glTexParameteri gl_texture_2d gl_texture_min_filter gl_nearest)
-          (glTexParameteri gl_texture_2d gl_texture_mag_filter gl_nearest)
-          ;; texture is in OpenGL now, can get rid of all the support data structures
-          (#_DisposePtr &texture)
-          (%get-long &texName))))
+  (let* ((Bytes-Per-Pixel (truncate Depth 8)))
+    (with-vector-of-size (&Texture (* Width Height Bytes-Per-Pixel))
+      (fill-buffer &Texture 0) ; clear memory
+      ;; create the OpenGL texture (hopefully in accelerator memory) and define parameters
+      (ccl::rlet ((&texName :long))
+        (glGenTextures 1 &texName)
+        (glBindTexture GL_TEXTURE_2D (get-long &texName))
+        (let ((Format (ecase Bytes-Per-Pixel (4 GL_RGBA) (3 GL_RGB))))
+          (glTexImage2D GL_TEXTURE_2D 0 Bytes-Per-Pixel Width Height 0 Format GL_UNSIGNED_BYTE &Texture))
+        (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_MIN_FILTER  GL_NEAREST)
+        (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_MAG_FILTER  GL_NEAREST)
+        ;; texture is in OpenGL now, can get rid of all the support data structures
+        (get-long &texName)))))
 
 
 (defun CREATE-32-BIT-TEXTURE-FROM-FILE ()
@@ -75,8 +75,8 @@
 (defun DELETE-TEXTURE (Texture)
   "Deletes the specified texture."
   (when Texture
-    (rlet ((&Tex-Id :long Texture))
-          (glDeleteTextures 1 &Tex-Id))))
+    (ccl::rlet ((&Tex-Id :long Texture))
+      (glDeleteTextures 1 &Tex-Id))))
 
 
 ;**************************************
@@ -143,11 +143,12 @@
 ;* Image-Editor                       *
 ;**************************************
 
-(defparameter *Default-Background-Texture* "ad3d:resources;textures;image-editor-bg.png")
+(defparameter *Default-Background-Texture* "lui:resources;textures;image-editor-bg.png")
 
 
-(defclass IMAGE-EDITOR (document-opengl-view)
-  ((img-texture :accessor img-texture :initform nil :documentation "OpenGL texture to store the image")
+(defclass IMAGE-EDITOR (opengl-dialog)
+  ((image :accessor image :initform nil :documentation "filename")
+   (img-texture :accessor img-texture :initform nil :documentation "OpenGL texture to store the image")
    (img-width :accessor img-width :initarg :img-width :initform 32 :documentation "image width in pixels")
    (img-height :accessor img-height :initarg :img-height :initform 32 :documentation "image height in pixels")
    (img-depth :accessor img-depth :initform 32 :documentation "image depth")
@@ -207,31 +208,41 @@
   "Called when the image-editor is initialized."
   (glClearColor 0.0 0.0 0.0 0.0)
   ;; Alpha
-  (glenable gl_blend)
-  (glBlendFunc gl_src_alpha gl_one_minus_src_alpha)
+  (glEnable GL_BLEND)
+  (glBlendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA)
   (aim-camera (camera Self) :eye-z 1.7379))
 
 
-(defmethod LOAD-BACKGROUND-TEXTURE ((Self image-editor) &optional (Pathname *Default-Background-Texture*))
-  (setf (bg-texture Self) (create-texture-from-file Pathname :mag-filter gl_nearest :repeat t)))
+(defmethod FINISHED-READING ((Self image-editor) Stream)
+  (declare (ignore Stream))
+  ;; content
+  (when (image Self)
+     (load-image Self (image Self)))
+  (display Self))
+
+
+(defmethod LOAD-BACKGROUND-TEXTURE ((Self image-editor) &optional (Pathname (truename *Default-Background-Texture*)))
+  (with-glcontext Self
+    (setf (bg-texture Self) (create-texture-from-file Pathname :mag-filter GL_NEAREST :repeat t))))
 
 
 (defmethod DISPOSE-BACKGROUND-TEXTURE ((Self image-editor))
   "Releases native resources used by the background texture"
-  (make-me-the-current-context Self)
-  (delete-texture (bg-texture Self)))
+  (with-glcontext Self
+    (delete-texture (bg-texture Self))))
 
 
 (defmethod DISPOSE-TEXTURE-IMAGE ((Self image-editor))
   "Releases native resources used by the texture image."
-  (make-me-the-current-context Self)
-  (delete-texture (img-texture Self)))
+  (with-glcontext Self
+    (delete-texture (img-texture Self))))
 
 
 (defmethod NEW-IMAGE ((Self image-editor) Width Height)
   "Creates an empty image."
-  (when (img-texture Self) (dispose-texture-image Self))
-  (with-cursor *Watch-Cursor*
+  (with-glcontext Self
+    (when (img-texture Self) (dispose-texture-image Self))
+    ;;; (with-cursor *Watch-Cursor*  some user feedback needed?
     (setf (img-texture Self) (create-empty-texture Width Height))
     (setf (selection-mask Self) (make-instance 'selection-mask :width Width :height Height))
     (setf (img-width Self) Width)
@@ -241,28 +252,30 @@
 (defmethod LOAD-IMAGE ((Self image-editor) From-Pathname)
   "Loads an image from a file into the editor."
   ;; (format t "loading image: ~A~%" From-Pathname)
-  (make-me-the-current-context Self)
-  (when (img-texture Self) (dispose-texture-image Self))
-  (when (pixel-buffer Self) (setf (pixel-buffer Self) nil))
-  ;;;  (clear-selection Self)
-  (with-cursor *Watch-Cursor*
-    (setf (img-texture Self) (create-texture-from-file From-Pathname :mag-filter gl_nearest))
-    (multiple-value-bind (Width Height Depth) (image-file-information From-Pathname)
+  (with-glcontext Self
+    (when (img-texture Self) (dispose-texture-image Self))
+    (when (pixel-buffer Self) (setf (pixel-buffer Self) nil))
+    ;;;  (clear-selection Self)
+    ;;; replace with new user feedback? (with-cursor *Watch-Cursor*
+    (multiple-value-bind (Name Width Height Depth)
+                         (create-texture-from-file From-Pathname :mag-filter GL_NEAREST)
+      (setf (img-texture Self) Name)
       (setf (img-width Self) Width)
       (setf (img-height Self) Height)
       (setf (img-depth Self) Depth)
-      (setf (selection-mask Self) (make-instance 'selection-mask :width Width :height Height))))
-  (view-draw-contents Self))
+      (setf (selection-mask Self) (make-instance 'selection-mask :width Width :height Height)))))
+;;  (display Self))
 
 
 (defmethod SAVE-IMAGE ((Self image-editor) To-Pathname)
   "Saves the currently edited image into a file."
   (declare (ignorable To-Pathname))
-  (when (img-texture Self)
-    (make-me-the-current-context Self) ;; nasty crash without this when multiple OpenGL contexts
-    (save-texture-as-image (img-texture Self) To-Pathname
-                           (img-width Self) (img-height Self) :depth (img-depth Self))
-    (when (on-image-saved Self) (funcall (on-image-saved Self) To-Pathname))))
+  (with-glcontext Self
+    (when (img-texture Self)
+      (make-me-the-current-context Self) ;; nasty crash without this when multiple OpenGL contexts
+      (save-texture-as-image (img-texture Self) To-Pathname
+                             (img-width Self) (img-height Self) :depth (img-depth Self))
+      (when (on-image-saved Self) (funcall (on-image-saved Self) To-Pathname)))))
 
 
 (defmethod COL-ROW-WITHIN-BOUNDS-P ((Self image-editor) Col Row)
@@ -286,23 +299,23 @@
            (progn ,@Forms)
          (dispose-vector ,Vector)))))
 
-
         
 (defmethod GET-RGBA-COLOR-AT ((Self image-editor) Col Row)
   "Returns the color at the specified pixel location."
   ;; make pixel buffer if needed
   (unless (pixel-buffer Self)
-    (setf (pixel-buffer Self) (#_NewPtr (* (img-width Self) (img-height Self) (image-bytes-per-pixel Self))))
-    (make-me-the-current-context Self)
-    (glBindTexture gl_texture_2d (img-texture Self))
-    (glGetTexImage gl_texture_2d 0 gl_rgba gl_unsigned_byte (pixel-buffer Self)))
-  ;; access pixel
-  (let ((Byte-Offset (image-byte-offset Self Col Row)))
-    (values
-     (%get-byte (pixel-buffer Self) Byte-Offset)
-     (%get-byte (pixel-buffer Self) (+ Byte-Offset 1))
-     (%get-byte (pixel-buffer Self) (+ Byte-Offset 2))
-     (%get-byte (pixel-buffer Self) (+ Byte-Offset 3)))))
+    (with-vector-of-size (&PixelBuffer (* (img-width Self) (img-height Self) (image-bytes-per-pixel Self)))
+      (setf (pixel-buffer Self) &PixelBuffer)
+      (with-glcontext Self
+        (glBindTexture GL_TEXTURE_2D (img-texture Self))
+        (glGetTexImage GL_TEXTURE_2D 0 GL_RGBA GL_UNSIGNED_BYTE (pixel-buffer Self))
+        ;; access pixel
+        (let ((Byte-Offset (image-byte-offset Self Col Row)))
+          (values
+           (get-byte (pixel-buffer Self) Byte-Offset)
+           (get-byte (pixel-buffer Self) (+ Byte-Offset 1))
+           (get-byte (pixel-buffer Self) (+ Byte-Offset 2))
+           (get-byte (pixel-buffer Self) (+ Byte-Offset 3))))))))
 
 
 (defmethod SET-RGBA-COLOR-AT ((Self image-editor) Col Row Red Green Blue &optional (Alpha 255))
@@ -310,17 +323,17 @@
   ;; update texture
   (when (img-texture Self)
     (with-rgba-byte-vector &color (Red Green Blue Alpha)
-      (make-me-the-current-context Self)
-      (glBindTexture gl_texture_2d (img-texture Self))
-      (gltexsubimage2d gl_texture_2d 0 Col (- (img-height Self) Row 1) 1 1 gl_rgba gl_unsigned_byte &color)))
+      (with-glcontext Self
+        (glBindTexture GL_TEXTURE_2D (img-texture Self))
+        (glTexSubImage2D GL_TEXTURE_2D 0 Col (- (img-height Self) Row 1) 1 1 GL_RGBA GL_UNSIGNED_BYTE &color))))
   ;; update pixel buffer
   (when (pixel-buffer Self)
     (let ((Byte-Offset (image-byte-offset Self Col Row)))
-      (when (> Byte-Offset (#_getPtrSize (pixel-buffer Self))) (error "out of range"))
-      (%put-byte (pixel-buffer Self) Red Byte-Offset)
-      (%put-byte (pixel-buffer Self) Green (+ Byte-Offset 1))
-      (%put-byte (pixel-buffer Self) Blue (+ Byte-Offset 2))
-      (%put-byte (pixel-buffer Self) Alpha (+ Byte-Offset 3)))))
+      (when (> Byte-Offset (sizeof (pixel-buffer Self))) (error "out of range"))
+      (set-byte (pixel-buffer Self) Red Byte-Offset)
+      (set-byte (pixel-buffer Self) Green (+ Byte-Offset 1))
+      (set-byte (pixel-buffer Self) Blue (+ Byte-Offset 2))
+      (set-byte (pixel-buffer Self) Alpha (+ Byte-Offset 3)))))
 
 
 (defmethod GET-COLOR-AT ((Self image-editor) Col Row)
@@ -343,10 +356,10 @@
 (defmethod PEN-COLOR ((Self image-editor))
   "Returns the color currently being used to draw or fill."
   (values 
-   (%get-byte (pen-color-vector Self) 0)
-   (%get-byte (pen-color-vector Self) 1)
-   (%get-byte (pen-color-vector Self) 2)
-   (%get-byte (pen-color-vector Self) 3)))
+   (get-byte (pen-color-vector Self) 0)
+   (get-byte (pen-color-vector Self) 1)
+   (get-byte (pen-color-vector Self) 2)
+   (get-byte (pen-color-vector Self) 3)))
 
 
 (defmethod SET-PEN-COLOR ((Self image-editor) Red Green Blue &optional (Alpha 255))
@@ -358,26 +371,26 @@
 (defmethod BG-COLOR ((Self image-editor))
   "Returns the color currently used to erase."
   (values
-   (%get-byte (bg-color-vector Self) 0)
-   (%get-byte (bg-color-vector Self) 1)
-   (%get-byte (bg-color-vector Self) 2)
-   (%get-byte (bg-color-vector Self) 3)))
+   (get-byte (bg-color-vector Self) 0)
+   (get-byte (bg-color-vector Self) 1)
+   (get-byte (bg-color-vector Self) 2)
+   (get-byte (bg-color-vector Self) 3)))
 
 
 (defmethod GET-BIGNUM-PEN-COLOR ((Self image-editor))
   (let ((Pen-Color (pen-color-vector Self)))
-    (+ (%get-byte pen-color 0)
-       (ash (%get-byte pen-color 1) 8)
-       (ash (%get-byte pen-color 2) 16)
-       (ash (%get-byte pen-color 3) 24))))
+    (+ (get-byte pen-color 0)
+       (ash (get-byte pen-color 1) 8)
+       (ash (get-byte pen-color 2) 16)
+       (ash (get-byte pen-color 3) 24))))
 
 
 (defmethod GET-BIGNUM-ERASER-COLOR ((Self image-editor))
   (let ((Eraser-Color (bg-color-vector Self)))
-    (+ (%get-byte eraser-color 0)
-       (ash (%get-byte eraser-color 1) 8)
-       (ash (%get-byte eraser-color 2) 16)
-       (ash (%get-byte eraser-color 3) 24))))
+    (+ (get-byte eraser-color 0)
+       (ash (get-byte eraser-color 1) 8)
+       (ash (get-byte eraser-color 2) 16)
+       (ash (get-byte eraser-color 3) 24))))
 
 
 (defmethod BIGNUM-TO-RGBA ((Self image-editor) Bignum-Color)
@@ -402,7 +415,7 @@
       (set-rgba-color-at Self Col Row Red Green Blue Alpha)))
   ;; mirroring
   (mirror-pixel Self Col Row)
-  (view-draw-contents Self))
+  (display Self))
 
 
 (defmethod ERASE-PIXEL ((Self image-editor) Col Row)
@@ -414,7 +427,7 @@
       (set-rgba-color-at Self Col Row Red Green Blue Alpha)))
   ;; mirroring
   (mirror-pixel Self Col Row)
-  (view-draw-contents Self))
+  (display Self))
 
 
 (defmethod FILL-SELECTED-PIXELS ((Self image-editor))
@@ -426,7 +439,7 @@
           (when (pixel-selected-p (selection-mask Self) Col Row)
             (set-rgba-color-at Self Col Row Red Green Blue Alpha)
             (mirror-pixel Self Col Row)))))
-    (view-draw-contents Self)))
+    (display Self)))
 
 
 (defmethod ERASE-SELECTED-PIXELS ((Self image-editor))
@@ -437,7 +450,7 @@
           (when (pixel-selected-p (selection-mask Self) Col Row)
             (set-rgba-color-at Self Col Row Red Green Blue Alpha)
             (mirror-pixel Self Col Row)))))
-    (view-draw-contents Self)))
+    (display Self)))
 
 
 (defmethod ERASE-ALL ((Self image-editor))
@@ -445,87 +458,87 @@
     (dotimes (Y (img-height Self))
       (multiple-value-bind (Red Green Blue Alpha) (bg-color Self)
         (set-rgba-color-at Self x y Red Green Blue Alpha))))
-  (view-draw-contents Self))
+  (display Self))
 
 
-(defmethod DISPLAY-BACKGROUND-TEXTURE ((Self image-editor))
-  "Displays the background texture image."
+(defmethod DRAW-BACKGROUND-TEXTURE ((Self image-editor))
+  "Draw the background texture image."
   (unless (bg-texture Self) (load-background-texture Self))
-  (glEnable gl_texture_2d)
-  (gltexenvi gl_texture_env gl_texture_env_mode gl_modulate)
-  (glBindTexture gl_texture_2d (bg-texture Self))
-  (glbegin gl_quads)
+  (glEnable GL_TEXTURE_2D)
+  (glTexEnvi GL_TEXTURE_ENV GL_TEXTURE_ENV_MODE GL_MODULATE)
+  (glBindTexture GL_TEXTURE_2D (bg-texture Self))
+  (glBegin GL_QUADS)
   (glnormal3f 0.0 0.0 -1.0)
   ;; default camera scales only when view is resized vertically
   ;; 8 gray + 8 white pixels
-  (let ((Height (float (/ (point-v (view-size Self)) 16) 0.0)))
-    (gltexcoord2f 0.0 Height) (glvertex2f -1.0 1.0)
-    (gltexcoord2f 0.0 0.0) (glvertex2f -1.0 -1.0)
-    (gltexcoord2f Height 0.0) (glvertex2f  1.0 -1.0)
-    (gltexcoord2f Height Height) (glvertex2f  1.0 1.0))
+  (let ((Height (float (/ (height Self) 16) 0.0)))
+    (glTexCoord2f 0.0 Height) (glVertex2f -1.0 1.0)
+    (glTexCoord2f 0.0 0.0) (glVertex2f -1.0 -1.0)
+    (glTexCoord2f Height 0.0) (glVertex2f  1.0 -1.0)
+    (glTexCoord2f Height Height) (glVertex2f  1.0 1.0))
   (glEnd))
 
 
-(defmethod DISPLAY-TEXTURE-IMAGE ((Self image-editor))
-  "Displays the texture image."
+(defmethod DRAW-TEXTURE-IMAGE ((Self image-editor))
+  "Draw the texture image."
   (when (img-texture Self)
-    (glEnable gl_texture_2d)
-    (gltexenvi gl_texture_env gl_texture_env_mode gl_modulate)
-    (glbindtexture gl_texture_2d (img-texture Self))
-    (glbegin gl_quads)
-    (glnormal3f 0.0 0.0 -1.0)
-    (gltexcoord2f 0.0 1.0) (glvertex2f -1.0 1.0)
-    (gltexcoord2f 0.0 0.0) (glvertex2f -1.0 -1.0)
-    (gltexcoord2f 1.0 0.0) (glvertex2f  1.0 -1.0)
-    (gltexcoord2f 1.0 1.0) (glvertex2f  1.0 1.0)
-    (glend)))
+    (glEnable GL_TEXTURE_2D)
+    (glTexEnvi GL_TEXTURE_ENV GL_TEXTURE_ENV_MODE GL_MODULATE)
+    (glBindTexture GL_TEXTURE_2D (img-texture Self))
+    (glBegin GL_QUADS)
+    (glNormal3f 0.0 0.0 -1.0)
+    (glTexCoord2f 0.0 1.0) (glVertex2f -1.0 1.0)
+    (glTexCoord2f 0.0 0.0) (glVertex2f -1.0 -1.0)
+    (glTexCoord2f 1.0 0.0) (glVertex2f  1.0 -1.0)
+    (glTexCoord2f 1.0 1.0) (glVertex2f  1.0 1.0)
+    (glEnd)))
 
 
-(defmethod DISPLAY-GUIDE-LINES ((Self image-editor))
-  (glDisable gl_line_stipple)
-  (if (is-grid-on Self) (display-grid Self))
-  (if (is-horizontal-line-on Self) (display-horizontal-guide-line Self))
-  (if (is-vertical-line-on Self)   (display-vertical-guide-line Self))
-  (glEnable gl_line_stipple))
-  
-  
-(defmethod DISPLAY-GRID ((Self image-editor))
-  (glBegin gl_lines)
-  (glcolor3f 0.5 0.5 0.5)
+(defmethod DRAW-HORIZONTAL-GUIDE-LINE ((Self image-editor))
+  (glLineWidth 2.0)
+  (glBegin GL_LINES)
+  (glColor3f 0.15 0.65 1.0)
+  (glVertex2f -1.0 0.0)
+  (glVertex2f  1.0 0.0)
+  (glEnd)
+  (glLineWidth 1.0))
+
+
+(defmethod DRAW-VERTICAL-GUIDE-LINE ((Self image-editor))
+  (glLineWidth 2.0)
+  (glBegin GL_LINES)
+  (glColor3f 0.15 0.65 1.0)
+  (glVertex2f 0.0 -1.0)
+  (glVertex2f 0.0  1.0)
+  (glEnd)
+  (glLineWidth 1.0))
+
+
+(defmethod DRAW-GRID ((Self image-editor))
+  (glBegin GL_LINES)
+  (glColor3f 0.5 0.5 0.5)
   (let ((Grid-Spacing (/ 2.0 (img-width Self))))
     (dotimes (I (/ (img-width Self) 2))
       (let ((Grid-Position (* i Grid-Spacing)))
-        (glvertex2f -1.0 Grid-Position)
-        (glvertex2f  1.0 Grid-Position)
-        (glvertex2f  Grid-Position -1.0)
-        (glvertex2f  Grid-Position  1.0)
+        (glVertex2f -1.0 Grid-Position)
+        (glVertex2f  1.0 Grid-Position)
+        (glVertex2f  Grid-Position -1.0)
+        (glVertex2f  Grid-Position  1.0)
         (setf Grid-Position (* -1.0 Grid-Position))
-        (glvertex2f -1.0 Grid-Position)
-        (glvertex2f  1.0 Grid-Position)
-        (glvertex2f  Grid-Position -1.0)
-        (glvertex2f  Grid-Position  1.0))))
+        (glVertex2f -1.0 Grid-Position)
+        (glVertex2f  1.0 Grid-Position)
+        (glVertex2f  Grid-Position -1.0)
+        (glVertex2f  Grid-Position  1.0))))
   (glEnd))
 
 
-(defmethod DISPLAY-HORIZONTAL-GUIDE-LINE ((Self image-editor))
-  (gllinewidth 2.0)
-  (glBegin gl_lines)
-  (glcolor3f 0.15 0.65 1.0)
-  (glvertex2f -1.0 0.0)
-  (glvertex2f  1.0 0.0)
-  (glEnd)
-  (gllinewidth 1.0))
-
-
-(defmethod DISPLAY-VERTICAL-GUIDE-LINE ((Self image-editor))
-  (gllinewidth 2.0)
-  (glBegin gl_lines)
-  (glcolor3f 0.15 0.65 1.0)
-  (glvertex2f 0.0 -1.0)
-  (glvertex2f 0.0  1.0)
-  (glEnd)
-  (gllinewidth 1.0))
-
+(defmethod DRAW-GUIDE-LINES ((Self image-editor))
+  (glDisable GL_LINE_STIPPLE)
+  (if (is-grid-on Self) (draw-grid Self))
+  (if (is-horizontal-line-on Self) (draw-horizontal-guide-line Self))
+  (if (is-vertical-line-on Self)   (draw-vertical-guide-line Self))
+  (glEnable GL_LINE_STIPPLE))
+  
 
 (defmethod IMAGE-CHANGED-EVENT ((Sefl image-editor) &optional Column1 Row1 Column2 Row2)
   (declare (ignore Row1 Column1 Row2 Column2))
@@ -539,7 +552,7 @@
 
 (defmethod TOGGLE-GRID ((Self image-editor) Is-Visible)
   (setf (is-grid-on Self) Is-Visible)
-  (view-draw-contents Self))
+  (display Self))
 
 
 (defmethod TOGGLE-MIRROR-LINES ((Self image-editor) Horizontal-Is-Visible Vertical-Is-Visible)
@@ -549,30 +562,21 @@
       (mirror-image-top-to-bottom Self))
   (if Vertical-Is-visible
       (mirror-image-left-to-right Self))
-  (view-draw-contents Self))
+  (display Self))
 
 
 (defmethod MIRROR-IMAGE-LEFT-TO-RIGHT ((Self image-editor))
   (dotimes (X (/ (img-width Self) 2))
     (dotimes (Y (img-height Self))
       (set-color-at Self (- (img-width Self) (+ X 1)) Y (get-color-at Self X Y))))
-  (view-draw-contents Self))
+  (display Self))
 
 
 (defmethod MIRROR-IMAGE-TOP-TO-BOTTOM ((Self image-editor))
   (dotimes (X (img-width Self))
     (dotimes (Y (/ (img-height Self) 2))
       (set-color-at Self X (- (img-height Self) (+ Y 1)) (get-color-at Self X Y))))
-  (view-draw-contents Self))
-
-
-(defmethod MIRROR-PIXEL ((Self image-editor) Col Row)
-  (let ((Horizontal-Mirror (is-horizontal-line-on Self))
-        (Vertical-Mirror (is-vertical-line-on   Self)))
-    (if horizontal-mirror (mirror-pixel-horizontally Self Col Row))
-    (if vertical-mirror   (mirror-pixel-vertically Self Col Row))
-    (if (and horizontal-mirror vertical-mirror)
-        (mirror-pixel-diagonally Self Col Row))))
+  (display Self))
 
 
 (defmethod MIRROR-PIXEL-VERTICALLY ((Self image-editor) Col Row)
@@ -589,6 +593,15 @@
   (multiple-value-bind (r g b a) (get-rgba-color-at Self Col Row)
     (set-rgba-color-at Self (- (- (img-width Self) 1) Col) (- (- (img-height Self) 1) Row) r g b a)))
 
+
+(defmethod MIRROR-PIXEL ((Self image-editor) Col Row)
+  (let ((Horizontal-Mirror (is-horizontal-line-on Self))
+        (Vertical-Mirror (is-vertical-line-on   Self)))
+    (if horizontal-mirror (mirror-pixel-horizontally Self Col Row))
+    (if vertical-mirror   (mirror-pixel-vertically Self Col Row))
+    (if (and horizontal-mirror vertical-mirror)
+        (mirror-pixel-diagonally Self Col Row))))
+
 ;; Mirroring selections
 (defmethod MIRROR-RECT-OR-ELLIPSE-SELECTION-IN-PROGRESS ((Self image-editor) Left Top Right Bottom Shape-Function)
   (let ((Mirror-Right  (- (img-width Self) Left))
@@ -603,25 +616,6 @@
         (funcall shape-function Self Mirror-Left Top Mirror-Right Bottom))
     (if (and Horizontal-Mirror Vertical-Mirror)
         (funcall shape-function Self Mirror-Left Mirror-Top Mirror-Right Mirror-Bottom))))
-
-
-(defmethod MIRROR-POLYGON-SELECTION-IN-PROGRESS ((Self image-editor) Vertices) 
-  (let ((Horizontal-Mirror (is-horizontal-line-on Self))
-        (Vertical-Mirror (is-vertical-line-on   Self))
-        (Return-Vertices Vertices))
-    (if Horizontal-Mirror
-        (setf Return-Vertices 
-          (append Return-Vertices 
-                  (mirror-polygon-selection-horizontally Self Vertices))))
-    (if Vertical-Mirror
-        (setf Return-Vertices 
-          (append Return-Vertices 
-                  (mirror-polygon-selection-vertically Self Vertices))))
-    (if (and Horizontal-Mirror Vertical-Mirror)
-        (setf Return-Vertices 
-          (append Return-Vertices 
-                  (mirror-polygon-selection-diagonally Self Vertices))))
-    (return-from mirror-polygon-selection-in-progress Return-Vertices)))
 
 
 (defmethod MIRROR-POLYGON-SELECTION-HORIZONTALLY ((Self image-editor) Vertices)
@@ -643,14 +637,34 @@
       (setf (car V) (- Width (car V)))
       (setf (car (cdr V)) (- Height (car (cdr V)))))))
 
+
+(defmethod MIRROR-POLYGON-SELECTION-IN-PROGRESS ((Self image-editor) Vertices) 
+  (let ((Horizontal-Mirror (is-horizontal-line-on Self))
+        (Vertical-Mirror (is-vertical-line-on   Self))
+        (Return-Vertices Vertices))
+    (if Horizontal-Mirror
+        (setf Return-Vertices 
+          (append Return-Vertices 
+                  (mirror-polygon-selection-horizontally Self Vertices))))
+    (if Vertical-Mirror
+        (setf Return-Vertices 
+          (append Return-Vertices 
+                  (mirror-polygon-selection-vertically Self Vertices))))
+    (if (and Horizontal-Mirror Vertical-Mirror)
+        (setf Return-Vertices 
+          (append Return-Vertices 
+                  (mirror-polygon-selection-diagonally Self Vertices))))
+    (return-from mirror-polygon-selection-in-progress Return-Vertices)))
+
+
 ;_______________________________
 ; Selections                    |
 ;_______________________________/
 
-(defmethod SCREEN->PIXEL-COORD ((Self image-editor) Point)
+(defmethod SCREEN->PIXEL-COORD ((Self image-editor) x y)
   "Converts a point in screen coordinate into a pixel coordinate."
-  (let ((Col (* (img-width Self) (/ (point-h Point) (point-h (view-size Self)))))
-        (Row (* (img-height Self) (/ (point-v Point) (point-v (view-size Self))))))
+  (let ((Col (* (img-width Self) (/ x (width Self))))
+        (Row (* (img-height Self) (/ y (height Self)))))
     (values (floor Col) (floor Row))))
 
 
@@ -660,47 +674,49 @@
    (+ -1.0 (* (/ 2.0 (img-width Self)) Col))
    (- 1.0 (* (/ 2.0 (img-height Self)) Row))))
 
-(defmethod DISPLAY-SELECTION ((Self image-editor))
-  "Displays the selection with marching ants effect."
-  (flet ((display-selection-outline ()
-                                    (dolist (Cluster (selection-outline Self))
-                                      (glBegin gl_line_loop)
-                                      (dolist (Segment Cluster)
-                                        (glVertex2f (x1 Segment) (y1 Segment)))
-                                      (glEnd))))
-    (glLogicOp gl_copy)
-    (glLineStipple 1 (stipple Self))
-    (glcolor3f 0.0 0.0 0.0)
-    (display-selection-outline)
-    (glLineStipple 1 (logand #xFFFF (lognot (stipple Self))))
-    (glcolor3f 1.0 1.0 1.0)
-    (display-selection-outline)))
 
-(defmethod DISPLAY-RECT-SELECTION-FEEDBACK ((Self image-editor) X1 Y1 X2 Y2)
+(defmethod DRAW-SELECTION ((Self image-editor))
+  "Displays the selection with marching ants effect."
+  (flet ((draw-selection-outline ()
+           (dolist (Cluster (selection-outline Self))
+             (glBegin GL_LINE_LOOP)
+             (dolist (Segment Cluster)
+               (glVertex2f (x1 Segment) (y1 Segment)))
+             (glEnd))))
+    (glLogicOp GL_COPY)
+    (glLineStipple 1 (stipple Self))
+    (glColor3f 0.0 0.0 0.0)
+    (draw-selection-outline)
+    (glLineStipple 1 (logand #xFFFF (lognot (stipple Self))))
+    (glColor3f 1.0 1.0 1.0)
+    (draw-selection-outline)))
+
+
+(defmethod DRAW-RECT-SELECTION-FEEDBACK ((Self image-editor) X1 Y1 X2 Y2)
   "Displays visual feedback for a rectangular selection in progress."
   (multiple-value-bind (Xw1 yw1) (pixel->world-coord Self X1 Y1)
     (multiple-value-bind (Xw2 Yw2) (pixel->world-coord Self X2 Y2)
-      (glEnable gl_line_stipple)
-      (glEnable gl_color_logic_op)
-      (glLogicOp gl_xor)
+      (glEnable GL_LINE_STIPPLE)
+      (glEnable GL_COLOR_LOGIC_OP)
+      (glLogicOp GL_XOR)
       (glLineStipple 1 (stipple Self))
-      (glBegin gl_line_loop)
+      (glBegin GL_LINE_LOOP)
       (glcolor3f 1.0 1.0 1.0)
-      (glvertex2f xw1 yw1)
-      (glvertex2f xw1 yw2)
-      (glvertex2f xw2 yw2)
-      (glvertex2f xw2 yw1)
+      (glVertex2f xw1 yw1)
+      (glVertex2f xw1 yw2)
+      (glVertex2f xw2 yw2)
+      (glVertex2f xw2 yw1)
       (glEnd)
-      (glDisable gl_color_logic_op))))
+      (glDisable GL_COLOR_LOGIC_OP))))
 
 
-(defmethod DISPLAY-ELLIPSE-SELECTION-FEEDBACK ((Self image-editor) X1 Y1 X2 Y2)
+(defmethod DRAW-ELLIPSE-SELECTION-FEEDBACK ((Self image-editor) X1 Y1 X2 Y2)
   "Displays visual feedback for an elliptical selection in progress."
   (multiple-value-bind (Xw1 yw1) (pixel->world-coord Self X1 Y1)
     (multiple-value-bind (Xw2 Yw2) (pixel->world-coord Self X2 Y2)
-      (glEnable gl_line_stipple)
-      (glEnable gl_color_logic_op)
-      (glLogicOp gl_xor)
+      (glEnable GL_LINE_STIPPLE)
+      (glEnable GL_COLOR_LOGIC_OP)
+      (glLogicOp GL_XOR)
       (glLineStipple 1 (stipple Self))
       ;; draw a polygon with many segments to approximate an ellipse
       (let* ((Segments 50)
@@ -711,34 +727,35 @@
              (Dangle (float (/ (* 2 pi) Segments) 0s0))
              (Angle 0.0))
         ;; not very efficient but we only need one
-        (glBegin gl_line_loop)
+        (glBegin GL_LINE_LOOP)
         (glVertex2f (+ x0 rx) y0)
         (dotimes (I Segments)
           (glVertex2f (+ x0 (* (cos Angle) Rx)) (+ y0 (* (sin Angle) Ry)))
           (incf Angle dAngle))
         (glEnd)
-        (glDisable gl_color_logic_op)))))
+        (glDisable GL_COLOR_LOGIC_OP)))))
 
 
-(defmethod DISPLAY-POLYGON-SELECTION-FEEDBACK ((Self image-editor) Vertices)
+(defmethod DRAW-POLYGON-SELECTION-FEEDBACK ((Self image-editor) Vertices)
   "Displays visual feedback for a polygonal selection in progress."
-  (glEnable gl_line_stipple)
-  (glEnable gl_color_logic_op)
-  (glLogicOp gl_xor)
+  (glEnable GL_LINE_STIPPLE)
+  (glEnable GL_COLOR_LOGIC_OP)
+  (glLogicOp GL_XOR)
   (glLineStipple 1 (stipple Self))
-  (glBegin gl_line_strip)
+  (glBegin GL_LINE_STRIP)
   (glcolor3f 1.0 1.0 1.0)
   (dolist (V Vertices)
     (multiple-value-bind (vx vy) (pixel->world-coord Self (first v) (second v))
-      (glvertex2f vx vy)))
+      (glVertex2f vx vy)))
   (multiple-value-bind (vx vy) (multiple-value-call #'pixel->world-coord Self 
+;; MUST FIX: NO mouse polling!!
                                  (screen->pixel-coord Self (view-mouse-position Self)))
-    (glvertex2f vx vy))
+    (glVertex2f vx vy))
   (glEnd)
-  (glDisable gl_color_logic_op))
+  (glDisable GL_COLOR_LOGIC_OP))
 
 
-(defmethod DISPLAY-SELECTION-IN-PROGRESS-FEEDBACK ((Self image-editor))
+(defmethod DRAW-SELECTION-IN-PROGRESS-FEEDBACK ((Self image-editor))
   "Displays visual feedback for a selection currently in progress if there is one."
   (when (selection-in-progress Self)
     (case (first (selection-in-progress Self))
@@ -747,30 +764,30 @@
              (Top    (third (selection-in-progress Self)))
              (Right  (fourth (selection-in-progress Self)))
              (Bottom (fifth (selection-in-progress Self))))
-         (display-rect-selection-feedback Self Left Top Right Bottom)
-         (mirror-rect-or-ellipse-selection-in-progress Self Left Top Right Bottom #'display-rect-selection-feedback)))
+         (draw-rect-selection-feedback Self Left Top Right Bottom)
+         (mirror-rect-or-ellipse-selection-in-progress Self Left Top Right Bottom #'draw-rect-selection-feedback)))
       (:ellipse 
        (let ((Left   (second (selection-in-progress Self)))
              (Top    (third (selection-in-progress Self)))
              (Right  (fourth (selection-in-progress Self)))
              (Bottom (fifth (selection-in-progress Self))))
-         (display-ellipse-selection-feedback Self Left Top Right Bottom)
-         (mirror-rect-or-ellipse-selection-in-progress Self Left Top Right Bottom #'display-ellipse-selection-feedback)))
+         (draw-ellipse-selection-feedback Self Left Top Right Bottom)
+         (mirror-rect-or-ellipse-selection-in-progress Self Left Top Right Bottom #'draw-ellipse-selection-feedback)))
       ;; Do not have the mirroring working for this yet
-      (:polygon (display-polygon-selection-feedback
+      (:polygon (draw-polygon-selection-feedback
                  Self (rest (selection-in-progress Self)))))))
 
 
-(defmethod DISPLAY ((Self image-editor))
+(defmethod DRAW ((Self image-editor))
   "Called when the image-editor needs to display its contents.
    Specialized to draw texture image, selection, and feedback for selection in progress."
-  (glClear (logior gl_color_buffer_bit gl_depth_buffer_bit))
-  (display-background-texture Self)
-  (display-texture-image Self)
-  (glDisable gl_texture_2d)
-  (display-guide-lines Self)
-  (display-selection Self)
-  (display-selection-in-progress-feedback Self))
+  (draw-background-texture Self)
+  (draw-texture-image Self)
+  ;;;(glDisable GL_TEXTURE_2D)
+  ;;;(draw-guide-lines Self)
+  ;;;(draw-selection Self)
+  ;;;(draw-selection-in-progress-feedback Self)
+  )
 
 
 (defmethod RECOMPUTE-SELECTION-OUTLINE ((Self image-editor))
@@ -802,13 +819,20 @@
     (group-line-segments (reverse Lines))))
 
 
+(defmethod CLEAR-SELECTION ((Self image-editor))
+  "Clears all selection."
+  (unselect-all (selection-mask Self))
+  (setf (selection-outline Self) nil)
+  (display Self))
+
+
 (defmethod UPDATE-SELECTION ((Self image-editor) New-Selection)
   "Updates the selection mask and recomputes the selection outline."
   (if New-Selection
       (destructuring-bind (Shape &rest Shape-Specs) New-Selection
         ;; update selection-mask
-        (if (option/alt-key-down-p)
-            (if (shift-key-down-p)
+        (if (alt-key-p)
+            (if (shift-key-p)
                 (apply #'intersect-selection (selection-mask Self) Shape Shape-Specs)
               (apply #'subtract-selection (selection-mask Self) Shape Shape-Specs))
           (apply #'add-selection (selection-mask Self) Shape Shape-Specs))
@@ -821,21 +845,14 @@
   "Selects the whole image."
   (select-all (selection-mask Self))
   (setf (selection-outline Self) (recompute-selection-outline Self))
-  (view-draw-contents Self))
-
-
-(defmethod CLEAR-SELECTION ((Self image-editor))
-  "Clears all selection."
-  (unselect-all (selection-mask Self))
-  (setf (selection-outline Self) nil)
-  (view-draw-contents Self))
+  (display Self))
 
 
 (defmethod INVERT-SELECTION ((Self image-editor))
   "Inverts the current selection."
   (invert-selection (selection-mask Self))
   (setf (selection-outline Self) (recompute-selection-outline Self))
-  (view-draw-contents Self))
+  (display Self))
 
 
 (defmethod ANIMATE ((Self image-editor) Time)
@@ -853,7 +870,7 @@
   (dispose-background-texture Self)
   (dispose-vector (pen-color-vector Self))
   (dispose-vector (bg-color-vector Self))
-  (when (pixel-buffer Self) (#_DisposePtr (pixel-buffer Self))))
+  (when (pixel-buffer Self) (dispose-vector (pixel-buffer Self))))
 
 ;_______________________________
 ; Tools                         |
@@ -933,7 +950,7 @@
           ;; Only when exiting this function for the last time (when the first iteration is done)
           ;; update the scene
           (when First-Iteration
-            (view-draw-contents Self)))))))
+            (display Self)))))))
 
 
 (defmethod MAGIC-WAND ((Self image-editor) Col Row  
@@ -1017,24 +1034,37 @@
   (return-from absolute-color-difference-ignore-alpha nil))
 
 ;_______________________________
-; Click Event Handler           |
+; Mouse  Handlers                |
 ;_______________________________/
 
-(defmethod VIEW-CLICK-EVENT-HANDLER ((Self image-editor) Point)
+(defmethod VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER ((Self image-editor) x y)
   "Called when the image-editor is clicked. Specialized to implement mouse handling for 
    the currently selected tool."
-  (declare (ignore Point))
-  (case (selected-tool (view-window Self))
+  (case (selected-tool (window Self))
     ;; Draw Tool
     (draw
-     (loop
-       (unless (mouse-down-p) 
-         (image-changed-event Self)
-         (return))
-       (when (img-texture Self)
-         (multiple-value-bind (Col Row) (screen->pixel-coord Self (view-mouse-position Self))
-           (draw-pixel Self Col Row)))))
-    
+     (when (img-texture Self)
+       (multiple-value-bind (Col Row) (screen->pixel-coord Self x y)
+         (draw-pixel Self Col Row))))
+
+
+  ))
+
+
+
+(defmethod VIEW-LEFT-MOUSE-DRAGGED-EVENT-HANDLER ((Self image-editor) X Y DX DY)
+  (case (selected-tool (window Self))
+    ;; Draw Tool
+    (draw
+     (when (img-texture Self)
+       (multiple-value-bind (Col Row) (screen->pixel-coord Self x y)
+         (draw-pixel Self Col Row))))
+
+    ))
+
+
+#|
+
     ;; Erase Tool
     (erase
      (loop
@@ -1042,19 +1072,19 @@
          (image-changed-event Self)
          (return))
        (when (img-texture Self)
-         (multiple-value-bind (Col Row) (screen->pixel-coord Self (view-mouse-position Self))
+         (multiple-value-bind (Col Row) (screen->pixel-coord Self x y)
            (erase-pixel Self Col Row)))))
     
     ;; Eye-Dropper
     (eye-dropper
      (when (img-texture Self)
-       (multiple-value-bind (Col Row) (screen->pixel-coord Self (view-mouse-position Self))
+       (multiple-value-bind (Col Row) (screen->pixel-coord Self x y)
          (eye-dropper Self Col Row))))
     
     ;; Paint Bucket
     (paint-bucket
      (when (img-texture Self)
-       (multiple-value-bind (Col Row) (screen->pixel-coord Self (view-mouse-position Self))
+       (multiple-value-bind (Col Row) (screen->pixel-coord Self x y)
          (multiple-value-bind (New-Red New-Green New-Blue New-Alpha) (pen-color Self)
            ;; The is without Tolerance
            ;;;;(flood-fill Self Col Row New-Red New-Green New-Blue New-Alpha)))))
@@ -1065,7 +1095,7 @@
     
     ;; Select-Rect Tool
     (select-rect
-     (multiple-value-bind (x0 y0) (screen->pixel-coord Self (view-mouse-position Self))
+     (multiple-value-bind (x0 y0) (screen->pixel-coord Self x y)
        (let* ((Pause (truncate (* 0.06 internal-time-units-per-second)))
               (Time-To-Animate (+ (get-internal-real-time) Pause))
               (Xold x0)
@@ -1150,32 +1180,32 @@
            ;;;;(magic-wand Self Col Row)))
            ;; For magic wand with tolerance
            (magic-wand Self Col Row :tolerance (tolerance Self) :tolerance-function #'absolute-color-difference-ignore-alpha)))
-       (view-draw-contents Self)))))
+       (display Self)))))
+
+
+|#
 
 ;**************************************
 ;* Image-Editor-Window                *
 ;**************************************
 
-(defclass IMAGE-EDITOR-WINDOW (document-window)
-  ()
-  (:default-initargs :view-size #@(400 436) :toolbar-dialog-items (image-editor-toolbar)
-    :window-title "Image Editor"
-    :opengl-view (make-instance 'image-editor)
+(defclass IMAGE-EDITOR-WINDOW (application-window)
+  ((selected-tool :accessor selected-tool :initform nil :type symbol :initarg :selected-tool :documentation "the name of the currently selected tool")
+   (image-editor-view :accessor image-editor-view :initform nil :initarg :image-editor-view :documentation "the image editor view"))
+  (:default-initargs 
     :selected-tool 'draw)
   (:documentation "Window containing an image-editor view."))
 
 
 (defmethod INITIALIZE-INSTANCE :after ((Self image-editor-window) 
                                        &key File (Image-Width 32) (Image-Height 32) On-Image-Saved)
+  #|
   (if (and File (probe-file File))
       (load-image (image-editor-view Self) File)
     (new-image (image-editor-view Self) Image-Width Image-Height))
   (setf (on-image-saved (image-editor-view Self)) On-Image-Saved))
-
-
-(defmethod IMAGE-EDITOR-VIEW ((Self image-editor-window))
-  "Returns the image-editor view."
-  (opengl-view Self))
+  |#
+  )
 
 
 (defmethod LOAD-IMAGE-FROM-FILE ((Self image-editor-window) Pathname)
@@ -1307,7 +1337,7 @@
        ;; Drawing Tools
        (setq Selected
              (make-instance 'bevel-image-button-dialog-item
-               :view-size #@(22 22)
+               ;; :view-size #@(22 22)
                :view-nick-name 'draw
                :on-image-pathname "ccl:resources;buttons;draw-button.png"
                :when-pressed-fn (tool-button-action 'draw)
@@ -1315,14 +1345,14 @@
                :turned-on-p t))
        -3
        (make-instance 'bevel-image-button-dialog-item
-         :view-size #@(22 22)
+         ;; :view-size #@(22 22)
          :view-nick-name 'erase
          :on-image-pathname "ccl:resources;buttons;erase-button.png"
          :when-pressed-fn (tool-button-action 'erase)
          :help-spec "Erase Tool")      
        -3
        (make-instance 'bevel-image-button-dialog-item
-         :view-size #@(22 22)
+         ;; :view-size #@(22 22)
          :view-nick-name 'eye-dropper
          :on-image-pathname "ccl:resources;buttons;eye-dropper-button.png"
          :when-pressed-fn (tool-button-action 'eye-dropper)
@@ -1330,7 +1360,7 @@
          :turned-on-p nil)       
        -3
        (make-instance 'bevel-image-button-dialog-item
-         :view-size #@(22 22)
+         ;; :view-size #@(22 22)
          :view-nick-name 'paint-bucket
          :on-image-pathname "ccl:resources;buttons;paint-bucket-button.png"
          :when-pressed-fn (tool-button-action 'paint-bucket)
@@ -1338,7 +1368,7 @@
        -3
        ;; Selection Tools
        (make-instance 'image-choice-image-button-dialog-item
-         :view-size #@(22 22)
+         ;; :view-size #@(22 22)
          :choices '(("select-rect-button" select-rect) 
                     ("select-ellipse-button" select-ellipse)
                     ("select-polygon-button" select-polygon))
@@ -1350,7 +1380,7 @@
          :turned-on-p nil)
        -3
        (make-instance 'bevel-image-button-dialog-item
-         :view-size #@(22 22)
+         ;; :view-size #@(22 22)
          :view-nick-name 'magic-wand
          :on-image-pathname "ccl:resources;buttons;magic-wand-button.png"
          :when-pressed-fn (tool-button-action 'magic-wand)
@@ -1358,7 +1388,7 @@
        -3
        ;; Navigation Tools
        (make-instance 'image-choice-image-button-dialog-item
-         :view-size #@(22 22)
+        ;; :view-size #@(22 22)
          :choices '(("zoom-in-button" zoom-in) ("zoom-out-button" zoom-out))
          :when-pressed-fn #'select-tool-button
          :dialog-item-action #'feature-not-implemented-message
@@ -1366,13 +1396,13 @@
          :turned-on-p nil)
        -3
        (make-instance 'bevel-image-button-dialog-item
-         :view-size #@(22 22)
+         ;; :view-size #@(22 22)
          :on-image-pathname "ccl:resources;buttons;pan-button.png"
          :when-pressed-fn #'feature-not-implemented-message
          :help-spec "Pan Tool")
        20
        (make-instance 'color-swatch-dialog-item
-         :view-size #@(22 22)
+         ;; :view-size #@(22 22)
          :view-nick-name 'color-swatch
          :help-spec "Color Swatch"
          :on-color-changed #'(lambda (Item New-Color)
@@ -1383,7 +1413,7 @@
        ;Grid
        20
        (make-instance 'image-choice-image-button-dialog-item
-         :view-size #@(22 22)
+         ;; :view-size #@(22 22)
          :choices '(("no-grid-button" nil)
                     ("grid-button" t))
          ;:when-pressed-fn toggle the grid on or off
@@ -1395,7 +1425,7 @@
        ;Mirroring
        -3
        (make-instance 'image-choice-image-button-dialog-item
-         :view-size #@(22 22)
+         ;; :view-size #@(22 22)
          :choices '(("mirror-none-button" 0)
                     ("mirror-horizontally-button" 1) 
                     ("mirror-vertically-button" 2)
@@ -1415,6 +1445,38 @@
     
     
 #|
+
+
+(defmethod PICK-COLOR-ACTION ((w window) (Color-Well color-well))
+  (set-pen-color (view-named w "image editor") (get-red Color-Well) (get-green Color-Well) (get-blue Color-Well)))
+
+
+(defmethod DRAW-TOOL-ACTION ((W window) (Button image-button))
+  (setf (selected-tool W) 'draw))
+
+
+(defmethod ERASE-TOOL-ACTION ((W window) (Button image-button))
+  (setf (selected-tool W) 'erase))
+
+
+
+<image-editor-window margin="20" title="Image Editor">
+  <row align="stretch" valign="stretch">
+    <column width="30">
+     <image-button action="draw-tool-action" image="draw-button.png"/> 
+     <image-button action="erase-tool-action" image="erase-button.png"/> 
+     <spacer height="10"/>
+     <color-well action="pick-color-action" color="FF00FF"/>
+   </column>
+  <image-editor name="image editor" image="/Users/alex/working copies/XMLisp svn/trunk/XMLisp/resources/images/redlobster.png" flex="1" vflex="1"/>
+  </row>
+</image-editor-window>
+
+
+<image-editor-window margin="20" title="Image Editor">
+  <image-editor image="/Users/alex/Desktop/images.jpeg"/>
+</image-editor-window>
+
 
 (defparameter w (make-instance 'image-editor-window 
                   :window-show t
