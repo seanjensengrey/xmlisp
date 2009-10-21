@@ -780,12 +780,13 @@
   (#/setTitle: (native-view Self) (native-string Text)))
 
 
+#||
 (defmethod INITIALIZE-INSTANCE :after ((Self radio-button-control) &rest Args)
-  (declare (ignore Args)
-           (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
-             (let (
-                   (prototype (#/init (#/alloc ns:ns-button-cell))))
-               (#/initWithFrame:mode:prototype:numberOfRows:numberOfColumns: (Native-Control Self) Frame #$NSRadioModeMatrix prototype '4 '1)))))
+  (declare (ignore Args))
+  (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+    (let ((prototype (#/init (#/alloc ns:ns-button-cell))))
+      (#/initWithFrame:mode:prototype:numberOfRows:numberOfColumns: (Native-Control Self) Frame #$NSRadioModeMatrix prototype '4 '1))))
+||#
 
 
 (defmethod GET-SELECTED-ACTION ((Self radio-button-control))
