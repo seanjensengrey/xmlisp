@@ -484,13 +484,11 @@ after any of the window controls calls stop-modal close window and return value.
   (:documentation "LUI Control: when clicked will call the action method of its target, maintains a value"))
 
 
-(defmethod INVOKE-ACTION ((self control))
-  (funcall (action (lui-control Self)) (window (lui-control Self)) (target (lui-control Self))))
-
+(defgeneric INVOKE-ACTION (control)
+  (:documentation "invoke to main control action. Called via events or user"))
 
 (defgeneric VALUE (control)
   (:documentation "Return the control value"))
-
 
 (defgeneric DISABLE (control)
   (:documentation "Disable: control is faded out"))
@@ -508,7 +506,7 @@ after any of the window controls calls stop-modal close window and return value.
 ; default implementation            |
 ;__________________________________/
 
-(defmethod initialize-instance ((Self control) &rest Args)
+(defmethod INITIALIZE-INSTANCE ((Self control) &rest Args)
   (declare (ignore Args))
   (call-next-method)
   (unless (target Self) (setf (target Self) Self)) ;; make me default target
@@ -531,6 +529,11 @@ after any of the window controls calls stop-modal close window and return value.
 (defmethod MAKE-NATIVE-CONTROL ((Self control))
   ;; keep the view
   (native-view Self))
+
+
+(defmethod INVOKE-ACTION ((Self control))
+  (funcall (action Self) (window Self) (target Self)))
+
 
 ;****************************************************
 ; Control Library                                   *
