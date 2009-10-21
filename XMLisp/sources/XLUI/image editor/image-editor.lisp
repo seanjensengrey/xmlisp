@@ -1040,27 +1040,33 @@
 (defmethod VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER ((Self image-editor) x y)
   "Called when the image-editor is clicked. Specialized to implement mouse handling for 
    the currently selected tool."
+  (unless (img-texture Self) (return-from view-left-mouse-down-event-handler))
   (case (selected-tool (window Self))
     ;; Draw Tool
     (draw
-     (when (img-texture Self)
-       (multiple-value-bind (Col Row) (screen->pixel-coord Self x y)
-         (draw-pixel Self Col Row))))
-
+     (multiple-value-bind (Col Row) (screen->pixel-coord Self x y)
+       (draw-pixel Self Col Row)))
+    ;; Erase Tool
+    (erase
+     (multiple-value-bind (Col Row) (screen->pixel-coord Self x y)
+       (erase-pixel Self Col Row)))
 
   ))
 
 
 
 (defmethod VIEW-LEFT-MOUSE-DRAGGED-EVENT-HANDLER ((Self image-editor) X Y DX DY)
+  (declare (ignore DX DY))
   (case (selected-tool (window Self))
     ;; Draw Tool
     (draw
      (when (img-texture Self)
        (multiple-value-bind (Col Row) (screen->pixel-coord Self x y)
          (draw-pixel Self Col Row))))
-
-    ))
+    ;; Erase Tool
+    (erase
+     (multiple-value-bind (Col Row) (screen->pixel-coord Self x y)
+       (erase-pixel Self Col Row)))))
 
 
 #|
@@ -1448,7 +1454,7 @@
 
 
 (defmethod PICK-COLOR-ACTION ((w window) (Color-Well color-well))
-  (set-pen-color (view-named w "image editor") (get-red Color-Well) (get-green Color-Well) (get-blue Color-Well)))
+  (set-pen-color (view-named w "image editor") (get-red Color-Well) (get-green Color-Well) (get-blue Color-Well) (get-alpha Color-Well)))
 
 
 (defmethod DRAW-TOOL-ACTION ((W window) (Button image-button))
