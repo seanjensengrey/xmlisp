@@ -36,6 +36,7 @@
 ;*    1.0.12    : 08/16/07 AR: make-me-the-current-context -> delete-texture *
 ;*    2.0       : 08/21/09 AR: CCL                                           *
 ;* Abstract     : Simple OpenGL based image editor.                          *
+;* Todo: make pixel buffer on init                                           * 
 ;*                                                                           *
 ;*****************************************************************************
 
@@ -153,6 +154,8 @@
    (img-height :accessor img-height :initarg :img-height :initform 32 :documentation "image height in pixels")
    (img-depth :accessor img-depth :initform 32 :documentation "image depth")
    (bg-texture :accessor bg-texture :initform nil :documentation "background texture")
+   (canvas-height :accessor canvas-height :initform 1.0 :documentation "world coordinate")
+   (canvas-width :accessor canvas-width :initform 1.0 :documentation "world coordinate")
    (on-image-saved :accessor on-image-saved :initarg :on-image-saved :initform nil :documentation "this function will be called with the filename when the image is saved")
    (pen-color-vector :accessor pen-color-vector :initform (make-byte-vector 0 0 0 255) :documentation "current pen color used for drawing")
    (bg-color-vector :accessor bg-color-vector :initform (make-byte-vector 0 0 0 0) :documentation "current background color used for erasing")
@@ -210,7 +213,13 @@
   ;; Alpha
   (glEnable GL_BLEND)
   (glBlendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA)
-  (aim-camera (camera Self) :eye-z 1.7379))
+  ;; camera at center of canvas
+  (aim-camera 
+   (camera Self) 
+   :eye-x (* 0.5 (canvas-width Self)) :eye-y (* 0.5 (canvas-height Self)) 
+   :center-x (* 0.5 (canvas-width Self)) :center-y (* 0.5 (canvas-height Self))
+   :eye-z 0.86))
+
 
 
 (defmethod FINISHED-READING ((Self image-editor) Stream)
@@ -259,11 +268,16 @@
     ;;; replace with new user feedback? (with-cursor *Watch-Cursor*
     (multiple-value-bind (Name Width Height Depth)
                          (create-texture-from-file From-Pathname :mag-filter GL_NEAREST)
+      ;; image
       (setf (img-texture Self) Name)
       (setf (img-width Self) Width)
       (setf (img-height Self) Height)
       (setf (img-depth Self) Depth)
-      (setf (selection-mask Self) (make-instance 'selection-mask :width Width :height Height)))))
+      ;; mask
+      (setf (selection-mask Self) (make-instance 'selection-mask :width Width :height Height))
+      ;; canvas: normalize height to be 1.0 but adjust width
+      (setf (canvas-width Self) (* (/ 1.0 (img-height Self)) (img-width Self))))))
+
 ;;  (display Self))
 
 
@@ -304,18 +318,17 @@
   "Returns the color at the specified pixel location."
   ;; make pixel buffer if needed
   (unless (pixel-buffer Self)
-    (with-vector-of-size (&PixelBuffer (* (img-width Self) (img-height Self) (image-bytes-per-pixel Self)))
-      (setf (pixel-buffer Self) &PixelBuffer)
-      (with-glcontext Self
-        (glBindTexture GL_TEXTURE_2D (img-texture Self))
-        (glGetTexImage GL_TEXTURE_2D 0 GL_RGBA GL_UNSIGNED_BYTE (pixel-buffer Self))
-        ;; access pixel
-        (let ((Byte-Offset (image-byte-offset Self Col Row)))
-          (values
-           (get-byte (pixel-buffer Self) Byte-Offset)
-           (get-byte (pixel-buffer Self) (+ Byte-Offset 1))
-           (get-byte (pixel-buffer Self) (+ Byte-Offset 2))
-           (get-byte (pixel-buffer Self) (+ Byte-Offset 3))))))))
+    (setf (pixel-buffer Self) (make-vector-of-size (* (img-width Self) (img-height Self) (image-bytes-per-pixel Self))))
+    (with-glcontext Self
+      (glBindTexture GL_TEXTURE_2D (img-texture Self))
+      (glGetTexImage GL_TEXTURE_2D 0 GL_RGBA GL_UNSIGNED_BYTE (pixel-buffer Self))))
+  ;; access pixel
+  (let ((Byte-Offset (image-byte-offset Self Col Row)))
+    (values
+     (get-byte (pixel-buffer Self) Byte-Offset)
+     (get-byte (pixel-buffer Self) (+ Byte-Offset 1))
+     (get-byte (pixel-buffer Self) (+ Byte-Offset 2))
+     (get-byte (pixel-buffer Self) (+ Byte-Offset 3)))))
 
 
 (defmethod SET-RGBA-COLOR-AT ((Self image-editor) Col Row Red Green Blue &optional (Alpha 255))
@@ -325,7 +338,7 @@
     (with-rgba-byte-vector &color (Red Green Blue Alpha)
       (with-glcontext Self
         (glBindTexture GL_TEXTURE_2D (img-texture Self))
-        (glTexSubImage2D GL_TEXTURE_2D 0 Col (- (img-height Self) Row 1) 1 1 GL_RGBA GL_UNSIGNED_BYTE &color))))
+        (glTexSubImage2D GL_TEXTURE_2D 0 Col (- (img-height Self) Row 1) 1 1 GL_RGBA GL_UNSIGNED_BYTE &color)))) 
   ;; update pixel buffer
   (when (pixel-buffer Self)
     (let ((Byte-Offset (image-byte-offset Self Col Row)))
@@ -471,11 +484,12 @@
   (glnormal3f 0.0 0.0 -1.0)
   ;; default camera scales only when view is resized vertically
   ;; 8 gray + 8 white pixels
-  (let ((Height (float (/ (height Self) 16) 0.0)))
-    (glTexCoord2f 0.0 Height) (glVertex2f -1.0 1.0)
-    (glTexCoord2f 0.0 0.0) (glVertex2f -1.0 -1.0)
-    (glTexCoord2f Height 0.0) (glVertex2f  1.0 -1.0)
-    (glTexCoord2f Height Height) (glVertex2f  1.0 1.0))
+  (let ((Tdy (float (/ (height Self) 16) 0.0))
+        (Tdx (float (/ (height Self) (/ (* 16 (canvas-height Self)) (canvas-width Self))) 0.0)))
+    (glTexCoord2f 0.0 Tdy) (glVertex2f 0.0 (canvas-height Self))
+    (glTexCoord2f 0.0 0.0) (glVertex2f 0.0 0.0)
+    (glTexCoord2f Tdx 0.0) (glVertex2f  (canvas-width Self) 0.0)
+    (glTexCoord2f Tdx Tdy) (glVertex2f  (canvas-width Self) (canvas-height Self)))
   (glEnd))
 
 
@@ -487,10 +501,10 @@
     (glBindTexture GL_TEXTURE_2D (img-texture Self))
     (glBegin GL_QUADS)
     (glNormal3f 0.0 0.0 -1.0)
-    (glTexCoord2f 0.0 1.0) (glVertex2f -1.0 1.0)
-    (glTexCoord2f 0.0 0.0) (glVertex2f -1.0 -1.0)
-    (glTexCoord2f 1.0 0.0) (glVertex2f  1.0 -1.0)
-    (glTexCoord2f 1.0 1.0) (glVertex2f  1.0 1.0)
+    (glTexCoord2f 0.0 1.0) (glVertex2f 0.0 (canvas-height Self))
+    (glTexCoord2f 0.0 0.0) (glVertex2f 0.0 0.0)
+    (glTexCoord2f 1.0 0.0) (glVertex2f (canvas-width Self) 0.0)
+    (glTexCoord2f 1.0 1.0) (glVertex2f (canvas-width Self) (canvas-height Self))
     (glEnd)))
 
 
@@ -662,10 +676,14 @@
 ;_______________________________/
 
 (defmethod SCREEN->PIXEL-COORD ((Self image-editor) x y)
-  "Converts a point in screen coordinate into a pixel coordinate."
-  (let ((Col (* (img-width Self) (/ x (width Self))))
-        (Row (* (img-height Self) (/ y (height Self)))))
-    (values (floor Col) (floor Row))))
+  "Converts a point in screen coordinate into a pixel coordinate.
+   If there is no valid pixel coordinate, i.e., outside of image then return nil nil"
+  (let ((Col (floor (/ (* (- x (truncate (- (width Self) (* (/ (height Self) (canvas-height Self)) (canvas-width Self))) 2))
+                          (img-width Self)) (* (/ (height Self) (canvas-height Self)) (canvas-width Self)))))
+        (Row (floor (* (img-height Self) (/ y (height Self))))))
+    (values
+     (when (<= 0 Col (1- (img-width Self))) Col)
+     (when (<= 0 Row (1- (img-height Self))) Row))))
 
 
 (defmethod PIXEL->WORLD-COORD ((Self image-editor) Col Row)
@@ -879,9 +897,7 @@
 (defmethod EYE-DROPPER ((Self image-editor) Col Row)
   (when (and (img-texture Self) (col-row-within-bounds-p Self Col Row))
     (multiple-value-bind (Red Green Blue Alpha) (get-rgba-color-at Self Col Row)
-      (set-pen-color Self Red Green Blue Alpha)
-      (set-selected-color (view-named 'color-swatch (view-window Self))
-                          (make-color (ash Red 8) (ash Green 8) (ash Blue 8))))))
+      (set-pen-color Self Red Green Blue Alpha))))
 
 
 (defmethod FLOOD-FILL ((Self image-editor) Col Row 
@@ -1037,36 +1053,41 @@
 ; Mouse  Handlers                |
 ;_______________________________/
 
+
+(defmethod CLICK-OR-DRAG-PIXEL ((Self image-editor) Col Row)
+  (case (selected-tool (window Self))
+    (draw 
+     (draw-pixel Self Col Row))
+    (erase
+     (erase-pixel Self Col Row))
+    (eye-dropper
+     (eye-dropper Self Col Row)
+     (multiple-value-bind (Red Green Blue Alpha) (get-rgba-color-at Self Col Row)
+       (set-color (view-named (window Self) "color well") 
+                  :red (/ Red 255.0) :green (/ Green 255.0) :blue (/ Blue 255.0) :alpha (/ Alpha 255.0))))
+    (paint-bucket 
+     (multiple-value-bind (New-Red New-Green New-Blue New-Alpha) (pen-color Self)
+       (flood-fill Self Col Row New-Red New-Green New-Blue New-Alpha
+                   :tolerance (tolerance Self) :tolerance-function #'absolute-color-difference-ignore-alpha)))))
+
+
+
 (defmethod VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER ((Self image-editor) x y)
   "Called when the image-editor is clicked. Specialized to implement mouse handling for 
    the currently selected tool."
   (unless (img-texture Self) (return-from view-left-mouse-down-event-handler))
-  (case (selected-tool (window Self))
-    ;; Draw Tool
-    (draw
-     (multiple-value-bind (Col Row) (screen->pixel-coord Self x y)
-       (draw-pixel Self Col Row)))
-    ;; Erase Tool
-    (erase
-     (multiple-value-bind (Col Row) (screen->pixel-coord Self x y)
-       (erase-pixel Self Col Row)))
-
-  ))
+  (multiple-value-bind (Col Row) (screen->pixel-coord Self x y)
+    (when (and Row Col)
+      (click-or-drag-pixel Self Col Row))))
 
 
 
 (defmethod VIEW-LEFT-MOUSE-DRAGGED-EVENT-HANDLER ((Self image-editor) X Y DX DY)
   (declare (ignore DX DY))
-  (case (selected-tool (window Self))
-    ;; Draw Tool
-    (draw
-     (when (img-texture Self)
-       (multiple-value-bind (Col Row) (screen->pixel-coord Self x y)
-         (draw-pixel Self Col Row))))
-    ;; Erase Tool
-    (erase
-     (multiple-value-bind (Col Row) (screen->pixel-coord Self x y)
-       (erase-pixel Self Col Row)))))
+  (unless (img-texture Self) (return-from view-left-mouse-dragged-event-handler))
+  (multiple-value-bind (Col Row) (screen->pixel-coord Self x y)
+    (when (and Row Col)
+      (click-or-drag-pixel Self Col Row))))
 
 
 #|
@@ -1465,22 +1486,52 @@
   (setf (selected-tool W) 'erase))
 
 
+(defmethod EYE-DROPPER-TOOL-ACTION ((W window) (Button image-button))
+  (setf (selected-tool W) 'eye-dropper))
+
+
+(defmethod PAINT-BUCKET-TOOL-ACTION ((W window) (Button image-button))
+  (setf (selected-tool W) 'paint-bucket))
+
+
+
+(defparameter *ie*
+  
+<image-editor-window margin="20" title="Image Editor">
+  <row align="stretch" valign="stretch">
+    <column width="25">
+     <image-button name="draw button" action="draw-tool-action" image="draw-button.png"/> 
+     <image-button name="erase button" action="erase-tool-action" image="erase-button.png"/> 
+     <image-button name="eye dropper button" action="eye-dropper-tool-action" image="eye-dropper-button.png"/> 
+     <image-button name="paint bucket button" action="paint-bucket-tool-action" image="paint-bucket-button.png"/> 
+     <spacer height="10"/>
+     <color-well name="color well" action="pick-color-action" color="000000"/>
+   </column>
+  <image-editor name="image editor" image="/Users/alex/working copies/XMLisp svn/trunk/XMLisp/resources/images/redlobster.png" flex="1" vflex="1"/>
+  </row>
+</image-editor-window>  )
+
+(inspect (view-named *ie* "image editor"))
+
+(sizeof (pixel-buffer (view-named *ie* "image editor")))
+
 
 <image-editor-window margin="20" title="Image Editor">
   <row align="stretch" valign="stretch">
     <column width="30">
-     <image-button action="draw-tool-action" image="draw-button.png"/> 
-     <image-button action="erase-tool-action" image="erase-button.png"/> 
+     <image-button name="draw button" action="draw-tool-action" image="draw-button.png"/> 
+     <image-button name="erase button" action="erase-tool-action" image="erase-button.png"/> 
+     <image-button name="eye dropper button" action="eye-dropper-tool-action" image="eye-dropper-button.png"/> 
      <spacer height="10"/>
-     <color-well action="pick-color-action" color="FF00FF"/>
+     <color-well name="color well" action="pick-color-action" color="FF00FF"/>
    </column>
-  <image-editor name="image editor" image="/Users/alex/working copies/XMLisp svn/trunk/XMLisp/resources/images/redlobster.png" flex="1" vflex="1"/>
+  <image-editor name="image editor" image="/Users/alex/Desktop/aqua_blue.png" flex="1" vflex="1"/>
   </row>
 </image-editor-window>
 
 
 <image-editor-window margin="20" title="Image Editor">
-  <image-editor image="/Users/alex/Desktop/images.jpeg"/>
+  <image-editor image="/Users/alex/Desktop/aqua_blue.png"/>
 </image-editor-window>
 
 
