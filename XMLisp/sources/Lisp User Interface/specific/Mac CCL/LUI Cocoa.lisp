@@ -97,6 +97,12 @@
   (when *Current-Event*
     (not (zerop (logand (#/modifierFlags (native-event *Current-Event*)) #$NSControlKeyMask)))))
 
+
+(defmethod DOUBLE-CLICK-P ()
+  (when *Current-Event*
+    (= (#/clickCount (native-event *Current-Event*)) 2)))
+
+
 ;**********************************
 ;* SUBVIEW-MANAGER-INTERFACE      *
 ;**********************************
@@ -735,7 +741,7 @@
           (unless (probe-file Path) (error "no such image file for button ~A" (image Self)))
           (#/initWithContentsOfFile: NS-Image  (native-string (native-path "lui:resources;buttons;" (image Self))))
           (#/initWithFrame: Native-Control Frame)
-          (#/setButtonType: Native-Control #$NSMomentaryPushInButton)
+          (#/setButtonType: Native-Control #$NSOnOffButton)   ;;;NSMomentaryPushInButton)
          ; (#/setImagePosition: Native-Control #$NSNoImage)
         ;  (if (probe-file Path)
             (#/setImagePosition: Native-Control #$NSImageOnly)
@@ -867,7 +873,7 @@
   (#/addItemWithTitle: (native-view Self) (native-string Text))
   (unless (equal image-pathname nil)
     (let ((image (#/alloc ns:ns-image)))
-          (#/initWithContentsOfFile: image (native-string(native-path "lui:resources;" image-pathname)))
+          (#/initWithContentsOfFile: image (native-string (native-path "lui:resources;buttons;" image-pathname)))
           (#/setImage: (#/itemWithTitle: (native-view Self) (native-string text)) Image)))
   (setf (actions Self) (append (actions Self) (list Action))))
 
@@ -1093,6 +1099,11 @@
          (a #>CGFloat))
     (#/getRed:green:blue:alpha: (#/color (Native-View self)) r g b a)
     (truncate (* (pref a #>CGFloat) 255))))
+
+
+(defmethod SET-COLOR ((Self color-well-control) &key (Red 0.0) (Green 0.0) (Blue 0.0) (Alpha 1.0))
+  ;; keep a native color instead of creating a new one for each display
+  (#/setColor: (native-view Self) (#/retain (#/colorWithCalibratedRed:green:blue:alpha: ns:ns-color Red Green Blue Alpha))))
 
 ;__________________________________
 ; Web Browser                      |
