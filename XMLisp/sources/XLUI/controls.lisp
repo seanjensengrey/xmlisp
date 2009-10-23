@@ -155,28 +155,37 @@
     :height 25)
   (:documentation "Compact button containing image"))
 
+
 (defclass POP-UP-ITEM (xml-serializer)
   ((text :accessor text :initform "untitled")
    (action :accessor action :initform 'default-action  :type symbol :documentation "method: window dialog"))
   (:documentation "a pop up menu item"))
 
+
 (defmethod ADD-SUBOBJECT ((Button popup-button-control) (Item pop-up-item))
   (add-item Button (text Item) (action Item)))
 
-(defmethod DEFAULT-ACTION ((window window)(self pop-up))
+
+(defmethod DEFAULT-ACTION ((window window) (self pop-up))
   (declare (ignore window))
   (declare (ignore self)))
 
-;______________________________________________________________________________________________________
-; Choice Image Button                                                                                  |
-;                                                                                                      |
-;   <choice-image-button tooltip="Selection Tool">                                                     |
-;      <image-choice image="mirror-none-button.png" action="mirror-none-action"/>                      |
-;      <image-choice image="mirror-horizontally-button.png" action="mirror-horizontally-action"/>      |
-;      <image-choice image="mirror-vertically-button.png" action="mirror-vertically-action"/>          |
-;      <image-choice image="mirror-both-button.png" action="mirror-both-action"/>                      |
-;     </choice-image-button>                                                                           |
-;______________________________________________________________________________________________________
+;___________________________________________________________________________________________________________
+; Choice Image Button                                                                                        |
+;____________________________________________________________________________________________________________
+
+#|
+
+<application-window>
+   <choice-image-button>                                                                                   
+     <choice-button-item text="no mirror" image="mirror-none-button.png" action="mirror-none-action"/>
+     <choice-button-item text="mirror horizontally" image="mirror-horizontally-button.png" action="mirror-horizontally-action"/>
+     <choice-button-item text="mirror vertically" image="mirror-vertically-button.png" action="mirror-vertically-action"/>
+     <choice-button-item text="mirror both" image="mirror-both-button.png" action="mirror-both-action"/>
+    </choice-image-button>
+</application-window>
+
+|#
 
 (defclass CHOICE-IMAGE-BUTTON (choice-button-control xml-layout-interface)
   ()
@@ -185,14 +194,26 @@
     :height 25)
   (:documentation "Compact button containing image"))
 
+
+(defmethod PRINT-SLOTS ((Self choice-image-button))
+  '(x y width height))
+
+
 (defclass CHOICE-BUTTON-ITEM (xml-serializer)
   ((text :accessor text :initform "untitled")
-   (image-path :accessor image-path :initform  nil)
+   (image :accessor image :initform  nil)
    (action :accessor action :initform 'print-window-and-dialog-action  :type symbol :documentation "method: window dialog"))
   (:documentation "a pop up menu item"))
 
+
+(defmethod PRINT-SLOTS ((Self choice-button-item))
+  '(x y width height))
+
+
 (defmethod ADD-SUBOBJECT ((Button choice-button-control) (Item choice-button-item))
-  (add-menu-item Button (text Item) (action Item)(image-path Item)))
+  (add-menu-item Button (text Item) (action Item) (image Item)))
+
+
 
 ;__________________________________________________________________________________________________
 ; Image Button Segment                                                                             |
