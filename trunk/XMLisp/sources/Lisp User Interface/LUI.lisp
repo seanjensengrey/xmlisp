@@ -67,6 +67,11 @@
 (defgeneric CONTROL-KEY-P ()
   (:documentation "is Control key pressed?"))
 
+;; Special Clicks
+
+(defgeneric DOUBLE-CLICK-P ()
+  (:documentation "True if clicked a second time not too long ago"))
+
 ;**********************************
 ;* SUBVIEW-MANAGER-INTERFACE      *
 ;**********************************
@@ -753,6 +758,10 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defgeneric GET-ALPHA (color-well-control)
   (:documentation "Returns the alpha value stored as a byte"))
+
+
+(defgeneric SET-COLOR (color-well-control &key Red Green Blue Alpha)
+  (:documentation "Set the color of the color well"))
 
 
 (defmethod COLOR-WELL-ACTION ((window window) (self COLOR-WELL-Control))
