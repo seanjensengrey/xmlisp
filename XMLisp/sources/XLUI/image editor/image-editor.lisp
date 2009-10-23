@@ -81,18 +81,6 @@
 
 
 ;**************************************
-;* Keyboard Functions                 *
-;**************************************
-
-(defun SHIFT-KEY-DOWN-P ()
-  (key-down-p (key-name->code "shift")))
-
-
-(defun SPACE-KEY-DOWN-P ()
-  (key-down-p (key-name->code "space")))
-
-
-;**************************************
 ;* Line-Segment                       *
 ;**************************************
 
@@ -156,6 +144,8 @@
    (bg-texture :accessor bg-texture :initform nil :documentation "background texture")
    (canvas-height :accessor canvas-height :initform 1.0 :documentation "world coordinate")
    (canvas-width :accessor canvas-width :initform 1.0 :documentation "world coordinate")
+   (hovered-pixel-col :accessor hovered-pixel-col :initform nil :documentation "column of pixel currentl hovered over")
+   (hovered-pixel-row :accessor hovered-pixel-row :initform nil :documentation "row of pixel currentl hovered over")
    (on-image-saved :accessor on-image-saved :initarg :on-image-saved :initform nil :documentation "this function will be called with the filename when the image is saved")
    (pen-color-vector :accessor pen-color-vector :initform (make-byte-vector 0 0 0 255) :documentation "current pen color used for drawing")
    (bg-color-vector :accessor bg-color-vector :initform (make-byte-vector 0 0 0 0) :documentation "current background color used for erasing")
@@ -286,10 +276,10 @@
   (declare (ignorable To-Pathname))
   (with-glcontext Self
     (when (img-texture Self)
-      (make-me-the-current-context Self) ;; nasty crash without this when multiple OpenGL contexts
-      (save-texture-as-image (img-texture Self) To-Pathname
-                             (img-width Self) (img-height Self) :depth (img-depth Self))
-      (when (on-image-saved Self) (funcall (on-image-saved Self) To-Pathname)))))
+      (with-glcontext Self
+        (save-texture-as-image (img-texture Self) To-Pathname
+                               (img-width Self) (img-height Self) :depth (img-depth Self))
+        (when (on-image-saved Self) (funcall (on-image-saved Self) To-Pathname))))))
 
 
 (defmethod COL-ROW-WITHIN-BOUNDS-P ((Self image-editor) Col Row)
@@ -512,8 +502,8 @@
   (glLineWidth 2.0)
   (glBegin GL_LINES)
   (glColor3f 0.15 0.65 1.0)
-  (glVertex2f -1.0 0.0)
-  (glVertex2f  1.0 0.0)
+  (glVertex2f 0.0 (/ (canvas-height Self) 2.0))
+  (glVertex2f  (canvas-width Self)  (/ (canvas-height Self) 2.0))
   (glEnd)
   (glLineWidth 1.0))
 
@@ -522,28 +512,27 @@
   (glLineWidth 2.0)
   (glBegin GL_LINES)
   (glColor3f 0.15 0.65 1.0)
-  (glVertex2f 0.0 -1.0)
-  (glVertex2f 0.0  1.0)
+  (glVertex2f (/ (canvas-width Self) 2.0) 0.0)
+  (glVertex2f (/ (canvas-width Self) 2.0)  (canvas-height Self))
   (glEnd)
   (glLineWidth 1.0))
 
 
-(defmethod DRAW-GRID ((Self image-editor))
+(defmethod DRAW-GRID ((Self image-editor)) 
   (glBegin GL_LINES)
   (glColor3f 0.5 0.5 0.5)
-  (let ((Grid-Spacing (/ 2.0 (img-width Self))))
-    (dotimes (I (/ (img-width Self) 2))
+  (let ((Grid-Spacing (/ (canvas-width Self) (img-width Self))))
+    ;; horizontal
+    (dotimes (I (img-height Self))
       (let ((Grid-Position (* i Grid-Spacing)))
-        (glVertex2f -1.0 Grid-Position)
-        (glVertex2f  1.0 Grid-Position)
-        (glVertex2f  Grid-Position -1.0)
-        (glVertex2f  Grid-Position  1.0)
-        (setf Grid-Position (* -1.0 Grid-Position))
-        (glVertex2f -1.0 Grid-Position)
-        (glVertex2f  1.0 Grid-Position)
-        (glVertex2f  Grid-Position -1.0)
-        (glVertex2f  Grid-Position  1.0))))
-  (glEnd))
+        (glVertex2f 0.0 Grid-Position)
+        (glVertex2f (canvas-width Self) Grid-Position)))
+    ;; vertical
+    (dotimes (I (img-width Self))
+      (let ((Grid-Position (* i Grid-Spacing)))
+        (glVertex2f Grid-Position 0.0)
+        (glVertex2f Grid-Position (canvas-height Self))))
+    (glEnd)))
 
 
 (defmethod DRAW-GUIDE-LINES ((Self image-editor))
@@ -689,8 +678,8 @@
 (defmethod PIXEL->WORLD-COORD ((Self image-editor) Col Row)
   "Converts from pixel coordinate into OpenGL world coordinate."
   (values 
-   (+ -1.0 (* (/ 2.0 (img-width Self)) Col))
-   (- 1.0 (* (/ 2.0 (img-height Self)) Row))))
+   (* (/ (canvas-width Self) (img-width Self)) Col)
+   (- (canvas-height Self) (* (/ (canvas-height Self) (img-height Self)) Row))))
 
 
 (defmethod DRAW-SELECTION ((Self image-editor))
@@ -701,6 +690,7 @@
              (dolist (Segment Cluster)
                (glVertex2f (x1 Segment) (y1 Segment)))
              (glEnd))))
+    (glEnable GL_LINE_STIPPLE)
     (glLogicOp GL_COPY)
     (glLineStipple 1 (stipple Self))
     (glColor3f 0.0 0.0 0.0)
@@ -765,9 +755,7 @@
   (dolist (V Vertices)
     (multiple-value-bind (vx vy) (pixel->world-coord Self (first v) (second v))
       (glVertex2f vx vy)))
-  (multiple-value-bind (vx vy) (multiple-value-call #'pixel->world-coord Self 
-;; MUST FIX: NO mouse polling!!
-                                 (screen->pixel-coord Self (view-mouse-position Self)))
+  (multiple-value-bind (vx vy) (pixel->world-coord Self (hovered-pixel-col Self) (hovered-pixel-row Self))
     (glVertex2f vx vy))
   (glEnd)
   (glDisable GL_COLOR_LOGIC_OP))
@@ -801,17 +789,17 @@
    Specialized to draw texture image, selection, and feedback for selection in progress."
   (draw-background-texture Self)
   (draw-texture-image Self)
-  ;;;(glDisable GL_TEXTURE_2D)
-  ;;;(draw-guide-lines Self)
-  ;;;(draw-selection Self)
-  ;;;(draw-selection-in-progress-feedback Self)
+  (glDisable GL_TEXTURE_2D)
+  (draw-guide-lines Self)
+  (draw-selection Self)
+  (draw-selection-in-progress-feedback Self)
   )
 
 
 (defmethod RECOMPUTE-SELECTION-OUTLINE ((Self image-editor))
   "Returns clusters of line segments that form the current selection edges."
-  (let ((Pixel-Width (/ 2.0 (img-width Self)))
-        (Pixel-Height (/ 2.0 (img-height Self)))
+  (let ((Pixel-Width (/ (canvas-width Self)  (img-width Self)))
+        (Pixel-Height (/ (canvas-height Self) (img-height Self)))
         (Lines nil))
     (dotimes (Row (img-height Self))
       (dotimes (Col (img-width Self))
@@ -1053,22 +1041,80 @@
 ; Mouse  Handlers                |
 ;_______________________________/
 
-
-(defmethod CLICK-OR-DRAG-PIXEL ((Self image-editor) Col Row)
+(defmethod CLICK-OR-DRAG-PIXEL ((Self image-editor) Col Row Dragged)
   (case (selected-tool (window Self))
+    ;; DRAW
     (draw 
      (draw-pixel Self Col Row))
+    ;; ERASE
     (erase
      (erase-pixel Self Col Row))
+    ;; DROPPER
     (eye-dropper
      (eye-dropper Self Col Row)
      (multiple-value-bind (Red Green Blue Alpha) (get-rgba-color-at Self Col Row)
        (set-color (view-named (window Self) "color well") 
                   :red (/ Red 255.0) :green (/ Green 255.0) :blue (/ Blue 255.0) :alpha (/ Alpha 255.0))))
+    ;; FLOOD FILL
     (paint-bucket 
      (multiple-value-bind (New-Red New-Green New-Blue New-Alpha) (pen-color Self)
        (flood-fill Self Col Row New-Red New-Green New-Blue New-Alpha
-                   :tolerance (tolerance Self) :tolerance-function #'absolute-color-difference-ignore-alpha)))))
+                   :tolerance (tolerance Self) :tolerance-function #'absolute-color-difference-ignore-alpha)))
+    ;; MAGIC WAND
+    (magic-wand
+     ;; When not holding shift, clear the selection
+     (unless (shift-key-p)
+       (clear-selection Self))
+     ;; When there is not a double click, make a selection, otherwise exit
+     (magic-wand Self Col Row :tolerance (tolerance Self) :tolerance-function #'absolute-color-difference-ignore-alpha)
+     (display Self))
+    ;; Select-Rect
+    (select-rect
+     (cond
+      ;; first click
+      ((not Dragged)
+       (unless (shift-key-p) 
+         (clear-selection Self)
+         (display Self))
+       (setf (selection-in-progress Self) (list :rect Col Row (+ Col 1) (+ Row 1))))
+      ;; dragging
+      (Dragged
+       (setf (fourth (selection-in-progress Self)) (1+ Col))
+       (setf (fifth (selection-in-progress Self)) (1+ Row))
+       (display Self))))
+    ;; SELECT ELLIPSE
+    (select-ellipse
+     (cond
+      ;; first click
+      ((not Dragged)
+       (unless (shift-key-p) 
+         (clear-selection Self)
+         (display Self))
+       (setf (selection-in-progress Self) (list :ellipse Col Row (+ Col 1) (+ Row 1))))
+      ;; dragging
+      (Dragged
+       (setf (fourth (selection-in-progress Self)) (1+ Col))
+       (setf (fifth (selection-in-progress Self)) (1+ Row))
+       (display Self))))
+    ;; Select Polygon
+    (select-polygon
+     (cond
+      ;; starting
+      ((or (not (selection-in-progress Self)) (member (first (selection-in-progress Self)) '(:rect :ellipse)))
+       (unless (shift-key-p) 
+         (clear-selection Self)
+         (display Self))
+       (setf (selection-in-progress Self) (list :polygon (list Col Row))))
+      ;; continue
+      (t
+       (cond
+        ;; done
+        ((double-click-p)
+         (update-selection Self (selection-in-progress Self))
+         (setf (selection-in-progress Self) nil)
+         (display Self))
+        (t
+         (setf (selection-in-progress Self) (append (selection-in-progress Self) (list (list Col Row)))))))))))
 
 
 
@@ -1078,8 +1124,7 @@
   (unless (img-texture Self) (return-from view-left-mouse-down-event-handler))
   (multiple-value-bind (Col Row) (screen->pixel-coord Self x y)
     (when (and Row Col)
-      (click-or-drag-pixel Self Col Row))))
-
+      (click-or-drag-pixel Self Col Row nil))))
 
 
 (defmethod VIEW-LEFT-MOUSE-DRAGGED-EVENT-HANDLER ((Self image-editor) X Y DX DY)
@@ -1087,130 +1132,36 @@
   (unless (img-texture Self) (return-from view-left-mouse-dragged-event-handler))
   (multiple-value-bind (Col Row) (screen->pixel-coord Self x y)
     (when (and Row Col)
-      (click-or-drag-pixel Self Col Row))))
+      (click-or-drag-pixel Self Col Row t))))
 
 
-#|
+(defmethod VIEW-MOUSE-MOVED-EVENT-HANDLER ((Self image-editor) x y dx dy)
+  (declare (ignore DX DY))
+  (unless (img-texture Self) (return-from view-mouse-moved-event-handler))
+  (multiple-value-bind (Col Row) (screen->pixel-coord Self x y)
+    (when (and Row Col)
+      (setf (hovered-pixel-col Self) Col)
+      (setf (hovered-pixel-row Self) Row)
+      ;; there may be a need to display some feedback, slighly excessive 
+      (display Self))))
 
-    ;; Erase Tool
-    (erase
-     (loop
-       (unless (mouse-down-p) 
-         (image-changed-event Self)
-         (return))
-       (when (img-texture Self)
-         (multiple-value-bind (Col Row) (screen->pixel-coord Self x y)
-           (erase-pixel Self Col Row)))))
-    
-    ;; Eye-Dropper
-    (eye-dropper
-     (when (img-texture Self)
-       (multiple-value-bind (Col Row) (screen->pixel-coord Self x y)
-         (eye-dropper Self Col Row))))
-    
-    ;; Paint Bucket
-    (paint-bucket
-     (when (img-texture Self)
-       (multiple-value-bind (Col Row) (screen->pixel-coord Self x y)
-         (multiple-value-bind (New-Red New-Green New-Blue New-Alpha) (pen-color Self)
-           ;; The is without Tolerance
-           ;;;;(flood-fill Self Col Row New-Red New-Green New-Blue New-Alpha)))))
-           ;; With Tolerance
-           (flood-fill Self Col Row New-Red New-Green New-Blue New-Alpha
-                       :tolerance (tolerance Self) :tolerance-function #'absolute-color-difference-ignore-alpha)))
-       (image-changed-event Self)))
-    
-    ;; Select-Rect Tool
-    (select-rect
-     (multiple-value-bind (x0 y0) (screen->pixel-coord Self x y)
-       (let* ((Pause (truncate (* 0.06 internal-time-units-per-second)))
-              (Time-To-Animate (+ (get-internal-real-time) Pause))
-              (Xold x0)
-              (Yold y0))
-         (loop
-           (unless (mouse-down-p) 
-             (update-selection Self (selection-in-progress Self))
-             (return))
-           (multiple-value-bind (X1 Y1) (screen->pixel-coord Self (view-mouse-position Self))
-             (if (space-key-down-p)
-                 (when (not (and (= xold x1) (= yold y1)))
-                   (incf x0 (- x1 xold))
-                   (incf y0 (- y1 yold))
-                   (setf (selection-in-progress Self) (list :rect x0 y0 
-                                                            (+ (fourth (selection-in-progress Self)) (- x1 xold))
-                                                            (+ (fifth (selection-in-progress Self)) (- y1 yold)))))
-               (when (not (and (= X0 X1) (= Y0 Y1)))
-                 (setf (selection-in-progress Self) (list :rect x0 y0 x1 y1))))
-             (setq xold x1)
-             (setq yold y1))
-           
-           (when (and (selection-in-progress Self) (>= (get-internal-real-time) Time-To-Animate))
-             (incf Time-To-Animate Pause)
-             (animate Self 0.06)
-             (view-draw-contents Self)))
+
+(defmethod VIEW-LEFT-MOUSE-UP-EVENT-HANDLER ((Self image-editor) x y)
+  (unless (img-texture Self) (return-from view-left-mouse-up-event-handler))
+  (multiple-value-bind (Col Row) (screen->pixel-coord Self x y)
+    (when (and Row Col)
+      (case (selected-tool (window Self))
+        ;; SELECT RECTANGLE
+        (select-rect
+         (update-selection Self (selection-in-progress Self))
          (setf (selection-in-progress Self) nil)
-         (view-draw-contents Self))))
-    
-    ;; Select-Ellipse Tool
-    (select-ellipse
-     (multiple-value-bind (x0 y0) (screen->pixel-coord Self (view-mouse-position Self))
-       (let* ((Pause (truncate (* 0.06 internal-time-units-per-second)))
-              (Time-To-Animate (+ (get-internal-real-time) Pause))
-              (Xold x0)
-              (Yold y0))
-         (loop
-           (unless (mouse-down-p)
-             (update-selection Self (selection-in-progress Self))
-             (return))
-           (multiple-value-bind (X1 Y1) (screen->pixel-coord Self (view-mouse-position Self))
-             (if (space-key-down-p)
-                 (when (not (and (= xold x1) (= yold y1)))
-                   (incf x0 (- x1 xold))
-                   (incf y0 (- y1 yold))
-                   (setf (selection-in-progress Self) (list :ellipse x0 y0 
-                                                            (+ (fourth (selection-in-progress Self)) (- x1 xold))
-                                                            (+ (fifth (selection-in-progress Self)) (- y1 yold)))))
-               (when (not (and (= X0 X1) (= Y0 Y1)))
-                 (setf (selection-in-progress Self) (list :ellipse x0 y0 x1 y1))))
-             (setq xold x1)
-             (setq yold y1))
-           (when (and (selection-in-progress Self) (>= (get-internal-real-time) Time-To-Animate))
-             (incf Time-To-Animate Pause)
-             (animate Self 0.06)
-             (view-draw-contents Self)))
+         (display Self))
+        ;; SELECT ELLIPSE
+        (select-ellipse 
+         (update-selection Self (selection-in-progress Self))
          (setf (selection-in-progress Self) nil)
-         (view-draw-contents Self))))
-    
-    ;; Select-Polygon Tool
-    (select-polygon
-     (multiple-value-bind (x0 y0) (screen->pixel-coord Self (view-mouse-position Self))                     
-       (if (selection-in-progress Self)
-           (destructuring-bind (Xstart Ystart) (second (selection-in-progress Self))
-             (if (or (double-click-p) (and (= x0 xstart) (= y0 ystart)))
-                 (progn
-                   (update-selection Self (selection-in-progress Self))
-                   (setf (selection-in-progress Self) nil))
-               (setf (selection-in-progress Self) (append (selection-in-progress Self) (list (list x0 y0))))))
-         (setf (selection-in-progress Self) (list :polygon (list x0 y0))))
-       (view-draw-contents Self)))
-    
-    ;; Magic Wand
-    (magic-wand
-     (when (img-texture Self)
-       ;; When not holding shift, clear the selection
-       (if (not (shift-key-down-p))
-           (clear-selection Self))
-       ;; When there is not a double click, make a selection, otherwise exit
-       (when (not (double-click-p))
-         (multiple-value-bind (Col Row) (screen->pixel-coord Self (view-mouse-position Self))
-           ;; For magic wand without tolerance
-           ;;;;(magic-wand Self Col Row)))
-           ;; For magic wand with tolerance
-           (magic-wand Self Col Row :tolerance (tolerance Self) :tolerance-function #'absolute-color-difference-ignore-alpha)))
-       (display Self)))))
+         (display Self))))))
 
-
-|#
 
 ;**************************************
 ;* Image-Editor-Window                *
@@ -1224,17 +1175,6 @@
   (:documentation "Window containing an image-editor view."))
 
 
-(defmethod INITIALIZE-INSTANCE :after ((Self image-editor-window) 
-                                       &key File (Image-Width 32) (Image-Height 32) On-Image-Saved)
-  #|
-  (if (and File (probe-file File))
-      (load-image (image-editor-view Self) File)
-    (new-image (image-editor-view Self) Image-Width Image-Height))
-  (setf (on-image-saved (image-editor-view Self)) On-Image-Saved))
-  |#
-  )
-
-
 (defmethod LOAD-IMAGE-FROM-FILE ((Self image-editor-window) Pathname)
   "Loads the specified image file into the editor window."
   (load-image (image-editor-view Self) Pathname)
@@ -1244,34 +1184,6 @@
 (defmethod SAVE-IMAGE-TO-FILE ((Self image-editor-window) Pathname)
   "Saves the current image in the editor window to the specified file."
   (save-image (image-editor-view Self) Pathname))
-
-
-(defmethod WINDOW-NULL-EVENT-HANDLER ((Self image-editor-window))
-  "Called periodically when the window has the focus."
-  ;; do animation only when there is selection
-  (when (or (selection-in-progress (image-editor-view Self))
-            (selection-outline (image-editor-view Self)))
-    (animate (image-editor-view Self) 0.06)
-    (view-draw-contents (image-editor-view Self)))
-  ;; update preview color when eyedropper tool is selected
-  (when (eql (selected-tool Self) 'eye-dropper)
-    (multiple-value-bind (Col Row) 
-        (screen->pixel-coord (image-editor-view Self) (view-mouse-position (image-editor-view Self)))
-      (when (col-row-within-bounds-p (image-editor-view Self) Col Row)
-        (multiple-value-bind (Red Green Blue) (get-rgba-color-at (image-editor-view Self) Col Row)
-          (draw-preview-color (view-named 'color-swatch Self) (make-color (ash Red 8)
-                                                                          (ash Green 8)
-                                                                          (ash Blue 8)))))))
-  (call-next-method))
-
-
-(defmethod VIEW-CLICK-EVENT-HANDLER ((Self image-editor-window) Where)
-  "Called when the image-editor-window or one of its contents is clicked.
-   Specialized to dispatch clicks on the image-editor view to the correct mouse handler."
-  (if (view-contains-point-p (image-editor-view Self) Where)
-      (view-click-event-handler (image-editor-view Self) Where)
-    (call-next-method))
-  (view-draw-contents (view-named 'color-swatch Self)))
 
 
 (defmethod VIEW-KEY-EVENT-HANDLER ((Self image-editor-window) Key)
@@ -1343,135 +1255,11 @@
     (window-save-as Self))))
 
   
-(defun FEATURE-NOT-IMPLEMENTED-MESSAGE (&rest Args)
-  "Temporary function to handle unimplemented features."
-  (declare (ignore Args))
-  (standard-alert-dialog "This feature is not yet implemented." :yes-text "OK" :no-text nil :cancel-text nil))
+;**************************************
+;* GUI                                *
+;**************************************
 
-
-(defun IMAGE-EDITOR-TOOLBAR ()
-  "Returns a list of dialog-items for the image-editor-window's toolbar."
-  (let ((Selected nil))
-    (labels ((select-tool-button (Item)
-                                 (when Selected (turn-off Selected))
-                                 (turn-on Item)
-                                 (setq Selected Item))
-             (tool-button-action (Tool-Name)
-                                 #'(lambda (Item)
-                                     (select-tool-button Item)
-                                     (tool-selection-event (view-window Item) Tool-Name))))
-      (list
-       ;; Drawing Tools
-       (setq Selected
-             (make-instance 'bevel-image-button-dialog-item
-               ;; :view-size #@(22 22)
-               :view-nick-name 'draw
-               :on-image-pathname "ccl:resources;buttons;draw-button.png"
-               :when-pressed-fn (tool-button-action 'draw)
-               :help-spec "Draw Tool"
-               :turned-on-p t))
-       -3
-       (make-instance 'bevel-image-button-dialog-item
-         ;; :view-size #@(22 22)
-         :view-nick-name 'erase
-         :on-image-pathname "ccl:resources;buttons;erase-button.png"
-         :when-pressed-fn (tool-button-action 'erase)
-         :help-spec "Erase Tool")      
-       -3
-       (make-instance 'bevel-image-button-dialog-item
-         ;; :view-size #@(22 22)
-         :view-nick-name 'eye-dropper
-         :on-image-pathname "ccl:resources;buttons;eye-dropper-button.png"
-         :when-pressed-fn (tool-button-action 'eye-dropper)
-         :help-spec "Eyedropper Tool"
-         :turned-on-p nil)       
-       -3
-       (make-instance 'bevel-image-button-dialog-item
-         ;; :view-size #@(22 22)
-         :view-nick-name 'paint-bucket
-         :on-image-pathname "ccl:resources;buttons;paint-bucket-button.png"
-         :when-pressed-fn (tool-button-action 'paint-bucket)
-         :help-spec "Paint Bucket Tool")
-       -3
-       ;; Selection Tools
-       (make-instance 'image-choice-image-button-dialog-item
-         ;; :view-size #@(22 22)
-         :choices '(("select-rect-button" select-rect) 
-                    ("select-ellipse-button" select-ellipse)
-                    ("select-polygon-button" select-polygon))
-         :when-pressed-fn #'select-tool-button
-         :dialog-item-action #'(lambda (Item)
-                                 (tool-selection-event
-                                  (view-window Item) (selected-choice Item)))
-         :help-spec "Selection Tool"
-         :turned-on-p nil)
-       -3
-       (make-instance 'bevel-image-button-dialog-item
-         ;; :view-size #@(22 22)
-         :view-nick-name 'magic-wand
-         :on-image-pathname "ccl:resources;buttons;magic-wand-button.png"
-         :when-pressed-fn (tool-button-action 'magic-wand)
-         :help-spec "Magic Wand Tool")
-       -3
-       ;; Navigation Tools
-       (make-instance 'image-choice-image-button-dialog-item
-        ;; :view-size #@(22 22)
-         :choices '(("zoom-in-button" zoom-in) ("zoom-out-button" zoom-out))
-         :when-pressed-fn #'select-tool-button
-         :dialog-item-action #'feature-not-implemented-message
-         :help-spec "Zoom In/Out Tool"
-         :turned-on-p nil)
-       -3
-       (make-instance 'bevel-image-button-dialog-item
-         ;; :view-size #@(22 22)
-         :on-image-pathname "ccl:resources;buttons;pan-button.png"
-         :when-pressed-fn #'feature-not-implemented-message
-         :help-spec "Pan Tool")
-       20
-       (make-instance 'color-swatch-dialog-item
-         ;; :view-size #@(22 22)
-         :view-nick-name 'color-swatch
-         :help-spec "Color Swatch"
-         :on-color-changed #'(lambda (Item New-Color)
-                               (set-pen-color (image-editor-view (view-window Item)) 
-                                              (ash (color-red New-Color) -8)
-                                              (ash (color-green New-Color) -8)
-                                              (ash (color-blue New-Color) -8) 255)))
-       ;Grid
-       20
-       (make-instance 'image-choice-image-button-dialog-item
-         ;; :view-size #@(22 22)
-         :choices '(("no-grid-button" nil)
-                    ("grid-button" t))
-         ;:when-pressed-fn toggle the grid on or off
-         :dialog-item-action #'(lambda (Item)
-                                 (toggle-grid (image-editor-view (view-window Item)) (selected-choice item)))
-         :help-spec "Mirror Image"
-         :turned-on-p nil)
-       
-       ;Mirroring
-       -3
-       (make-instance 'image-choice-image-button-dialog-item
-         ;; :view-size #@(22 22)
-         :choices '(("mirror-none-button" 0)
-                    ("mirror-horizontally-button" 1) 
-                    ("mirror-vertically-button" 2)
-                    ("mirror-both-button" 3))
-         ;:when-pressed-fn toggle the needed mirroring lines on and off
-         :dialog-item-action #'(lambda (Item)
-                                 (if (= (selected-choice item) 0)
-                                     (toggle-mirror-lines (image-editor-view (view-window Item)) nil nil)
-                                   (if (= (selected-choice item) 1)
-                                       (toggle-mirror-lines (image-editor-view (view-window Item)) t nil)
-                                     (if (= (selected-choice item) 2)
-                                         (toggle-mirror-lines (image-editor-view (view-window Item)) nil t)
-                                       (if (= (selected-choice item) 3)
-                                           (toggle-mirror-lines (image-editor-view (view-window Item)) t t))))))
-         :help-spec "Mirror Image"
-         :turned-on-p nil)))))
-    
-    
-#|
+;; Control Actions
 
 
 (defmethod PICK-COLOR-ACTION ((w window) (Color-Well color-well))
@@ -1494,26 +1282,73 @@
   (setf (selected-tool W) 'paint-bucket))
 
 
+(defmethod MAGIC-WAND-TOOL-ACTION ((W window) (Button image-button))
+  (setf (selected-tool W) 'magic-wand))
+
+
+(defmethod SELECT-RECT-TOOL-ACTION ((W window) (Button image-button))
+  (setf (selected-tool W) 'select-rect))
+
+
+(defmethod SELECT-ELLIPSE-TOOL-ACTION ((W window) (Button image-button))
+  (setf (selected-tool W) 'select-ellipse))
+
+
+(defmethod SELECT-POLYGON-TOOL-ACTION ((W window) (Button image-button))
+  (setf (selected-tool W) 'select-polygon))
+
+
+(defmethod ENABLE-GRID-ACTION ((W window) (Check-Box check-box))
+  (toggle-grid (view-named w "image editor") (value Check-Box)))
+
+
+(defmethod MIRROR-NONE-ACTION ((W window) (Choice choice-image-button))
+  (toggle-mirror-lines (view-named w "image editor") nil nil))
+
+
+(defmethod MIRROR-HORIZONTALLY-ACTION ((W window) (Choice choice-image-button))
+  (toggle-mirror-lines (view-named w "image editor") t nil))
+
+
+(defmethod MIRROR-VERTICALLY-ACTION ((W window) (Choice choice-image-button))
+  (toggle-mirror-lines (view-named w "image editor") nil t))
+
+
+(defmethod MIRROR-BOTH-ACTION ((W window) (Choice choice-image-button))
+  (toggle-mirror-lines (view-named w "image editor") t t))
+
+#|
 
 (defparameter *ie*
   
-<image-editor-window margin="20" title="Image Editor">
-  <row align="stretch" valign="stretch">
-    <column width="25">
+<image-editor-window margin="20" track-mouse="true" title="Image Editor" width="500" height="450">
+ <column align="stretch" valign="stretch">
+  <row align="center" valign="middle" height="28" >
+    <check-box text="show grid" action="enable-grid-action"/>
+    <choice-image-button width="180">                                                                                   
+      <choice-button-item text="no mirror" image="mirror-none-button.png" action="mirror-none-action"/>
+      <choice-button-item text="mirror horizontally" image="mirror-horizontally-button.png" action="mirror-horizontally-action"/>
+      <choice-button-item text="mirror vertically" image="mirror-vertically-button.png" action="mirror-vertically-action"/>
+      <choice-button-item text="mirror both" image="mirror-both-button.png" action="mirror-both-action"/>
+    </choice-image-button>
+  </row>
+  <row align="stretch" valign="stretch" vflex="1">
+    <column width="25" vflex="1">
      <image-button name="draw button" action="draw-tool-action" image="draw-button.png"/> 
      <image-button name="erase button" action="erase-tool-action" image="erase-button.png"/> 
      <image-button name="eye dropper button" action="eye-dropper-tool-action" image="eye-dropper-button.png"/> 
-     <image-button name="paint bucket button" action="paint-bucket-tool-action" image="paint-bucket-button.png"/> 
+     <image-button name="paint bucket button" action="paint-bucket-tool-action" image="paint-bucket-button.png"/>
+     <image-button name="magic wand button" action="magic-wand-tool-action" image="magic-wand-button.png"/>
+     <image-button name="select rectangle button" action="select-rect-tool-action" image="select-rect-button.png"/>
+     <image-button name="select ellipse button" action="select-ellipse-tool-action" image="select-ellipse-button.png"/>
+     <image-button name="select polygon button" action="select-polygon-tool-action" image="select-polygon-button.png"/>
      <spacer height="10"/>
      <color-well name="color well" action="pick-color-action" color="000000"/>
    </column>
   <image-editor name="image editor" image="/Users/alex/working copies/XMLisp svn/trunk/XMLisp/resources/images/redlobster.png" flex="1" vflex="1"/>
   </row>
+  </column>
 </image-editor-window>  )
-
-(inspect (view-named *ie* "image editor"))
-
-(sizeof (pixel-buffer (view-named *ie* "image editor")))
 
 
 <image-editor-window margin="20" title="Image Editor">
@@ -1522,6 +1357,7 @@
      <image-button name="draw button" action="draw-tool-action" image="draw-button.png"/> 
      <image-button name="erase button" action="erase-tool-action" image="erase-button.png"/> 
      <image-button name="eye dropper button" action="eye-dropper-tool-action" image="eye-dropper-button.png"/> 
+     <image-button name="paint bucket button" action="paint-bucket-tool-action" image="paint-bucket-button.png"/> 
      <spacer height="10"/>
      <color-well name="color well" action="pick-color-action" color="FF00FF"/>
    </column>
