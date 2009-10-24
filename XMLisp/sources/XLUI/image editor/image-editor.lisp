@@ -203,21 +203,15 @@
   ;; Alpha
   (glEnable GL_BLEND)
   (glBlendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA)
-  ;; camera at center of canvas
-  (aim-camera 
-   (camera Self) 
-   :eye-x (* 0.5 (canvas-width Self)) :eye-y (* 0.5 (canvas-height Self)) 
-   :center-x (* 0.5 (canvas-width Self)) :center-y (* 0.5 (canvas-height Self))
-   :eye-z 0.86))
-
-
-
-(defmethod FINISHED-READING ((Self image-editor) Stream)
-  (declare (ignore Stream))
-  ;; content
   (when (image Self)
-     (load-image Self (image Self)))
-  (display Self))
+     (load-image Self (image Self))
+    ;; camera at center of canvas
+    (aim-camera 
+     (camera Self) 
+     :eye-x (* 0.5 (canvas-width Self)) :eye-y (* 0.5 (canvas-height Self)) 
+     :center-x (* 0.5 (canvas-width Self)) :center-y (* 0.5 (canvas-height Self))
+     :eye-z 0.87)  ;; determines size
+    (display Self)))
 
 
 (defmethod LOAD-BACKGROUND-TEXTURE ((Self image-editor) &optional (Pathname (truename *Default-Background-Texture*)))
@@ -1267,10 +1261,12 @@
 
 
 (defmethod DRAW-TOOL-ACTION ((W window) (Button image-button))
+  (set-cursor "CopyArrow")
   (setf (selected-tool W) 'draw))
 
 
 (defmethod ERASE-TOOL-ACTION ((W window) (Button image-button))
+  (set-cursor "NotAllowed")
   (setf (selected-tool W) 'erase))
 
 
