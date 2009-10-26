@@ -578,7 +578,10 @@ after any of the window controls calls stop-modal close window and return value.
 
 
 (defclass IMAGE-BUTTON-CONTROL (control)
-  ((image :accessor image :initform nil :initarg :image :documentation "filename"))
+  ((image :accessor image :initform nil :initarg :image :documentation "filename")
+   (container :accessor container :initform nil)
+   (in-cluster :accessor in-cluster :initform nil)
+   (user-action :accessor user-action :initform nil))
   (:default-initargs
       :text "")
   (:documentation "Button Image"))
@@ -587,6 +590,12 @@ after any of the window controls calls stop-modal close window and return value.
 (defmethod DEFAULT-ACTION((window window) (self image-button-control))
   (declare (ignore window))
   (declare (ignore self)))
+
+
+
+(defmethod CLUSTER-ACTION((window window) (self image-button-control))
+  (funcall 'change-cluster-selections (container self) self)
+  (funcall (user-action self) window self))
 
 
 (defclass POPUP-BUTTON-CONTROL (control)
@@ -631,6 +640,24 @@ after any of the window controls calls stop-modal close window and return value.
   (let ((action (get-selected-action self)))
     (funcall action Window Self)))
 
+
+(defclass IMAGE-BUTTON-CLUSTER-CONTROL (control)
+  ((elements :initarg :elements :accessor elements :initform (#/init (#/alloc ns:ns-mutable-array)))
+   (actions :initarg :actions :accessor actions  :initform ()
+            :documentation "list of actions"))
+  (:default-initargs
+      :text ""
+   :action 'image-cluster-action)
+  (:documentation "radio-button"))
+
+
+
+(defmethod IMAGE-CLUSTER-ACTION ((window window) (self Radio-Button-Control))
+  (print "CLUSTER"))
+#|  
+(let ((action (get-selected-action self)))
+    (funcall action Window Self)))
+|#
 ;__________________________________
 ; Seperator                        |
 ;__________________________________/
@@ -721,6 +748,8 @@ after any of the window controls calls stop-modal close window and return value.
 (defmethod initialize-event-handling ((Self image-control))
   ;; not clickable
   )
+
+
 ;__________________________________
 ; Color Well                       |
 ;__________________________________/

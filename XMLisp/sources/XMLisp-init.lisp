@@ -12,7 +12,7 @@
 
 ;; edit to point to root folder containing /sources  /resources  etc.
 (setf (logical-pathname-translations "lui")
-      '(("**;*.*" "home:working copies;XMLisp svn;trunk;XMLisp;**;")))
+      '(("**;*.*" "ccl:XMLisp;**;")))
 
 
 #-cocotron
@@ -80,11 +80,15 @@
    "LABEL-CONTROL" "TEXT" "ALIGN"
    "EDITABLE-TEXT-CONTROL"
    "VALUE"
-     "IMAGE-CONTROL" "SRC" "FILE"
+   "IMAGE-CONTROL" "SRC" "FILE" "IN-CLUSTER"
    "RADIO-BUTTON-CONTROL"
+   "IMAGE-BUTTON-CLUSTER-CONTROL"
+   "IMAGE-BUTTON-CLUSTER" "CHANGE-CLUSTER-SELECTIONS"
+   "CLICKABLE-ROW"
+   "CLICKABLE-IMAGE-CONTROL"
    "DEFAULT-ACTION"
    "CHECKBOX-CONTROL" "START-CHECKED" "IMAGE-ON-RIGHT"
-   "IMAGE-BUTTON-CONTROL" "IMAGE" 
+   "IMAGE-BUTTON-CONTROL" "IMAGE" "CONTAINER" "CLUSTER-ACTION" "USER-ACTION" "SET-BUTTON-OFF"
    "RADIO-BUTTON-CONTROL" "ADD-ITEM" "FINALIZE-CLUSTER" "RADIO-ACTION"
    "POPUP-BUTTON-CONTROL" "add-item" "get-selected-action" "POPUP-ACTION"
    "TAB-VIEW-CONTROL" "ADD-TAB-VIEW-ITEM"

@@ -742,11 +742,8 @@
           (#/initWithContentsOfFile: NS-Image  (native-string (native-path "lui:resources;buttons;" (image Self))))
           (#/initWithFrame: Native-Control Frame)
           (#/setButtonType: Native-Control #$NSOnOffButton)   ;;;NSMomentaryPushInButton)
-         ; (#/setImagePosition: Native-Control #$NSNoImage)
-        ;  (if (probe-file Path)
-            (#/setImagePosition: Native-Control #$NSImageOnly)
-            (#/setImage: Native-Control NS-Image);)
-           
+          (#/setImagePosition: Native-Control #$NSImageOnly)
+          (#/setImage: Native-Control NS-Image)
           (#/setBezelStyle: Native-Control #$NSShadowlessSquareBezelStyle)
           (#/setTitle: Native-Control (native-string (text Self)))))
       Native-Control)))
@@ -754,6 +751,10 @@
 
 (defmethod (setf text) :after (Text (Self image-button-control))
   (#/setTitle: (native-view Self) (native-string Text)))
+
+
+(defmethod SET-BUTTON-OFF ((Self image-button-control))
+  (#/setState: (native-view self) #$NSOffState))
 
 ;__________________________________
 ; RADIO BUTTON                     |
@@ -1033,6 +1034,43 @@
         (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
               (#/initWithFrame: Native-Control Frame))))
       Native-Control))
+
+;__________________________________
+; CLICKABLE IMAGE                 |
+;_________________________________/
+
+(defclass native-clickable-image (ns:ns-image-view)
+  ((lui-view :accessor lui-view :initarg :lui-view))
+  (:metaclass ns:+ns-object))
+
+
+(defmethod make-native-object ((Self clickable-image-control))
+  (let ((Native-Control (make-instance 'native-clickable-image :lui-view Self))) 
+      ;; no problem if there is no source, just keep an empty view
+      (cond
+       ;; in most cases there should be an image source
+       ((src Self)
+        ;; consider caching image with the same file, there is a good chance
+        ;; that some image files, e.g., buttons are used frequently
+        (let ((Image #-cocotron (#/initByReferencingFile: (#/alloc ns:ns-image) (native-string (file Self)))
+                     #+cocotron (#/initWithContentsOfFile: (#/alloc ns:ns-image) (native-string (file Self)))))
+          (unless #-cocotron (#/isValid Image)
+                  #+cocotron (not (ccl:%null-ptr-p Image))
+            (error "cannot create image from file ~S" (file Self)))
+          ;; if size 0,0 use original size
+          (when (and (zerop (width Self)) (zerop (height Self)))
+            (let ((Size (#/size Image)))
+              (setf (width Self) (rref Size <NSS>ize.width))
+              (setf (height Self) (rref Size <NSS>ize.height))))
+          (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+            (#/initWithFrame: Native-Control Frame))
+          (#/setImage: Native-Control Image)
+          (#/setImageScaling: Native-Control #$NSScaleToFit)))
+       (t
+        (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+              (#/initWithFrame: Native-Control Frame))))
+      Native-Control))
+
 
 ;__________________________________
 ; Color Well                       |
