@@ -170,22 +170,16 @@
   (declare (ignore window))
   (declare (ignore self)))
 
-;___________________________________________________________________________________________________________
-; Choice Image Button                                                                                        |
-;____________________________________________________________________________________________________________
 
-#|
-
-<application-window>
-   <choice-image-button>                                                                                   
-     <choice-button-item text="no mirror" image="mirror-none-button.png" action="mirror-none-action"/>
-     <choice-button-item text="mirror horizontally" image="mirror-horizontally-button.png" action="mirror-horizontally-action"/>
-     <choice-button-item text="mirror vertically" image="mirror-vertically-button.png" action="mirror-vertically-action"/>
-     <choice-button-item text="mirror both" image="mirror-both-button.png" action="mirror-both-action"/>
-    </choice-image-button>
-</application-window>
-
-|#
+;___________________________________________________________________________________________________________________________________
+; Choice Image Button                                                                                                               |
+;    <choice-image-button width="180">                                                                                              |
+;      <choice-button-item text="no mirror" image="mirror-none-button.png" action="mirror-none-action"/>                            |
+;      <choice-button-item text="mirror horizontally" image="mirror-horizontally-button.png" action="mirror-horizontally-action"/>  |
+;      <choice-button-item text="mirror vertically" image="mirror-vertically-button.png" action="mirror-vertically-action"/>        |
+;      <choice-button-item text="mirror both" image="mirror-both-button.png" action="mirror-both-action"/>                          |
+;    </choice-image-button>                                                                                                         |
+;___________________________________________________________________________________________________________________________________
 
 (defclass CHOICE-IMAGE-BUTTON (choice-button-control xml-layout-interface)
   ()
@@ -216,12 +210,12 @@
 
 
 ;__________________________________________________________________________________________________
-; Image Button Segment                                                                             |
+; Image Button Cluster                                                                             |
 ;                                                                                                  |
 ;      <image-button-segment>                                                                      |
-;        <image-button image="draw-button.png" action="draw-tool-action" tooltip="Draw Tool"/>     |
-;        <image-button image="erase-button.png" action="erase-tool-action" tooltip="Erase Tool"/>  |
-;      </image-button-segment>                                                                     |
+;        <image-button image="draw-button.png" action="draw-tool-action" />                        | 
+;        <image-button image="erase-button.png" action="erase-tool-action" />                      |
+;      </image-button-cluster>                                                                     |
 ;__________________________________________________________________________________________________
 
 
@@ -243,8 +237,7 @@
       )))
 
 
-(defmethod DEFAULT-ACTION ((Window window) (Self image-button-cluster))
-)
+(defmethod DEFAULT-ACTION ((Window window) (Self image-button-cluster)))
 
 (defmethod ADD-SUBOBJECT ((cluster image-button-cluster) (button image-button))
   (call-next-method)
@@ -253,14 +246,7 @@
   (setf (user-action button) (action button))
   (setf (action button) 'cluster-action)
   (initialize-event-handling button)
-  (setf (images cluster) (append (images cluster) (list button)))
-  )
-
-
-
-
-
-
+  (setf (images cluster) (append (images cluster) (list button))))
 
 
 ;_____________________________________________________________________

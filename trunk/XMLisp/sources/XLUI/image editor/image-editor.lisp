@@ -1329,7 +1329,7 @@
     </choice-image-button>
   </row>
   <row align="stretch" valign="stretch" vflex="1">
-    <column width="25" vflex="1">
+    <image-button-cluster>
      <image-button name="draw button" action="draw-tool-action" image="draw-button.png"/> 
      <image-button name="erase button" action="erase-tool-action" image="erase-button.png"/> 
      <image-button name="eye dropper button" action="eye-dropper-tool-action" image="eye-dropper-button.png"/> 
@@ -1340,8 +1340,8 @@
      <image-button name="select polygon button" action="select-polygon-tool-action" image="select-polygon-button.png"/>
      <spacer height="10"/>
      <color-well name="color well" action="pick-color-action" color="000000"/>
-   </column>
-  <image-editor name="image editor" image="/Users/alex/working copies/XMLisp svn/trunk/XMLisp/resources/images/redlobster.png" flex="1" vflex="1"/>
+   </image-button-cluster>
+  <image-editor name="image editor" image="/Users/Mike/ccl2/XMLisp/resources/images/redlobster.png" flex="1" vflex="1"/>
   </row>
   </column>
 </image-editor-window>  )
@@ -1357,7 +1357,7 @@
      <spacer height="10"/>
      <color-well name="color well" action="pick-color-action" color="FF00FF"/>
    </column>
-  <image-editor name="image editor" image="/Users/alex/Desktop/aqua_blue.png" flex="1" vflex="1"/>
+  <image-editor name="image editor" image="" flex="1" vflex="1"/>
   </row>
 </image-editor-window>
 
