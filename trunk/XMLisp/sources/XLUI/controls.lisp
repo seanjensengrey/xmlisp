@@ -225,8 +225,10 @@
 ;__________________________________________________________________________________________________
 
 
-(defclass IMAGE-BUTTON-SEGMENT (row)
-  ((selected-button :accessor selected-button :initform nil :documentation "currently selected button"))
+(defclass IMAGE-BUTTON-CLUSTER (column) 
+  ((selected-button :accessor selected-button :initform nil :documentation "currently selected button")
+   (images :accessor images :initform ())
+   )
   (:default-initargs
     :padding -1
     :action 'default-action
@@ -234,17 +236,27 @@
   (:documentation "a row of image-buttons. Pressing button will select it and unselect all others in same segment."))
 
 
-(defmethod SELECT-BUTTON ((Self image-button-segment) Button)
-  ;; select new button deselect old one
-  (when (eq Button (selected-button Self)) (return-from select-button))
-  (when (selected-button Self) (turn-off (selected-button Self)))
-  (turn-on Button)
-  (setf (selected-button Self) Button))
-        
+(defmethod CHANGE-CLUSTER-SELECTIONS ((Self image-button-cluster) button)
+  (dolist (image-button (images self))
+    (unless (eql image-button button)
+      (set-button-off image-button)
+      )))
 
-(defmethod DEFAULT-ACTION ((Window window) (Self image-button-segment))
-  (select-button Segment Item)
-  (invoke-action Item))
+
+(defmethod DEFAULT-ACTION ((Window window) (Self image-button-cluster))
+)
+
+(defmethod ADD-SUBOBJECT ((cluster image-button-cluster) (button image-button))
+  (call-next-method)
+  (setf (in-cluster button) 'T)
+  (setf (container button) cluster)
+  (setf (user-action button) (action button))
+  (setf (action button) 'cluster-action)
+  (initialize-event-handling button)
+  (setf (images cluster) (append (images cluster) (list button)))
+  )
+
+
 
 
 
@@ -578,50 +590,6 @@
 
 (defparameter *w2* (make-instance 'application-window))
 
-
-(setf (root-view *w2*)
-<column>
-  <row minimize="box">
-    <image-button-segment minimize="box">
-      <image-button image="draw-button.png"/>
-      <image-button image="paint-bucket-button.png"/>
-      <image-button image="erase-button.png"/>
-    </image-button-segment>
-  </row>
-  <row minimize="box">
-    <image-button-segment minimize="box">
-      <image-button image="draw-button.png"/>
-      <image-button image="paint-bucket-button.png"/>
-      <image-button image="erase-button.png"/>
-    </image-button-segment>
-  </row>
-</column>)
-
-
-(setf (root-view *w2*)
-<row>
-   <label text="bla" width="60" align="right"/>
-    <image-button-segment>
-      <image-button image="draw-button.png"/>
-      <image-button image="paint-bucket-button.png"/>
-      <image-button image="erase-button.png"/>
-    </image-button-segment>
-    <label text="bla" width="60"/>
-</row>)
-
-
-(setf (root-view *w2*)
-<column>
-  <row size="500 20">
-  <label text="bla" width="60"/>
-    <image-button-segment size="500 20">
-      <image-button image="draw-button.png"/>
-      <image-button image="paint-bucket-button.png"/>
-      <image-button image="erase-button.png"/>
-    </image-button-segment>
-    <label text="bla" width="70"/>
-  </row>
-</column>)
 
 
   <row-of-squares>
