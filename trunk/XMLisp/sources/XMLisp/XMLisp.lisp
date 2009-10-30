@@ -6,9 +6,9 @@
 ;*********************************************************************
 ;* Author       : Alexander Repenning, alexander@agentsheets.com     *
 ;*                http://www.agentsheets.com                         *
-;* Copyright    : (c) 1996-2008, AgentSheets Inc.                    *
+;* Copyright    : (c) 1996-2009, AgentSheets Inc.                    *
 ;* Filename     : XMLisp.lisp                                        *
-;* Last Update  : 12/16/08                                           *
+;* Last Update  : 10/30/09                                           *
 ;* Version      :                                                    *
 ;*    1.0       : 09/19/04                                           *
 ;*    1.1       : 09/30/04 encode/decode strings in XML              *
@@ -81,8 +81,11 @@
 ;*    3.5.1     : 12/10/08 string-upcase symbol codec, float codec   *
 ;*    3.5.2     : 12/16/08 read-return-value fixed, keyword CODEC    *
 ;*    3.5.3     : 08/04/09 :is-created-by-xml-reader slot            *
-;* Systems      : G4, OS X 10.5.7                                    *
-;* Lisps        : MCL 5.0, MCL 5.2, LispWorks 4.3.7, CCL 1.3         *
+;*    3.6       : 10/30/09 more stringent instantiation policy       *
+;*                         <bla ... will result in error if there is *
+;*                         no matching class BLA                     *
+;* Systems      : G4, OS X 10.6.1                                    *
+;* Lisps        : MCL 5.0, MCL 5.2, LispWorks 4.3.7, CCL 1.4         *
 ;*                CLISP 2.33.83, CMUCL, AGL                          *
 ;* Licence      : LGPL                                               *
 ;* Based on     : XML by Andri Ioannidou                             *
@@ -1608,7 +1611,7 @@
              (if *Fallback-Class-Name-For-Element-Name-Hook* 
                (or (funcall *fallback-class-name-for-element-name-hook* Symbol)
                    'xml-content)
-               'xml-content)
+               (error "cannot find class \"~A\" ~%XMlisp is trying to create an instance of this class while reading \"<~A ...\"" Symbol String))
            :name Symbol
            :is-created-by-xml-reader t)))))))
 
@@ -1883,6 +1886,12 @@
   ;; do nothing
   )
 
+
+(defmethod (SETF FILE) (Container (Self t))
+  ;; for instance modal window dialogs return any kind of objects, make sure this is not a problem
+  (declare (ignore Container))
+  ;; do nothing
+  )
 
 (defmethod FILE ((Self xml-serializer))
   ;; by default we are not storing this information. Add a file slot to you object if you needs this
