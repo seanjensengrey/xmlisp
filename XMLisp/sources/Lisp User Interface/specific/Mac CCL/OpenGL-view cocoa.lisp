@@ -59,10 +59,11 @@
 
 
 (objc:defmethod (#/drawRect: :void) ((Self native-opengl-view) (rect :<NSR>ect))
-  (let ((Opengl-View (lui-view Self)))
-    (with-glcontext Opengl-View
-      (clear-background Opengl-View)
-      (draw Opengl-View))))
+  (with-simple-restart (abandon-drawing "Stop trying OpenGL to draw in ~s" Self)
+    (let ((Opengl-View (lui-view Self)))
+      (with-glcontext Opengl-View
+        (clear-background Opengl-View)
+        (draw Opengl-View)))))
 
 
 (objc:defmethod (#/prepareOpenGL :void) ((Self native-opengl-view))

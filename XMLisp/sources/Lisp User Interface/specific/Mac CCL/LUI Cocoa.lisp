@@ -181,8 +181,9 @@
 
 
 (objc:defmethod (#/drawRect: :void) ((self native-view) (rect :<NSR>ect))
-  ;; (format t "~%drawRect simple view")
-  (draw (lui-view Self)))
+  ;; if there is an error make this restartable from alternate console
+  (with-simple-restart (abandon-drawing "Stop trying Cocoa to draw in ~s" Self)
+    (draw (lui-view Self))))
 
 
 (objc:defmethod (#/display :void) ((self native-view))
