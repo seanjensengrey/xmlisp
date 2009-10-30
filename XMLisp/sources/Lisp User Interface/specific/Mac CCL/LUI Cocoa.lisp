@@ -417,6 +417,10 @@
                   <NSR>ect.size.height)))
 
 
+(defmethod (setf TITLE) :after (Title (self window))
+  (#/setTitle: (native-window Self) (native-string Title)))
+
+
 (defvar *Run-Modal-Return-Value* nil "shared valued used to return the run modal values")
 
 ;; Modal windows
