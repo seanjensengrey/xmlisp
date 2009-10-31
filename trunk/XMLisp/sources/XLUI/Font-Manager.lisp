@@ -92,7 +92,7 @@
   (- (char-code Char) (start Self)))
 
 
-(defmethod LINE-HEIGHT ((Self font))   20.0) 
+(defmethod LINE-HEIGHT ((Self font))   0.15)   ;; JIKES hard coded
 
 #|
   "Returns the height of a line of characters."
