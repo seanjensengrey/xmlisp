@@ -157,7 +157,11 @@
 ;****** XLUI
 
 (defpackage :XLUI
-  (:use :common-lisp :XML :LUI :opengl))
+  (:use :common-lisp :XML :LUI :opengl)
+  ;; import MOP
+  (:import-from "CCL"
+                "SLOT-DEFINITION-NAME" "SLOT-DEFINITION-TYPE"))
+
 
 (setq xml::*xmlisp-packages* (list (find-package :xlui) (find-package :xml)))
 
