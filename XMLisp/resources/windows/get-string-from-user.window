@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<get-string-from-user-window title="get string" height="100">
+  <column align="stretch" valign="distribute">
+    <editable-text  name="text"/>
+    <row align="right" minimize="vertical">
+      <button text="Cancel" action="cancel-action"/>
+      <button text="OK" action="OK-action" default-button="true"/>
+    </row>
+  </column>
+</get-string-from-user-window>
