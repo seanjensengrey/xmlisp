@@ -828,6 +828,93 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 (defmethod USE-TEXTURE ((Self agent-3d) Texture)
   (use-texture (view Self) Texture))
 
+
+(defmethod SELECTED-TEXTURE ((Self agent-3d))
+  ;; no default texture
+  nil)
+
+
+(defmethod UNSELECTED-TEXTURE ((Self agent-3d))
+  ;; no default texture
+  nil)
+
+
+(defmethod DRAW-TEXTURE ((Self agent-3d) Texture X Y Width Height)
+  (glEnable gl_texture_2d) 
+  (gltexenvi gl_texture_env gl_texture_env_mode gl_modulate)
+  (use-texture (view Self) Texture)
+  (glpushmatrix)
+  (gltranslatef x y 0.01s0)  ;; sligthly towards the viewer
+  (glbegin gl_quads)
+  (glnormal3f 0s0 0s0 1s0)
+  (gltexcoord2i 0 0) (glVertex2f 0s0 0s0)
+  (gltexcoord2i 0 1) (glvertex2f 0s0 Height)
+  (gltexcoord2i 1 1) (glvertex2f Width Height)
+  (gltexcoord2i 1 0) (glvertex2f Width 0s0)
+  (glend)
+  (glPopMatrix))
+
+
+(defmethod STRETCHED-TEXTURE-DT ((Self agent-3d))
+  ;; what ratio of the texture is considered being margin: 0 - 0.5
+  0.15s0)
+
+
+(defmethod STRETCHED-TEXTURE-DV ((Self agent-3d))
+  ;; what absolute size of a textured rectangle is considered margin
+  0.06s0)
+
+
+(defmethod DRAW-STRETCHED-TEXTURE ((Self agent-3d) Texture X Y Width Height &optional Dt Dv)
+  (setq Dt (or Dt (stretched-texture-dt Self)))
+  (setq Dv (or Dv (stretched-texture-dv Self)))
+  (glEnable gl_texture_2d) 
+  (gltexenvi gl_texture_env gl_texture_env_mode gl_modulate)
+  (use-texture (view Self) Texture)
+  (glpushmatrix)
+  ;;(gltranslatef x y 0.01s0)  ;; sligthly towards the viewer
+  (gltranslatef x y 0s0)
+  (glnormal3f 0s0 0s0 1s0)
+  ;; this is pretty inefficient
+  ;; direct mode should be replaced with a vector array
+  ;; precompute all the coordinate
+  (let ((1-Dt (- 1s0 dt))
+        (W-Dv (- Width Dv))
+        (H-Dv (- Height dv)))
+    (labels ((draw-strip (Yt0 Yt1 Yv0 Yv1)
+               (glbegin gl_quad_strip)
+                 (glTexCoord2f 0s0 yt0) (glVertex2f 0s0 Yv0)
+               (glTexCoord2f 0s0 Yt1) (glVertex2f 0s0 Yv1)
+               (glTexCoord2f dt yt0) (glVertex2f dv Yv0)
+               (glTexCoord2f dt Yt1) (glVertex2f dv Yv1)
+               (glTexCoord2f 1-dt yt0) (glVertex2f w-dv Yv0)
+               (glTexCoord2f 1-dt Yt1) (glVertex2f w-dv Yv1)
+               (glTexCoord2f 1s0 yt0) (glVertex2f Width Yv0)
+               (glTexCoord2f 1s0 Yt1) (glVertex2f Width Yv1)
+               (glend)))
+      (draw-strip 0s0 dt 0s0 dv)
+      (draw-strip dt 1-dt dv h-dv)
+      (draw-strip 1-dt 1s0 h-dv Height)))
+  (glPopMatrix))
+
+;; clayton: 0.1
+;; Andri 0.12, 0.05
+;; ronald 0.12, 0.05
+;; bob: 0.04
+
+;______________________________
+; Layout                       |
+;______________________________
+
+(defmethod LAYOUT ((Self agent-3d))
+  ;; do nothing
+  )
+
+(defmethod LAYOUT-WRAP-BEFORE-P ((Self agent-3d))
+  ;; no wrapping as default
+  nil)
+
+
 ;; XML
 
 (defmethod ADD-SUBOBJECT ((View agent-3d-view) (Agent agent-3d))
