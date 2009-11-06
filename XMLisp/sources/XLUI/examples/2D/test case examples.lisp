@@ -511,10 +511,10 @@ More functional browser example
   <column align="stretch" height="400" valign="stretch">
     <row height="20" align="stretch" valign="stretch">
       <choice-image-button width="140" >                                             
-        <choice-button-item text="Yahoo" action="load-yahoo" image-path="images/excited2.jpg"/>   
-        <choice-button-item text="ESPN" action="load-espn" image-path="images/ESPN.jpg"/>             
-        <choice-button-item text="DIGG" action="load-digg" image-path="images/diggin3.jpg"/> 
-        <choice-button-item text="New York Times" action="load-new-york-times" image-path="images/NYtimes.jpg"/>      
+        <choice-button-item text="Yahoo" action="load-yahoo" image="images/excited2.jpg"/>   
+        <choice-button-item text="ESPN" action="load-espn" image="images/ESPN.jpg"/>             
+        <choice-button-item text="DIGG" action="load-digg" image="images/diggin3.jpg"/> 
+        <choice-button-item text="New York Times" action="load-new-york-times" image="images/NYtimes.jpg"/>      
       </choice-image-button>  
       <image-button image="arrow-button.png" height="25" action="go-to-url" width="60" />
       <editable-text width="600" name="url" height="20" text="http://www.google.com"/>  
