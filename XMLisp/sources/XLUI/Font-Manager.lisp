@@ -401,9 +401,12 @@
   (setq Font-Name (string-downcase Font-Name))
   (let ((Font (gethash Font-Name (font-table Self))))
     (unless Font
-      (setq Font (load-font Font-Name (font-directory Self)))
-      (setf (texture Font) (create-font-texture Font-Name))
-      (setf (gethash Font-Name (font-table Self)) Font))
+      ;; need to have an active glcontext, assume it is shared
+      ;; perhaps better: check if there is current glcontext
+      (with-glcontext (shared-opengl-view)
+        (setq Font (load-font Font-Name (font-directory Self)))
+        (setf (texture Font) (create-font-texture Font-Name))
+        (setf (gethash Font-Name (font-table Self)) Font)))
     Font))
 
 
