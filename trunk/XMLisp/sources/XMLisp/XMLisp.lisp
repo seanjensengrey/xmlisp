@@ -1962,26 +1962,40 @@
     (print-slot-value-as-subelement Self slot-definition Stream)))
 
 
+(defmethod SLOT-DEFINITIONS-WITH-SLOT-BOUND ((Self xml-serializer) Slot-Definitions)
+  ;; keep only slot definitions of bound slots
+  (mapcan
+   #'(lambda (Definition)
+       (typecase Definition
+         (symbol (list Definition))
+         (t (if (slot-boundp Self (slot-definition-name Definition))
+              (list Definition)
+              nil))))
+   Slot-Definitions))
+
+
 (defmethod SLOTS-TO-PRINT-LIST ((Self xml-serializer))
   (let ((Slot-Names (print-slots Self)))
-    (if (equal Slot-Names :all)
-      (class-slots (class-of Self))
-      (mapcar
-       #'(lambda (Slot-Name)
-           (or (find-slot-definition Self Slot-Name)
-               ;; if slot definition is not found return slot-name, caller could try to find accessor function
-               Slot-Name))
-       Slot-Names))))
+    (slot-definitions-with-slot-bound
+     Self
+     (if (equal Slot-Names :all)
+       (class-slots (class-of Self))
+       (mapcar
+        #'(lambda (Slot-Name)
+            (or (find-slot-definition Self Slot-Name)
+                ;; if slot definition is not found return slot-name, caller could try to find accessor function
+                Slot-Name))
+        Slot-Names)))))
 
 
-(defmethod print-accessor-values-as-attributes ((Self xml-serializer) Accessor-Values Stream)
+(defmethod PRINT-ACCESSOR-VALUES-AS-ATTRIBUTES ((Self xml-serializer) Accessor-Values Stream)
   (dolist (Accessor-Value Accessor-Values)
     ;; we have little meta information: no type, initform etc.
     (format Stream " ~A=" (string-downcase (first Accessor-Value)))
     (print-typed-attribute-value (rest Accessor-Value) t Stream)))
 
 
-(defmethod print-accessor-values-as-subelements ((Self xml-serializer) Accessor-Values Stream)
+(defmethod PRINT-ACCESSOR-VALUES-AS-SUBELEMENTS ((Self xml-serializer) Accessor-Values Stream)
   (dolist (Accessor-Value Accessor-Values)
     (map-object
        (rest Accessor-Value)
