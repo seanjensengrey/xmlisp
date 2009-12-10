@@ -22,7 +22,8 @@
 ;*    2.5       : 03/01/07 "disclosed" attribute, wrapping, camera   *
 ;*    2.5.1     : 08/30/07 shortcut: double click to test            *
 ;*    2.5.2     : 10/04/07 use meta information comment as tooltip   *
-;* Systems      : G4, MCL 5.2, OS X 10.4.10                          *
+;*    3.0       : 11/05/09 Clozure CL: work with type checking MOP   *
+;* Systems      : Intel-Mac, OS X 10.6.1, CCL 1.4                    *
 ;* Abstract     : Interface to VAT instructions                      *
 ;*                                                                   *
 ;*********************************************************************
@@ -44,7 +45,7 @@
                        :documentation "position after which arguments are optional")
    (format-list :accessor format-list :initform nil :initarg :format-list :documentation "contains keyword or nil for each argument agent")
    (arguments :accessor arguments :initform nil :initarg :arguments 
-              :documentation "list of (<name> <type>) lists")
+              :documentation "list of (<name> <type> <editor-class-name> <init-value>) lists")
    (instruction-superlass :accessor instruction-superclass :initform 'instruction :initarg :superclass)
    (instruction-class :accessor instruction-class :initarg :class :documentation "default to instruction name")
    (comments :accessor comments :initform "Instruction" :initarg :comments)
@@ -458,16 +459,16 @@
     (flip-vertical Self)))
 
 
-(defmethod DISPLAY ((Self instruction))
+(defmethod DRAW ((Self instruction))
   (when (is-visible Self) 
-    (display-background Self)
-    (when (is-drag-entered Self) (display-insertion-arrows Self)))
+    (draw-background Self)
+    (when (is-drag-entered Self) (draw-insertion-arrows Self)))
   ;; argument agents
   (glcolor4f 1s0 1s0 1s0 1s0)
-  (map-disclosed-argument-agents Self #'display)
+  (map-disclosed-argument-agents Self #'draw)
   ;; regular agents
   (dolist (Agent (agents Self))
-    (display Agent)))
+    (draw Agent)))
 
 ;________________________
 ; Disclosure Management  |
@@ -553,7 +554,7 @@
   - instance will be initialized with (initialize-slot-type-instance <instance> <instruction> <slot-definition>)
   - slot value will be set to (value <instance>)
 
-  If instruction is displayed or layed out then all argument agents need to be created based on the slot-value:
+  If instruction is drawn or layed out then all argument agents need to be created based on the slot-value:
  1) if the slot-value is an agent-3d or a list of agent-3d then it will be used and no editor will be created. 
  2)  if <type> is a standard-class then an instance will be created of it and used as editor. 
   3) if <type> is built-in-class then no editor is created and slot-value remains unchanged."
@@ -598,11 +599,16 @@
                  #'(lambda (argument)
                      `(,(first argument) 
                        :accessor ,(first argument)
-                       :initform ,(third argument)
+                       :initform ,(fourth argument)
                        :type ,(second argument)
-                       ,@(when (fourth argument) `(:documentation ,(fourth argument)))))
+                       ,@(when (fourth argument) `(:documentation ,(fifth argument)))))
                  (remove-if #'atom Arguments))
                (:documentation ,Comments))
+             ;; generate slot-editor-classes definition
+             (defmethod SLOT-EDITOR-CLASSES ((Self ,class))
+               ',(mapcar
+                   #'(lambda (Argument) (list (first Argument) (third Argument)))
+                   (remove-if #'atom Arguments)))
              ;; generate expander method
              ;; if there is no macro expand into nil
              (defmethod EXPAND ((,(If Macro (First (First Macro)) 'Self) ,class))
@@ -618,6 +624,63 @@
 
 
 #| Examples:
+
+
+
+(pprint (macroexpand-1 
+         '(instruction DOUBLE-ME ((Value float float-editor 3.14))
+                       )))
+
+
+(instruction DOUBLE-ME ((Value float float-editor 3.14))
+  "double the value"
+  :macro ((Self) `(* 2 ,(value Self))))
+
+
+<double-me value="3.0"/>
+
+(inspect <double-me value="3.0"/>)
+
+(defmethod DRAW ((Self double-me))
+  (layout Self)  ;; excessive
+  (print
+  (truncate (/ (hemlock::time-to-run   (call-next-method)) 1000  ))))
+
+
+<application-window>
+  <agent-3d-view name="opengl">
+   <double-me value="3.0"/>
+   <double-me value="3.0" y="1.0"/>
+  </agent-3d-view>
+</application-window> 
+
+
+(defmethod PRINT-SELECTION-ACTION ((w application-window) (Button bevel-button))
+  (print (agents-selected (view-named w "opengl"))))
+
+
+(defmethod EXPAND-SELECTION-ACTION ((w application-window) (Button bevel-button))
+  (print (expand (first (agents-selected (view-named w "opengl"))))))
+
+
+<application-window>
+  <column align="stretch" valign="stretch">
+  <agent-3d-view name="opengl" vflex="1">
+   <double-me value="1.0"/>
+   <double-me value="2.0" y="1.0"/>
+  </agent-3d-view>
+  <row minimize="vertical" align="center">
+   <bevel-button text="print" action="print-selection-action" width="55"/>
+   <bevel-button text="expand" action="expand-selection-action" width="70"/>
+  </row>
+  </column>
+</application-window>
+
+
+
+
+
+
 
 
 (instruction FOR ((Var symbol) (From integer) (to integer) (instructions list))
