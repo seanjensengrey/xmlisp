@@ -299,7 +299,7 @@
                       :initial-string (value Self)
                       #| :position (add-points (view-mouse-position nil) #@(-33 -86)) |#))
   ;; adjust attribute value of slot I am editing
-  ;; (set-attribute-value (part-of Self) (slot-name Self) (value Self))
+  (set-attribute-value (part-of Self) (slot-name Self) (value Self))
   ;; layout 
   (let ((View (view (part-of Self))))
     (dolist (Agent (agents View))
@@ -446,17 +446,6 @@
 (defclass FLOAT-EDITOR (string-editor)
   ()
   (:documentation "Float"))
-
-
-(defmethod initialize-instance :after ((Self float-editor) &rest args)
-  (setf (value Self) "0.0"))
-
-
-(defmethod PRINT-TYPED-ATTRIBUTE-VALUE (Value (Type (eql 'float-editor)) Stream)
-  (print-typed-attribute-value Value 'double-float Stream))
-
-(defmethod READ-TYPED-ATTRIBUTE-VALUE ((Value string) (Type (eql 'float-editor)))
-  (read-typed-attribute-value Value 'double-float))
 
 
 (defmethod (SETF VALUE) (Value (Self float-editor))
