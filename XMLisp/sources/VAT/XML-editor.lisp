@@ -40,6 +40,7 @@
 (defclass XML-EDITOR (agent-3d)
   ((display-name-p :accessor display-name-p :initform t :initarg :display-name-p :documentation "if non-nil use name as first element of argument-agents")
    (argument-agents :accessor argument-agents :initform nil :documentation "agents representing use editable attributes and sub elements")
+   (slot-editors :accessor slot-editors :initform nil :documentation "slot editor instances used to edit value")
    (texture :accessor texture :initform "VAT2action.png" :initarg :texture)
    (widht :accessor width :initform 0.0 :initarg :width)
    (height :accessor height :initform 0.0 :initarg :height)
@@ -49,6 +50,18 @@
 
 (defgeneric EDIT-SLOTS (Xml-Editor)
   (:documentation "Use these slots in this order to display object"))
+
+
+(defgeneric SLOT-EDITOR-CLASSES (xml-editor)
+  (:documentation "association list of slot name, editor class name"))
+
+
+(defgeneric SLOT-EDITOR (xml-editor slot-name)
+  (:documentation "return the slot editor for slot <slot-name>"))
+
+
+(defgeneric (setf SLOT-EDITOR) (editor xml-editor slot-name)
+  (:documentation "set the slot editor of slot <slot-name> to <editor>"))
 
 
 (defgeneric MAKE-VALUE-EDITOR-FROM-SLOT-DEFINITION (Xml-Editor Slot-Definition)
@@ -61,6 +74,14 @@
 (defmethod EDIT-SLOTS ((Self xml-editor))
   ;; default to same slots and order as used for serialization
   (print-slots Self))
+
+
+(defmethod SLOT-EDITOR ((Self xml-editor) Slot-Name)
+  (getf (slot-editors Self) Slot-Name))
+
+
+(defmethod (setf SLOT-EDITOR) (Editor (Self xml-editor) Slot-Name)
+  (setf (getf (slot-editors Self) Slot-Name) Editor))
 
 
 (defmethod SELECTED-TEXTURE ((Self xml-editor))
@@ -123,28 +144,21 @@
 
 
 (defmethod MAKE-VALUE-EDITOR-FROM-SLOT-DEFINITION ((Self xml-editor) Slot-Definition)
-  ;; built-in classes do not work with make-instance
-  (etypecase (find-class (most-specific-class (slot-definition-type Slot-Definition)))
-    ;; standard class objects can be converted into value editors
-    (standard-class
-     (let ((Value-Editor (make-instance
-                          (most-specific-class (slot-definition-type Slot-Definition))
+  (let ((Value-Editor-Class-Name (second (assoc (slot-definition-name Slot-Definition)
+                                                (slot-editor-classes Self)))))
+    (unless Value-Editor-Class-Name
+      (error "no value editor defined for slot \"~A\" of class \"~A\"" (slot-definition-name Slot-Definition) (type-of Self)))
+    (let ((Value-Editor (make-instance
+                          Value-Editor-Class-Name
                           :part-of Self
                           :name (slot-definition-name Slot-Definition)
                           :view (view Self))))
+      (setf (slot-editor Self (slot-definition-name Slot-Definition)) Value-Editor)
        (set-value-from-slot-attribute Value-Editor Self Slot-Definition)
-       ;; if slot is unbound or value is not set get it from value editor
-       (unless (and (slot-boundp Self (slot-definition-name Slot-Definition))
-                    (slot-value Self (slot-definition-name Slot-Definition)))
-         (setf (slot-value Self (slot-definition-name Slot-Definition))
-               Value-Editor))  ;; use editor not just value
        ;; some value editors remember which slots they represent
        (when (slot-exists-p Value-Editor 'slot-name)
          (setf (slot-value Value-Editor 'slot-name) (slot-definition-name Slot-Definition)))
-       Value-Editor))
-    ;; built-in class objects are hard to deal with: assume we can just use the value
-    (built-in-class
-     (slot-value Self (slot-definition-name Slot-Definition)))))
+      Value-Editor)))
     
 
 
@@ -481,70 +495,43 @@ List may be a nested list."
 #| Examples:
 
 (defclass EXCHANGE-RATE-XML-EDITOR (xml-editor)
-  ((rate :type float-editor :editor bla-editor)
-   (size :type float-editor)))
+  ((rate :accessor rate :initform 3.14 :type float)
+   (size :accessor size :initform 2.71 :type float)))
 
 
-;; accessors
-
-(defmethod RATE ((Self exchange-rate-xml-editor))
-  (value (slot-value Self 'rate)))
-
-
-(defmethod (setf RATE) (Value (Self exchange-rate-xml-editor))
-  (setf (value (slot-value Self 'rate)) Value))
-
-
-(defmethod PRINT-SLOTS ((Self exchange-rate-xml-editor))
-  '(rate size))
+(defmethod SLOT-EDITOR-CLASSES ((Self exchange-rate-xml-editor))
+  '((rate float-editor) 
+    (size string-menu-editor)))
 
 
 (defmethod EDIT-SLOTS ((Self exchange-rate-xml-editor))
   '(rate size))
 
 
-
-
-(defmethod DRAW ((Self exchange-rate-xml-editor))
-  (layout Self)  ;; excessive
-  ;;(print
-  (truncate (/ (hemlock::time-to-run   (call-next-method)) 1000  )))
-
-
-(defparameter *ed* (make-instance 'exchange-rate-xml-editor))
-
-(pprint (class-slots (class-of *ed*)))
-
-(slot-definition-name (first (slots-to-edit-list *ed*)))
-
-(type-of (first (slots-to-edit-list *ed*)))
-
-(slot-boundp *ed* (slot-definition-name (first (slots-to-edit-list *ed*))))
-
-(make-argument-agents *ed*)
-
-(defparameter *fe* (make-instance 'float-editor))
-
-(value *fe*)
-
-
-(inspect *ed*)
-
-
-
-(defparameter *wi*
-
-<application-window>
-  <agent-3d-view name="opengl">
-   <exchange-rate-xml-editor draggable="true"/>
-  <exchange-rate-xml-editor y="1.0" draggable="true"/>
-  </agent-3d-view>
-</application-window>  )
+(defmethod PRINT-SLOTS ((Self exchange-rate-xml-editor))
+  '(rate size))
 
 
 (rate <exchange-rate-xml-editor/>)
 
-(view-named *wi* "opengl")
+(inspect <exchange-rate-xml-editor rate="4.5"/>)
+
+<exchange-rate-xml-editor rate="4.5"/>
+
+
+
+(defmethod DRAW ((Self exchange-rate-xml-editor))
+  (layout Self)  ;; excessive
+  (print
+  (truncate (/ (hemlock::time-to-run   (call-next-method)) 1000  ))))
+
+
+<application-window>
+  <agent-3d-view name="opengl">
+   <exchange-rate-xml-editor rate="1000.0" draggable="true"/>
+  <exchange-rate-xml-editor y="1.0" draggable="true"/>
+  </agent-3d-view>
+</application-window>  
 
 
 |#
