@@ -445,7 +445,8 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defmethod VIEW-EVENT-HANDLER ((Self Window) (Event mouse-event))
   (let ((*Current-Event* Event))
-    (mouse-event-handler Self (x Event) (y Event) (dx Event) (dy Event) Event)))
+    (with-simple-restart (abandon-view-event-handler "Stop event handling of event ~S of window ~S" Event Self)
+      (mouse-event-handler Self (x Event) (y Event) (dx Event) (dy Event) Event))))
 
 
 (defmethod VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER ((Self window) X Y)
