@@ -40,7 +40,10 @@
 
 
 (defmethod (SETF VALUE) (Value (Self xml-editor-sequence))
-  (setf (agents Self) Value))
+  (setf (agents Self) Value)
+  ;; make each editor recognize that it is part of the sequence
+  (dolist (Agent (agents Self))
+    (setf (part-of Agent) Self)))
 
 
 (defmethod SET-VALUE-FROM-SLOT-ATTRIBUTE ((Self xml-editor-sequence) (Xml-Editor xml-editor) Slot-Definition)
@@ -144,9 +147,43 @@
 
 
 
-(defclass FORWARD (xml-editor)
+(defclass ACTION (xml-editor)
+  ()
+  (:documentation "Action base class"))
+
+
+(defclass FORWARD (action)
   ((distance :accessor distance :initform 1.0 :type float))
   (:documentation "turtle action to make turtle move forward a certain distance"))
+
+
+(defmethod COULD-RECEIVE-DROP ((Action1 action) (Action2 action))
+  (values 
+   t
+   "why not"))
+
+
+(defmethod COULD-RECEIVE-DROP ((Action1 action) (Action2 repeat))
+  (values 
+   nil
+   "nope"))
+
+
+(defmethod RECEIVE-DROP ((Action1 action) (Action2 action))
+  (let ((Sequence (part-of Action1)))
+    ;; update value-editor value
+    (setf (value Sequence) (move-before (value Sequence) Action2 Action1))
+    ;; update slot value
+    (setf (slot-value (part-of Sequence) (slot-name Sequence)) (value Sequence))
+    (layout Sequence)
+    (display (view Action1))))
+
+
+  (print (part-of (part-of Action1))))
+
+  ;;(setf (actions (part-of Action1)) (move-before (actions (part-of Action1)) Action2 Action1))
+ ;;; (print (actions (part-of Action1))))
+
 
 
 (defmethod DRAW ((Self forward))
@@ -171,13 +208,13 @@
   (layout Self))
 
 
-(defmethod ADD-SUBOBJECT ((Self repeat) (Action forward))
+(defmethod ADD-SUBOBJECT ((Self repeat) (Action action))
   (setf (actions Self) (append (actions Self) (list Action)))
   ;; make all sub agents views point to world
   (broadcast-to-agents Action #'(lambda (Agent) (setf (view Agent) Self)))
   (setf (part-of Action) Self))
 
-
+(slot-editor <repeat/> 'actions)
 
 
 (inspect <repeat/>)
@@ -191,7 +228,8 @@
    </repeat>
    <repeat times="12" draggable="true" y="2.0">
      <forward distance="1.0" draggable="true"/>
-     <forward distance="2000.0" draggable="false"/>
+     <forward distance="2.0" draggable="true"/>
+     <forward distance="3.0" draggable="true"/>
    </repeat>
   </agent-3d-view>
 </application-window> 
