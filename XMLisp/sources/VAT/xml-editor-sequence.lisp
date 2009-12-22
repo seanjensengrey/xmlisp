@@ -27,13 +27,28 @@
   (:documentation "A xml-editor sequence editor"))
 
 
-;; Print
+(defgeneric INSERT-BEFORE (xml-editor-sequence new-xml-editor before-xml-editor)
+  (:documentation "Insert <new-xml-editor> before <before-xml-editor>. Copy <new-xml-editor> if needed"))
+
+
+(defgeneric INSERT-AFTER (xml-editor-sequence after-xml-editor new-xml-editor)
+  (:documentation "Insert <new-xml-editor> after <after-xml-editor>. Copy <new-xml-editor> if needed"))
+
+
+(defgeneric REMOVE-ITEM (xml-editor-sequence xml-editor)
+  (:documentation "Remove <xml-editor> from <xml-editor-sequence>"))
+
+;______________________________
+; Printing                     |
+;______________________________
 
 (defmethod PRINT-SLOTS ((Self xml-editor-sequence))
   '(agents))
 
 
-;; Value
+;______________________________
+; Value accessors              |
+;______________________________
 
 (defmethod VALUE ((Self xml-editor-sequence))
   (agents Self))
@@ -51,13 +66,15 @@
   (setf (value Self) (slot-value Xml-Editor (slot-definition-name Slot-Definition))))
 
 
-;; Display 
+;______________________________
+; Display                      |
+;______________________________
 
-(defmethod DISPLAY-STRETCHED-TEXTURE-DT ((Self xml-editor-sequence))
+(defmethod STRETCHED-TEXTURE-DT ((Self xml-editor-sequence))
   0.3s0)
 
 
-(defmethod DISPLAY-STRETCHED-TEXTURE-DV ((Self xml-editor-sequence))
+(defmethod STRETCHED-TEXTURE-DV ((Self xml-editor-sequence))
   0.15s0)
 
 
@@ -92,15 +109,15 @@
     (draw Agent)))
 
 
-;; layout
-
+;______________________________
+; layout                       |
+;______________________________
 
 (defmethod FLIP-VERTICAL ((Self xml-editor-sequence))
   ;; if height is know content needs be flipped vertically because of OpenGL coordinate system
   (let ((Height (height Self)))
     (dolist (Agent (agents Self))
       (setf (y Agent) (- Height (y Agent) (height Agent))))))
-
 
 
 (defmethod LAYOUT ((Self xml-editor-sequence))
@@ -118,6 +135,108 @@
     (setf (width Self) (+ X-max *Spacing* *Spacing*))
     (setf (height Self) (+ Y *Spacing*)))
   (flip-vertical Self))
+
+
+;______________________________
+; List Operations              |
+;_______________________________
+
+(defmethod INSERT-BEFORE ((List list) New-Item Before-Item) "
+  in: List list; New-Item t; Before-Item t;
+  Return a new list with <New-item> preceeding <Before-Item>.
+  List may be nested"
+ (mapcan 
+  #'(lambda (Item)
+      (cond 
+       ((listp Item) (list (insert-before Item New-Item Before-Item)))
+       ((eq Item Before-Item) (list New-Item Before-Item))
+       (t (list Item))))
+  List))
+
+;; example: (insert-before '(1 2 3 4 5 6 7 8 9) 0 1)
+;; example: (insert-before '(1 2 3 4 (5 6 7 8 9)) 8.5 9)
+
+
+(defmethod INSERT-AFTER ((List list) After-Item New-Item) "
+  in: List list; After-Item t; New-Item t;
+  Return a new list with <New-item> following <After-Item>.
+ List may be a nested list."
+ (mapcan 
+  #'(lambda (Item)
+      (cond
+       ((listp Item) (list (insert-after Item After-Item New-Item)))
+       ((eq Item After-Item) (list After-Item New-Item))
+       (t (list Item))))
+  List))
+
+;; (insert-after '(0 1 2 3 4 5 6 7 8 9) 6 6.5)
+;; (insert-after '(0 1 2 (3 4 (5 6 7 8)) 9) 6 6.5)
+
+
+(defmethod MOVE-BEFORE ((List list) Old-Item Before-Item) "
+  in: List list; Old-Item t; Before-Item t; 
+  Return a new list with <New-item> preceeding <Before-Item>.
+ List may be a nested list."
+ (mapcan 
+  #'(lambda (Item)
+      (cond
+       ((listp Item) (list (move-before Item Old-Item Before-Item)))
+       ((eq Item Before-Item) (list Old-Item Before-Item))
+       ((eq Item Old-Item) nil)
+       (t (list Item))))
+  List))
+
+;; example: (move-before '(1 2 3 4 5 6 7 8 9) 8 1)
+;; example: (move-before '((1 2 3 4) 5 (6 7 8) 9) 8 1)
+;; example: (move-before '(1 2 3 4 5 6 7 8 9) 1 8)
+
+(defmethod MOVE-AFTER ((List list) After-Item Old-Item) "
+  in: List list; After-Item t; Old-Item t; 
+  Return a new list with <Old-item> following <after-Item>.
+List may be a nested list."
+ (mapcan 
+  #'(lambda (Item)
+      (cond
+       ((listp Item) (list (move-after Item After-Item Old-Item)))
+       ((eq Item After-Item) (list After-Item Old-Item))
+       ((eq Item Old-Item) nil)
+       (t (list Item))))
+  List))
+
+;; (move-after '(0 1 2 3 4 5 6 7 8 9) 3 0)
+;; (move-after '(((0)) 1 (2) (3 4 5) 6 7 8 9) 3 0)
+
+
+
+(defmethod INSERT-BEFORE ((Self xml-editor-sequence) (New-Xml-Editor xml-editor) (Before-Xml-Editor xml-editor))
+  (multiple-value-bind (Acceptable Need-To-Copy Explanation)
+                       (could-receive-drop Before-Xml-Editor New-Xml-Editor)
+    (declare (ignore Explanation))
+    ;; (format t "drop: accept=~A copy=~A explanation=~A~%" Acceptable Need-To-Copy Explanation)
+    (unless Acceptable 
+      (format t "drag failled: cannot accept dragging a \"~A\" on a \"~A\"~%" 
+              (type-of New-Xml-Editor) (type-of Before-Xml-Editor))
+      (return-from insert-before))
+    ;; update value editor sequence
+    (cond
+     ;; copy
+     (Need-To-Copy
+      (let ((Editor-Copy (duplicate New-Xml-Editor (find-package :xlui))))
+        ;; re-establish links to view, xml-editor could come from differnet window/view
+        (broadcast-to-agents Editor-Copy #'(lambda (Agent) (setf (view Agent) (view Self))))
+        (setf (part-of Editor-Copy) (part-of Self))
+        (setf (value Self) (insert-before (value Self) Editor-Copy Before-Xml-Editor))))
+     ;; move
+     (t
+      (setf (value Self) (move-before (value Self) New-Xml-Editor Before-Xml-Editor))))
+    ;; update slot value
+    (setf (slot-value (part-of Self) (slot-name Self)) (value Self))
+    (dolist (Editor (agents (view Self)))
+      (layout Editor))
+;;    (layout (part-of Self))  ;; need to go to root probably
+    (display (view Self))))
+
+
 
 
 #| Examples:
@@ -138,7 +257,7 @@
 
 
 (defmethod PRINT-SLOTS ((Self repeat))
-  (edit-slots Self))
+  '(times actions draggable))
 
 
 (defmethod INITIALIZE-INSTANCE :after ((Self repeat) &rest Args)
@@ -157,33 +276,27 @@
   (:documentation "turtle action to make turtle move forward a certain distance"))
 
 
+
 (defmethod COULD-RECEIVE-DROP ((Action1 action) (Action2 action))
   (values 
    t
+   (not (eq (part-of Action1) (part-of Action2)))
    "why not"))
 
 
 (defmethod COULD-RECEIVE-DROP ((Action1 action) (Action2 repeat))
   (values 
-   nil
+   t
+   (not (eq (part-of Action1) (part-of Action2)))
    "nope"))
 
 
 (defmethod RECEIVE-DROP ((Action1 action) (Action2 action))
-  (let ((Sequence (part-of Action1)))
-    ;; update value-editor value
-    (setf (value Sequence) (move-before (value Sequence) Action2 Action1))
-    ;; update slot value
-    (setf (slot-value (part-of Sequence) (slot-name Sequence)) (value Sequence))
-    (layout Sequence)
-    (display (view Action1))))
+  (insert-before (part-of Action1) Action2 Action1))
 
 
-  (print (part-of (part-of Action1))))
-
-  ;;(setf (actions (part-of Action1)) (move-before (actions (part-of Action1)) Action2 Action1))
- ;;; (print (actions (part-of Action1))))
-
+(defmethod RECEIVE-DROP ((Action1 action) (Repeat repeat))
+  (insert-before (part-of Action1) Repeat Action1))
 
 
 (defmethod DRAW ((Self forward))
@@ -200,7 +313,7 @@
 
 
 (defmethod PRINT-SLOTS ((Self forward))
-  (edit-slots Self))
+  '(distance draggable))
 
 
 (defmethod INITIALIZE-INSTANCE :after ((Self forward) &rest Args)
@@ -219,14 +332,12 @@
 
 (inspect <repeat/>)
 
+(duplicate  <forward distance="1.0" draggable="true"/>)
+
 (setq wi
 <application-window margin="0">
   <agent-3d-view name="opengl">
    <repeat times="12" draggable="true">
-     <forward distance="1.0" draggable="true"/>
-     <forward distance="2000.0" draggable="false"/>
-   </repeat>
-   <repeat times="12" draggable="true" y="2.0">
      <forward distance="1.0" draggable="true"/>
      <forward distance="2.0" draggable="true"/>
      <forward distance="3.0" draggable="true"/>
@@ -236,20 +347,8 @@
 
 )
 
-(inspect (first (agents (view-named wi "opengl"))))
 
-
-<application-window>
-  <agent-3d-view name="opengl">
-   <forward distance="12.5"/>
-  </agent-3d-view>
-</application-window> 
-
-
-
-
-
-
+(frame-rate (view-named wi "opengl"))
 
 
 |#
