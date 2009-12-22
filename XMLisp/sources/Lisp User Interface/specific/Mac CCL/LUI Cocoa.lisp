@@ -1272,6 +1272,8 @@
   ;; dispatch action to window + target
   ;; catch errors to avoid total crash of CCL
   (print "hello44"))
+
+;;The following code if a lot of failed attempts to create a popup menu it is only hear for reference.  
 #|
 
 (defmethod initialize-event-handling ((Self control))

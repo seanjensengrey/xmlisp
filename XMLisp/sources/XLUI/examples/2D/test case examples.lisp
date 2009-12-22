@@ -278,7 +278,7 @@ The lawyer said, 'I don't mind all this attention, but what makes me so special?
 St. Peter replied, 'Well, I've added up all the hours for which you billed your clients, and by my calculation you must be about 193 years old!'"/>
 </application-window> 
 
-
+;; Popup Test
 (defmethod hello ((w application-window) (Button button))
   (show-string-popup w))
 
