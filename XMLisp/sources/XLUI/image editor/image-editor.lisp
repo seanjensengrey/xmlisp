@@ -1341,6 +1341,7 @@
      <spacer height="10"/>
      <color-well name="color well" action="pick-color-action" color="000000"/>
    </image-button-cluster>
+  <spacer width="5"/>
   <image-editor name="image editor" image="~/working copies/XMLisp svn/trunk/XMLisp/resources/images/redlobster.png" flex="1" vflex="1"/>
   </row>
   </column>
