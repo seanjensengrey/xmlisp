@@ -609,8 +609,9 @@ after any of the window controls calls stop-modal close window and return value.
 
 
 (defmethod POPUP-ACTION((window window) (self popup-Button-Control))
-  (let ((action (get-selected-action self)))
-    (funcall action Window Self)))
+  (unless (eql (get-selected-action self) NIL)
+    (let ((action (get-selected-action self)))
+      (funcall action Window Self))))
 
 
 (defclass RADIO-BUTTON-CONTROL (control)

@@ -279,8 +279,13 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
 </application-window> 
 
 ;; Popup Test
+
+
 (defmethod hello ((w application-window) (Button button))
-  (show-string-popup w))
+  (print (show-string-popup w '("hello" "hello2" "hello3"))))
+
+
+
 
 <application-window title="Currency Converter" width="300" height="180">
   <column align="stretch" valign="stretch" padding="9">
