@@ -185,6 +185,13 @@
 (load "lui:sources;XLUI;AWE;Morph")
 
 
+;; Visual AgenTalk
+
+(load "lui:sources;XLUI;dialogs;get-string-from-user")
+(load "lui:sources;VAT;XML-editor")
+(load "lui:sources;VAT;Value-Editors")
+(load "lui:sources;VAT;xml-editor-sequence")
+
 ;******** Multimedia
 
 (defpackage :sound
