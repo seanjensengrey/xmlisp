@@ -1206,15 +1206,25 @@
 ;__________________________________
 ; Show PopUp                       |
 ;__________________________________/
-(export '(show-string-popup))
+;(export '(show-string-popup))
 
-(objc:defmethod (#/testAction :void) ((self native-target))
-  ;; dispatch action to window + target
-  ;; catch errors to avoid total crash of CCL
-  (print "hello44"))
 
-(defun show-string-popup (window)
-  (print "hello")
+
+(defun show-string-popup (window list)
+    (let ((Pop-up (make-instance 'popup-button-control )))
+      (dolist (String list)
+        (add-item Pop-Up String nil))
+      (add-subviews window Pop-up)
+      (#/setTransparent: (native-view Pop-Up) #$YES)
+      (#/performClick:  (native-view Pop-up) +null-ptr+)
+      (#/removeFromSuperview (native-view Pop-up))
+      (ccl::lisp-string-from-nsstring  (#/titleOfSelectedItem (native-view Pop-Up)))
+      ))
+ 
+
+
+  
+#|
   (ns:with-ns-rect (Frame 100 50 200 200)
     (ns:with-ns-point (Point 50 50)
     (let ((popupCell (#/alloc ns:ns-pop-up-button-cell))) 
@@ -1249,7 +1259,7 @@
        ; (inspect menu)
         (#/drawBezelWithFrame:inView: popupCell Frame (native-view window)))      
       )))))
-
+|#
 (export '(make-event))
 (defun make-event (window) 
   (ns:with-ns-rect (Frame 100 50 200 200)

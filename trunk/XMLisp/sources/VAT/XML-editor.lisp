@@ -343,7 +343,7 @@
 
 (defclass EXCHANGE-RATE-XML-EDITOR (xml-editor)
   ((rate :accessor rate :initform 3.14 :type float)
-   (size :accessor size :initform 2.71 :type float)))
+   (size :accessor size :initform "hello" :type string)))
 
 
 (defmethod SLOT-EDITOR-CLASSES ((Self exchange-rate-xml-editor))

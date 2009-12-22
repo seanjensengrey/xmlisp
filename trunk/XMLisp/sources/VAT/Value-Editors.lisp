@@ -358,33 +358,14 @@
 
 (defmethod EDIT ((Self string-menu-editor))
   ;; just in time menu
-  (when (make-pop-up-p Self)
-    (setf (pop-up-menu Self)
-          (make-instance 'pop-up-menu
-            #| :view-position #@(20 55) |#
-            :view-font '("Geneva" 9)
-            :default-item 0
-            :auto-update-default nil
-            :menu-items
-            (mapcar 
-             #'(lambda (String)
-                 (make-instance 'menu-item
-                   :menu-item-title String
-                   :menu-item-action #'(lambda () (setf (value Self) String))))
-             (menu-strings Self)))))
-  (add-subviews (window Self) (pop-up-menu Self))
-  ;; (set-view-position (pop-up-menu Self) (add-points (view-mouse-position (window Self)) #@(-20 -10)))
-  ;; activate pop up window
-  (menu-select (pop-up-menu Self) 0)
-  (remove-subviews (window Self) (pop-up-menu Self)) ;; no point in keeping it in there
-  ;; adjust attribute value of slot I am editing
-  (set-attribute-value (part-of Self) (slot-name Self) (value Self))
+  (setf (value Self) (show-string-popup (window Self) (menu-strings self))) 
+   (set-attribute-value (part-of Self) (slot-name Self) (value Self))
   ;; layout 
   (let ((View (view (part-of Self))))
     (dolist (Agent (agents View))
       (layout Agent))
-    (display View)
-    (setf (window-needs-saving-p (window Self)) t)))
+    (display View)))
+   ; (setf (window-needs-saving-p (window Self)) t)))
 
 
 ;;*********************************
