@@ -387,7 +387,7 @@
       ;; setup potential drag and drop
       (when (draggable Agent)
         (setf (drag-and-drop-handler Self)
-              (make-instance 'drag-and-drop-handler 
+              (make-instance 'drag-and-drop-handler
                 :source-agent Agent
                 :source-view Self
                 :x-start x
@@ -485,7 +485,7 @@
    (pitch :accessor pitch :initform 0.0 :initarg :pitch :type short-float)
    (heading :accessor heading :initform 0.0 :initarg :heading :type short-float)
    (reference-id :accessor reference-id :initform (incf *Reference-Id-Counter*) :type integer)
-   (draggable :accessor draggable :initform nil :type boolean :documentation "if true agent can be dragged by user")
+   (draggable :accessor draggable :initform nil :type boolean :initarg :draggable :documentation "if true agent can be dragged by user")
    (is-visible :accessor is-visible :initform t :type boolean)
    (is-hovered :accessor is-hovered :initform nil :type boolean :documentation "is mouse hovering over me?")
    (is-selected :accessor is-selected :initform nil :type boolean :documentation "am I one of the selected agents?")
