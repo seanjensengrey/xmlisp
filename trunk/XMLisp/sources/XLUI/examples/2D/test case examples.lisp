@@ -279,6 +279,17 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
 </application-window> 
 
 
+(defmethod hello ((w application-window) (Button button))
+  (show-string-popup w))
+
+<application-window title="Currency Converter" width="300" height="180">
+  <column align="stretch" valign="stretch" padding="9">
+    <row align="stretch" minimize="vertical" valign="bottom">
+      <button text="make-event" action="hello" width="100" default-button="true"/>
+    </row>
+  </column>
+</application-window>
+
 ;; Editable-Text
 
 (defmethod CONVERT-CURRENCY-ACTION ((w application-window) (Button button))

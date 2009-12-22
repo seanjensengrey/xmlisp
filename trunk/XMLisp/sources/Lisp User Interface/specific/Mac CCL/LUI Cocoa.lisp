@@ -1203,4 +1203,161 @@
 ;; (lui::print-dom (lui::native-view <web-browser url="http://www.agentsheets.com"/>))
 )
 
+;__________________________________
+; Show PopUp                       |
+;__________________________________/
+(export '(show-string-popup))
 
+(objc:defmethod (#/testAction :void) ((self native-target))
+  ;; dispatch action to window + target
+  ;; catch errors to avoid total crash of CCL
+  (print "hello44"))
+
+(defun show-string-popup (window)
+  (print "hello")
+  (ns:with-ns-rect (Frame 100 50 200 200)
+    (ns:with-ns-point (Point 50 50)
+    (let ((popupCell (#/alloc ns:ns-pop-up-button-cell))) 
+      (#/initTextCell:pullsDown: popupCell (native-string "hello") #$NO)
+      (let ((context (#/graphicsContextWithWindow: ns:ns-graphics-context (native-window window))))
+      ;(#/addItemWithTitle: popupCell (native-string "hello2"))
+      (let ((menu (#/alloc ns:ns-menu)))
+      ;  (let ((event (#/mouseEventWithType:location:modifierFlags:timestamp:windowNumber:context:eventNumber:clickCount:pressure:
+        (let ((event (#/otherEventWithType:location:modifierFlags:timestamp:windowNumber:context:subtype:data1:data2:
+                      ns:ns-event
+                      #$NSApplicationDefined;#$NSLeftMouseDown
+                      Point
+                      0
+                      55555555545464564646.0d0
+                      1
+                      context
+                      #$NSApplicationDefined;1
+                      1
+                      1;1.0
+                      )))       
+
+        (#/initWithTitle: menu (native-string "hello"))
+        (let ((item (#/alloc ns:ns-menu-item)))
+          (#/initWithTitle:action:keyEquivalent: item (native-string "item 1") (objc::@selector #/testAction) (native-string "h"))
+          (#/addItem: menu item))
+
+        (#/setMenu: popupCell menu)
+        (#/trackMouse:inRect:ofView:untilMouseUp: popupCell event Frame (native-view window) #$YES))
+        (#/setAutoenablesItems: popupCell #$YES)
+        (#/performClick: popupCell (native-view window))
+        ;(inspect popupCell)
+       ; (inspect menu)
+        (#/drawBezelWithFrame:inView: popupCell Frame (native-view window)))      
+      )))))
+
+(export '(make-event))
+(defun make-event (window) 
+  (ns:with-ns-rect (Frame 100 50 200 200)
+    (ns:with-ns-point (Point 50 50)
+      (let ((context (#/graphicsContextWithWindow: ns:ns-graphics-context (native-window window))))
+        (let ((event (#/mouseEventWithType:location:modifierFlags:timestamp:windowNumber:context:eventNumber:clickCount:pressure:
+                      ns:ns-event
+                      #$NSLeftMouseDown
+                      Point
+                      0
+                      55555555545464564646.0d0
+                      1
+                      context
+                      1
+                      1
+                      1.0)))       
+      )))))
+
+(objc:defmethod (#/testAction :void) ((self native-target))
+  ;; dispatch action to window + target
+  ;; catch errors to avoid total crash of CCL
+  (print "hello44"))
+#|
+
+(defmethod initialize-event-handling ((Self control))
+  (#/setTarget: (native-view Self) 
+                (make-instance 'native-target 
+                  :native-control (native-view Self)
+                  :lui-control Self))
+  (#/setAction: (native-view Self) (objc::@selector #/testAction)))
+|#
+#|
+    (ns:with-ns-point (Point 50 50)
+    (let ((context (#/graphicsContextWithWindow: ns:ns-graphics-context (native-window window))))
+      (let ((event (#/mouseEventWithType:location:modifierFlags:timestamp:windowNumber:context:eventNumber:clickCount:pressure:
+                    ns:ns-event
+                    #$NSLeftMouseDown
+                    Point
+                    0
+                    55555555545464564646.0d0
+                    1
+                    context
+                    1
+                    1
+                    1.0)))
+        ;(inspect event)
+        (print event)
+        (let ((menu (#/alloc ns:ns-menu)))
+          (#/initWithTitle: menu (native-string "hello"))
+          (#/addItem: menu (#/separatorItem ns:ns-menu-item))
+          (#/addItem: menu (#/separatorItem ns:ns-menu-item))
+          (#/popUpContextMenu:withEvent:forView: ns:ns-menu menu event (native-view window)) 
+          (print "hello2")
+        )))))
+|#
+  #|
+
+|#
+
+
+
+#| 
+(let ((Pop-up (make-instance 'popup-button-control )))
+    (add-item Pop-Up "S 1" "a 1")
+    (add-item Pop-Up "S 2" "a 1")
+    (add-item Pop-Up "S 3" "a 1")
+ ;   (#/setState: Pop-up #$NSOnState)
+    (add-subviews window Pop-up)))
+|#
+#|
+    (let ((Pop-up (make-instance 'popup-button-control )))
+    (add-item Pop-Up "S 1" "a 1")
+    (add-item Pop-Up "S 2" "a 1")
+    (add-item Pop-Up "S 3" "a 1")
+    (add-subviews window Pop-up)))
+|#
+#|
+  (let ((Native-Control (make-instance ns:ns-pop-up-button)))
+    (ns:with-ns-rect (Frame 100 100 200 200)
+      (#/initWithFrame:pullsDown: Native-Control Frame #$NO)
+      (#/addItemWithTitle: Native-Control (native-string "hello")))))
+|#
+
+#|
+
+(defclass native-popup-button (ns:ns-pop-up-button)
+  ((lui-view :accessor lui-view :initarg :lui-view))
+  (:metaclass ns:+ns-object))
+
+(defmethod make-native-object ((Self popup-button-control))
+  (let ((Native-Control (make-instance 'native-popup-button :lui-view Self)))
+    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+      (#/initWithFrame:pullsDown: Native-Control Frame #$NO)
+    Native-Control)))
+
+
+(defmethod VALUE ((self popup-button-control))
+  (#/title (#/selectedItem (native-view self))))
+
+
+(defmethod GET-SELECTED-ACTION ((Self popup-button-control))
+  (elt (actions self)  (#/indexOfSelectedItem (native-view self))))
+
+
+(defmethod ADD-ITEM ((Self popup-button-control) Text Action)
+  (if (equal (#/indexOfItemWithTitle: (native-view Self) (native-string Text)) -1)
+    (progn
+      (#/addItemWithTitle: (native-view Self) (native-string Text))
+      (setf (actions Self) (append (actions Self) (list Action))))
+    (warn "Cannot add items of the same name")))
+|#
