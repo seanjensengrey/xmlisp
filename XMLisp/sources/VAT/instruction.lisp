@@ -216,6 +216,11 @@
 
 (defmethod SHOW-OPTIONAL-ARGUMENTS ((Self instruction))
   (layout Self)
+  (dolist (Agent (agents (view Self)))
+    (layout Agent)))
+
+#| no notion of document view
+
   (let ((View (view (part-of Self)))
         (Camera (camera (view Self)))
         (Height (height (document-root (window Self)))))
@@ -226,10 +231,15 @@
     (when (vertical-scrollbar (window Self))
       (decf (eye-y Camera) Height)
       (decf (center-y Camera) Height))
-    (display View)))
+    (display View)))  |#
 
 
 (defmethod HIDE-OPTIONAL-ARGUMENTS ((Self instruction))
+  (layout Self)
+  (dolist (Agent (agents (view Self)))
+    (layout Agent)))
+
+#| no notion of document view
   (let ((View (view (part-of Self)))
         (Camera (camera (view Self)))
         (Height (height (document-root (window Self)))))
@@ -240,7 +250,7 @@
     (when (vertical-scrollbar (window Self))
       (decf (eye-y Camera) Height)
       (decf (center-y Camera) Height))
-    (display View)))
+    (display View)))  |#
 
 
 (defmethod DISCLOSED-ARGUMENT-AGENTS ((Self instruction))
@@ -632,7 +642,7 @@
                        )))
 
 
-(instruction DOUBLE-ME ((Value float float-editor 3.14))
+(instruction DOUBLE-ME ((Value float float-editor 3.14) &optional "V2" (Value2 float float-editor 2.7))
   "double the value"
   :macro ((Self) `(* 2 ,(value Self))))
 
@@ -666,8 +676,8 @@
 <application-window>
   <column align="stretch" valign="stretch">
   <agent-3d-view name="opengl" vflex="1">
-   <double-me value="1.0"/>
-   <double-me value="2.0" y="1.0"/>
+   <double-me value="1.0" draggable="true"/>
+   <double-me value="2.0" y="1.0" draggable="true"/>
   </agent-3d-view>
   <row minimize="vertical" align="center">
    <bevel-button text="print" action="print-selection-action" width="55"/>
