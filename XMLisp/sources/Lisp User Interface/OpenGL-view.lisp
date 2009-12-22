@@ -116,6 +116,11 @@
 (defmethod IS-ANIMATED ((Self opengl-view))
   (member Self (animated-views Self)))
 
+
+(defmethod VIEW ((Self opengl-view))
+  ;; I am my own view
+  Self)
+
 ;_______________________________
 ; Events                        |
 ;_______________________________
