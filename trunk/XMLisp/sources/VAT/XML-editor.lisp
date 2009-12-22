@@ -18,6 +18,8 @@
 ;*    2.0       : 10/29/09 Clozure CL, less forgiving MOP            *
 ;*                :initform nil is not compatible with value-editor  *
 ;*                typed slots, need to use unbound instead           *
+;*    2.1       : 12/21/09 factored sequence operations into         *
+;*                xml-editor-sequence.lisp                           *
 ;* Systems      : Intel-Mac, CCL 1.4, OS X 10.6.1                    *
 ;* Abstract     : XML-Editors can be displayed and edited in         *
 ;*                xml-editor-windows                                 *
@@ -64,6 +66,10 @@
   (:documentation "set the slot editor of slot <slot-name> to <editor>"))
 
 
+(defgeneric PRINT-NAME (xml-editor)
+  (:documentation "return string of name to be used to label xml-editor, default to element name"))
+
+
 (defgeneric MAKE-VALUE-EDITOR-FROM-SLOT-DEFINITION (Xml-Editor Slot-Definition)
   (:documentation "Make a value editor based on slot-definition. Use value, type, ... to create appropriate editor"))
 
@@ -84,8 +90,12 @@
   (setf (getf (slot-editors Self) Slot-Name) Editor))
 
 
+(defmethod PRINT-NAME ((Self xml-editor))
+  (xml-tag-name-string Self))
+
+
 (defmethod SELECTED-TEXTURE ((Self xml-editor))
-  "VAT2action_selected.png")
+  "aqua_red.png")
 
 
 (defmethod UNSELECTED-TEXTURE ((Self xml-editor))
@@ -169,7 +179,7 @@
         (when (display-name-p Self)
           (list (make-value-editor
                               'static-string-editor
-                              (xml-tag-name-string Self)
+                              (print-name Self)
                               :part-of Self
                               :view (view Self)))))
   ;; scan editable slots
@@ -184,8 +194,6 @@
                   (typecase Value
                     ;; an agent-3d is ready to go
                     (agent-3d Value)
-                    ;; a list: assume it's a list of agent-3d
-                    (list Value)
                     ;; a non agent value that needs to be mapped to a value-editor
                     (t  (make-value-editor-from-slot-definition Self Slot-Definition)))))
                ;; slot is unbound, e.g., no init value and attribute not set
@@ -315,168 +323,7 @@
     ;; flip vertical 
     (flip-vertical Self)))
           
-;______________________________
-; Agent reorganization          |
-;_______________________________
-
-
-(defun INSERT-BEFORE (List New-Item Before-Item) "
-  in: List list; New-Item t; Before-Item t;
-  Return a new list with <New-item> preceeding <Before-Item>.
-  List may be nested"
- (mapcan 
-  #'(lambda (Item)
-      (cond 
-       ((listp Item) (list (insert-before Item New-Item Before-Item)))
-       ((eq Item Before-Item) (list New-Item Before-Item))
-       (t (list Item))))
-  List))
-
-;; example: (insert-before '(1 2 3 4 5 6 7 8 9) 0 1)
-;; example: (insert-before '(1 2 3 4 (5 6 7 8 9)) 8.5 9)
-
-
-(defun INSERT-AFTER (List After-Item New-Item) "
-  in: List list; After-Item t; New-Item t;
-  Return a new list with <New-item> following <After-Item>.
- List may be a nested list."
- (mapcan 
-  #'(lambda (Item)
-      (cond
-       ((listp Item) (list (insert-after Item After-Item New-Item)))
-       ((eq Item After-Item) (list After-Item New-Item))
-       (t (list Item))))
-  List))
-
-;; (insert-after '(0 1 2 3 4 5 6 7 8 9) 6 6.5)
-;; (insert-after '(0 1 2 (3 4 (5 6 7 8)) 9) 6 6.5)
-
-
-(defun MOVE-BEFORE (List Old-Item Before-Item) "
-  in: List list; Old-Item t; Before-Item t; 
-  Return a new list with <New-item> preceeding <Before-Item>.
- List may be a nested list."
- (mapcan 
-  #'(lambda (Item)
-      (cond
-       ((listp Item) (list (move-before Item Old-Item Before-Item)))
-       ((eq Item Before-Item) (list Old-Item Before-Item))
-       ((eq Item Old-Item) nil)
-       (t (list Item))))
-  List))
-
-;; example: (move-before '(1 2 3 4 5 6 7 8 9) 8 1)
-;; example: (move-before '((1 2 3 4) 5 (6 7 8) 9) 8 1)
-;; example: (move-before '(1 2 3 4 5 6 7 8 9) 1 8)
-
-(defun MOVE-AFTER (List After-Item Old-Item) "
-  in: List list; After-Item t; Old-Item t; 
-  Return a new list with <Old-item> following <after-Item>.
-List may be a nested list."
- (mapcan 
-  #'(lambda (Item)
-      (cond
-       ((listp Item) (list (move-after Item After-Item Old-Item)))
-       ((eq Item After-Item) (list After-Item Old-Item))
-       ((eq Item Old-Item) nil)
-       (t (list Item))))
-  List))
-
-;; (move-after '(0 1 2 3 4 5 6 7 8 9) 3 0)
-;; (move-after '(((0)) 1 (2) (3 4 5) 6 7 8 9) 3 0)
-
-
-
-(defmethod INSERT-BEFORE-AGENT ((Self xml-editor) (Dragged-Agent xml-editor))
-  (multiple-value-bind (Acceptable Need-To-Copy Explanation)
-                       (could-receive-drop Self Dragged-Agent)
-    (declare (ignore Explanation))
-    ;; (format t "drop: accept=~A copy=~A explanation=~A~%" Acceptable Need-To-Copy Explanation)
-    (unless Acceptable 
-      (format t "drag failled: cannot accept dragging a \"~A\" on a \"~A\"~%" 
-              (type-of Dragged-Agent) (type-of Self))
-      (return-from insert-before-agent))
-    (cond
-     ;; COPY: leave original where it is
-     (Need-To-Copy
-      (setq Dragged-Agent (copy Dragged-Agent))
-      ;; insert new agent before me
-      (map-edit-slots-lists 
-       (part-of Self)
-       #'(lambda (Agents) (insert-before Agents Dragged-Agent Self))))
-     ;; MOVE
-     (t
-      ;; insert new agent before me
-      (map-edit-slots-lists 
-       (part-of Self)
-       #'(lambda (Agents) (move-before Agents Dragged-Agent Self)))))
-    ;; clean up layout and container links
-    (layout (first (agents (view Self))))
-    (broadcast-to-agents Dragged-Agent #'(lambda (Agent) (setf (view Agent) (view Self))))
-    (setf (part-of Dragged-Agent) (part-of Self))
-    ;; update to user
-    (setf (window-needs-saving-p (window Self)) t)
-    (display (view Self))))
-
-
-(defmethod INSERT-AFTER-AGENT ((Self xml-editor) (Dragged-Agent xml-editor))
-  (multiple-value-bind (Acceptable Need-To-Copy Explanation)
-                       (could-receive-drop Self Dragged-Agent)
-    (declare (ignore Explanation))
-    (unless Acceptable 
-      (format t "drag failled: cannot accept dragging a \"~A\" on a \"~A\"~%" 
-              (type-of Dragged-Agent) (type-of Self))
-      (return-from insert-after-agent))
-    (cond
-     ;; COPY: leave original where it is
-     (Need-To-Copy
-      (setq Dragged-Agent (copy Dragged-Agent))
-      ;; insert new agent after me
-      (map-edit-slots-lists 
-       (part-of Self)
-       #'(lambda (Agents) (insert-after Agents Self Dragged-Agent))))
-     ;; MOVE
-     (t
-      ;; insert new agent after me
-      (map-edit-slots-lists
-       (part-of Self)
-       #'(lambda (Agents) (move-after Agents Self Dragged-Agent)))))
-    ;; clean up layout and container links
-    (layout (first (agents (view Self))))
-    (broadcast-to-agents Dragged-Agent #'(lambda (Agent) (setf (view Agent) (view Self))))
-    (setf (part-of Dragged-Agent) (part-of Self))
-    ;; update to user
-    (setf (window-needs-saving-p (window Self)) t)
-    (display (view Self))))
-
-
-(defmethod ERASE-AGENT ((Self xml-editor))
-  ;; remove me
-  (map-edit-slots-lists
-   (part-of Self)
-   #'(lambda (Agents) (remove Self Agents)))
-  ;; clean up layout and container links
-  (layout (first (agents (view Self))))
-  (setf (part-of Self) nil)
-  ;; update to user
-  (setf (window-needs-saving-p (window Self)) t)
-  (display (view Self)))
-
-
-(defmethod SET-EDIT-SLOT-LIST ((Self xml-editor) Agents)
-  (map-edit-slots-lists
-   Self
-   #'(lambda (Agent) 
-       (declare (ignore Agent))
-       Agents))
-  (layout (first (agents (view Self))))
-  (dolist (Agent Agents)
-    (broadcast-to-agents Agent #'(lambda (Agent) (setf (view Agent) (view Self))))
-    (setf (part-of Agent) Self))
-  ;; update to user
-  (setf (window-needs-saving-p (window Self)) t)
-  (display (view Self)))
-  
+ 
 ;______________________________
 ; Picking                      |
 ;______________________________
@@ -527,7 +374,7 @@ List may be a nested list."
 
 
 <application-window>
-  <agent-3d-view name="opengl">
+  <agent-3d-view name="opengl" full-scene-anti-aliasing="false">
    <exchange-rate-xml-editor rate="1000.0" draggable="true"/>
   <exchange-rate-xml-editor y="1.0" draggable="true"/>
   </agent-3d-view>
