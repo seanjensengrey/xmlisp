@@ -241,7 +241,8 @@
 
 (defmethod INITIALIZE-INSTANCE :after ((Self xml-editor) &rest Args)
   (declare (ignore Args))
-  (make-argument-agents Self))
+  (make-argument-agents Self)
+  (layout Self))  ;; excessive when nested xml-editors
 
 ;;______________________________
 ;; Layout                       |
