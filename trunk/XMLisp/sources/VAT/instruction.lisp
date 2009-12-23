@@ -6,9 +6,9 @@
 ;*********************************************************************
 ;* Author       : Alexander Repenning, alexander@agentsheets.com     *
 ;*                http://www.agentsheets.com                         *
-;* Copyright    : (c) 1996-2007, AgentSheets Inc.                    *
+;* Copyright    : (c) 1996-2009, AgentSheets Inc.                    *
 ;* Filename     : Instruction.lisp                                   * 
-;* Last Update  : 10/04/07                                           *
+;* Last Update  : 12/22/09                                           *
 ;* Version      :                                                    *
 ;*    1.0       : 12/08/04                                           *
 ;*    2.0       : 02/07/05 based on xml-editor                       *
@@ -76,6 +76,7 @@
 (defclass INSTRUCTION (xml-editor)
   ((disclosure-editor :accessor disclosure-editor :initform nil :documentation "used for &optional attributes")
    (unclosable-argument-agents :accessor unclosable-argument-agents :initform nil))
+  (:default-initargs :draggable t)
   (:documentation "A piece of code that can be executed"))
 
 
@@ -125,59 +126,6 @@
 
 (defgeneric NEED-TO-WRAP-HORIZONTALLY (Instruction Agent X)
   (:documentation "return t is adding <agent> at position <x> to <instruction> should be wrapped to next line"))
-
-
-;________________________
-; Initialization         |
-;________________________
-
-#| Too eager for now: creating instances of vector arrays without a window can result in crash
-
-
-(defmethod INITIALIZE-SLOT-TYPE-INSTANCE (Slot-Type-Instance Instruction Slot-Definition)
-  ;; This generic implementation should only be called accidentally
-  (format t "~%Instruction ~A has created a slot-type-instance ~A for slot ~A" 
-          Instruction 
-          Slot-Type-Instance
-          (slot-definition-name Slot-Definition)))
-
-
-(defmethod INITIALIZE-SLOT-TYPE-INSTANCE ((Self agent-3d) (Instruction instruction) Slot-Definition)
-  (let ((Slot-Name (slot-definition-name Slot-Definition)))
-    ;; link value editor to instruction containing it
-    (setf (part-of Self) Instruction)
-    (setf (name Self) Slot-Name)
-    (setf (view Self) (view Instruction))
-    ;; set instruction slot value 
-    (unless (slot-value Instruction Slot-Name)
-      (setf (slot-value Instruction Slot-Name)
-            (value Self)))
-    ;; some value editors remember which slots they represent
-    (when (slot-exists-p Self 'slot-name)
-      (setf (slot-value Self 'slot-name) Slot-Name))))
-
-
-
-(defmethod INITIALIZE-INSTANCE :after ((Self instruction) &rest Args) 
-  (declare (ignore Args))
-  (when (instruction-meta-information Self)
-    ;; special treatment for standard-class slot types
-    (dolist (Argument (arguments (instruction-meta-information Self)))
-      ;; if there is a typed slot without <initform>
-      (when (and (listp Argument) (= 2 (length Argument)))
-        (let ((Slot-Name (first Argument))
-              (Type (second Argument)))
-          (typecase (find-class Type)
-            (standard-class
-             ;; don't mess with existing slot values
-             (unless (slot-value Self Slot-Name)
-               (let ((Slot-Type-Instance (make-instance Type)))
-                 (initialize-slot-type-instance Slot-Type-Instance Self (find-slot-definition Self Slot-Name)))))
-            (built-in-class
-             ;; nothing obvious to do here
-             )))))))
-
-|#
 
 ;________________________
 ; default implementation |
@@ -346,13 +294,13 @@
                   (list (if (variants Self)
                           (make-value-editor
                            'variant-name-editor
-                           (xml-tag-name-string Self)
+                           (print-name Self)
                            :variants (variants Self)
                            :part-of Self
                            :view (view Self))
                           (make-value-editor
                            'static-string-editor
-                           (xml-tag-name-string Self)
+                           (print-name Self)
                            :part-of Self
                            :view (view Self)))))))
   ;; Arguments: create them if necessary and make sure their view is same as ours
@@ -373,13 +321,6 @@
                     ;; an agent-3d is ready to go
                     (agent-3d
                      (unless (view Value) (setf (view Value) (view Self))) ;; agent may be missing it's view
-                     Value)
-                    ;; nil -> make value editor
-                    (null (make-value-editor-from-slot-definition Self (find-slot-definition Self Slot-Name)))
-                    ;; a list: assume it's a list of agent-3ds
-                    (list 
-                     (dolist (Agent Value) 
-                       (unless (view Agent) (setf (view Agent) (view Self))))
                      Value)
                     ;; a non agent value that needs to be mapped to a value-editor
                     (t  (make-value-editor-from-slot-definition Self (find-slot-definition Self Slot-Name))))))))
@@ -635,42 +576,23 @@
 
 #| Examples:
 
-
-
-(pprint (macroexpand-1 
-         '(instruction DOUBLE-ME ((Value float float-editor 3.14))
-                       )))
-
+;; Example 1: basic instruction with expansion
 
 (instruction DOUBLE-ME ((Value float float-editor 3.14) &optional "V2" (Value2 float float-editor 2.7))
   "double the value"
   :macro ((Self) `(* 2 ,(value Self))))
 
 
-<double-me value="3.0"/>
-
 (inspect <double-me value="3.0"/>)
-
-(defmethod DRAW ((Self double-me))
-  (layout Self)  ;; excessive
-  (print
-  (truncate (/ (hemlock::time-to-run   (call-next-method)) 1000  ))))
-
-
-<application-window>
-  <agent-3d-view name="opengl">
-   <double-me value="3.0"/>
-   <double-me value="3.0" y="1.0"/>
-  </agent-3d-view>
-</application-window> 
 
 
 (defmethod PRINT-SELECTION-ACTION ((w application-window) (Button bevel-button))
-  (print (agents-selected (view-named w "opengl"))))
+  (dolist (Agent (agents-selected (view-named w "opengl")))
+    (print Agent)))
 
 
 (defmethod EXPAND-SELECTION-ACTION ((w application-window) (Button bevel-button))
-  (print (expand (first (agents-selected (view-named w "opengl"))))))
+  (pprint (expand (first (agents-selected (view-named w "opengl"))))))
 
 
 <application-window>
@@ -690,23 +612,26 @@
 
 
 
+;; Example 2: nested instructions
 
 
-
-(instruction FOR ((Var symbol) (From integer) (to integer) (instructions list))
+(instruction FOR ((Var string string-editor "I") 
+                  (From integer integer-editor 1) 
+                  (to integer integer-editor 10)
+                  &optional  (instructions list xml-editor-sequence nil))
   "Iterate <var> from <from> to <to> and execute <instructions>"
   :macro 
   ((Self) 
-   `(let ((,(Var Self) ,(if (> (to Self) (from Self)) (1- (from Self)) (1+ (from Self)))))
+   `(let ((,(read-from-string (Var Self)) ,(if (> (to Self) (from Self)) (1- (from Self)) (1+ (from Self)))))
       (loop
         ;; count towards end
         ,(if (> (to Self) (from Self))
-           `(incf ,(var Self))
-           `(decf ,(var Self)))
+           `(incf ,(read-from-string (Var Self)))
+           `(decf ,(read-from-string (Var Self))))
         ;; run all sub instructions
         ,@(mapcar #'expand (instructions Self))
         ;; done?
-        (when (= ,(var Self) ,(to Self)) (return))))))
+        (when (= ,(read-from-string (Var Self)) ,(to Self)) (return))))))
 
 
 (defmethod ADD-SUBOBJECT ((Self for) (Instruction instruction))
@@ -714,52 +639,52 @@
 
 
 
-(instruction PRINT ((Value string))
-  :macro ((Self) `(print ,(read-from-string (value Self)))))
+(instruction PRINT ((Value string string-editor "33"))
+  :macro ((Self) `(print ,(expand (value Self)))))
+
+
+(defmethod PRINT-SELECTION-ACTION ((w application-window) (Button bevel-button))
+  (dolist (Agent (agents-selected (view-named w "opengl")))
+    (print Agent)))
+
+
+(defmethod EXPAND-SELECTION-ACTION ((w application-window) (Button bevel-button))
+  (pprint (expand (first (agents-selected (view-named w "opengl"))))))
 
 
 
-(expand <print value="3"/>)
-
-(expand
-<for var="I" from="1" to="100">
-  <print value="I"/>
-</for>)
-
-
-(pprint
-(expand
-<for var="I" from="-1" to="+1">
-  <for var="J" from="-1" to="+1">
-    <print value="(+ i j)"/>
-  </for>
-</for>  ))
-
+<application-window>
+  <column align="stretch" valign="stretch">
+  <agent-3d-view name="opengl" vflex="1">
+    <for var="I" from="1" to="100">
+      <print value="I"/>
+      <print value="I"/>
+    </for>
+  </agent-3d-view>
+  <row minimize="vertical" align="center">
+   <bevel-button text="print" action="print-selection-action" width="55"/>
+   <bevel-button text="expand" action="expand-selection-action" width="70"/>
+  </row>
+  </column>
+</application-window>
 
 
-
-(instruction show-slide ("from" (number integer-editor) 
-                         "to" (next-number integer-editor) 
-                         &optional "use border" (border check-box-editor) 
-                         :return "play sound" (play check-box-editor) 
-                         :return "sound" (Sound sound-name-editor)) )
-
-
-(inspect (instruction-meta-information <show-slide number="1" next-number="2"/>))
-
-
-(defparameter *In* <show-slide number="1" next-number="20" border="false" play="false" sound="click"/>)
-
-
-(edit *In*)
-(inspect *in*)
-
-
-(value (fourth (argument-agents *in*)))
+<application-window>
+  <column align="stretch" valign="stretch">
+  <agent-3d-view name="opengl" vflex="1">
+    <for var="I" from="-1" to="+1" disclosed="true">
+      <for var="J" from="-1" to="+1">
+        <print value="i + j"/>
+      </for>
+    </for>  
+  </agent-3d-view>
+  <row minimize="vertical" align="center">
+   <bevel-button text="print" action="print-selection-action" width="55"/>
+   <bevel-button text="expand" action="expand-selection-action" width="70"/>
+  </row>
+  </column>
+</application-window>
 
 
-(edit <show-slide number="1" next-number="20" border="false" play="false" sound="click"/>)
-
-(inspect (gethash 'show-slide *Instructions*))
 
 |#
