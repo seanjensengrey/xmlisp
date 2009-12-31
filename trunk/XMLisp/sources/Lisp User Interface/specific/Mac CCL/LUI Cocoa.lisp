@@ -852,7 +852,7 @@
     (progn
       (#/addItemWithTitle: (native-view Self) (native-string Text))
       (setf (actions Self) (append (actions Self) (list Action))))
-    (warn "Cannot add items of the same name")))
+    (warn "Cannot add item with the same title (~S)" Text)))
 
 
 ;__________________________________
