@@ -62,7 +62,7 @@
             (ns:with-ns-point (Hotspot (hot-x Cursor-Manager) (hot-y Cursor-Manager))
               (let ((Cursor (#/initWithImage:hotSpot: 
                              (#/alloc ns:ns-cursor)
-                             (#/initByReferencingFile: 
+                             (#/initWithContentsOfFile: 
                               (#/alloc ns:ns-image)
                               (native-string (native-path *Cursor-Resources-Path* (image Cursor-Manager))))
                              Hotspot)))
