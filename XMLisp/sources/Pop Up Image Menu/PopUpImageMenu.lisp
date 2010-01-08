@@ -1,30 +1,9 @@
 (in-package :lui)
-
-;(export '(GENERAL-POP-UP-IMAGE-MENU DISPLAY-POP-UP-MENU DISPLAY-POP-UP))
 ;;_______________________________
 ;; Pop Up Image Menu            |
 ;;_______________________________
-
 (defclass POP-UP-IMAGE-MENU ()
-  ()
-  (:documentation "An image pop up menu"))
-
-(defgeneric POP-UP (pop-up-image-menu)
-  (:documentation "Pops up the menu and returns the value of the selected image"))
-
-(defgeneric CLOSE-WINDOW (pop-up-image-menu)
-  (:documentation "Is called when the window needs to be closed, this method will stop the application from running the window modally."))
-
-(defgeneric POP-UP (pop-up-image-menu)
-  (:documentation "Pops up the menu and returns the value of the selected image"))
-
-;;_______________________________
-;; General Pop Up Image Menu    |
-;;_______________________________
-
-(defclass GENERAL-POP-UP-IMAGE-MENU (pop-up-image-menu)
-  (
-   (native-window :accessor native-window :initform nil)
+  ((native-window :accessor native-window :initform nil)
    (native-view :accessor native-view :initform nil)
    (x :accessor x :initform 200 :initarg :x :documentation "screen position, pixels")
    (y :accessor y :initform 690 :initarg :y :documentation "screen position, pixels")
@@ -38,40 +17,85 @@
    (name-of-selection :accessor name-of-selection :initform nil :initarg :name-of-selection :documentation "the name of the selected item")
    (window-offset-x :accessor window-offset-x :initform 0 :documentation "the X offset needed to display the window in the propper location")
    (window-offset-y :accessor window-offset-y :initform 0 :documentation "the Y offset needed to display the window in the propper location")
-   (images :accessor images :initform nil :initarg :images :documentation "A list of images for the Menu")
-   )
-  (:documentation "Image Pop Up Menu"))
+   (images :accessor images :initform nil :initarg :images :documentation "A list of images for the Menu"))
+  (:documentation "This class will pop up an an image menu that tries to display the given list of strings in a way that is as close to a square as possible"))
 
-(defmethod image-names ((Self general-pop-up-image-menu))
+
+(defgeneric DISPLAY-POP-UP-MENU (pop-up-image-menu)
+  (:documentation "Pops up the menu and returns the value of the selected image"))
+
+
+(defgeneric IMAGE-NAMES (pop-up-image-menu)
+  (:documentation "Returns the list of strings that will be used by the menu"))
+
+(defmethod IMAGE-NAMES ((Self pop-up-image-menu))
   (images self))
 
-(defmethod IMAGE-NAME-PATHNAME ((Self general-pop-up-image-menu) Name)
+
+(defmethod IMAGE-NAME-PATHNAME ((Self pop-up-image-menu) Name)
   (native-path  (image-pathname self)  Name))
 
-(defmethod NUMBER-OF-COLUMNS ((Self general-pop-up-image-menu))
+
+(defmethod NUMBER-OF-COLUMNS ((Self pop-up-image-menu))
   (case (length (image-names Self))
     (0 1)
     (t (isqrt (length (image-names Self))))))
 
-(defmethod NUMBER-OF-ROWS ((Self general-pop-up-image-menu))
+
+(defmethod NUMBER-OF-ROWS ((Self pop-up-image-menu))
   (case (length (image-names Self))
     (0 1)
     (t (ceiling (length (image-names Self)) (number-of-columns Self)))))
 
 
-
-(defmethod GET-X-GRID-POSITION ((Self general-pop-up-image-menu))
+(defmethod GET-X-GRID-POSITION ((Self pop-up-image-menu))
   (mod (index-of-selection self) (number-of-columns self)))
 
-(defmethod GET-Y-GRID-POSITION ((Self general-pop-up-image-menu))
+
+(defmethod GET-Y-GRID-POSITION ((Self pop-up-image-menu))
   (number-of-rows self) (floor (/ (index-of-selection self) (number-of-columns self))))
 
-(defmethod GET-SELECTION-INDICES ((Self general-pop-up-image-menu))"
-  Returns the Vertex Texture-vertex and normal seperatley from the face"
+
+(defmethod GET-SELECTION-INDICES ((Self pop-up-image-menu))
     (values 
-     (GET-X-GRID-POSITION self)
-     (GET-Y-GRID-POSITION self)))
+     (get-x-grid-position self)
+     (get-y-grid-position self)))
+
+#| Example:
+
+(defparameter *Pop-Up-Menu* (make-instance 'directional-pop-up-image-menu :name-of-selection  "direction_north_west.png"))
+
+(display-Pop-Up-menu *Pop-Up-Menu* )
+
+|#
 
 
+;;_______________________________
+;; Direction Pop Up Menu         |
+;;_______________________________
+(defclass DIRECTIONAL-POP-UP-IMAGE-MENU (pop-up-image-menu)
+  ()
+  (:documentation "An image pop up menu that is used as a directional picker"))
 
 
+(defmethod image-names ((Self directional-pop-up-image-menu))
+  '("direction_north_west" "direction_north" "direction_north_east" "direction_west" "direction_center" "direction_east" "direction_south_west" "direction_south" "direction_south_east"))
+
+
+#|Example
+
+(defparameter *Pop-Up-Menu* (make-instance 'directional-pop-up-image-menu :name-of-selection  "direction_north_west"))
+
+(defmethod pop-up-image-menu-now ((w application-window) (Button button))
+  (print (display-Pop-Up-menu *Pop-Up-Menu* )))
+
+
+<application-window title="Currency Converter" width="300" height="180">
+  <column align="stretch" valign="stretch" padding="9">
+    <row align="stretch" minimize="vertical" valign="bottom">
+      <button text="make-event" action="pop-up-image-menu-now" width="100" default-button="true"/>
+    </row>
+  </column>
+</application-window>
+    
+|#

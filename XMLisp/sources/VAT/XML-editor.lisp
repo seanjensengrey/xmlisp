@@ -349,7 +349,7 @@
 
 (defmethod SLOT-EDITOR-CLASSES ((Self exchange-rate-xml-editor))
   '((rate float-editor) 
-    (size string-menu-editor)))
+    (size COMPARATOR-EDITOR)))
 
 
 (defmethod EDIT-SLOTS ((Self exchange-rate-xml-editor))
