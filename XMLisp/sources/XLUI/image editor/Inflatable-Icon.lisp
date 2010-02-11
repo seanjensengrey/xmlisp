@@ -6,9 +6,9 @@
 ;*********************************************************************
 ;* Author       : Alexander Repenning, alexander@agentsheets.com     *
 ;*                http://www.agentsheets.com                         *
-;* Copyright    : (c) 1996-2007, AgentSheets Inc.                    *
+;* Copyright    : (c) 1996-2010, AgentSheets Inc.                    *
 ;* Filename     : inflatable-icon.lisp                               * 
-;* Last Update  : 10/12/07                                           *
+;* Last Update  : 02/10/10                                           *
 ;* Version      :                                                    *
 ;*    1.0       : 02/17/04                                           *
 ;*    1.1       : 10/14/04 resource / xml based                      *
@@ -22,15 +22,16 @@
 ;*    1.3.2     : 08/16/07 preserve connectors                       *
 ;*    1.4       : 09/27/07 flat icons can be superfast               *
 ;*    1.4.1     : 10/12/07 *Minimal-Inflatable-Icon-Height*          *
-;* Systems      : G4, MCL 5.2, OS X 10.4.10                          *
+;*    2.0       : 02/09/10 CCL Cocoa                                 *
+;* Systems      : Intel-Mac, OS X 10.6.2, CCL 1.4                    *
 ;* Abstract     : 3D shapes derived from 2D icons/images             *
 ;*                                                                   *
 ;*********************************************************************
 
-(in-package :ad3d)
+(in-package :xlui)
 
 
-(defclass INFLATABLE-ICON (shape)
+(defclass INFLATABLE-ICON (agent-3d)
   ((height :accessor height :initform 0s0 :initarg :height)
    (rows :accessor rows :initform 32 :initarg :rows)
    (columns :accessor columns :initform 32 :initarg :columns)
@@ -40,16 +41,16 @@
    (max-value :accessor max-value :initform 1.0)
    (dx :accessor dx :initform 1.0 :initarg :dx :type short-float)
    (dy :accessor dy :initform 1.0 :initarg :dy :type short-float)
-   (dz :accessor dz :initform 0.0 :initarg :dy :type short-float :documentation "z offset, can be used to antialias through edge snipping")
+   (dz :accessor dz :initform 0.0 :initarg :dz :type short-float :documentation "z offset, can be used to antialias through edge snipping")
    (display-list :accessor display-list :initform nil)
    (is-compiled :accessor is-compiled :initform nil :type boolean)
    (auto-compile :accessor auto-compile :initform t :type boolean :initarg :auto-compile)
    (is-upright :accessor is-upright :initform nil :type boolean)
    (surfaces :accessor surfaces :initform 'front :type symbol :documentation "FRONT, FRONT AND BACK, ..")
-   (icon :accessor icon :initform nil :initarg :icon)
+   (icon :accessor icon :initform nil :initarg :icon :documentation "name of icon image")
    (image :accessor image :initform nil :initarg image :documentation "RGBA image")
    (noise-map :accessor noise-map :initform nil :documentation "a 2d map with noise values")
-   (altitudes :accessor altitudes :initform nil :type array)
+   (altitudes :accessor altitudes :type array)
    (distance :accessor distance :initform 0.0 :documentation "distance between mirrored surfaces")
    (connectors :accessor connectors :initform nil :documentation "connectors are polygons connecting inner and outer edges of the symetric sides")
    (visible-alpha-threshold :accessor visible-alpha-threshold :initform 64 :allocation :class :documentation "8 bit alpha value used as visible/invisible threshold")
@@ -83,10 +84,27 @@
 
 
 (defmethod PRINT-SLOTS ((Self inflatable-icon))
-  `(icon rows columns height pressure steps noise max-value version is-upright surfaces altitudes distance dz is-flat))
+  `(icon rows columns height pressure steps noise max-value is-upright surfaces altitudes distance dz is-flat))
+
+
+(defmethod INITIALIZE-INSTANCE :after ((Self inflatable-icon) &rest Args)
+  (declare (ignore Args))
+  ;; if no icon is specified default to lobster inflatable icon
+  (unless (icon Self)
+    (let ((Pathname  "lui:resources;shapes;redLobster;redLobster.png"))
+      (setf (icon Self) (format nil "~A.~A" (pathname-name Pathname) (pathname-type Pathname)))
+      (setf (auto-compile Self) t)
+      ;; convert the icon into an RGBA image and initialize the altitude array
+      (multiple-value-bind (Image Columns Rows)
+                           (create-image-from-file Pathname)
+        (setf (image Self) Image)
+        (setf (rows Self) Rows)
+        (setf (columns Self) Columns)
+        (setf (altitudes Self) (altitudes (load-object "lui:resources;shapes;redLobster;index.shape" :package (find-package :xlui))))))))
 
 
 (defmethod FINISHED-READING :after ((Self inflatable-icon) Stream)
+  (declare (ignore Stream))
   ;; no point in storing connectors: generate them in the right cases
   (case (surfaces Self)
     (front-and-back-connected (compute-connectors Self)))
@@ -107,7 +125,7 @@
       (unless (altitudes Self)
         (setf (altitudes Self) (make-array (list Rows Columns) 
                                            :element-type 'short-float
-                                           :initial-element 0s0))))))
+                                           :initial-element 0.0))))))
 
 
 (defmethod OPEN-RESOURCE ((Self inflatable-icon))
@@ -122,6 +140,8 @@
      :noise (noise Self)
      :max (max-value Self))) |# )
 
+
+#| still Carbon
 
 (defmethod COPY-CONTENT-INTO ((Source inflatable-icon) (Destination inflatable-icon))
   ;; check for size compatibility to avoid disaster
@@ -153,6 +173,8 @@
   (setf (auto-compile Destination) (not (is-flat Source)))
   ;; to make change visible we have to reset the compiled flag
   (setf (is-compiled Destination) nil))
+
+|#
 
 
 (defmethod MAXIMUM-ALTITUDE ((Self inflatable-icon))
@@ -349,13 +371,14 @@
 
 
 (defmethod (SETF DISTANCE) :after (Value (Self inflatable-icon))
+  (declare (ignore Value))
   ;;(format t "~%distance=~A" Value)
   (compute-connectors Self)
   ;;(print (length (connectors Self)))
   )
 
 ;___________________________________
-; Display                           |
+; DRAW                              |
 ;___________________________________
     
 
@@ -365,7 +388,7 @@
   ;; new list
   (setf (display-list Self) (glGenLists 1))
   (glNewList (display-list Self) gl_compile)
-  (display-uncompiled Self)
+  (draw-uncompiled Self)
   (glEndList)
   (setf (is-compiled Self) t))
 
@@ -374,8 +397,8 @@
   (setf (is-compiled Self) nil))
 
 
-(defmethod DISPLAY-CONNECTORS ((Self inflatable-icon))
-  ;; current: random small quads -> super infefficient way to display the connectors
+(defmethod DRAW-CONNECTORS ((Self inflatable-icon))
+  ;; current: random small quads -> super infefficient way to draw the connectors
   ;; better: sort and make quad strips
   ;; best: run-lenght join quads: same color, connected, planar quads into big quads
   (dolist (Connector (connectors Self))
@@ -391,7 +414,7 @@
     
 
 
-(defmethod DISPLAY ((Self inflatable-icon))
+(defmethod DRAW ((Self inflatable-icon))
   ;; the texture update needs to happen in the right opengl context
   ;; just in time while display is not elegant but works
   (when (update-texture-from-image-p Self)
@@ -411,64 +434,64 @@
     (front 
      (glpushmatrix)
      (glTranslatef 0s0 0s0 (distance Self))
-     (if (is-compiled Self) (display-compiled Self) (display-uncompiled Self))
+     (if (is-compiled Self) (draw-compiled Self) (draw-uncompiled Self))
      (glpopmatrix))
     ;; front and back
     (front-and-back
      (glpushmatrix)
      (glTranslatef 0s0 0s0 (distance Self))
-     (if (is-compiled Self) (display-compiled Self) (display-uncompiled Self))
+     (if (is-compiled Self) (draw-compiled Self) (draw-uncompiled Self))
      (glpopmatrix)
      ;; back
      (glpushmatrix)
      (glscalef 1s0 1s0 -1s0)
      (glTranslatef 0s0 0s0 (distance Self))
-     (if (is-compiled Self) (display-compiled Self) (display-uncompiled Self))
+     (if (is-compiled Self) (draw-compiled Self) (draw-uncompiled Self))
      (glpopmatrix))
     (front-and-back-connected
      (glpushmatrix)
      (glTranslatef 0s0 0s0 (distance Self))
-     (if (is-compiled Self) (display-compiled Self) (display-uncompiled Self))
+     (if (is-compiled Self) (draw-compiled Self) (draw-uncompiled Self))
      ;; connectors
-     (if (connectors Self) (display-connectors Self))
+     (if (connectors Self) (draw-connectors Self))
      (glpopmatrix)
      ;; back
      (glpushmatrix)
      (glscalef 1s0 1s0 -1s0)
      (glTranslatef 0s0 0s0 (distance Self))
-     (if (is-compiled Self) (display-compiled Self) (display-uncompiled Self))
+     (if (is-compiled Self) (draw-compiled Self) (draw-uncompiled Self))
      (glpopmatrix))
     ;; CUBE
     (cube 
      (glpushmatrix)
      (glTranslatef 0.0 0.0 (distance Self))
-     (if (is-compiled Self) (display-compiled Self) (display-uncompiled Self))
+     (if (is-compiled Self) (draw-compiled Self) (draw-uncompiled Self))
      (glpopmatrix)
      
      (glpushmatrix)
      (glTranslatef (+ 0.5 (distance Self)) 0.0 0.5)
      (glRotatef 90.0 0.0 1.0 0.0)
-     (if (is-compiled Self) (display-compiled Self) (display-uncompiled Self))
+     (if (is-compiled Self) (draw-compiled Self) (draw-uncompiled Self))
      (glpopmatrix)
      
      (glpushmatrix)
      (glTranslatef (- 0.5 (distance Self)) 0.0 0.5)
      (glscalef -1.0 1.0 1.0)
      (glRotatef 90.0 0.0 1.0 0.0)
-     (if (is-compiled Self) (display-compiled Self) (display-uncompiled Self))
+     (if (is-compiled Self) (draw-compiled Self) (draw-uncompiled Self))
      (glpopmatrix)
      
      ;; top
      (glpushmatrix)
      (glTranslatef 0.0 (+ 0.5 (distance Self)) 0.5)
      (glRotatef -90.0 1.0 0.0 0.0)
-     (if (is-compiled Self) (display-compiled Self) (display-uncompiled Self))
+     (if (is-compiled Self) (draw-compiled Self) (draw-uncompiled Self))
      (glpopmatrix)
      
      (glpushmatrix)
      (glscalef 1.0 1.0 -1.0)
      (glTranslatef 0s0 0s0 (distance Self))
-     (if (is-compiled Self) (display-compiled Self) (display-uncompiled Self))
+     (if (is-compiled Self) (draw-compiled Self) (draw-uncompiled Self))
      (glpopmatrix)))
  (glpopmatrix))
 
@@ -498,11 +521,13 @@
    2m))
 
 
-(defmethod DISPLAY-COMPILED ((Self inflatable-icon))
+(defmethod DRAW-COMPILED ((Self inflatable-icon))
   (glCallList (display-list Self)))
 
 
-(defmethod DISPLAY-AS-FLAT-TEXTURE ((Self inflatable-icon))
+#| still Carbon
+
+(defmethod DRAW-AS-FLAT-TEXTURE ((Self inflatable-icon))
   (unless (texture-id Self)
     ;; use image as texture
     (unless (image Self) (error "image of inflatable icon is undefined"))
@@ -531,13 +556,15 @@
   (gltexcoord2i 0 1) (glVertex2f 0.0 1.0)
   (glEnd))
 
+|#
+
    
 
-(defmethod DISPLAY-UNCOMPILED ((Self inflatable-icon))
-  (unless (image Self) (return-from display-uncompiled))
+(defmethod DRAW-UNCOMPILED ((Self inflatable-icon)) 
+  (unless (image Self) (return-from draw-uncompiled))
   (when (is-flat Self)  ;; optimization
-    (display-as-flat-texture Self)
-    (return-from display-uncompiled))
+    (draw-as-flat-texture Self)
+    (return-from draw-uncompiled))
   (let* ((X 0s0)
          (Dx (/ (dx Self) (columns Self)))
          (Y 0s0)
@@ -581,12 +608,12 @@
                   (glEnd)
                   (glBegin gl_triangle_strip)
                   (setq Face-Number 0))
-                (with-rgba-vector V ((/ Color-Red 256s0) 
-                                     (/ Color-Green 256s0)
-                                     (/ Color-Blue 256s0)
-                                     (/ Color-Alpha 256s0)
-                                     )
-                  (glcolor4fv V)
+                (with-vector (V 
+                              (/ Color-Red 256s0)
+                              (/ Color-Green 256s0)
+                              (/ Color-Blue 256s0)
+                              (/ Color-Alpha 256s0))
+                  (glColor4fv V)
                   ;; (glColor4f 0.5s0 0.5s0 0.5s0 0.5s0)
                   )
                 (setq Old-Color-Red Color-Red)
@@ -625,8 +652,7 @@
       (glEnd)
       (setq Face-Number 0))
     ;; finish
-     (with-rgba-vector V (1.0 1.0 1.0 1.0) 
-       (glcolor4fv V))))
+    (glcolor4fv {1.0 1.0 1.0 1.0})))
 
 ;_________________________________________
 ; Altitude Operations                     |
@@ -693,10 +719,14 @@
 ; File I/O                                |
 ;_________________________________________
 
+#| still Carbon
+
 (defmethod SAVE-TO-PATHNAME ((Self inflatable-icon) Pathname)
   (with-open-file (File Pathname :direction :output :element-type '(unsigned-byte 8) :if-exists :supersede)
     (dotimes (I (#_getPtrSize (image Self)))
       (write-byte (%get-byte (image Self) i) File))))
+
+|#
 
 ;__________________________________
 ; Contructors                      |
@@ -714,12 +744,33 @@
       (setf (image Icon) Image)
       (setf (altitudes Icon) (make-array (list Rows Columns) 
                                          :element-type 'short-float
-                                         :initial-element 0s0)))
+                                         :initial-element 0.0)))
     Icon))
 
   
 
 #| Examples:
+
+
+;;; Intel Mac 2.6 GHz, MacBook Pro, Nvidia GeForce 8600 GT, CCL 1.4, 64 bit, red lobster: 40us = 25k Lobster/Second
+
+
+(inspect 
+ (make-inflatable-icon-from-image-file "lui:resources;shapes;redLobster;redLobster.png")
+
+<application-window>
+  <agent-3d-view>
+    <inflatable-icon/>
+  </agent-3d-view>
+</application-window>
+
+
+<application-window>
+  <agent-3d-view full-scene-anti-aliasing="false">
+    <inflatable-icon/>
+  </agent-3d-view>
+</application-window>
+
 
 
 (inspect 
