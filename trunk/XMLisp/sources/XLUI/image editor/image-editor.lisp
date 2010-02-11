@@ -42,7 +42,6 @@
 
 ;;;TODO:
 ;;; - always create 32-bit texture (otherwise problem with get/set-color)
-;;; - bug: texture doesn't quite align with the view
 
 (in-package :xlui)
 
