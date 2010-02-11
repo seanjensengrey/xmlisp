@@ -12,6 +12,9 @@
 ;; Event Classes                 *
 ;;********************************
 
+(defvar *View-Last-Clicked* nil "the view that got clicked last")
+
+
 (defvar *Current-Event* nil "event")
 
 (defvar *LUI-Event-Types* 
@@ -228,19 +231,22 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 (defmethod MOUSE-EVENT-HANDLER ((Self view) X Y DX DY Event)
   (do-subviews (Subview Self)
+    ;; a left mouse down may be the start of a drag, remember the view starting this
+    (when (and (member (event-type Event) '(:left-mouse-down))
+               (<= (x Subview) x (+ (x Subview) (width Subview)))
+               (<= (y Subview) y (+ (y Subview) (height Subview))))
+      (setf *View-Last-Clicked* Subview))
     ;; forward event with relative coordinates to ALL subviews overlapping click position
-    (when t ;;(and (<= (x Subview) x (+ (x Subview) (width Subview)))
-            ;;   (<= (y Subview) y (+ (y Subview) (height Subview))))
-      (mouse-event-handler Subview (- x (x Subview)) (- y (y Subview)) DX DY Event)))
-  ;; and dispatch event to view
-  (when t ;;(and (<= 0 x (width Self))
-          ;;   (<= 0 y (height Self)))
-    (case (event-type Event)
-      (:left-mouse-down (view-left-mouse-down-event-handler Self x y))
-      (:left-mouse-up (view-left-mouse-up-event-handler Self x y))
-      (:left-mouse-dragged (view-left-mouse-dragged-event-handler Self x y dx dy))
-      (:mouse-moved (view-mouse-moved-event-handler Self x y dx dy))
-      (t (format t "not handling ~A event yet~%" (event-type Event))))))
+    (mouse-event-handler Subview (- x (x Subview)) (- y (y Subview)) DX DY Event))
+  ;; and dispatch event to window
+  (case (event-type Event)
+    (:left-mouse-down (view-left-mouse-down-event-handler Self x y))
+    (:left-mouse-up (view-left-mouse-up-event-handler Self x y))
+    (:left-mouse-dragged
+     (when (equal Self *View-Last-Clicked*)
+       (view-left-mouse-dragged-event-handler Self x y dx dy)))
+    (:mouse-moved (view-mouse-moved-event-handler Self x y dx dy))
+    (t (format t "not handling ~A event yet~%" (event-type Event)))))
 
 
 (defmethod VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER ((Self view) X Y)
@@ -422,19 +428,22 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defmethod MOUSE-EVENT-HANDLER ((Self window) X Y DX DY Event)
   (do-subviews (Subview Self)
+    ;; a left mouse down may be the start of a drag, remember the view starting this
+    (when (and (member (event-type Event) '(:left-mouse-down))
+               (<= (x Subview) x (+ (x Subview) (width Subview)))
+               (<= (y Subview) y (+ (y Subview) (height Subview))))
+      (setf *View-Last-Clicked* Subview) )
     ;; forward event with relative coordinates to ALL subviews overlapping click position
-    (when t  ;; (and (<= (x Subview) x (+ (x Subview) (width Subview)))
-             ;;  (<= (y Subview) y (+ (y Subview) (height Subview))))
-      (mouse-event-handler Subview (- x (x Subview)) (- y (y Subview)) DX DY Event)))
+    (mouse-event-handler Subview (- x (x Subview)) (- y (y Subview)) DX DY Event))
   ;; and dispatch event to window
-  (when t ;;(and (<= 0 x (width Self))
-        ;;     (<= 0 y (height Self)))
-    (case (event-type Event)
-      (:left-mouse-down (view-left-mouse-down-event-handler Self x y))
-      (:left-mouse-up (view-left-mouse-up-event-handler Self x y))
-      (:left-mouse-dragged (view-left-mouse-dragged-event-handler Self x y dx dy))
-      (:mouse-moved (view-mouse-moved-event-handler Self x y dx dy))
-      (t (format t "not handling ~A event yet~%" (event-type Event))))))
+  (case (event-type Event)
+    (:left-mouse-down (view-left-mouse-down-event-handler Self x y))
+    (:left-mouse-up (view-left-mouse-up-event-handler Self x y))
+    (:left-mouse-dragged
+     (when (equal Self *View-Last-Clicked*)
+       (view-left-mouse-dragged-event-handler Self x y dx dy)))
+    (:mouse-moved (view-mouse-moved-event-handler Self x y dx dy))
+    (t (format t "not handling ~A event yet~%" (event-type Event)))))
 
 
 (defmethod VIEW-EVENT-HANDLER ((Self Window) Event)
