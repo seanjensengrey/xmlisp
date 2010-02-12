@@ -54,7 +54,9 @@
   ;; (format t "create-empty-texture: ~A ~A ~A~%" Width Height Depth)
   (let* ((Bytes-Per-Pixel (truncate Depth 8)))
     (with-vector-of-size (&Texture (* Width Height Bytes-Per-Pixel))
-      (fill-buffer &Texture 0) ; clear memory
+      ; clear memory
+      (dotimes (i (* Width Height Bytes-Per-Pixel))
+        (setf (ccl::%get-byte &Texture i) 0))
       ;; create the OpenGL texture (hopefully in accelerator memory) and define parameters
       (ccl::rlet ((&texName :long))
         (glGenTextures 1 &texName)
@@ -168,6 +170,10 @@
   (:documentation "Loads an image from a file into the editor."))
 
 
+(defgeneric CENTER-CANVAS (Image-Editor)
+  (:documentation "Ajust camera that canvas is fully visible in center of view"))
+
+
 (defgeneric SAVE-IMAGE (Image-Editor Pathname)
   (:documentation "Saves the currently edited image into a file."))
 
@@ -196,6 +202,15 @@
 ; Implementation                |
 ;_______________________________/
 
+
+(defmethod CENTER-CANVAS ((Self image-editor))
+  (aim-camera 
+   (camera Self) 
+   :eye-x (* 0.5 (canvas-width Self)) :eye-y (* 0.5 (canvas-height Self)) 
+   :center-x (* 0.5 (canvas-width Self)) :center-y (* 0.5 (canvas-height Self))
+   :eye-z 0.87))
+  
+
 (defmethod INIT ((Self image-editor))
   "Called when the image-editor is initialized."
   (glClearColor 0.0 0.0 0.0 0.0)
@@ -203,13 +218,8 @@
   (glEnable GL_BLEND)
   (glBlendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA)
   (when (image Self)
-     (load-image Self (image Self))
-    ;; camera at center of canvas
-    (aim-camera 
-     (camera Self) 
-     :eye-x (* 0.5 (canvas-width Self)) :eye-y (* 0.5 (canvas-height Self)) 
-     :center-x (* 0.5 (canvas-width Self)) :center-y (* 0.5 (canvas-height Self))
-     :eye-z 0.87)  ;; determines size
+    (load-image Self (image Self))
+    (center-canvas Self)
     (display Self)))
 
 
@@ -230,15 +240,21 @@
     (delete-texture (img-texture Self))))
 
 
-(defmethod NEW-IMAGE ((Self image-editor) Width Height)
+(defmethod NEW-IMAGE ((Self image-editor) Width Height &optional (Depth 32))
   "Creates an empty image."
   (with-glcontext Self
-    (when (img-texture Self) (dispose-texture-image Self))
-    ;;; (with-cursor *Watch-Cursor*  some user feedback needed?
+    (when (img-texture Self) 
+      (dispose-texture-image Self))
     (setf (img-texture Self) (create-empty-texture Width Height))
     (setf (selection-mask Self) (make-instance 'selection-mask :width Width :height Height))
     (setf (img-width Self) Width)
-    (setf (img-height Self) Height)))
+    (setf (img-height Self) Height)
+    (setf (img-depth Self) Depth)
+    ;; mask
+    (setf (selection-mask Self) (make-instance 'selection-mask :width Width :height Height))
+    ;; canvas: normalize height to be 1.0 but adjust width
+    (setf (canvas-width Self) (* (/ 1.0 (img-height Self)) (img-width Self)))))
+    
 
 
 (defmethod LOAD-IMAGE ((Self image-editor) From-Pathname)
