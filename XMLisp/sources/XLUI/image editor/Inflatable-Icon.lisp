@@ -89,6 +89,7 @@
 
 (defmethod INITIALIZE-INSTANCE :after ((Self inflatable-icon) &rest Args)
   (declare (ignore Args))
+#| not a great idea: 
   ;; if no icon is specified default to lobster inflatable icon
   (unless (icon Self)
     (let ((Pathname  "lui:resources;shapes;redLobster;redLobster.png"))
@@ -100,7 +101,8 @@
         (setf (image Self) Image)
         (setf (rows Self) Rows)
         (setf (columns Self) Columns)
-        (setf (altitudes Self) (altitudes (load-object "lui:resources;shapes;redLobster;index.shape" :package (find-package :xlui))))))))
+        (setf (altitudes Self) (altitudes (load-object "lui:resources;shapes;redLobster;index.shape" :package (find-package :xlui))))))) |#)
+
 
 
 (defmethod FINISHED-READING :after ((Self inflatable-icon) Stream)
