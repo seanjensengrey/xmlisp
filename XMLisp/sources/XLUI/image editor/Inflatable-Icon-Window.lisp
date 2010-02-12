@@ -6,7 +6,7 @@
 ;*********************************************************************
    ;* Author    : Alexander Repenning (alexander@agentsheets.com)    *
    ;*             http://www.agentsheets.com                         *
-   ;* Copyright : (c) 1996-2007, AgentSheets Inc.                    *
+   ;* Copyright : (c) 1996-2010, AgentSheets Inc.                    *
    ;* Filename  : Inflatable-Icon-window.lisp                        *
    ;* Updated   : 08/16/07                                           *
    ;* Version   :                                                    *
@@ -15,39 +15,50 @@
    ;*    1.2    : 05/30/07 Selection based inflation                 *
    ;*    1.2.1  : 08/16/07 if inflatable-icon has icon slot use      *
    ;*                       as image filename for image.             *
-   ;* HW/SW     : G4, OS X 10.4.10, MCL 5.2                          *
+   ;*    2.0    : 02/09/10 CCL Cocoa version                         *
+   ;* HW/SW     : G4, OS X 10.6.2, CCL 1.4                           *
    ;* Abstract  : Editor for inflatable icons                        *
    ;* Portable  : white                                              *
    ;*                                                                *
    ;******************************************************************
 
-(in-package :ad3d)
+(in-package :xlui)
 
 
 (defclass INFLATABLE-ICON-EDITOR-WINDOW (application-window)
   ((smoothing-cycles :accessor smoothing-cycles :initform 0 :initarg :smoothing-cycles)
+   (selected-tool :accessor selected-tool :initform nil :type symbol :initarg :selected-tool :documentation "the name of the currently selected tool")
    (file :accessor file :initform nil :documentation "shape file")
    (destination-inflatable-icon :accessor destination-inflatable-icon :initform nil :initarg :destination-inflatable-icon :documentation "if present save edited icon into this inflatable icon")
    (close-action :accessor close-action :initform nil :initarg :close-action :documentation "called with self when inflatable icon window is being closed"))
   (:documentation "Editor used to create inflatable icons"))
 
 
+(defgeneric TOOL-SELECTION-EVENT (inflatable-icon-editor-window Tool-Name)
+  (:documentation "called after tool has been selected"))
+
+
+(defmethod TOOL-SELECTION-EVENT ((Self inflatable-icon-editor-window) Tool-Name)
+  (setf (selected-tool Self) Tool-Name))
+
+
+#+:carbon
 (defmethod WINDOW-NULL-EVENT-HANDLER ((Self inflatable-icon-editor-window))
   "Called periodically when the window has the focus."
-  (let ((Icon-Editor (or (view-named 'icon-editor Self))))
+  (let ((Icon-Editor (or (view-named Self 'icon-editor))))
     (when Icon-Editor
       ;; do animation only when there is selection
       (when (or (selection-in-progress Icon-Editor)
                 (selection-outline Icon-Editor))
         (animate Icon-Editor 0.06)
-        (view-draw-contents Icon-Editor))
+        (display Icon-Editor))
       ;; update preview color when eyedropper tool is selected
       (when (eql (selected-tool Self) 'eye-dropper)
         (multiple-value-bind (Col Row) 
                              (screen->pixel-coord Icon-Editor (view-mouse-position Icon-Editor))
           (when (col-row-within-bounds-p Icon-Editor Col Row)
             (multiple-value-bind (Red Green Blue) (get-rgba-color-at Icon-Editor Col Row)
-              (draw-preview-color (view-named 'color-swatch Self) (make-color (ash Red 8)
+              (draw-preview-color (view-named Self 'color-swatch) (make-color (ash Red 8)
                                                                               (ash Green 8)
                                                                               (ash Blue 8))))))))
     (call-next-method)))
@@ -59,12 +70,12 @@
 
 
 (defmethod SELECT-ALL ((Self inflatable-icon-editor-window))
-  (select-all (view-named 'icon-editor Self)))
+  (select-all (view-named Self 'icon-editor)))
 
 
 (defmethod VIEW-KEY-EVENT-HANDLER ((Self inflatable-icon-editor-window) Key)
   "Called when a key is typed while the image-editor-window has keyboard focus."
-  (let ((Icon-Editor (view-named 'icon-editor Self)))
+  (let ((Icon-Editor (view-named Self 'icon-editor)))
     (cond
      ((command-key-p)
       (case Key
@@ -88,8 +99,8 @@
 
 (defmethod UPDATE-INFLATION ((Self inflatable-icon-editor-window))
   ;; need to update model editor
-  (let ((Icon-Editor (or (view-named 'icon-editor (view-window Self)) (error "icon editor missing")))
-        (Model-Editor (or (view-named 'model-editor (view-window Self)) (error "model editor missing"))))
+  (let ((Icon-Editor (or (view-named Self 'icon-editor) (error "icon editor missing")))
+        (Model-Editor (or (view-named Self 'model-editor) (error "model editor missing"))))
     (let ((Inflatable-Icon (inflatable-icon Model-Editor)))
       ;; make sure model and icon editor image buffers are aligned
       (unless (image Inflatable-Icon)
@@ -105,7 +116,7 @@
         ;; inflate
         (inflate
          Inflatable-Icon
-         :steps 10
+         :steps 20
          :pressure (pressure Inflatable-Icon)
          :max (max-value Inflatable-Icon)
          :inflate-pixel-p-fn #'pixel-selected-p-fn)
@@ -125,7 +136,7 @@
            :max (max-value Inflatable-Icon)
            :inflate-pixel-p-fn #'pixel-selected-p-fn))
         ;; update 
-        (view-draw-contents Model-Editor)))))
+        (display Model-Editor)))))
 
 
 (defmethod LOAD-IMAGE-FROM-FILE ((Self inflatable-icon-editor-window) Pathname)
@@ -151,11 +162,6 @@
 
 (defmethod WINDOW-NEEDS-SAVING-P ((Self inflatable-icon-editor-window))
   t)
-
-
-(defmethod DOCUMENT-ROOT ((Self inflatable-icon-editor-window))
-  ;; access by name
-  (inflatable-icon (view-named 'model-editor Self)))
 
 
 (defmethod IMAGE-FILE-NAME ((Self inflatable-icon-editor-window))
@@ -200,7 +206,7 @@
     (add-window-proxy-icon Self File)
     ;; set file to this new file
     (setf (window-needs-saving-p Self) nil)
-    (save-image (view-named 'icon-editor Self) (image-file Self))))  ;; save image
+    (save-image (view-named Self 'icon-editor) (image-file Self))))  ;; save image
 
 
 (defmethod WINDOW-SAVE :around ((Self inflatable-icon-editor-window))
@@ -211,7 +217,7 @@
     (unless (icon (document-root Self))
       (setf (icon (document-root Self)) (image-file-name Self)))     ;; set icon attribute
     (call-next-method)
-    (save-image (view-named 'icon-editor Self) (image-file Self))  ;; save image
+    (save-image (view-named Self 'icon-editor) (image-file Self))  ;; save image
     (store-window-state-in-document-root Self)
     (save-object (document-root Self) (file Self) :if-exists :supersede))
    ;; never saved
@@ -229,11 +235,13 @@
 ;  Icon Editor                                   |
 ;________________________________________________
 
-(defclass ICON-EDITOR (image-editor xml-dialog-interface)
-  ((dialog-item-action-function :accessor dialog-item-action-function :initform nil))
+(defclass ICON-EDITOR (image-editor)
+  ((action :accessor action :initform 'control-default-action :initarg :action :type symbol :documentation "method by this name will be called on the window containing control and the target of the control"))
   (:default-initargs
-    :view-position #@(0 0)
-    :view-size #@(200 200))
+    :x 0
+    :y 0
+    :width 200
+    :height 200)
   (:documentation "Edit icons with me"))
 
 
@@ -241,10 +249,11 @@
   (declare (ignore Window))
   ;; center camera straight over image
   (setf (camera Self) 
-        (copy <camera eye-x="0.0" eye-y="0.0" eye-z="1.7379" 
-              center-x="0.0" center-y="0.0" center-z="0.0" 
-              up-x="0.0" up-y="1.0" up-z="0.0" fovy="60.0" 
-              near="0.005" far="2000.0" azimuth="0.0" zenith="0.0"/>))
+        (duplicate <camera eye-x="0.0" eye-y="0.0" eye-z="1.7379" 
+                   center-x="0.0" center-y="0.0" center-z="0.0" 
+                   up-x="0.0" up-y="1.0" up-z="0.0" fovy="60.0" 
+                   near="0.005" far="2000.0" azimuth="0.0" zenith="0.0"/>
+                   (find-package :xlui)))
   (setf (view (camera Self)) Self)
   (init Self)
   ;; create the texture
@@ -252,7 +261,7 @@
 
 
 (defmethod PRINT-SLOTS ((Self icon-editor))
-  '(view-position view-size img-height img-width))
+  '(img-height img-width))
 
 
 (defmethod IMAGE-CHANGED-EVENT ((Self icon-editor) &optional Column1 Row1 Column2 Row2)
@@ -274,10 +283,11 @@
   (declare (ignore Window))
   ;; center camera straight over image
   (setf (camera Self) 
-        (copy <camera eye-x="0.0" eye-y="0.0" eye-z="1.7379" 
-              center-x="0.0" center-y="0.0" center-z="0.0" 
-              up-x="0.0" up-y="1.0" up-z="0.0" fovy="60.0" 
-              near="0.005" far="2000.0" azimuth="0.0" zenith="0.0"/>))
+        (duplicate <camera eye-x="0.0" eye-y="0.0" eye-z="1.7379" 
+                   center-x="0.0" center-y="0.0" center-z="0.0" 
+                   up-x="0.0" up-y="1.0" up-z="0.0" fovy="60.0" 
+                   near="0.005" far="2000.0" azimuth="0.0" zenith="0.0"/>
+                   (find-package :xlui)))
   (setf (view (camera Self)) Self)
   (init Self)
   ;; create the texture
@@ -288,10 +298,10 @@
 ;  Inflated-Icon-Editor                          |
 ;________________________________________________
 
-(defclass INFLATED-ICON-EDITOR (opengl-view xml-layout-interface)
+(defclass INFLATED-ICON-EDITOR (opengl-dialog)
   ((inflatable-icon :accessor inflatable-icon :initarg :inflatable-icon))
   (:default-initargs
-    :use-global-gl-context t
+    :use-global-glcontext t
     :inflatable-icon (make-instance 'inflatable-icon :auto-compile nil))
   (:documentation "3d inflated icon editor"))
 
@@ -300,18 +310,13 @@
   (call-next-method)
   (glShadeModel gl_smooth)
   ;; define material
-  (with-rgba-vector Specular (0.5 0.5 0.5 0.0)
-    (glmaterialfv gl_front_and_back gl_specular Specular))
+  (glmaterialfv gl_front_and_back gl_specular {0.5 0.5 0.5 0.0})
   (glmaterialf gl_front_and_back gl_shininess 20.0)
-  (with-rgba-vector V (1.0 1.0 1.0 1.0)
-    (glmaterialfv gl_front_and_back gl_ambient_and_diffuse V))
+  (glmaterialfv gl_front_and_back gl_ambient_and_diffuse {1.0 1.0 1.0 1.0})
   ;; light
-  (with-rgba-vector Position (0.0 5.0 5.0 1.0)
-    (gllightfv gl_light0 gl_position Position))
-  (with-rgba-vector White-Light (1.0 1.0 1.0 1.0)
-    (gllightfv gl_light0 gl_diffuse White-Light))
-  (with-rgba-vector Specular-Light (1.0 1.0 1.0 1.0)
-    (gllightfv gl_light0 gl_specular Specular-Light))
+  (gllightfv gl_light0 gl_position {0.0 5.0 5.0 1.0})
+  (gllightfv gl_light0 gl_diffuse {1.0 1.0 1.0 1.0})
+  (gllightfv gl_light0 gl_specular {1.0 1.0 1.0 1.0})
   ;; enablers
   (glenable gl_lighting)
   (glenable gl_light0)
@@ -321,14 +326,15 @@
   (glBlendFunc gl_src_alpha gl_one_minus_src_alpha)
   ;; top down 45 degree angle view
   (setf (camera Self)
-        (copy <camera eye-x="0.0" eye-y="0.89" eye-z="1.0" center-x="0.0" center-y="0.0" center-z="0.0" up-x="0.0" up-y="0.5726468643072211" up-z="-1.5649032618904695" fovy="60.0" aspect="1.0" near="0.004999999888241291" far="2000.0" azimuth="0.0" zenith="0.7200000286102295"/>))
+        (duplicate <camera eye-x="0.0" eye-y="0.89" eye-z="1.0" center-x="0.0" center-y="0.0" center-z="0.0" up-x="0.0" up-y="0.5726468643072211" up-z="-1.5649032618904695" fovy="60.0" aspect="1.0" near="0.004999999888241291" far="2000.0" azimuth="0.0" zenith="0.7200000286102295"/>
+                   (find-package :xlui)))
   (setf (view (camera Self)) Self))
 
 
 (defmethod INITIALIZE-LAYOUT :after ((Self inflated-icon-editor))
   ;; initialize based on values of icon-editor
   ;; (print "initializing inflated icon editor")
-  (let ((Icon-Editor (view-named 'icon-editor (view-window Self))))
+  (let ((Icon-Editor (view-named (window Self) 'icon-editor)))
     (unless Icon-Editor (error "cannot find Icon Editor"))
     ;; (setf (image (inflatable-icon Self)) (pixel-buffer Icon-Editor))
     (setf (altitudes (inflatable-icon Self))
@@ -337,7 +343,7 @@
                       :initial-element 0s0))))
   
   
-(defmethod DISPLAY-SKY-BOX ((Self inflated-icon-editor))
+(defmethod DRAW-SKY-BOX ((Self inflated-icon-editor))
   (glenable gl_texture_2d)
   (glEnable gl_cull_face) ;; cull to see through walls
   (gltexenvi gl_texture_env gl_texture_env_mode gl_modulate)
@@ -380,14 +386,14 @@
   (glDisable gl_cull_face))
 
   
-(defmethod DISPLAY ((Self inflated-icon-editor)) 
+(defmethod DRAW ((Self inflated-icon-editor)) 
   (glClearColor 0.9 0.9 0.9 1.0) 
   (glClear (logior GL_COLOR_BUFFER_BIT gl_depth_buffer_bit))
-  (display-sky-box Self)
+  (draw-sky-box Self)
   (glpushmatrix)
   (glTranslatef -0.5s0 +0.01s0 0.5s0)
   (glRotatef -90s0 1.0s0 0.0s0 0.0s0)
-  (display (inflatable-icon Self))
+  (draw (inflatable-icon Self))
   (glpopmatrix))
   
 
@@ -438,36 +444,28 @@
   (tool-selection-event Window 'select-ellipse))
 
 
-(defmethod COLOR-WELL-ACTION ((Window inflatable-icon-editor-window) Color-Well)
-  (multiple-value-bind (R G B Alpha)
-                       (pen-color (view-named 'icon-editor Window))
-    (declare (ignore R G B))
-    (set-pen-color
-     (view-named 'icon-editor Window)
-     (ash (color-red (selected-color Color-Well)) -8)
-     (ash (color-green (selected-color Color-Well)) -8)
-     (ash (color-blue (selected-color Color-Well)) -8)
-     Alpha)))
+(defmethod PICK-COLOR-ACTION ((w inflatable-icon-editor-window) (Color-Well color-well))
+  (set-pen-color (view-named w "icon-editor") (get-red Color-Well) (get-green Color-Well) (get-blue Color-Well) (get-alpha Color-Well)))
 
 
 (defmethod MIRROR-NONE-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
-  (toggle-mirror-lines (view-named 'icon-editor Window) nil nil))
+  (toggle-mirror-lines (view-named Window 'icon-editor) nil nil))
 
 
 (defmethod MIRROR-VERTICALLY-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
-  (toggle-mirror-lines (view-named 'icon-editor Window) nil t))
+  (toggle-mirror-lines (view-named Window'icon-editor) nil t))
 
 
 (defmethod MIRROR-HORIZONTALLY-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
-  (toggle-mirror-lines (view-named 'icon-editor Window) t nil))
+  (toggle-mirror-lines (view-named Window 'icon-editor) t nil))
 
 
 (defmethod MIRROR-BOTH-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
-  (toggle-mirror-lines (view-named 'icon-editor Window) t t))
+  (toggle-mirror-lines (view-named Window 'icon-editor) t t))
 
 
 
@@ -475,76 +473,76 @@
 
 
 (defmethod ADJUST-PRESSURE-ACTION ((Window inflatable-icon-editor-window) (Slider slider))
-  (let ((Pressure (* 0.08 (+ -1.0 (/ (* 2.0 (get-slider-setting Slider)) 1000)))))
-    (let ((Text-View (view-named 'pressuretext Window)))
+  (let ((Pressure (value Slider)))
+    (let ((Text-View (view-named Window 'pressuretext)))
       ;; update label
-      (set-dialog-item-text Text-View (format nil "~4,3F" Pressure))
-      (view-draw-contents Text-View)
+      (setf (text Text-View) (format nil "~4,3F" Pressure))
+      (display Text-View)
       ;; update model editor
-      (let ((Model-Editor (view-named 'model-editor Window)))
+      (let ((Model-Editor (view-named Window 'model-editor)))
         (setf (pressure (inflatable-icon Model-Editor)) Pressure)
         (update-inflation Window)
         (setf (is-flat (inflatable-icon Model-Editor)) nil)))))
 
 
 (defmethod ADJUST-CEILING-ACTION ((Window inflatable-icon-editor-window) (Slider slider))
-  (let ((Ceiling (* 0.001 (get-slider-setting Slider))))
-    (let ((Text-View (view-named 'ceilingtext Window)))
+  (let ((Ceiling (* 0.001 (value Slider))))
+    (let ((Text-View (view-named Window 'ceilingtext)))
       ;; update label
-      (set-dialog-item-text Text-View (format nil "~4,3F" Ceiling))
-      (view-draw-contents Text-View)
+      (setf (text Text-View) (format nil "~4,3F" Ceiling))
+      (display Text-View)
       ;; update model editor
-      (let ((Model-Editor (view-named 'model-editor Window)))
+      (let ((Model-Editor (view-named Window 'model-editor)))
         (setf (max-value (inflatable-icon Model-Editor)) Ceiling)
         (update-inflation Window)))))
 
 
 (defmethod ADJUST-NOISE-ACTION ((Window inflatable-icon-editor-window) (Slider slider))
-  (let ((Noise (* 0.0002 (get-slider-setting Slider))))
-    (let ((Text-View (view-named 'noise-text Window)))
+  (let ((Noise (* 0.0002 (value Slider))))
+    (let ((Text-View (view-named Window 'noise-text)))
       ;; update label
-      (set-dialog-item-text Text-View (format nil "~4,2F" Noise))
-      (view-draw-contents Text-View)
+      (setf (text Text-View) (format nil "~4,2F" Noise))
+      (display Text-View)
       ;; update model editor
-      (let ((Model-Editor (view-named 'model-editor Window)))
+      (let ((Model-Editor (view-named Window 'model-editor)))
         (setf (noise (inflatable-icon Model-Editor)) Noise)
         (update-inflation Window)
         (setf (is-flat (inflatable-icon Model-Editor)) nil)))))
 
 
 (defmethod ADJUST-SMOOTH-ACTION ((Window inflatable-icon-editor-window) (Slider slider))
-  (let ((Smooth (truncate (get-slider-setting Slider) 200)))
-    (let ((Text-View (view-named 'smooth-text Window)))
+  (let ((Smooth (truncate (value Slider) 200)))
+    (let ((Text-View (view-named Window 'smooth-text)))
       ;; update label
-      (set-dialog-item-text Text-View (format nil "~A" Smooth))
-      (view-draw-contents Text-View)
+      (setf (text Text-View) (format nil "~A" Smooth))
+      (display Text-View)
       ;; update model editor
       (setf (smoothing-cycles Window) Smooth)
       (update-inflation Window))))
 
 
 (defmethod ADJUST-Z-OFFSET-ACTION ((Window inflatable-icon-editor-window) (Slider slider))
-  (let ((Offset (* 0.1 (+ -1.0 (/ (* 2.0 (get-slider-setting Slider)) 1000)))))
-    (let ((Text-View (view-named 'z-offset-text Window)))
+  (let ((Offset (* 0.1 (+ -1.0 (/ (* 2.0 (value Slider)) 1000)))))
+    (let ((Text-View (view-named Window 'z-offset-text)))
       ;; update label
-      (set-dialog-item-text Text-View (format nil "~4,3F" Offset))
-      (view-draw-contents Text-View)
+      (setf (text Text-View) (format nil "~4,3F" Offset))
+      (display Text-View)
       ;; update model editor
-      (let ((Model-Editor (view-named 'model-editor Window)))
+      (let ((Model-Editor (view-named Window 'model-editor)))
         (setf (dz (inflatable-icon Model-Editor)) Offset)
-        (view-draw-contents Model-Editor)))))
+        (display Model-Editor)))))
 
 
 (defmethod ADJUST-ALPHA-ACTION ((Window inflatable-icon-editor-window) (Slider slider))
-  (let ((Alpha (* 0.001 (get-slider-setting Slider))))
-    (let ((Text-View (view-named 'alpha-text Window)))
+  (let ((Alpha (* 0.001 (value Slider))))
+    (let ((Text-View (view-named 'Window alpha-text)))
       ;; update label
-      (set-dialog-item-text Text-View (format nil "~A%" (truncate (* Alpha 100))))
-      (view-draw-contents Text-View))
+      (setf (text Text-View) (format nil "~A%" (truncate (* Alpha 100))))
+      (display Text-View))
     ;; update pen color
-    (let ((Color-Well (view-named 'color-swatch Window)))
+    (let ((Color-Well (view-named Window 'color-swatch)))
       (set-pen-color
-       (view-named 'icon-editor Window) 
+       (view-named Window 'icon-editor) 
        (ash (color-red (selected-color Color-Well)) -8)
        (ash (color-green (selected-color Color-Well)) -8)
        (ash (color-blue (selected-color Color-Well)) -8) 
@@ -552,15 +550,15 @@
 
 
 (defmethod ADJUST-DISTANCE-ACTION ((Window inflatable-icon-editor-window) (Slider slider))
-  (let ((Distance (* 0.001 (get-slider-setting Slider))))
-    (let ((Text-View (view-named 'distance-text Window)))
+  (let ((Distance (* 0.001 (value Slider))))
+    (let ((Text-View (view-named Window 'distance-text)))
       ;; update label
-      (set-dialog-item-text Text-View (format nil "~4,2F" Distance))
-      (view-draw-contents Text-View))
+      (setf (text Text-View) (format nil "~4,2F" Distance))
+      (display Text-View))
     ;; set distance of inflatable icon
-    (let ((Model-Editor (view-named 'model-editor Window)))
+    (let ((Model-Editor (view-named Window 'model-editor)))
       (setf (distance (inflatable-icon Model-Editor)) Distance)
-      (view-draw-contents Model-Editor))))
+      (display Model-Editor))))
 
 
 (defmethod CHANGE-ICON-ACTION ((Window inflatable-icon-editor-window) (Icon-Editor icon-editor))
@@ -568,55 +566,55 @@
 
 
 (defmethod UPRIGHT-ACTION ((Window inflatable-icon-editor-window) (Check-Box check-box))
-  (let ((Model-Editor (view-named 'model-editor Window)))
+  (let ((Model-Editor (view-named Window 'model-editor)))
     (setf (is-upright (inflatable-icon Model-Editor))
           (check-box-checked-p Check-Box))
-    (view-draw-contents Model-Editor)))
+    (display Model-Editor)))
 
 
 ;; surface actions
 
 (defmethod FRONT-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up-Item pop-up-item))
   (declare (ignore Pop-Up-item))
-  (let ((Model-Editor (view-named 'model-editor Window)))
+  (let ((Model-Editor (view-named Window 'model-editor)))
     (setf (surfaces (inflatable-icon Model-Editor)) 'front)
-    (view-draw-contents Model-Editor)))
+    (display Model-Editor)))
 
 
 (defmethod FRONT-AND-BACK-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up-Item pop-up-item))
   (declare (ignore Pop-Up-item))
-  (let ((Model-Editor (view-named 'model-editor Window)))
+  (let ((Model-Editor (view-named Window 'model-editor)))
     (setf (surfaces (inflatable-icon Model-Editor)) 'front-and-back)
-    (view-draw-contents Model-Editor)))
+    (display Model-Editor)))
 
 
 (defmethod FRONT-AND-BACK-CONNECTED-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up-Item pop-up-item))
   (declare (ignore Pop-Up-item))
-  (let ((Model-Editor (view-named 'model-editor Window)))
+  (let ((Model-Editor (view-named Window 'model-editor)))
     (setf (surfaces (inflatable-icon Model-Editor)) 'front-and-back-connected)
-    (view-draw-contents Model-Editor)))
+    (display Model-Editor)))
 
 
 (defmethod CUBE-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up-Item pop-up-item))
   (declare (ignore Pop-Up-item))
-  (let ((Model-Editor (view-named 'model-editor Window)))
+  (let ((Model-Editor (view-named Window 'model-editor)))
     (setf (surfaces (inflatable-icon Model-Editor)) 'cube)
-    (view-draw-contents Model-Editor)))
+    (display Model-Editor)))
 
 
 (defmethod EDIT-ICON-FLATTEN-ACTION ((Window inflatable-icon-editor-window) (Button button))
-  (let ((Model-Editor (view-named 'model-editor Window)))
+  (let ((Model-Editor (view-named Window 'model-editor)))
     (flatten (inflatable-icon Model-Editor))
     ;; update GUI: pressure is 0.0
-    (set-slider-setting (view-named 'pressure_slider Window) 500)
-    (set-dialog-item-text (view-named 'pressuretext Window) "0.0")
-    (setf (pressure (inflatable-icon (view-named 'model-editor Window))) 0.0)
+    (setf (value (view-named Window 'pressure_slider)) 500)
+    (set (text (view-named Window 'pressuretext)) "0.0")
+    (setf (pressure (inflatable-icon (view-named Window 'model-editor))) 0.0)
     ;; enable flat texture optimization
-    (setf (is-flat (inflatable-icon (view-named 'model-editor Window))) t)
-    (change-icon-action Window (view-named 'icon-editor Window))
-    (update-texture-from-image (inflatable-icon (view-named 'model-editor Window)))
+    (setf (is-flat (inflatable-icon (view-named Window 'model-editor))) t)
+    (change-icon-action Window (view-named Window 'icon-editor))
+    (update-texture-from-image (inflatable-icon (view-named Window 'model-editor)))
     ;; update for user
-    (view-draw-contents Model-Editor)))
+    (display Model-Editor)))
 
 
 (defmethod CLOSE-WINDOW-WITH-WARNING ((Self inflatable-icon-editor-window))
@@ -632,7 +630,7 @@
 
 
 (defmethod EDIT-ICON-APPLY-ACTION ((Window inflatable-icon-editor-window) (Button button))
-  (let ((Model-Editor (view-named 'model-editor Window)))
+  (let ((Model-Editor (view-named Window 'model-editor)))
     ;; finalize geometry
     (compute-height (inflatable-icon Model-Editor))
     ;; save
@@ -645,11 +643,11 @@
 
 (defmethod EDIT-ICON-OK-ACTION ((Window inflatable-icon-editor-window) (Button button))
   ;; finalize geometry
-  (compute-height (inflatable-icon (view-named 'model-editor Window)))
+  (compute-height (inflatable-icon (view-named Window 'model-editor)))
   ;; save
   (when (destination-inflatable-icon Window)
     ;;(format t "~%copy into icon")
-    (copy-content-into (inflatable-icon (view-named 'model-editor Window)) (destination-inflatable-icon Window)))
+    (copy-content-into (inflatable-icon (view-named Window 'model-editor)) (destination-inflatable-icon Window)))
   (window-hide Window)
   (window-save Window))
 
@@ -657,13 +655,26 @@
 ; Open & New                                |
 ;___________________________________________
 
-(defun NEW-INFLATABLE-ICON-EDITOR-WINDOW () "
+(defun NEW-INFLATABLE-ICON-EDITOR-WINDOW (&key (Width 32) (Height 32)) "
   Create and return a new inflatable icon editor window"
-  (let ((Window (make-instance 'inflatable-icon-editor-window
-                  :window-show nil
-                  :view-size #@(550 530))))
-    (setf (root-view Window) (load-object "ad3d:resources;windows;inflatable-icon-editor.window"))
-    (window-show Window)
+  (let* ((Window (load-object "lui:resources;windows;inflatable-icon-editor.window" :package (find-package :xlui)))
+         (Icon-Editor (view-named Window "icon-editor"))
+         (Inflated-Icon-Editor (view-named Window "model-editor")))
+    ;; 2D
+    (new-image Icon-Editor Width Height)
+    (center-canvas Icon-Editor)
+    (get-rgba-color-at Icon-Editor 0 0) ;;; HACK!! make sure buffer is allocated 
+    ;; 3D
+    (setf (inflatable-icon Inflated-Icon-Editor)
+          (make-instance 'inflatable-icon :columns Width :rows Height))
+    (setf (auto-compile (inflatable-icon Inflated-Icon-Editor)) nil)  ;;; keep non compiled for editing
+    (setf (altitudes (inflatable-icon Inflated-Icon-Editor))
+          (make-array (list Height Width)
+                      :element-type 'short-float
+                      :initial-element 0.0))
+    ;; share the pixel buffer of the icon editor
+    (setf (image (inflatable-icon Inflated-Icon-Editor))
+                  (pixel-buffer Icon-Editor))
     Window))
 
 
@@ -674,10 +685,11 @@
                   :window-show nil
                   :destination-inflatable-icon Destination-Inflatable-Icon
                   :close-action Close-Action
-                  :view-size #@(550 530))))
-    (setf (root-view Window) (load-object "ad3d:resources;windows;inflatable-icon-editor.window"))
+                  :width 550
+                  :height 530)))
+    (setf (root-view Window) (load-object "lui:resources;windows;inflatable-icon-editor.window"))
     ;; Load 2D image 
-    (let ((Icon-Editor (view-named 'icon-editor Window)))
+    (let ((Icon-Editor (view-named Window 'icon-editor)))
       (load-image Icon-Editor Pathname)
       ;; Load Shape 
       (let ((Shape-Pathname (make-pathname
@@ -688,7 +700,7 @@
                              :defaults Pathname)))
         ;; when shape file is missing stick with flat default 
         (when (probe-file Shape-Pathname)
-          (let ((Inflated-Icon-Editor (view-named 'model-editor Window)))
+          (let ((Inflated-Icon-Editor (view-named Window 'model-editor)))
             (setf (inflatable-icon Inflated-Icon-Editor) (load-object Shape-Pathname))
             (setf (auto-compile (inflatable-icon Inflated-Icon-Editor)) nil)  ;; keep editable
             ;; use the icon editor image, not the new inflatable icon editor one
@@ -708,7 +720,12 @@
 #| Examples:
 
 
-(defparameter *Inflatable-Icon-Editor* (new-inflatable-icon-editor-window))
+(defparameter *Inflatable-Icon-Editor* (new-inflatable-icon-editor-window :width 32 :height 32))
+
+(defparameter *Inflatable-Icon-Editor40* (new-inflatable-icon-editor-window :width 40 :height 40))
+
+
+(defparameter *Inflatable-Icon-Editor* (new-inflatable-icon-editor-window :width 64 :height 40))
 
 (defparameter *Inflatable-Icon-Editor2* (new-inflatable-icon-editor-window-from-image (choose-file-dialog)))
 
