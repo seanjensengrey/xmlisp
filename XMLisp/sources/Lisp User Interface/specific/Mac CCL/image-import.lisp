@@ -109,6 +109,40 @@
      (#/bitmapFormat Image-Representation))))
 
 
+(defun RGBA-IMAGE-RED (Image X Y Width) "
+  in:  Image {RGBAimage}, x, y, Width {fixnum}.
+  out: Byte {byte}."
+  (%get-byte Image (* (+ (* y Width) x) 4)))
+
+
+(defun RGBA-IMAGE-GREEN (Image X Y Width) "
+  in:  Image {RGBAimage}, x, y, Width {fixnum}.
+  out: Byte {byte}."
+  (%get-byte Image (+ (* (+ (* y Width) x) 4) 1)))
+
+
+(defun RGBA-IMAGE-BLUE (Image X Y Width) "
+  in:  Image {RGBAimage}, x, y, Width {fixnum}.
+  out: Byte {byte}."
+  (%get-byte Image (+ (* (+ (* y Width) x) 4) 2)))
+
+
+(defun RGBA-IMAGE-ALPHA (Image X Y Width) "
+  in:  Image {RGBAimage}, x, y, Width {fixnum}.
+  out: Byte {byte}."
+  (%get-byte Image (+ (* (+ (* y Width) x) 4) 3)))
+
+
+(defun SET-IMAGE-RGBA (Image X Y Width R G B A) "
+ in: Image {RGGAimage}, x, y, Width {fixnum}, R, G, B, A {byte}"
+ (let ((Index (* (+ (* y Width) x) 4)))
+   (setf (%get-byte Image Index) R)
+   (setf (%get-byte Image (+ Index 1)) G)
+   (setf (%get-byte Image (+ Index 2)) B)
+   (setf (%get-byte Image (+ Index 3)) A)))
+
+
+
 #| Examples:
 
 (time (create-image-from-file "/Users/alex/working copies/XMLisp svn/trunk/XMLisp/resources/textures/palm-araceae02.png"))
