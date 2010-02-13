@@ -26,26 +26,29 @@
      </row>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="Ceiling"/>
-        <slider action="adjust-ceiling-action" name="ceiling_slider" value="1000" flex="1"/>
+        <slider action="adjust-ceiling-action" name="ceiling_slider" value="1.0" max-value="1.0" flex="1"/>
         <label name="ceilingtext" align="right" width="35" text="1.0"/>
       </row>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="Noise"/>
-        <slider action="adjust-noise-action" flex="1"/>
+        <slider action="adjust-noise-action" max-value="0.2" flex="1"/>
         <label name="noise-text" align="right" width="35" text="0.0"/>
       </row>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="Smooth"/>
-        <slider action="adjust-smooth-action" flex="1"/>
+        <slider action="adjust-smooth-action" max-value="5" flex="1"/>
         <label name="smooth-text" align="right" width="35" text="0.0"/>
-      </row>
-      <row align="stretch" minimize="vertical" valign="middle">
-        <label width="65" text="z offset"/>
-        <slider action="adjust-z-offset-action" flex="1"/>
-        <label name="z-offset-text" align="right" width="35" text="0.0"/>
       </row>
       <row align="center" minimize="vertical" valign="middle">
         <bevel-button text="Flatten" width="64" height="24" action="edit-icon-flatten-action"/>
+      </row>
+
+      <spacer height="15"/>
+      <label width="65" text="Geometry" align="center"/>
+      <row align="stretch" minimize="vertical" valign="middle">
+        <label width="65" text="z offset"/>
+        <slider action="adjust-z-offset-action" min-value="-0.1" max-value="0.1" flex="1"/>
+        <label name="z-offset-text" align="right" width="35" text="0.0"/>
       </row>
     </column>
     <spacer width="5"/>
