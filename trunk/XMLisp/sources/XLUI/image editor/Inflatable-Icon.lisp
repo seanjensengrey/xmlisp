@@ -218,16 +218,17 @@
 
 
 (defmethod UPDATE-TEXTURE-FROM-IMAGE ((Self inflatable-icon) &optional Image)
-  (unless Image (setq Image (image Self)))
-  ;; replace entire texture with image
-  (cond
-   ((and (texture-id Self) Image)
-    (glbindtexture gl_texture_2d (texture-id Self))
-    (gltexsubimage2d gl_texture_2d 0 0 0 (columns Self) (rows Self) gl_rgba gl_unsigned_byte Image)
-    ;; need to update also the mipmaps to avoid mix of new and old image
-    (gluBuild2DMipmaps gl_texture_2d 4 (columns Self) (rows Self) gl_rgba gl_unsigned_byte Image))
-   (t
-    (warn "inflatable icon is not ready for update"))))
+  (with-glcontext (view Self)  ;; could be called from outside of draw
+    (unless Image (setq Image (image Self)))
+    ;; replace entire texture with image
+    (cond
+     ((and (texture-id Self) Image)
+      (glBindTexture GL_TEXTURE_2D (texture-id Self))
+      (glTexSubImage2D GL_TEXTURE_2D 0 0 0 (columns Self) (rows Self) GL_RGBA GL_UNSIGNED_BYTE Image)
+      ;; need to update also the mipmaps to avoid mix of new and old image
+      (gluBuild2DMipmaps GL_TEXTURE_2D 4 (columns Self) (rows Self) GL_RGBA GL_UNSIGNED_BYTE Image))
+     (t
+      (warn "inflatable icon is not ready for update")))))
 
 ;___________________________________
 ; Connectors                        |
@@ -527,40 +528,36 @@
   (glCallList (display-list Self)))
 
 
-#| still Carbon
-
+;; HACK!! move this into LUI Cocoa
 (defmethod DRAW-AS-FLAT-TEXTURE ((Self inflatable-icon))
   (unless (texture-id Self)
     ;; use image as texture
     (unless (image Self) (error "image of inflatable icon is undefined"))
-    (unless (= (#_getPtrSize (image Self)) (* (rows Self) (columns Self) 4)) (error "image size does not match row/column size"))
-    (rlet ((&texName :long))
+    (unless (= (#_GetPtrSize (image Self)) (* (rows Self) (columns Self) 4)) (error "image size does not match row/column size"))
+    (ccl::rlet ((&texName :long))
       (glGenTextures 1 &texName)
-      (setf (texture-id Self) (%get-long &texName)))
-    (glBindTexture gl_texture_2d (texture-id Self))
+      (setf (texture-id Self) (ccl::%get-long &texName)))
+    (glBindTexture GL_TEXTURE_2D (texture-id Self))
     ;; clam to edge to avoid gaps between adjacent textures
-    (gltexparameteri gl_texture_2d gl_texture_wrap_s gl_clamp_to_edge)
-    (gltexparameteri gl_texture_2d gl_texture_wrap_t gl_clamp_to_edge)
+    (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_WRAP_S GL_CLAMP_TO_EDGE)
+    (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_WRAP_T GL_CLAMP_TO_EDGE)
     ;; linear pixel magnification
-    (gltexparameteri gl_texture_2d gl_texture_mag_filter gl_nearest)
-    (glTexParameteri gl_texture_2d gl_texture_min_filter gl_linear_mipmap_nearest)
-    (glTexImage2D gl_texture_2d 0 4 (columns Self) (rows Self) 0 gl_rgba gl_unsigned_byte (image Self))
-    (unless (zerop (gluBuild2DMipmaps gl_texture_2d 4 (columns Self) (rows Self) gl_rgba gl_unsigned_byte (image Self)))
+    (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_MAG_FILTER GL_NEAREST)
+    (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_MIN_FILTER GL_LINEAR_MIPMAP_NEAREST)
+    (glTexImage2D GL_TEXTURE_2D 0 4 (columns Self) (rows Self) 0 GL_RGBA GL_UNSIGNED_BYTE (image Self))
+    (unless (zerop (gluBuild2DMipmaps GL_TEXTURE_2D 4 (columns Self) (rows Self) GL_RGBA GL_UNSIGNED_BYTE (image Self)))
             (error "could not create mipmaps")))
-  (glEnable gl_texture_2d)
-  (gltexenvi gl_texture_env gl_texture_env_mode gl_modulate)
-  (glBindTexture gl_texture_2d (texture-id Self))
-  (glBegin gl_quads)
+  (glEnable GL_TEXTURE_2D)
+  (glTexEnvi GL_TEXTURE_ENV GL_TEXTURE_ENV_MODE GL_MODULATE)
+  (glBindTexture GL_TEXTURE_2D (texture-id Self))
+  (glBegin GL_QUADS)
   (glNormal3f 0.0 0.0 1.0)
-  (gltexcoord2i 0 0) (glVertex2f 0.0 0.0)
-  (gltexcoord2i 1 0) (glVertex2f 1.0 0.0)
-  (gltexcoord2i 1 1) (glVertex2f 1.0 1.0)
-  (gltexcoord2i 0 1) (glVertex2f 0.0 1.0)
+  (glTexCoord2i 0 0) (glVertex2f 0.0 0.0)
+  (glTexCoord2i 1 0) (glVertex2f 1.0 0.0)
+  (glTexCoord2i 1 1) (glVertex2f 1.0 1.0)
+  (glTexCoord2i 0 1) (glVertex2f 0.0 1.0)
   (glEnd))
 
-|#
-
-   
 
 (defmethod DRAW-UNCOMPILED ((Self inflatable-icon)) 
   (unless (image Self) (return-from draw-uncompiled))
