@@ -64,6 +64,12 @@
     (call-next-method)))
 
 
+(defmethod DOCUMENT-DEFAULT-DIRECTORY ((Self inflatable-icon-editor-window)) "
+  out: Pathname
+  When loading saving: where to look first."
+  (when (file Self)
+    (make-pathname :name nil :type nil :defaults (file Self))))
+
 
 (defmethod WINDOW-CLOSE-EVENT-HANDLER ((Self inflatable-icon-editor-window))
   (close-window-with-warning Self))
@@ -172,19 +178,12 @@
 (defmethod IMAGE-FILE ((Self inflatable-icon-editor-window))
   (when (file Self)
     ;; allow icon of inflatable icon to overwrite the default image file name+extension
-    (if (and (document-root Self) (icon (document-root Self)))
-      (make-pathname
-       :directory (pathname-directory (file Self))
-       :name (filename-name (icon (document-root Self)))
-       :type (filename-extension (icon (document-root Self)))
-       :host (pathname-host (file Self))
-       :defaults (file Self))
-      (make-pathname
-       :directory (pathname-directory (file Self))
-       :name (pathname-name (file Self))
-       :type "png"
-       :host (pathname-host (file Self))
-       :defaults (file Self)))))
+    (make-pathname
+     :directory (pathname-directory (file Self))
+     :name (pathname-name (file Self))
+     :type "png"
+     :host (pathname-host (file Self))
+     :defaults (file Self))))
 
 
 (defmethod WINDOW-FILENAME ((Self inflatable-icon-editor-window))
@@ -194,19 +193,19 @@
 
 (defmethod WINDOW-SAVE-AS ((Self inflatable-icon-editor-window) &optional External-Format)
   (declare (ignore External-Format))
-  (let ((File (choose-new-file-dialog 
-               :prompt nil
-               :name (format nil "untitled.~A" (document-type-file-extension Self))
-               :window-title (format nil "Save ~A As:" (document-type-name Self))
+
+  (let ((File (easygui::choose-new-file-dialog  ;; HACK
+               ;;; :name (format nil "untitled.~A" (document-type-file-extension Self))
+               ;;; :window-title (format nil "Save ~A As:" (document-type-name Self))
                :directory (document-default-directory Self))))
     (setf (file Self) File)
-    (setf (icon (document-root Self)) (image-file-name Self))     ;; set icon attribute
-    (store-window-state-in-document-root Self)
-    (save-object (document-root Self) File :if-exists :error)
-    (add-window-proxy-icon Self File)
+ ;;   (setf (icon (document-root Self)) (image-file-name Self))     ;; set icon attribute
+ ;;   (store-window-state-in-document-root Self)
+ ;;   (save-object (document-root Self) File :if-exists :error)
+ ;;   (add-window-proxy-icon Self File)
     ;; set file to this new file
-    (setf (window-needs-saving-p Self) nil)
-    (save-image (view-named Self 'icon-editor) (image-file Self))))  ;; save image
+ ;;   (setf (window-needs-saving-p Self) nil)
+    (save-image (view-named Self 'icon-editor) (image-file Self))))
 
 
 (defmethod WINDOW-SAVE :around ((Self inflatable-icon-editor-window))
@@ -476,7 +475,7 @@
   (let ((Pressure (value Slider)))
     (let ((Text-View (view-named Window 'pressuretext)))
       ;; update label
-      (setf (text Text-View) (format nil "~4,3F" Pressure))
+      (setf (text Text-View) (format nil "~4,2F" Pressure))
       (display Text-View)
       ;; update model editor
       (let ((Model-Editor (view-named Window 'model-editor)))
@@ -486,10 +485,10 @@
 
 
 (defmethod ADJUST-CEILING-ACTION ((Window inflatable-icon-editor-window) (Slider slider))
-  (let ((Ceiling (* 0.001 (value Slider))))
+  (let ((Ceiling (value Slider)))
     (let ((Text-View (view-named Window 'ceilingtext)))
       ;; update label
-      (setf (text Text-View) (format nil "~4,3F" Ceiling))
+      (setf (text Text-View) (format nil "~4,2F" Ceiling))
       (display Text-View)
       ;; update model editor
       (let ((Model-Editor (view-named Window 'model-editor)))
@@ -498,7 +497,7 @@
 
 
 (defmethod ADJUST-NOISE-ACTION ((Window inflatable-icon-editor-window) (Slider slider))
-  (let ((Noise (* 0.0002 (value Slider))))
+  (let ((Noise (value Slider)))
     (let ((Text-View (view-named Window 'noise-text)))
       ;; update label
       (setf (text Text-View) (format nil "~4,2F" Noise))
@@ -511,7 +510,7 @@
 
 
 (defmethod ADJUST-SMOOTH-ACTION ((Window inflatable-icon-editor-window) (Slider slider))
-  (let ((Smooth (truncate (value Slider) 200)))
+  (let ((Smooth (truncate (value Slider))))
     (let ((Text-View (view-named Window 'smooth-text)))
       ;; update label
       (setf (text Text-View) (format nil "~A" Smooth))
@@ -522,31 +521,15 @@
 
 
 (defmethod ADJUST-Z-OFFSET-ACTION ((Window inflatable-icon-editor-window) (Slider slider))
-  (let ((Offset (* 0.1 (+ -1.0 (/ (* 2.0 (value Slider)) 1000)))))
+  (let ((Offset (value Slider)))
     (let ((Text-View (view-named Window 'z-offset-text)))
       ;; update label
-      (setf (text Text-View) (format nil "~4,3F" Offset))
+      (setf (text Text-View) (format nil "~4,2F" Offset))
       (display Text-View)
       ;; update model editor
       (let ((Model-Editor (view-named Window 'model-editor)))
         (setf (dz (inflatable-icon Model-Editor)) Offset)
         (display Model-Editor)))))
-
-
-(defmethod ADJUST-ALPHA-ACTION ((Window inflatable-icon-editor-window) (Slider slider))
-  (let ((Alpha (* 0.001 (value Slider))))
-    (let ((Text-View (view-named 'Window alpha-text)))
-      ;; update label
-      (setf (text Text-View) (format nil "~A%" (truncate (* Alpha 100))))
-      (display Text-View))
-    ;; update pen color
-    (let ((Color-Well (view-named Window 'color-swatch)))
-      (set-pen-color
-       (view-named Window 'icon-editor) 
-       (ash (color-red (selected-color Color-Well)) -8)
-       (ash (color-green (selected-color Color-Well)) -8)
-       (ash (color-blue (selected-color Color-Well)) -8) 
-       (truncate (* 255 Alpha))))))
 
 
 (defmethod ADJUST-DISTANCE-ACTION ((Window inflatable-icon-editor-window) (Slider slider))
@@ -602,12 +585,12 @@
     (display Model-Editor)))
 
 
-(defmethod EDIT-ICON-FLATTEN-ACTION ((Window inflatable-icon-editor-window) (Button button))
+(defmethod EDIT-ICON-FLATTEN-ACTION ((Window inflatable-icon-editor-window) (Button bevel-button))
   (let ((Model-Editor (view-named Window 'model-editor)))
     (flatten (inflatable-icon Model-Editor))
     ;; update GUI: pressure is 0.0
-    (setf (value (view-named Window 'pressure_slider)) 500)
-    (set (text (view-named Window 'pressuretext)) "0.0")
+    (setf (value (view-named Window 'pressure_slider)) 0.0)
+    (setf (text (view-named Window 'pressuretext)) "0.0")
     (setf (pressure (inflatable-icon (view-named Window 'model-editor))) 0.0)
     ;; enable flat texture optimization
     (setf (is-flat (inflatable-icon (view-named Window 'model-editor))) t)
@@ -666,7 +649,7 @@
     (get-rgba-color-at Icon-Editor 0 0) ;;; HACK!! make sure buffer is allocated 
     ;; 3D
     (setf (inflatable-icon Inflated-Icon-Editor)
-          (make-instance 'inflatable-icon :columns Width :rows Height))
+          (make-instance 'inflatable-icon :columns Width :rows Height :view Inflated-Icon-Editor))
     (setf (auto-compile (inflatable-icon Inflated-Icon-Editor)) nil)  ;;; keep non compiled for editing
     (setf (altitudes (inflatable-icon Inflated-Icon-Editor))
           (make-array (list Height Width)
@@ -722,10 +705,16 @@
 
 (defparameter *Inflatable-Icon-Editor* (new-inflatable-icon-editor-window :width 32 :height 32))
 
+(window-save-as *Inflatable-Icon-Editor*)
+
+
+
+
+
 (defparameter *Inflatable-Icon-Editor40* (new-inflatable-icon-editor-window :width 40 :height 40))
 
 
-(defparameter *Inflatable-Icon-Editor* (new-inflatable-icon-editor-window :width 64 :height 40))
+(defparameter *Inflatable-Icon-Editor* (new-inflatable-icon-editor-window :width 64 :height 64))
 
 (defparameter *Inflatable-Icon-Editor2* (new-inflatable-icon-editor-window-from-image (choose-file-dialog)))
 
