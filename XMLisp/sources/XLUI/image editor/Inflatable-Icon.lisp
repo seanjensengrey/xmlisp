@@ -533,7 +533,7 @@
   (unless (texture-id Self)
     ;; use image as texture
     (unless (image Self) (error "image of inflatable icon is undefined"))
-    (unless (= (#_GetPtrSize (image Self)) (* (rows Self) (columns Self) 4)) (error "image size does not match row/column size"))
+    (unless (= (sizeof (image Self)) (* (rows Self) (columns Self) 4)) (error "image size does not match row/column size"))
     (ccl::rlet ((&texName :long))
       (glGenTextures 1 &texName)
       (setf (texture-id Self) (ccl::%get-long &texName)))
