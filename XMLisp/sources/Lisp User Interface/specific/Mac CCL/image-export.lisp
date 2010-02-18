@@ -25,7 +25,7 @@
 (defun RGBA-TO-ARGB-BUFFER (Pixel-Buffer)
   "Rearanges pixel buffer from RGBA to ARGB order."
   ; the slow way
-  (dotimes (I (truncate (#_GetPtrSize Pixel-Buffer) 4))
+  (dotimes (I (truncate (sizeof Pixel-Buffer) 4))
     (let* ((Addr (* i 4))
            (Alpha (%get-byte Pixel-Buffer (+ Addr 3))))
       (setf (%get-byte Pixel-Buffer (+ Addr 3)) (%get-byte Pixel-Buffer (+ Addr 2)))
