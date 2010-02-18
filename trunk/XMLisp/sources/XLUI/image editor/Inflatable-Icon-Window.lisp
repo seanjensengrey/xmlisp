@@ -194,10 +194,11 @@
 (defmethod WINDOW-SAVE-AS ((Self inflatable-icon-editor-window) &optional External-Format)
   (declare (ignore External-Format))
 
-  (let ((File (easygui::choose-new-file-dialog  ;; HACK
-               ;;; :name (format nil "untitled.~A" (document-type-file-extension Self))
-               ;;; :window-title (format nil "Save ~A As:" (document-type-name Self))
-               :directory (document-default-directory Self))))
+  (let ((File  #-windows-target (easygui::choose-new-file-dialog  ;; HACK
+                                 ;;; :name (format nil "untitled.~A" (document-type-file-extension Self))
+                                 ;;; :window-title (format nil "Save ~A As:" (document-type-name Self))
+                                 :directory (document-default-directory Self))
+               #+windows-target "image999.png"))
     (setf (file Self) File)
  ;;   (setf (icon (document-root Self)) (image-file-name Self))     ;; set icon attribute
  ;;   (store-window-state-in-document-root Self)
@@ -658,6 +659,7 @@
     ;; share the pixel buffer of the icon editor
     (setf (image (inflatable-icon Inflated-Icon-Editor))
                   (pixel-buffer Icon-Editor))
+    (display Window)
     Window))
 
 
