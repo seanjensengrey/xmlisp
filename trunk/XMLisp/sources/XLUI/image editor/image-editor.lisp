@@ -287,7 +287,7 @@
     (when (img-texture Self)
       (with-glcontext Self
         (save-texture-as-image (img-texture Self) To-Pathname
-                               (img-width Self) (img-height Self) :depth (img-depth Self))
+                               (img-width Self) (img-height Self) :depth (truncate (img-depth Self) 8))
         (when (on-image-saved Self) (funcall (on-image-saved Self) To-Pathname))))))
 
 
