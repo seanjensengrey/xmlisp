@@ -4,7 +4,7 @@
 ;; for CCL 1.3 
 ;; 5/28/09
 ;; 07/15/09 + font support
-;; just testing
+;; 02/17/10 + inflatable icons and inflatable icon editor window
 
 (in-package :cl-user)
 
@@ -144,6 +144,7 @@
 (load "lui:sources;Lisp User Interface;OpenGL-view")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;LUI Cocoa")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;image-import")
+(load "lui:sources;Lisp User Interface;specific;Mac CCL;image-export")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;OpenGL-view Cocoa")
 (load "lui:sources;Lisp User Interface;Camera")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;Transparent-OpenGL-Window")
@@ -177,8 +178,12 @@
 (load "lui:sources;XLUI;String-Shape")
 (load "lui:sources;XLUI;Cursor-Manager")
 (load "lui:sources;XLUI;agent-3D")
+
+;; inflatable icons
 (load "lui:sources;XLUI;image editor;selection-mask")
 (load "lui:sources;XLUI;image editor;image-editor")
+(load "lui:sources;XLUI;image editor;Inflatable-Icon")
+(load "lui:sources;XLUI;image editor;Inflatable-Icon-Window")
 
 
 ;; Agent Warp Engine
