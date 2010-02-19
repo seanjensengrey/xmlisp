@@ -209,21 +209,19 @@
     (save-image (view-named Self 'icon-editor) (image-file Self))))
 
 
-(defmethod WINDOW-SAVE :around ((Self inflatable-icon-editor-window))
+(defmethod WINDOW-SAVE ((Self inflatable-icon-editor-window))
   (cond
    ;; saved before
    ((file Self) 
-    ;; do not overwrite existing icon name
-    (unless (icon (document-root Self))
-      (setf (icon (document-root Self)) (image-file-name Self)))     ;; set icon attribute
-    (call-next-method)
+;;    (call-next-method)
     (save-image (view-named Self 'icon-editor) (image-file Self))  ;; save image
-    (store-window-state-in-document-root Self)
-    (save-object (document-root Self) (file Self) :if-exists :supersede))
+;;    (store-window-state-in-document-root Self)
+;;    (save-object (document-root Self) (file Self) :if-exists :supersede)
+    )
    ;; never saved
    (t 
     ;; indirectly call window save as
-    (call-next-method))))
+    (window-save-as Self))))
 
   
 
@@ -624,6 +622,7 @@
       (when (is-flat (destination-inflatable-icon Window))
         (setf (update-texture-from-image-p (destination-inflatable-icon Window)) t)))))
 
+#|
 
 (defmethod EDIT-ICON-OK-ACTION ((Window inflatable-icon-editor-window) (Button button))
   ;; finalize geometry
@@ -634,6 +633,14 @@
     (copy-content-into (inflatable-icon (view-named Window 'model-editor)) (destination-inflatable-icon Window)))
   (window-hide Window)
   (window-save Window))
+
+|#
+
+(defmethod EDIT-ICON-SAVE-ACTION ((Window inflatable-icon-editor-window) (Button button))
+  ;; finalize geometry
+  (compute-height (inflatable-icon (view-named Window 'model-editor)))
+  (window-save Window))
+
 
 ;___________________________________________
 ; Open & New                                |
@@ -706,11 +713,6 @@
 
 
 (defparameter *Inflatable-Icon-Editor* (new-inflatable-icon-editor-window :width 32 :height 32))
-
-(window-save-as *Inflatable-Icon-Editor*)
-
-
-
 
 
 (defparameter *Inflatable-Icon-Editor40* (new-inflatable-icon-editor-window :width 40 :height 40))
