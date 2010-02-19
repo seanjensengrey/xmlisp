@@ -75,9 +75,12 @@
   ;; Cocotron doesn't implement #/imageRepWithContentsOfFile: (Issue 376)
   #+cocotron
   (let* ((images (#/imageRepsWithContentsOfFile: ns:NS-Image-Rep native-filename)))
-    (if (> (#/count images) 0)
-      (#/objectAtIndex: images 0)
-      +null-ptr+))
+    (cond
+     ((%null-ptr-p images) images)
+     (t 
+      (if (> (#/count images) 0)
+        (#/objectAtIndex: images 0)
+        +null-ptr+))))
   #-cocotron (#/imageRepWithContentsOfFile: ns:NS-Image-Rep native-filename))
 
 
