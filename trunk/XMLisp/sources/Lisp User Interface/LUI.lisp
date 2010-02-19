@@ -318,7 +318,7 @@ Call with most important parameters. Make other paramters accessible through *Cu
    (resizable :accessor resizable :initform t :initarg :resizable :type boolean :documentation "has resize control")
    (closeable :accessor closeable :initform t :initarg :closeable :type boolean :documentation "has close control")
    (full-screen :accessor full-screen :initform nil :initarg :full-screen :type boolean :documentation "is in full screen mode")
-   (do-show-immediatly :accessor do-show-immediatly :initarg :do-show-immediatly :initform t :documentation "if true will show window when creating instance")
+   (do-show-immediately :accessor do-show-immediately :initarg :do-show-immediately :initform t :documentation "if true will show window when creating instance")
    (native-window :accessor native-window :initform nil :documentation "native OS window object")
    (native-view :accessor native-view :initform nil :documentation "native OS view object"))
   (:documentation "a window that can contain views, coordinate system: topleft = 0, 0")
@@ -377,7 +377,7 @@ after any of the window controls calls stop-modal close window and return value.
   (declare (ignore Args))
   (call-next-method)
   (setf (native-window Self) (make-native-object Self))
-  (when (do-show-immediatly Self)
+  (when (do-show-immediately Self)
     (show Self)))
 
 
@@ -1000,6 +1000,6 @@ after any of the window controls calls stop-modal close window and return value.
 
 ;; done 
 
-(show-and-run-modal (make-instance 'modal-window :do-show-immediatly nil :closeable nil))
+(show-and-run-modal (make-instance 'modal-window :do-show-immediately nil :closeable nil))
 
 |#
