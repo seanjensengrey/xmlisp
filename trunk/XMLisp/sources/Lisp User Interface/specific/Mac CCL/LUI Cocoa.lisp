@@ -5,6 +5,7 @@
 ;;;          0.3 03/12/09 CCL 1.3: do not rely on NSstring auto conversion
 ;;;          0.3.1 04/27/09 Raffael Cavallaro, raffaelcavallaro@mac.com web-browser-control fixed
 ;;;          0.4   05/30/09 Full Screen Mode
+;;;          0.4.1 02/19/10 add-subviews and add-subview for scroll-view: only allow one subview; fixed map-subiews for scroll-view
 
 (in-package :LUI)
 
@@ -220,13 +221,23 @@
 (defmethod ADD-SUBVIEWS ((view scroll-view)  &rest Subviews)
   (call-next-method)
   ;; it only really makes sense to have one subview
-  (#/setDocumentView: (native-view View) (native-view (first Subviews))))
+  (#/setDocumentView: (native-view View) (native-view (first Subviews)))
+  (warn "You are adding multiple views to a scroll-view. Only the first one will be visible."))
+
+
+(defmethod ADD-SUBVIEW ((view scroll-view)  Subview)
+  (call-next-method)
+  (unless (%null-ptr-p (#/documentView (native-view View))) 
+    (warn "Redefining document view of scroll view. Only one subview is allowed in a scroll view."))
+  ;; make it the document view
+  (#/setDocumentView: (native-view View) (native-view Subview)))
 
 
 (defmethod MAP-SUBVIEWS ((Self scroll-view) Function &rest Args)
   ;; no digging: only apply to document view
   (let ((Document-View (#/documentView (native-view Self))))
-    (when Document-View 
+    ;; can't use (when Document-View) -- empty document view is a null pointer 
+    (unless (%null-ptr-p Document-View) 
       (apply Function (lui-view Document-View) Args))))
 
 
