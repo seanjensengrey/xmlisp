@@ -1,5 +1,6 @@
 ;;; Application-Window
 ;;; 11/13/08 Alexander Repenning
+;;; 02/17/10 AI: fixed spelling of do-show-immediately (used to be do-show-immediatly)
 
 (in-package :XLUI)
 
@@ -11,7 +12,7 @@
    (margin :accessor margin :initform *Layout-Border* :type integer :documentation "top, right, left, bottom"))
   (:documentation "Main windows of applications that are not document-based.")
   (:default-initargs 
-      :do-show-immediatly nil))
+      :do-show-immediately nil))
 
 
 (defmethod REGISTER-NAMED-VIEWS ((Self application-window))

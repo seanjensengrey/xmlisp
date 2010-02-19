@@ -1,5 +1,6 @@
 ;;; Application-Window
 ;;; 11/13/08 Alexander Repenning
+;;; 02/17/10 AI: fixed spelling of do-show-immediately (used to be do-show-immediatly)
 
 (in-package :XLUI)
 
@@ -8,7 +9,7 @@
 (defclass DIALOG-WINDOW (application-window xml-serializer)
   ((value :accessor value :initform nil :documentation "value returned"))
   (:default-initargs 
-    :do-show-immediatly nil
+    :do-show-immediately nil
     :resizable nil
     :minimizable nil
     :closeable nil
