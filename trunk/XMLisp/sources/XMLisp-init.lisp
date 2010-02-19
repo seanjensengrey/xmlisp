@@ -5,6 +5,7 @@
 ;; 5/28/09
 ;; 07/15/09 + font support
 ;; 02/17/10 + inflatable icons and inflatable icon editor window
+;; testing
 
 (in-package :cl-user)
 
