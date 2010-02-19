@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <inflatable-icon-editor-window title="Shape Editor:" width="800" height="300">
-  <row align="stretch" valign="stretch">
+  <column align="stretch" valign="stretch">
+  <row align="stretch" valign="stretch" vflex="1">
     <image-button-cluster>
      <image-button name="draw button" action="draw-tool-action" image="draw-button.png"/> 
      <image-button name="erase button" action="erase-tool-action" image="erase-button.png"/> 
@@ -61,5 +62,10 @@
      <image-button name="rotate button" action="camera-rotate-action" image="rotate-button.png"/> 
     </image-button-cluster>
   </row>
+  <spacer height="15"/>
+  <row minimize="vertical" align="right">
+    <button text="Save" width="70" action="EDIT-ICON-SAVE-ACTION" default-button="true"/>
+  </row>
+  </column>
 </inflatable-icon-editor-window>
 
