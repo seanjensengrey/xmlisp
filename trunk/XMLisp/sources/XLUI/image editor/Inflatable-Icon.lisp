@@ -82,27 +82,8 @@
 ;* Implementation                                       *
 ;********************************************************
 
-
 (defmethod PRINT-SLOTS ((Self inflatable-icon))
   `(icon rows columns height pressure steps noise max-value is-upright surfaces altitudes distance dz is-flat))
-
-
-(defmethod INITIALIZE-INSTANCE :after ((Self inflatable-icon) &rest Args)
-  (declare (ignore Args))
-#| not a great idea: 
-  ;; if no icon is specified default to lobster inflatable icon
-  (unless (icon Self)
-    (let ((Pathname  "lui:resources;shapes;redLobster;redLobster.png"))
-      (setf (icon Self) (format nil "~A.~A" (pathname-name Pathname) (pathname-type Pathname)))
-      (setf (auto-compile Self) t)
-      ;; convert the icon into an RGBA image and initialize the altitude array
-      (multiple-value-bind (Image Columns Rows)
-                           (create-image-from-file Pathname)
-        (setf (image Self) Image)
-        (setf (rows Self) Rows)
-        (setf (columns Self) Columns)
-        (setf (altitudes Self) (altitudes (load-object "lui:resources;shapes;redLobster;index.shape" :package (find-package :xlui))))))) |#)
-
 
 
 (defmethod FINISHED-READING :after ((Self inflatable-icon) Stream)
@@ -747,6 +728,29 @@
     Icon))
 
   
+;********************************************************
+;* Lobster Inflatable Icon                              *
+;********************************************************
+
+(defclass LOBSTER-INFLATABLE-ICON (inflatable-icon)
+  ()
+  (:documentation "freqently used inflatable icon used for benchmarking and defaulting"))
+
+
+(defmethod INITIALIZE-INSTANCE :after ((Self lobster-inflatable-icon) &rest Args)
+  (declare (ignore Args))
+  (let ((Pathname  "lui:resources;shapes;redLobster;redLobster.png"))
+    (setf (icon Self) (format nil "~A.~A" (pathname-name Pathname) (pathname-type Pathname)))
+    (setf (auto-compile Self) t)
+    ;; convert the icon into an RGBA image and initialize the altitude array
+    (multiple-value-bind (Image Columns Rows)
+                         (create-image-from-file Pathname)
+      (setf (image Self) Image)
+      (setf (rows Self) Rows)
+      (setf (columns Self) Columns)
+      (setf (altitudes Self) (altitudes (load-object "lui:resources;shapes;redLobster;index.shape" :package (find-package :xlui)))))))
+
+
 
 #| Examples:
 
@@ -759,16 +763,10 @@
 
 <application-window>
   <agent-3d-view>
-    <inflatable-icon/>
+    <lobster-inflatable-icon/>
   </agent-3d-view>
 </application-window>
 
-
-<application-window>
-  <agent-3d-view full-scene-anti-aliasing="false">
-    <inflatable-icon/>
-  </agent-3d-view>
-</application-window>
 
 
 
