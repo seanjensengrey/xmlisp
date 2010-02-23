@@ -7,6 +7,7 @@
 ;* Author       : Alexander Repenning, alexander@agentsheets.com     *
 ;*                http://www.agentsheets.com                         *
 ;* Copyright    : (c) 1996-2010, AgentSheets Inc.                    *
+;* License:     : Protected by U.S. Patent No. 7,630,580             *
 ;* Filename     : inflatable-icon.lisp                               * 
 ;* Last Update  : 02/10/10                                           *
 ;* Version      :                                                    *
