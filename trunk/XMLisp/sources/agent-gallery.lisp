@@ -69,7 +69,7 @@
 (defmethod add-shape-action ((w application-window) (Button bevel-button))
   (let ((image-badge (value (view-named w "image-badge"))) (user-input (get-string-from-user "Please select a name and image for your agent" :initial-string "Unitled Agent")))
     ;(setf (window image-badge) w)
-    (add-group-item image-badge (selected-group image-badge) `(,(second user-input) ,(first user-input) ))
+    (add-group-item image-badge (selected-group image-badge) `(,(second user-input) ,(first user-input) ) :image-path "lui:resources;shapes;")
     ))
 
 (defclass GET-STRING-FROM-USER-WINDOW (dialog-window)

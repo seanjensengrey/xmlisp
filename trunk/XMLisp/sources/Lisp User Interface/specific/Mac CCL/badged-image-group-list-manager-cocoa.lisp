@@ -487,9 +487,9 @@
     list-of-items))
                
       
-(defmethod ADD-GROUP-ITEM ((Self badged-image-group-list-manager-view) group-name item)
-
-  (let ((list-item (make-instance 'list-group-item :item-name (first item) :image-name (second item))))
+(defmethod ADD-GROUP-ITEM ((Self badged-image-group-list-manager-view) group-name item &key (image-path "lui:resources;images;"))
+  
+  (let ((list-item (make-instance 'list-group-item :item-name (first item) :image-path image-path :image-name (second item))))
   (let ((group (get-group-with-name self group-name)))
     (dolist (group-item (group-items group))
       (if (equal (first item) (item-name group-item))
