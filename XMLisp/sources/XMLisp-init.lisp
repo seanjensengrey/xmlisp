@@ -212,6 +212,8 @@
   (:use :common-lisp :ccl)
   (:export "PLAY-SOUND"))
 
+(defpackage :agentcubes
+ (:use :ccl :xml :lui :xlui :common-lisp :opengl))
 
 ;;*************** Build functions
 
