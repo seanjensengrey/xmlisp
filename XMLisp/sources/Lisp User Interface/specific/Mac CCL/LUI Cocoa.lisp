@@ -247,6 +247,9 @@
   ;; need to propagate sizing to subviews: not likely to effect their sizes but needs to be done at least once
   (map-subviews Self #'(lambda (View) (set-size View (width View) (height View)))))
 
+
+      
+
 ;**********************************
 ;* RECTANGLE-VIEW                 *
 ;**********************************
@@ -882,15 +885,20 @@
     Native-Control)))
 
 
+(defmethod VALUE ((self choice-button-control))
+  (ccl::lisp-string-from-nsstring(#/title (#/selectedItem (native-view self)))))
+
+
 (defmethod GET-SELECTED-ACTION ((Self choice-button-control))
   (elt (actions self)  (#/indexOfSelectedItem (native-view self))))
 
 
+
 (defmethod ADD-MENU-ITEM ((Self choice-button-control) text action Image-pathname)
-  (#/addItemWithTitle: (native-view Self) (native-string Text))
+  (#/addItemWithTitle: (native-view Self) (native-string text))
   (unless (equal image-pathname nil)
     (let ((image (#/alloc ns:ns-image)))
-          (#/initWithContentsOfFile: image (native-string (native-path "lui:resources;buttons;" image-pathname)))
+          (#/initWithContentsOfFile: image (native-string (native-path "lui:resources;" image-pathname)))
           (#/setImage: (#/itemWithTitle: (native-view Self) (native-string text)) Image)))
   (setf (actions Self) (append (actions Self) (list Action))))
 

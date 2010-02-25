@@ -288,6 +288,11 @@ Call with most important parameters. Make other paramters accessible through *Cu
   (:documentation "A scrollable view containing a view"))
 
 
+
+
+
+
+
 ;**********************************
 ;* RECTANGLE-VIEW                 *
 ;**********************************
@@ -741,7 +746,9 @@ after any of the window controls calls stop-modal close window and return value.
 ;__________________________________/
 
 (defclass IMAGE-CONTROL (control)
-  ((src :accessor src :initform nil :initarg :src :documentation "URL: so far only filename"))
+  ((src :accessor src :initform nil :initarg :src :documentation "URL: so far only filename")
+  (path :accessor path :initform nil :initarg :path :documentation "if this accesor is nil then the image-control will looks for 
+        the image in the resources;images directory, if not it will look for the src image at the location specified by this accessor"))
   (:documentation "image. If size is 0,0 use original image size")
   (:default-initargs 
     :width 0
@@ -753,7 +760,9 @@ after any of the window controls calls stop-modal close window and return value.
 
 
 (defmethod FILE ((Self image-control))
-  (native-path "lui:resources;images;" (src Self)))
+  (if (path self)
+    (native-path (path self) (src Self))
+    (native-path "lui:resources;images;" (src Self))))
 
 
 (defmethod initialize-event-handling ((Self image-control))

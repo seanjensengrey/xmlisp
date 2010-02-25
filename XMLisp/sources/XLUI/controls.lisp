@@ -73,6 +73,52 @@
 (defmethod PRINT-SLOTS ((Self scroll-box))
   '(x y width height))
 
+;________________________________________________
+; Scroll-Box                                     |
+;   scrollable view                              |
+;   Examples: color picker                       |
+;                                                |
+;                                                |
+;________________________________________________
+
+(defclass BADGED-IMAGE-GROUP-LIST-MANAGER (badged-image-group-list-manager-view xml-layout-interface)
+  ()
+  (:documentation "box with scrollable content"))
+
+
+(defclass IMAGE-BADGE-GROUP-LIST-ITEM (xml-serializer)
+  (;(text :accessor text :initform "untitled")
+   ;(action :accessor action :initform 'default-action  :type symbol :documentation "method: window dialog")
+   (name :accessor name :initarg :name :initform "untitled")
+   (image-name :accessor image-name :initarg :image-name :initform "redlobster.png")
+   (item-list :accessor item-list :initarg :item-list :initform nil);'(("shape3" "redlobster.png")( "shape4" "redlobster.png")))
+   )
+  (:documentation "a pop up menu item"))
+
+
+(defmethod ADD-SUBOBJECT ((manager badged-image-group-list-manager) (item image-badge-group-list-item))
+  (add-group manager `(,(name item) ,(image-name item) ,(item-list item)) ))
+ ; (add-group manager '( "hello" "redlobster.png"  (("shape3" "redlobster.png")( "shape4" "redlobster.png")))))
+
+
+(defmethod PRINT-SLOTS ((Self badged-image-group-list-manager))
+  '(x y width height))
+
+
+(defclass AGENT-GALLERY (agent-gallery-view xml-layout-interface)
+  ()
+  (:documentation "box with scrollable content"))
+
+
+(defmethod ADD-SUBOBJECT ((manager agent-gallery) (item image-badge-group-list-item))
+  (add-group manager `(,(name item) ,(image-name item) ,(item-list item)) ))
+ ; (add-group manager '( "hello" "redlobster.png"  (("shape3" "redlobster.png")( "shape4" "redlobster.png")))))
+
+
+(defmethod PRINT-SLOTS ((Self agent-gallery))
+  '(x y width height))
+
+
 ;;***********************************************
 ;;*    Images                                   *
 ;;***********************************************

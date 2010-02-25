@@ -291,8 +291,7 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
 
 (defparameter *Pop-Up-Menu* (make-instance 'directional-pop-up-image-menu :name-of-selection  "direction_north_west"))
 
-(defmethod pop-up-image-menu-now ((w application-window) (Button button))
-  (print (display-Pop-Up-menu *Pop-Up-Menu* )))
+
 
 
 <application-window title="Currency Converter" width="300" height="180">
@@ -472,7 +471,52 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
   </column>
 </application-window>
 
+#|
+(defmethod GO-TO-URL ((w application-window) (button image-button))
+  (let ((url (value (view-named w "image-badge"))))
+    (add-g
+|#
 
+<application-window title="agent-gallery" margin="0" height="500">
+  <column align="stretch" valign="stretch">  
+    <scroll-box vflex="1">
+      <badged-image-group-list-manager name="image-badge">
+        <image-badge-group-list-item name="lobster!!" />
+      </badged-image-group-list-manager>
+    </scroll-box>
+    <row align="stretch" valign="stretch" height="30">
+      <bevel-button text="Add Agent" action="add-agent-action" width="95" />
+      <bevel-button text="Add Shape" action="add-shape-action" width="95" />
+      <bevel-button text="Delete"  action="delete-selected-agent" width="80" />
+    </row>
+
+    <editable-text  name="text-field" height="20" text="lobster?"/>  
+  </column>
+</application-window> 
+
+
+
+(defmethod add-agent-action ((w application-window) (Button button))
+  (SHOW-AGENT-INPUT-WINDOW button)
+  (let ((image-badge (value (view-named w "image-badge"))) (name (value (view-named w "text-field"))))
+    ;(setf (window image-badge) w)
+    (add-group image-badge `(,name "redlobster.png"  (("shape5" "redlobster.png")( "shape4" "redlobster.png"))))
+    ))
+
+(defmethod delete-selected-agent ((w application-window) (Button button))
+  (let ((image-badge (value (view-named w "image-badge"))) (name (value (view-named w "text-field"))))
+    (delete-group image-badge  (selected-group image-badge)))) 
+
+(defmethod add-shape-action ((w application-window) (Button button))
+  (let ((image-badge (value (view-named w "image-badge"))) (name (value (view-named w "text-field"))))
+    ;(setf (window image-badge) w)
+    (add-group-item image-badge (selected-group image-badge) `(,name "redlobster.png"))
+    ))
+    
+(defmethod delete-shape-action ((w application-window) (Button button))
+  (let ((image-badge (value (view-named w "image-badge"))) (name (value (view-named w "text-field"))))
+    (delete-group-item image-badge  (selected-group image-badge) (selected-group-item image-badge)))) 
+    
 ;; ************************
 ;; *  WEB BROWSER         *
 ;; ************************

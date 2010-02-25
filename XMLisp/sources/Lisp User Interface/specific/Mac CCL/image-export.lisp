@@ -66,9 +66,27 @@
         nil)
        (native-string (namestring (translate-logical-pathname Pathname)))
        #$YES)
-      (#/release Bitmap))))
+      (#/release Bitmap)
+     )))
 
-
+#|
+(defun WRITECG-RGBA-IMAGE-TO-FILE (Image Height Width Pathname &key (Depth 4) (Image-Type :png)) "
+  in: Image pointer to RBGA buffer; Height, Width int; Pathname pathname; &optional Depth int default 4.
+  Depth in bytes.
+  Write RGBA image buffer into an image file."
+  (let ((bitmap ((#/CGImageCreate
+                  width
+                  height
+                  8
+                  32
+                  (* Width Depth)
+                  #$kCGColorSpaceGenericRGB
+                  #$kCGBitmapAlphaInfoMask
+                  Image
+                  #$NULL
+                  #$NO
+                  #$kCGRenderingIntentDefault))))))
+|#
 (defun SAVE-TEXTURE-AS-IMAGE (Texture To-Pathname Width Height &key (Depth 4)) "
   in: Texture id; to-pathname pathname; width, height int; &key Depth int default 4.
   Depth in bytes.
