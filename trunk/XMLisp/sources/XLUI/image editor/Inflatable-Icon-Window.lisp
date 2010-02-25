@@ -26,7 +26,8 @@
 
 
 (defclass INFLATABLE-ICON-EDITOR-WINDOW (application-window)
-  ((smoothing-cycles :accessor smoothing-cycles :initform 0 :initarg :smoothing-cycles)
+  ((container :accessor container :initform nil :initarg :container)
+   (smoothing-cycles :accessor smoothing-cycles :initform 0 :initarg :smoothing-cycles)
    (selected-tool :accessor selected-tool :initform nil :type symbol :initarg :selected-tool :documentation "the name of the currently selected tool")
    (file :accessor file :initform nil :documentation "shape file")
    (destination-inflatable-icon :accessor destination-inflatable-icon :initform nil :initarg :destination-inflatable-icon :documentation "if present save edited icon into this inflatable icon")
@@ -153,7 +154,9 @@
 
 (defmethod SAVE-IMAGE-TO-FILE ((Self inflatable-icon-editor-window) Pathname)
   "Saves the current image in the editor window to the specified file."
-  (save-image (image-editor-view Self) Pathname))
+
+  (save-image (image-editor-view Self) Pathname)
+  )
 
 ;______________________________________________
 ; File menu support                            |
@@ -639,7 +642,10 @@
 (defmethod EDIT-ICON-SAVE-ACTION ((Window inflatable-icon-editor-window) (Button button))
   ;; finalize geometry
   (compute-height (inflatable-icon (view-named Window 'model-editor)))
-  (window-save Window))
+  (window-save Window)
+  (if (container window)
+    (lui::save-button-pressed (container window))
+    (print "NOT")))
 
 
 ;___________________________________________
@@ -674,7 +680,7 @@
   Create and return an new inflatable icon editor by loading an image. 
   If folder contains .shape file matching image file name then load shape file."
   (let ((Window (make-instance 'inflatable-icon-editor-window
-                  :window-show nil
+                ;  :window-show nil
                   :destination-inflatable-icon Destination-Inflatable-Icon
                   :close-action Close-Action
                   :width 550
@@ -702,7 +708,8 @@
                   (pixel-buffer Icon-Editor)))
           ;; proxy icons
           (setf (file Window) Shape-Pathname)
-          (add-window-proxy-icon Window Shape-Pathname))))
+          (add-window-proxy-icon Window Shape-Pathname)
+          )))
     (window-show Window)
     Window))
 
@@ -720,7 +727,9 @@
 
 (defparameter *Inflatable-Icon-Editor* (new-inflatable-icon-editor-window :width 64 :height 64))
 
-(defparameter *Inflatable-Icon-Editor2* (new-inflatable-icon-editor-window-from-image (choose-file-dialog)))
+(defparameter *Inflatable-Icon-Editor2* (new-inflatable-icon-editor-window-from-image  (easygui::choose-file-dialog)))
+
+
 
 
 

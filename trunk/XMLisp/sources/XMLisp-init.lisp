@@ -77,7 +77,7 @@
    "ACTION" "SUBVIEWS" "DO-SUBVIEWS" "MAP-SUBVIEWS" "ADD-SUBVIEW" "ADD-SUBVIEWS" "SET-FRAME"
    "BUTTON-CONTROL" "DEFAULT-BUTTON"
    "INVOKE-ACTION"
-   "BEVEL-BUTTON-CONTROL" "SLIDER-CONTROL" "TICK-MARKS" "MIN-VALUE" "MAX-VALUE"
+   "BEVEL-BUTTON-CONTROL" "DISABLE" "SLIDER-CONTROL" "TICK-MARKS" "MIN-VALUE" "MAX-VALUE"
    "LABEL-CONTROL" "TEXT" "ALIGN"
    "EDITABLE-TEXT-CONTROL"
    "VALUE"
@@ -90,6 +90,8 @@
    "IMAGE-BUTTON-CONTROL" "IMAGE" "CONTAINER" "CLUSTER-ACTION" "USER-ACTION" "SET-BUTTON-OFF"
    "RADIO-BUTTON-CONTROL" "ADD-ITEM" "FINALIZE-CLUSTER" "RADIO-ACTION"
    "POPUP-BUTTON-CONTROL"  "POPUP-ACTION"
+   "ADD-GROUP" "ADD-GROUP-ITEM" "DELETE-GROUP" "DELETE-GROUP-ITEM" "SELECTED-GROUP" "SELECTED-GROUP-ITEM" "SELECT-GROUP" "SELECT-GROUP-ITEM"
+  
    "SHOW-STRING-POPUP"
    "TAB-VIEW-CONTROL" "ADD-TAB-VIEW-ITEM"
    "TAB-VIEW-ITEM-CONTROL" "ADD-TAB-VIEW-ITEM-VIEW"
@@ -150,7 +152,10 @@
 (load "lui:sources;Lisp User Interface;Camera")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;Transparent-OpenGL-Window")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;speech")
-
+(load "lui:sources;Lisp User Interface;pop-up-image-menu")
+(load "lui:sources;Lisp User Interface;specific;Mac CCL;pop-up-image-menu-cocoa")
+(load "lui:sources;Lisp User Interface;badged-image-group-list-manager")
+(load "lui:sources;Lisp User Interface;specific;Mac CCL;badged-image-group-list-manager-cocoa")
 ;****** XMLisp
 
 (defpackage :XML
