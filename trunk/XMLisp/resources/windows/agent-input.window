@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<get-string-from-user-window title="get string" height="100">
+  <column align="stretch" valign="distribute">
+    <editable-text  name="text"/>
+     <choice-image-button name="image-selection" width="140" >                                             
+        <choice-button-item text="redlobster.png"  image="images/redlobster.png"/>   
+        <choice-button-item text="draw-button.png"  image="images/draw-button.png"/>             
+        <choice-button-item text="erase-button.png"  image="images/erase-button.png"/> 
+
+      </choice-image-button>  
+
+    <row align="right" minimize="vertical">
+      <button text="Cancel" action="cancel-action"/>
+      <button text="OK" action="OK-action" default-button="true"/>
+    </row>
+  </column>
+</get-string-from-user-window>
