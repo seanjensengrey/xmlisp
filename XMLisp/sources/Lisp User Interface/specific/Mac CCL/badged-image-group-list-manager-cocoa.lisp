@@ -470,6 +470,7 @@
       (t (setf (groups self) (append (groups self) (list (make-instance 'list-group :group-name (first group) :group-image (second group) :group-items (create-list-of-items-from-list-of-strings (third group))))))))
     (if (native-view self)
       (progn
+
         (add-group-to-gui self (get-group-with-name self (group-name list-group)))
         (#/setNeedsDisplay: (native-view self) #$YES)
         (layout (native-view self))
@@ -490,13 +491,15 @@
 (defmethod ADD-GROUP-ITEM ((Self badged-image-group-list-manager-view) group-name item &key (image-path "lui:resources;images;"))
   
   (let ((list-item (make-instance 'list-group-item :item-name (first item) :image-path image-path :image-name (second item))))
+
   (let ((group (get-group-with-name self group-name)))
+    (if (group-items group)
     (dolist (group-item (group-items group))
       (if (equal (first item) (item-name group-item))
         (progn
           ;(warn "Cannot add group item, a group item with this name already exists")
           (print "Cannot add group item, a group item with this name already exists")
-          (return-from add-group-item nil))))
+          (return-from add-group-item nil)))))
 
     (setf (group-items group) (append (group-items group) (list list-item)  ))
 
@@ -508,6 +511,7 @@
 
 
 (defmethod ADD-ITEM-TO-GUI ((Self badged-image-group-list-manager-view) group group-item)
+  (print "ADDING TO GUI")
   (ns:with-ns-size (Size (NS:NS-RECT-WIDTH (#/frame (item-view group)))  (+ (row-height self) (NS:NS-RECT-HEIGHT (#/frame (item-view group)))))
     (#/setFrameSize: (item-view group) Size ))
   (let ((x (+ (left-margin self)(group-item-offset self))) (text-length 100) (item-y (- (* (row-height self) (length (group-items group))) (row-height self))))

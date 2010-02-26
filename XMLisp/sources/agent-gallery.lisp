@@ -8,10 +8,13 @@
    (:documentation "This class will is a view that contains groups of items that are identified by a badge image."))
 
 
+
+
 (defmethod layout-changed ((self agent-gallery-view))
   
   (unless (equal (#/window (native-view self)) +null-ptr+)
-    (funcall (update-action self) self (lui-window (#/window (native-view self)))))
+    ;(funcall (update-action self) self (lui-window (#/window (native-view self))))
+    )
     
     ;(inspect  (lui-window (#/window (native-view self)))))
 
@@ -33,6 +36,7 @@
 
 (defmethod SAVE-BUTTON-PRESSED ((self agent-gallery-view))
   (print "SAVE BUTTON PRESSED")
+  (inspect self)
   (let ((i 0)(group (get-group-with-name self (selected-group self))))
     (dolist (item (group-items group))
       (if (equal (item-name item) (selected-group-item self))
@@ -52,7 +56,7 @@
 
 (in-package :xlui)
 
-
+(export '(update-buttons))
 (defmethod add-agent-action ((w application-window) (Button bevel-button))
  ; (SHOW-AGENT-INPUT-WINDOW button)
   (let ((image-badge (value (view-named w "image-badge"))) (user-input (get-string-from-user "Please select a name and image for your agent" :initial-string "Unitled Agent")))

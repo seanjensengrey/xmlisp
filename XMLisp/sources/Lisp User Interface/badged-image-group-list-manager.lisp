@@ -60,7 +60,7 @@
                   and finally a list of group items.  This method will return the group of it was sucesfully added or nil if it could not be added.  "))
 
 
-(defgeneric add-group-item (badged-image-group-list-manager-view group-name group-item)
+(defgeneric add-group-item (badged-image-group-list-manager-view group-name group-item &key image-path )
   (:documentation "Adds a new group item to the group defined by group-name.  This method will return sucess if the item was added corectly or nil if it was not. "))
 
 
