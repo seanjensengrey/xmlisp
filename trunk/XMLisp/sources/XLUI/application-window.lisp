@@ -8,8 +8,8 @@
 
 
 (defclass APPLICATION-WINDOW (window xml-serializer)
-  ((named-views :accessor named-views :initform (make-hash-table :test #'equal) :documentation "hashtable of all the named views contained in window")
-   (margin :accessor margin :initform *Layout-Border* :type integer :documentation "top, right, left, bottom"))
+  ((named-views :accessor named-views :initarg :named-views :initform (make-hash-table :test #'equal) :documentation "hashtable of all the named views contained in window")
+   (margin :accessor margin :initarg :margin :initform *Layout-Border* :type integer :documentation "top, right, left, bottom"))
   (:documentation "Main windows of applications that are not document-based.")
   (:default-initargs 
       :do-show-immediately nil))
@@ -52,6 +52,11 @@
   (do-subviews (Subview Self)
     (set-size Subview (- Width (margin Self) (margin Self)) (- Height (margin Self) (margin Self)))
     (set-position Subview (margin Self) (margin Self))))
+
+
+(defmethod FORCE-REDRAW ((Self Application-Window))
+  (set-size Self (width Self) (height Self))
+  (display Self))
 
 
 ;***************************************
