@@ -116,7 +116,7 @@
     
     ))
 |#
-(defmethod SELECTED ((self badged-image-view))
+(defmethod SELECT ((self badged-image-view))
   (make-selection (container self) (group-name (#/superview self)) ))
 
 
@@ -135,7 +135,7 @@
               :documentation "Group Item Image View"))
 
 
-(defmethod SELECTED ((self group-item-image-view))
+(defmethod SELECT ((self group-item-image-view))
 
   (set-selected-item (container self)  (group-name  (#/superview(#/superview (#/superview self))))(item-name self)))
 
@@ -228,7 +228,7 @@
 (objc:defmethod (#/mouseDown: :void) ((self mouse-detecting-image-view) Event)
   ;(declare (ignore Event))
   (call-next-method Event)
-  (selected (#/superview self)) 
+  (select (#/superview self)) 
   (if (> ( #/clickCount Event) 1)
     (double-clicked (#/superview self)))
   )
