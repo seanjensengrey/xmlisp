@@ -6,6 +6,7 @@
 ;; 07/15/09 + font support
 ;; 02/17/10 + inflatable icons and inflatable icon editor window
 ;; testing
+;; 03/02/10 + agentcubes package, loading agent-gallery, properties, resource managers 
 
 (in-package :cl-user)
 
@@ -13,7 +14,11 @@
 
 ;; edit to point to root folder containing /sources  /resources  etc.
 (setf (logical-pathname-translations "lui")
-      '(("**;*.*" "home:working copies;XMLisp svn;trunk;XMLisp;**;")))
+      '(("**;*.*" "home:Documents;working copies;XMLisp;**;")))
+
+
+(setf (logical-pathname-translations "agentcubes")
+      '(("**;*.*" "home:Documents;working copies;AgentCubes;**;")))
 
 
 #-cocotron
@@ -65,7 +70,7 @@
    "MOUSE-EVENT" "TRACK-MOUSE" "VIEW-MOUSE-MOVED-EVENT-HANDLER" "VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER"
    "VIEW-LEFT-MOUSE-UP-EVENT-HANDLER" "VIEW-LEFT-MOUSE-DRAGGED-EVENT-HANDLER"
    "COMMAND-KEY-P" "SHIFT-KEY-P" "ALT-KEY-P" "CONTROL-KEY-P" "DOUBLE-CLICK-P"
-   "WINDOW" "VIEW" "X" "Y" "WIDTH" "HEIGHT" "SHOW" "SHOW-AND-RUN-MODAL" "STOP-MODAL" "CANCEL-MODAL" "HIDE" 
+   "WINDOW" "VIEW" "X" "Y" "WIDTH" "HEIGHT" "SHOW" "DO-SHOW-IMMEDIATELY" "SHOW-AND-RUN-MODAL" "STOP-MODAL" "CANCEL-MODAL" "HIDE" 
    "SWITCH-TO-FULL-SCREEN-MODE" "SWITCH-TO-WINDOW-MODE" "FULL-SCREEN" "WINDOW-CLOSE"
    "FIND-WINDOW-AT-SCREEN-POSITION" "FIND-VIEW-CONTAINING-POINT" "FIND-VIEW-AT-SCREEN-POSITION"
    "SCROLL-VIEW" "HAS-HORIZONTAL-SCROLLER" "HAS-VERTICAL-SCROLLER"
@@ -119,7 +124,12 @@
    "SYNTHESIZER" "SPEAK" "WILL-SPEAK-WORD" "WILL-SPEAK-PHONEME" "DID-FINISH-SPEAKING" "AVAILABLE-VOICES"
    ;; native support
    "NATIVE-STRING"
+   ;; badged image
+   "ADD-GROUP" "ADD-GROUP-ITEM" "DELETE-GROUP" "DELETE-GROUP-ITEM" "SELECTED-GROUP" "SELECTED-GROUP-ITEM" "SELECT-GROUP" "SELECT-GROUP-ITEM"
+   ;; properties
+   "REMOVE-VIEW" "REMOVE-ALL-SUBVIEWS" "SELECTED"
    ))
+
 
 
 (defun LUI::NATIVE-PATH (Directory-Name File-Name) "
@@ -156,6 +166,8 @@
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;pop-up-image-menu-cocoa")
 (load "lui:sources;Lisp User Interface;badged-image-group-list-manager")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;badged-image-group-list-manager-cocoa")
+
+
 ;****** XMLisp
 
 (defpackage :XML
@@ -170,7 +182,8 @@
   (:use :common-lisp :XML :LUI :opengl)
   ;; import MOP
   (:import-from "CCL"
-                "SLOT-DEFINITION-NAME" "SLOT-DEFINITION-TYPE"))
+                "SLOT-DEFINITION-NAME" "SLOT-DEFINITION-TYPE")
+  (:export "INFLATABLE-ICON"))
 
 
 (setq xml::*xmlisp-packages* (list (find-package :xlui) (find-package :xml)))
@@ -206,14 +219,16 @@
 (load "lui:sources;VAT;Value-Editors")
 (load "lui:sources;VAT;xml-editor-sequence")
 
+
+
 ;******** Multimedia
 
 (defpackage :sound
   (:use :common-lisp :ccl)
   (:export "PLAY-SOUND"))
 
-(defpackage :agentcubes
- (:use :ccl :xml :lui :xlui :common-lisp :opengl))
+
+
 
 ;;*************** Build functions
 
@@ -298,6 +313,39 @@
    (truename "lui:resources;English.lproj;InfoPlist.strings")
    (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/English.lproj/InfoPlist.strings" (user-homedir-pathname))
    :if-exists :supersede))
+
+
+;; properties
+(load "agentcubes:properties;image-and-subview-management-patches")
+(load "agentcubes:properties;simulation-properties")
+
+
+;; Agent Gallery
+(load "lui:sources;agent-gallery")
+;; then resolve export problems, reload controls.lisp and try again!
+(load "lui:sources;XLUI;controls")
+(load "lui:sources;agent-gallery")
+
+
+
+(defpackage :agentcubes
+ (:use :ccl :xml :lui :xlui :common-lisp :opengl))
+
+;; new shape: BOX
+(load "agentcubes:box-shape")
+
+
+;; resource management
+(load "agentcubes:resource-management;Name-Space")
+(load "agentcubes:resource-management;resource-manager")
+(load "agentcubes:resource-management;Shape-Manager")
+(load "agentcubes:resource-management;Agent-Manager")
+(load "agentcubes:resource-management;Project-Manager")
+
+
+
+
+
 
 #| 
 
