@@ -6,7 +6,6 @@
 ;; 07/15/09 + font support
 ;; 02/17/10 + inflatable icons and inflatable icon editor window
 ;; testing
-;; 03/02/10 + agentcubes package, loading agent-gallery, properties, resource managers 
 
 (in-package :cl-user)
 
@@ -14,11 +13,11 @@
 
 ;; edit to point to root folder containing /sources  /resources  etc.
 (setf (logical-pathname-translations "lui")
-      '(("**;*.*" "home:Documents;working copies;XMLisp;**;")))
+      '(("**;*.*" "home:working copies;XMLisp svn;trunk;XMLisp;**;")))
 
 
 (setf (logical-pathname-translations "agentcubes")
-      '(("**;*.*" "home:Documents;working copies;AgentCubes;**;")))
+     '(("**;*.*" "home:working copies;XMLisp svn;trunk;XMLisp;sources;AgentCubes;**;")))
 
 
 #-cocotron
@@ -125,7 +124,8 @@
    ;; native support
    "NATIVE-STRING"
    ;; badged image
-   "ADD-GROUP" "ADD-GROUP-ITEM" "DELETE-GROUP" "DELETE-GROUP-ITEM" "SELECTED-GROUP" "SELECTED-GROUP-ITEM" "SELECT-GROUP" "SELECT-GROUP-ITEM"
+   "ADD-GROUP"  "ADD-GROUP-ITEM" "DELETE-GROUP" "DELETE-GROUP-ITEM" "SELECTED-GROUP" "SELECTED-GROUP-ITEM" "SELECT-GROUP" "SELECT-GROUP-ITEM"
+   "PROJECT-MANAGER-REFERENCE" "AGENT-GALLERY-VIEW"
    ;; properties
    "REMOVE-VIEW" "REMOVE-ALL-SUBVIEWS" "SELECTED"
    ))
@@ -164,8 +164,7 @@
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;speech")
 (load "lui:sources;Lisp User Interface;pop-up-image-menu")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;pop-up-image-menu-cocoa")
-(load "lui:sources;Lisp User Interface;badged-image-group-list-manager")
-(load "lui:sources;Lisp User Interface;specific;Mac CCL;badged-image-group-list-manager-cocoa")
+
 
 
 ;****** XMLisp
@@ -320,20 +319,19 @@
 (load "agentcubes:properties;simulation-properties")
 
 
-;; Agent Gallery
-(load "lui:sources;agent-gallery")
-;; then resolve export problems, reload controls.lisp and try again!
-(load "lui:sources;XLUI;controls")
-(load "lui:sources;agent-gallery")
-
-
 
 (defpackage :agentcubes
  (:use :ccl :xml :lui :xlui :common-lisp :opengl))
 
-;; new shape: BOX
-(load "agentcubes:box-shape")
 
+
+
+
+
+
+
+
+(load "agentcubes:box-shape")
 
 ;; resource management
 (load "agentcubes:resource-management;Name-Space")
@@ -341,11 +339,15 @@
 (load "agentcubes:resource-management;Shape-Manager")
 (load "agentcubes:resource-management;Agent-Manager")
 (load "agentcubes:resource-management;Project-Manager")
-
-
-
-
-
+(load "agentcubes:resource-management;Application-Manager")
+;;badged image group list manager
+(load "lui:sources;Lisp User Interface;badged-image-group-list-manager")
+(load "lui:sources;Lisp User Interface;specific;Mac CCL;badged-image-group-list-manager-cocoa")
+;; Agent Gallery
+(load "lui:sources;agent-gallery")
+;; then resolve export problems, reload controls.lisp and try again!
+(load "lui:sources;XLUI;controls")
+(load "lui:sources;agent-gallery")
 
 #| 
 
