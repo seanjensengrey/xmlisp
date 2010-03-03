@@ -225,6 +225,11 @@ Call with most important parameters. Make other paramters accessible through *Cu
   )
 
 
+(defmethod LAYOUT ((Self view))
+  ;; nothing
+  )
+
+
 (defun FIND-VIEW-AT-SCREEN-POSITION (screen-x screen-y &key Window-Type)
   (let ((Window (find-window-at-screen-position screen-x screen-y :type Window-Type)))
     (when Window
