@@ -345,9 +345,10 @@
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;badged-image-group-list-manager-cocoa")
 ;; Agent Gallery
 (load "lui:sources;agent-gallery")
+
 ;; then resolve export problems, reload controls.lisp and try again!
-(load "lui:sources;XLUI;controls")
-(load "lui:sources;agent-gallery")
+;(load "lui:sources;XLUI;controls")
+;(load "lui:sources;agent-gallery")
 
 #| 
 
