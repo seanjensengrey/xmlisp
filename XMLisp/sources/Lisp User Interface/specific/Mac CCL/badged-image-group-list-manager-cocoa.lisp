@@ -99,9 +99,12 @@
 
 
 (defmethod UPDATE-IMAGE ((self badged-image-view))
-  (print "BADGED UPDATE IMAGE")
-  (print (type-of (#/superview self)))
-  (setf self (create-badged-image self)))
+  (let ((subviews (gui::list-from-ns-array (#/subviews self))))  
+    (dolist (subview subviews)
+      (#/removeFromSuperviewWithoutNeedingDisplay subview)))
+  (setf self (create-badged-image self))
+  (#/setNeedsDisplay: self #$YES)
+  )
 #|
   (let ((image (make-instance badged-image-view :container self :group-name (group-name group) :x x :y 0 :head-image-name (head-image-name self)  :badge-image-name (group-image group)))) 
     (incf x (row-height self))
@@ -324,7 +327,7 @@
         (layout subview)))))
 
 
-
+#|
 (defmethod RESIZE-HEIGHT-OF-VIEW ((Self badged-image-group-list-manager-view))
   (let ((height 0))
     (dolist (group (groups self))
@@ -332,8 +335,21 @@
         (incf height (+ (row-height self) (* (row-height self) (length (group-items group)))))
         (incf height (row-height self))))
     (setf (height self) 60)))
-
-
+|#
+#|
+(defmethod RESIZE-HEIGHT-OF-VIEW ((Self badged-image-group-list-manager-view))
+  (let ((height 0))
+    (dolist (group (groups self))
+      (if (is-disclosed group)
+        (incf height (+ (row-height self) (* (row-height self) (length (group-items group)))))
+        (incf height (row-height self))))
+    (setf (height self) 60))
+  
+  (unless (equal (#/superview (native-view self)) +null-ptr+)
+    (display (lui-view (#/superview (#/superview (native-view self))))))
+  
+  )
+|#
 (defclass NATIVE-BADGED-IMAGE-GROUP-LIST-MANAGER-VIEW (layout-view)
   ((lui-view :accessor lui-view :initform nil :initarg :lui-view)
    )
@@ -428,7 +444,15 @@
         (incf height (+  (row-height self)  (* (row-height self) (length (group-items group)))))
         (incf height  (row-height self))))  
     (if (> height 200)
-      (setf (height self) height))))
+      (setf (height self) height)))
+   (unless (equal (#/superview (native-view self)) +null-ptr+)
+     (progn
+       (print "RESIZING SCROLL")
+       (set-size (lui-view (#/superview (#/superview (native-view self)))) (width (lui-view (#/superview (#/superview (native-view self))))) (height (lui-view (#/superview (#/superview (native-view self))))))
+       (layout (lui-view (#/superview (#/superview (native-view self)))))
+     
+       ;  (display (lui-view (#/superview (#/superview (native-view self)))))
+       (display self))))
 
 
 (defmethod GET-GROUP-WITH-NAME ((self badged-image-group-list-manager-view) group-name)
@@ -478,6 +502,11 @@
 
 
 (defmethod ADD-GROUP ((Self badged-image-group-list-manager-view) group)
+  (print "ADDING GROUP")
+  (print (first group))
+  
+  (setf (first group) (string-capitalize (first group)))
+  (print (first group))
   (dolist (old-group (groups self))
     (if (equal (first group) (group-name old-group))
       (progn 
@@ -512,7 +541,8 @@
 
 
 (defmethod ADD-GROUP-ITEM ((Self badged-image-group-list-manager-view) group-name item &key (image-path "lui:resources;images;"))
-  
+  (setf (first item) (string-capitalize (first item)))
+  (setf group-name (string-capitalize group-name))
   (let ((list-item (make-instance 'list-group-item :item-name (first item) :image-path image-path :image-name (second item))))
 
   (let ((group (get-group-with-name self group-name)))
