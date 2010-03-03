@@ -176,6 +176,9 @@ Call with most important parameters. Make other paramters accessible through *Cu
 (defgeneric DRAW (view-or-window)
   (:documentation "Draw view. Assume view is focused. Only issue render commands, e.g., OpenGL glBegin, and no preparation or double buffer flushing"))
 
+(defgeneric LAYOUT (view-or-window)
+  (:documentation "Adjust size and potentially position to container, adjust size and position of content if necesary"))
+
 (defgeneric MAKE-NATIVE-OBJECT (view-or-window)
   (:documentation "Make and return a native view object"))
 
