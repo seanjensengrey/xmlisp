@@ -296,9 +296,8 @@ Call with most important parameters. Make other paramters accessible through *Cu
   (:documentation "A scrollable view containing a view"))
 
 
-
-
-
+(defmethod LAYOUT ((Self scroll-view))
+  (set-size Self (width Self) (height Self)))
 
 
 ;**********************************
