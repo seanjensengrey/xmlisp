@@ -220,6 +220,10 @@
     (setf (height Self) H)))
 
 
+(defmethod LAYOUT ((Self row))
+  (set-size Self (width Self) (height Self)))
+
+
 ;***************************************
 ;* Column                              *
 ;***************************************
@@ -320,6 +324,11 @@
              ((:vertical :box)
               (total-subviews-height Self))
              (t h)))))
+
+
+(defmethod LAYOUT ((Self column))
+  (set-size Self (width Self) (height Self)))
+
 
 
 
