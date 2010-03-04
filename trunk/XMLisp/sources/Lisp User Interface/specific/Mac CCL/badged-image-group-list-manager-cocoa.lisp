@@ -767,77 +767,58 @@
 
 
 
-  (objc:defmethod (#/textDidEndEditing: :void) ((self mouse-detection-text-field) Notification)
-   (declare (ignore Notification))
-    (print "textdidendeditting")
-   ; (break "text did end editting")
-   ;here (#/setDrawsBackground: self #$NO)
-    (call-next-method Notification)
-    )
+(objc:defmethod (#/textDidEndEditing: :void) ((self mouse-detection-text-field) Notification)
+  (declare (ignore Notification))
+  (print "textdidendeditting")
+  (call-next-method Notification))
 
-  (objc:defmethod (#/textDidBeginEditing: :void) ((self mouse-detection-text-field) Notification)
-   (declare (ignore Notification))
-    (print "TEXT DID BEGIN EDITTING")
-   ; (break "text did end editting")
-    ;(#/setDrawsBackground: self #$NO)
-    (call-next-method Notification)
-    )
-    (objc:defmethod (#/textShouldBeginEditing: :void) ((self mouse-detection-text-field) Notification)
-    ;(declare (ignore Notification))
-    (print "TEXT ----SHOULD-- BEGIN EDITTING")
-    ; (break "text did end editting")
-    ;(#/setDrawsBackground: self #$NO)
-    (call-next-method Notification)
-    )
+(objc:defmethod (#/textDidBeginEditing: :void) ((self mouse-detection-text-field) Notification)
+  (declare (ignore Notification))
+  (print "TEXT DID BEGIN EDITTING")
+  (call-next-method Notification))
 
-   (objc:defmethod (#/becomeFirstResponder  :void) ((self mouse-detection-text-field))
-     (remove-background-from-text-fields (native-view (container self)))
-     (#/setDrawsBackground: self #$YES)
-     (print "BECOMES FIRST RESPONDER")
-     (print (type-of (container self)))
-     (call-next-method)
-     
-     )
-              
-     (objc:defmethod (#/becomeFirstResponder  :<bool>) ((self ns:ns-text-view))
-       
-      ; (#/setDrawsBackground: self #$YES)
-       (print "ns-text-view become")
-       (call-next-method)
-     
-     )     
-  (objc:defmethod (#/resignFirstResponder  :<bool>) ((self ns:ns-text-view))
 
-      ; (#/setDrawsBackground: self #$YES)
-       (print "ns-text-view resign")
-       (call-next-method)
-     
-     )       
+(objc:defmethod (#/textShouldBeginEditing: :void) ((self mouse-detection-text-field) Notification)
+  ;(declare (ignore Notification))
+  (print "TEXT ----SHOULD-- BEGIN EDITTING")
+  (call-next-method Notification))
 
+(objc:defmethod (#/becomeFirstResponder  :void) ((self mouse-detection-text-field))
+  (remove-background-from-text-fields (native-view (container self)))
+  (#/setDrawsBackground: self #$YES)
+  (print "BECOMES FIRST RESPONDER")
+  (print (type-of (container self)))
+  (call-next-method))
+
+(objc:defmethod (#/becomeFirstResponder  :<bool>) ((self ns:ns-text-view))
+  ; (#/setDrawsBackground: self #$YES)
+  (print "ns-text-view become")
+  (call-next-method))
+
+
+(objc:defmethod (#/resignFirstResponder  :<bool>) ((self ns:ns-text-view))
+  ; (#/setDrawsBackground: self #$YES)
+  (print "ns-text-view resign")
+  (call-next-method))       
+
+
+
+(objc:defmethod (#/resignFirstResponder  :void) ((self mouse-detection-text-field))
+  (print "RESIGN FIRST RESPONDER")
+  ; (print "setting background")
+  ;  here (#/setDrawsBackground: self #$NO)
+  (call-next-method)
   
+  )
 
-   (objc:defmethod (#/resignFirstResponder  :void) ((self mouse-detection-text-field))
-     (print "RESIGN FIRST RESPONDER")
-     ; (print "setting background")
-     ;  here (#/setDrawsBackground: self #$NO)
-     (call-next-method)
-     
-     )
-    
-   (defmethod REMOVE-BACKGROUND-FROM-TEXT-FIELDS ((self ns:ns-view))
-   ;  (print "REMOVE BACKGROUND FORM TEXT FIELDS")
-     (let ((subviews (gui::list-from-ns-array (#/subviews self))))  
-       (dolist (subview subviews)
-         (if (or
-              (equal (type-of subview) 'NS:NS-TEXT-VIEW )
-              (equal (type-of subview) 'LUI::MOUSE-DETECTION-TEXT-FIELD ))
-           (progn
-         ;    (print "DOING REMOVE")
-             (#/setDrawsBackground: subview #$NO)
-             ;(#/setBackgroundColor: subview (#/blackColor ns:ns-color))
-             )
-           (remove-background-from-text-fields subview)
-           )
-         )))
+(defmethod REMOVE-BACKGROUND-FROM-TEXT-FIELDS ((self ns:ns-view))
+  (let ((subviews (gui::list-from-ns-array (#/subviews self))))  
+    (dolist (subview subviews)
+      (if (or
+           (equal (type-of subview) 'NS:NS-TEXT-VIEW )
+           (equal (type-of subview) 'LUI::MOUSE-DETECTION-TEXT-FIELD ))
+        (progn
+          (#/setDrawsBackground: subview #$NO))
+        (remove-background-from-text-fields subview)))))
 
 
