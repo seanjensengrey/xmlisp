@@ -21,9 +21,14 @@
 
 (defmethod EDIT-GROUP-ITEM ((self agent-gallery-view) group-name item-name)
   ;(declare (ignore group-name item-name))
-  (let ((*Inflatable-Icon-Editor* (xlui::new-inflatable-icon-editor-window   :width 32 :height 32)))
-    (let ((shape-manager (xlui::find-shape-manager (xlui::project-manager-reference self)  (agentcubes:agentcubes-class-symbol group-name) (agentcubes:agentcubes-symbol item-name))))     
-      (let ((image-name (xlui::icon (xlui::shape shape-manager))))      
+  ;(let ((*Inflatable-Icon-Editor* (xlui::new-inflatable-icon-editor-window   :width 32 :height 32)))
+    (let ((shape-manager (xlui::find-shape-manager (xlui::project-manager-reference self)  (agentcubes:agentcubes-class-symbol group-name) (agentcubes:agentcubes-symbol item-name)))) 
+    ;  (print (pathname-directory  (file shape-manager)  ))
+      (let ((image-name (xlui::icon (xlui::shape shape-manager))))
+        ;(let ((*Inflatable-Icon-Editor*  (xlui::new-inflatable-icon-editor-window-from-image  (make-pathname :directory  (append (pathname-directory  (file shape-manager)) (list "redlobster.png"))  ) )   ))
+        (let ((*Inflatable-Icon-Editor*  (xlui::new-inflatable-icon-editor-window-from-image (make-pathname :name (subseq image-name 0 (- (length image-name) #.(length ".png"))) :type "png" :directory (pathname-directory  (file shape-manager))) :shape-filename "index" )));"/Users/Mike/Lobsters/agents/Lobster/shapes/redlobster/redlobster.png" )   ))
+          (print "/Users/Mike/Lobsters/agents/Lobster/shapes/redlobster/redlobster.png")
+          (print (make-pathname :name "redlobster" :type "png" :directory   (pathname-directory  (file shape-manager)) )  )
         (setf (file *Inflatable-Icon-Editor*) (make-pathname :name (subseq image-name 0 (- (length image-name) #.(length ".png"))) :directory  (pathname-directory  (file shape-manager)  ))) ;"lui:resources;images;redlobster.png")      
         (setf (container *Inflatable-Icon-Editor*) self )))))
 
