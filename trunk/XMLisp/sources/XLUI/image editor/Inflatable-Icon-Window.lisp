@@ -679,47 +679,57 @@
 (defun NEW-INFLATABLE-ICON-EDITOR-WINDOW-FROM-IMAGE (Pathname &key Shape-Filename Destination-Inflatable-Icon Close-Action) "
   Create and return an new inflatable icon editor by loading an image. 
   If folder contains .shape file matching image file name then load shape file."
-  (let ((Window (make-instance 'inflatable-icon-editor-window
-                ;  :window-show nil
-                  :destination-inflatable-icon Destination-Inflatable-Icon
-                  :close-action Close-Action
-                  :width 550
-                  :height 530)))
-    (setf (root-view Window) (load-object "lui:resources;windows;inflatable-icon-editor.window"))
-    ;; Load 2D image 
-    (let ((Icon-Editor (view-named Window 'icon-editor)))
-      (load-image Icon-Editor Pathname)
-      ;; Load Shape 
-      (let ((Shape-Pathname (make-pathname
-                             :directory (pathname-directory Pathname)
-                             :name (or Shape-Filename (pathname-name Pathname))
-                             :type "shape"
-                             :host (pathname-host Pathname)
-                             :defaults Pathname)))
-        ;; when shape file is missing stick with flat default 
-        (when (probe-file Shape-Pathname)
-          (let ((Inflated-Icon-Editor (view-named Window 'model-editor)))
-            (setf (inflatable-icon Inflated-Icon-Editor) (load-object Shape-Pathname))
-            (setf (auto-compile (inflatable-icon Inflated-Icon-Editor)) nil)  ;; keep editable
-            ;; use the icon editor image, not the new inflatable icon editor one
-            (dispose-vector (image (inflatable-icon Inflated-Icon-Editor)))
-            (get-rgba-color-at Icon-Editor 0 0)   ;; hack: make sure pixel buffer exists by accessing it once
-            (setf (image (inflatable-icon Inflated-Icon-Editor))
-                  (pixel-buffer Icon-Editor)))
-          ;; proxy icons
-          (setf (file Window) Shape-Pathname)
-          (add-window-proxy-icon Window Shape-Pathname)
-          )))
-    (window-show Window)
+  (let* ((Window (load-object "lui:resources;windows;inflatable-icon-editor.window" :package (find-package :xlui)))
+         (Icon-Editor (view-named Window "icon-editor"))
+         (Inflated-Icon-Editor (view-named Window "model-editor")))
+    ;; 2D
+    (load-image Icon-Editor Pathname)
+    (center-canvas Icon-Editor)
+    (get-rgba-color-at Icon-Editor 0 0) ;;; HACK!! make sure buffer is allocated 
+    ;; 3D
+    (let ((Shape-Pathname (make-pathname
+                           :directory (pathname-directory Pathname)
+                           :name (or Shape-Filename (pathname-name Pathname))
+                           :type "shape"
+                           :host (pathname-host Pathname)
+                           :defaults Pathname)))
+     ;; make shape 
+      (cond
+       ;; make shape from shape file
+       ((probe-file Shape-Pathname)
+        (setf (inflatable-icon Inflated-Icon-Editor) 
+              (load-object Shape-Pathname :package (find-package :xlui))))
+       ;; make new one
+       (t
+        (setf (inflatable-icon Inflated-Icon-Editor) 
+              (make-instance 'inflatable-icon 
+                :columns (img-width Icon-Editor)
+                :rows (img-height Icon-Editor)
+                :view Inflated-Icon-Editor))
+        (setf (altitudes (inflatable-icon Inflated-Icon-Editor))
+              (make-array (list (img-height Icon-Editor) (img-width Icon-Editor))
+                          :element-type 'short-float
+                          :initial-element 0.0))))
+      (setf (auto-compile (inflatable-icon Inflated-Icon-Editor)) nil))  ;; keep editable
+    ;; use the icon editor image, not the new inflatable icon editor one
+    (setf (image (inflatable-icon Inflated-Icon-Editor))
+          (pixel-buffer Icon-Editor))
+    ;; proxy icons
+    ;;; some day (add-window-proxy-icon Window Shape-Pathname)
+    ;; wrap up
+    (display Window)
     Window))
-
-
 
 
 #| Examples:
 
 
 (defparameter *Inflatable-Icon-Editor* (new-inflatable-icon-editor-window :width 32 :height 32))
+
+(new-inflatable-icon-editor-window-from-image "lui:resources;shapes;redLobster;redLobster.png")
+
+(new-inflatable-icon-editor-window-from-image "lui:resources;shapes;redLobster;redLobster.png" :shape-filename "index")
+
 
 
 (defparameter *Inflatable-Icon-Editor40* (new-inflatable-icon-editor-window :width 40 :height 40))
