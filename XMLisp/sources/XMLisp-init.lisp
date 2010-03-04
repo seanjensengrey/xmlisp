@@ -13,11 +13,7 @@
 
 ;; edit to point to root folder containing /sources  /resources  etc.
 (setf (logical-pathname-translations "lui")
-      '(("**;*.*" "home:working copies;XMLisp svn;trunk;XMLisp;**;")))
-
-
-(setf (logical-pathname-translations "agentcubes")
-     '(("**;*.*" "home:working copies;XMLisp svn;trunk;XMLisp;sources;AgentCubes;**;")))
+      '(("**;*.*" "home:Work Documents;working copies;XMLisp;**;")))
 
 
 #-cocotron
@@ -73,7 +69,7 @@
    "SWITCH-TO-FULL-SCREEN-MODE" "SWITCH-TO-WINDOW-MODE" "FULL-SCREEN" "WINDOW-CLOSE"
    "FIND-WINDOW-AT-SCREEN-POSITION" "FIND-VIEW-CONTAINING-POINT" "FIND-VIEW-AT-SCREEN-POSITION"
    "SCROLL-VIEW" "HAS-HORIZONTAL-SCROLLER" "HAS-VERTICAL-SCROLLER"
-   "SET-SIZE" "SET-POSITION" "DISPLAY" "DRAW" "LAYOUT" "INIT" "CLEAR-BACKGROUND" "RECURSIVE-MAP-SUBVIEWS"
+   "SET-SIZE" "SET-POSITION" "DISPLAY" "DRAW" "INIT" "CLEAR-BACKGROUND" "RECURSIVE-MAP-SUBVIEWS"
    "WINDOW-X" "WINDOW-Y"
    "RECTANGLE-VIEW" "SET-COLOR"
    "ZOOMABLE" "MINIMIZABLE" "RESIZABLE" "CLOSEABLE" "TITLE"
@@ -126,8 +122,6 @@
    ;; badged image
    "ADD-GROUP"  "ADD-GROUP-ITEM" "DELETE-GROUP" "DELETE-GROUP-ITEM" "SELECTED-GROUP" "SELECTED-GROUP-ITEM" "SELECT-GROUP" "SELECT-GROUP-ITEM"
    "PROJECT-MANAGER-REFERENCE" "AGENT-GALLERY-VIEW"
-   ;; properties
-   "REMOVE-VIEW" "REMOVE-ALL-SUBVIEWS" "SELECTED"
    ))
 
 
@@ -307,6 +301,14 @@
   (ccl::recursive-copy-directory
    (truename "lui:resources;windows;")
    (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/windows/" (user-homedir-pathname)))
+  (format t "~%- copy button resources")
+  (ccl::recursive-copy-directory
+   (truename "lui:resources;buttons;")
+   (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/buttons/" (user-homedir-pathname)))
+  (format t "~%- copy template resources")
+  (ccl::recursive-copy-directory
+   (truename "lui:resources;templates;")
+   (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/templates/" (user-homedir-pathname)))
   (format t "~%- patch info plist resources")
   (copy-file 
    (truename "lui:resources;English.lproj;InfoPlist.strings")
@@ -314,41 +316,10 @@
    :if-exists :supersede))
 
 
-;; properties
-(load "agentcubes:properties;image-and-subview-management-patches")
-(load "agentcubes:properties;simulation-properties")
-
-
-
-(defpackage :agentcubes
- (:use :ccl :xml :lui :xlui :common-lisp :opengl))
-
-
-
-
-
-
-
-
-
-(load "agentcubes:box-shape")
-
-;; resource management
-(load "agentcubes:resource-management;Name-Space")
-(load "agentcubes:resource-management;resource-manager")
-(load "agentcubes:resource-management;Shape-Manager")
-(load "agentcubes:resource-management;Agent-Manager")
-(load "agentcubes:resource-management;Project-Manager")
-(load "agentcubes:resource-management;Application-Manager")
-;;badged image group list manager
+;; badged image group list manager
 (load "lui:sources;Lisp User Interface;badged-image-group-list-manager")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;badged-image-group-list-manager-cocoa")
-;; Agent Gallery
-(load "lui:sources;agent-gallery")
 
-;; then resolve export problems, reload controls.lisp and try again!
-;(load "lui:sources;XLUI;controls")
-;(load "lui:sources;agent-gallery")
 
 #| 
 
