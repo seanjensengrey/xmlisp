@@ -431,7 +431,7 @@
 
 (defmethod ADD-GROUP-ITEM ((Self badged-image-group-list-manager-view) group-name item &key (image-path "lui:resources;images;"))
   (setf (first item) (string-capitalize (first item)))
-  (setf group-name (string-capitalize group-name))
+  ;(setf group-name (string-capitalize group-name))
   (let ((list-item (make-instance 'list-group-item :item-name (first item) :image-path image-path :image-name (second item))))
 
   (let ((group (get-group-with-name self group-name)))
