@@ -5,7 +5,7 @@
 
 
 (defun VALIDATE-AGENT-NAME (name)
-  (agentcubes:agentcubes-class-string (agentcubes:AGENTCUBES-CLASS-SYMBOL name)))
+  name)
 
 (defclass LAYOUT-VIEW (ns:ns-view)
   ()
