@@ -24,6 +24,7 @@
 ;*    1.6       : 03/20/07 projected-window-position reference-point *
 ;*    2.0       : 05/02/09 XLUI: based on game-engine.lisp           *
 ;*    2.1       : 07/24/09 drag and drop                             *
+;*    2.1.1     : 03/03/10 AI: print-slots for tile                  *
 ;* todos:       : implement withhout using glBegin/End for OpenGL 3x *
 ;* Systems      : G4, CCL 1.3, OS X 10.5.7                           *
 ;* Abstract     : engine with agents, animation, rendering, picking  *
@@ -1291,6 +1292,10 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
   (glTexCoord2f 1.0 1.0) (glVertex2f (width Self) (height Self))
   (glTexCoord2f 1.0 0.0) (glVertex2f (width Self) 0.0)
   (glEnd))
+
+
+(defmethod PRINT-SLOTS ((Self tile))
+  `(texture))
 
 
 ;_______________________________________
