@@ -447,7 +447,8 @@
   (declare (ignore dx dy))
   ;;(format t "~%hover: x=~A y=~A dx=~A dy=~A" x y dx dy)
   (let ((Agent (find-agent-at Self x y *Selection-Tolerance* *Selection-Tolerance*)))
-    (unless (equal Agent (agent-hovered Self))
+    (when (or (not (eq Agent (agent-hovered Self))) 
+              (and Agent (subtypep (type-of Agent) 'matrix-background-agent)))  ;; hack! matrix-background-agent are shared
       (when (agent-hovered Self)
         (setf (is-hovered (agent-hovered Self)) nil)
         (mouse-hover-leave-event-handler (agent-hovered Self)))
@@ -455,6 +456,7 @@
         (setf (is-hovered Agent) t)
         (mouse-hover-enter-event-handler Agent))
       (setf (agent-hovered Self) Agent))))
+
 
 ;****************************************
 ;  class Agent-3d                       *
@@ -596,6 +598,16 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 (defgeneric MOUSE-DRAG-LEAVE-EVENT-HANDLER (Agent1 Agent2)
   (:documentation "<Agent2> was dragged away from me"))
 
+;; Selection 
+
+(defgeneric SELECT (agent-3d)
+  (:documentation "Make me selected"))
+
+
+(defgeneric UNSELECT (agent-3d)
+  (:documentation "Unselect me"))
+
+
 
 ;_______________________________________
 ; Implementation                        |
@@ -608,6 +620,10 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 
 (defmethod HAS-SHADE ((Self agent-3d))
   nil)  ;; no shade for me
+
+
+(defmethod SHADE ((Self agent-3d))
+  nil)  ;; could be a string
 
 
 (defmethod WINDOW ((Self agent-3d))
@@ -902,6 +918,18 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 ;; Andri 0.12, 0.05
 ;; ronald 0.12, 0.05
 ;; bob: 0.04
+
+
+;; Selection
+
+(defmethod SELECT ((Self agent-3d))
+  (setf (is-selected Self) t))
+
+
+(defmethod UNSELECT ((Self agent-3d))
+  (setf (is-selected Self) nil))
+
+
 
 ;______________________________
 ; Layout                       |
