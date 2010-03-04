@@ -159,11 +159,13 @@ Example:
 
 (in-package :xlui)
 
-<application-window title="agent-gallery"  margin="0" height="500">
+<application-window title="agent-gallery"  margin="0" height="250">
   <column align="stretch" valign="stretch">  
     <scroll-box vflex="1">
       <badged-image-group-list-manager name="image-badge">
         <image-badge-group-list-item name="lobster!!" />
+        <image-badge-group-list-item name="lobster2" />
+        <image-badge-group-list-item name="lobster3" />
       </badged-image-group-list-manager>
     </scroll-box>
   </column>
