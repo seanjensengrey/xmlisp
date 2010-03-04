@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
-<get-string-from-user-window title="get string" height="100">
+<get-string-from-user-window title="get string" height="110">
   <column align="stretch" valign="distribute">
     <editable-text  name="text"/>
+     <spacer height="5"/>
      <choice-image-button name="image-selection" width="140" >                                             
         <choice-button-item text="redlobster.png"  image="images/redlobster.png"/>   
         <choice-button-item text="draw-button.png"  image="images/draw-button.png"/>             
