@@ -155,34 +155,18 @@
 
 
 #|
-Example
+Example:
+
 (in-package :xlui)
 
-(defparameter *group-list-manager* (make-instance 'badged-image-group-list-manager-view))
-
-(defmethod pop-up-image-menu-now ((w application-window) (Button button)) 
-
-  (add-group *group-list-manager* '("lobster1" "redlobster.png") )
-  (print (group-list *group-list-manager*))
-  
-  (add-group *group-list-manager* '("lobster2" "redlobster.png"  (("shape1" "redlobster.png")( "shape2" "redlobster.png"))) )
-  (print (group-list *group-list-manager*))
-  
-  (add-group *group-list-manager* '("lobster3" "redlobster.png"  (("shape3" "redlobster.png")( "shape4" "redlobster.png"))) )
-  ;(setf (lui::is-disclosed (elt  (lui::groups *group-list-manager*) 1)) "YES")
-  (select-group *group-list-manager* "lobster3" nil) 
-  (print "selected group")
-  (print (lui::selected-group  *group-list-manager*))
-  (delete-group-item  *group-list-manager* "lobster2" "shape2")
- ; (inspect (groups *group-list-manager*))
-  (print (make-test-window *group-list-manager* )))
-
-<application-window title="Currency Converter" width="300" height="180">
-  <column align="stretch" valign="stretch" padding="9">
-    <row align="stretch" minimize="vertical" valign="bottom">
-      <button text="make-event" action="pop-up-image-menu-now" width="100" default-button="true"/>
-    </row>
+<application-window title="agent-gallery"  margin="0" height="500">
+  <column align="stretch" valign="stretch">  
+    <scroll-box vflex="1">
+      <badged-image-group-list-manager name="image-badge">
+        <image-badge-group-list-item name="lobster!!" />
+      </badged-image-group-list-manager>
+    </scroll-box>
   </column>
-</application-window>
+</application-window> 
     
 |#
