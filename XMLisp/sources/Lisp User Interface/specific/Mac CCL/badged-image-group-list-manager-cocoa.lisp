@@ -161,9 +161,7 @@
 
 
 (defmethod DOUBLE-CLICKED ((self group-item-image-view))
-  (print "2-1")
-  (edit-group-item (container self) (group-name self)(item-name self))
-  (print "2-2"))
+  (edit-group-item (container self) (group-name self)(item-name self)))
 
 
 (defmethod CREATE-IMAGE ((self group-item-image-view)(list-item list-group-item))
@@ -180,30 +178,12 @@
         (#/addSubview: self image-view))
       self)))
 
-     #|
-            (let ((Image #-cocotron (#/initByReferencingFile: (#/alloc ns:ns-image) (native-string "hello.png")) ;(image-name Self)))
-                         #+cocotron (#/initWithContentsOfFile: (#/alloc ns:ns-image) (native-string "lui:resources;images;redlobster.png;"))))
-             
-              (unless #-cocotron (#/isValid Image)
-                #+cocotron (not (ccl:%null-ptr-p Image))
-                (print "cannot create image from file ~S" "redlobs"))
 
-              (inspect Image)
-              (#/setImage: subview Image)
-              (#/setNeedsDisplay: self #$YES)
-              |#
-
-
-(defmethod UPDATE-IMAGE ((self group-item-image-view))
-  (print "MORE UPDATE IMAGE!!!!!@@@")
-  
-  (let ((subviews (gui::list-from-ns-array (#/subviews self))))  
-    
+(defmethod UPDATE-IMAGE ((self group-item-image-view)) 
+  (let ((subviews (gui::list-from-ns-array (#/subviews self))))   
     (dolist (subview subviews)
       (if (equal (type-of subview) 'lui::mouse-detecting-image-view)
         (progn
-          (print "done?")
-          (print (image-path self))
           (#/removeFromSuperviewWithoutNeedingDisplay subview)
           (let ((image (make-instance 'image-control  :path (image-path self)  :src (image-name self) :x 0 :y 0 :width (image-size self) :height (image-size self)))) 
             (let ((image-view (#/alloc mouse-detecting-image-view)))
@@ -211,12 +191,7 @@
                 (#/initWithFrame: image-view Frame )
                 (#/setImage: image-view (#/image (native-view image)))
                 (#/setImageScaling: image-view #$NSScaleToFit)
-                (#/addSubview: self image-view))
-              ))
-          )
-        )
-      )
-    ))
+                (#/addSubview: self image-view)))))))))
               
               
 (defclass ITEM-CONTAINER-VIEW (layout-view)
@@ -273,9 +248,7 @@
   )
 
 
-(objc:defmethod (#/mouseDown: :void) ((self mouse-detection-text-field) Event)
-  (print "mousedown")
-  
+(objc:defmethod (#/mouseDown: :void) ((self mouse-detection-text-field) Event)  
   (unless (item-name self)
     (unless (is-selected (group self))
       (progn
@@ -284,9 +257,7 @@
     (progn
       (unless (equal (selected-item-name (group self)) (item-name self))
         (set-selected-item (container self) (group-name (#/superview (#/superview (#/superview self)))) (item-name self)))))
-  (print "CALL NEXT METHOD")
-  (call-next-method event)
-  )
+  (call-next-method event))
 
 
 (objc:defmethod (#/textDidChange: :void) ((self mouse-detection-text-field) Notification)
@@ -447,11 +418,8 @@
       (setf (height self) height)))
    (unless (equal (#/superview (native-view self)) +null-ptr+)
      (progn
-       (print "RESIZING SCROLL")
        (set-size (lui-view (#/superview (#/superview (native-view self)))) (width (lui-view (#/superview (#/superview (native-view self))))) (height (lui-view (#/superview (#/superview (native-view self))))))
        (layout (lui-view (#/superview (#/superview (native-view self)))))
-     
-       ;  (display (lui-view (#/superview (#/superview (native-view self)))))
        (display self))))
 
 
@@ -482,31 +450,18 @@
       (dolist (item (group-items group))
         (if (equal (item-name item) item-name)
           (progn
-            (print (item-detection-views group))
+            
             (#/removeFromSuperviewWithoutNeedingDisplay (elt (item-detection-views group) i))   
             (setf (item-detection-views group) (delete  (elt (item-detection-views group) i) (item-detection-views group)))
-            (print (item-detection-views group))         
-          ;  (#/setNeedsDisplay: (native-view self) #$YES)        
+            (print (item-detection-views group))           
             (setf (selected-item-name group) nil)
-            (setf (group-items group) (delete item (group-items group)))
-            (print "DELETEING")
-            (print item-name)
-          
-            (print (group-items group))
-            (print i)
+            (setf (group-items group) (delete item (group-items group)))          
             (layout (native-view self))))
-        (incf i)
-        (print "I INC")
-        (print i)
-        )))))
+        (incf i))))))
 
 
 (defmethod ADD-GROUP ((Self badged-image-group-list-manager-view) group)
-  (print "ADDING GROUP")
-  (print (first group))
-  
   (setf (first group) (string-capitalize (first group)))
-  (print (first group))
   (dolist (old-group (groups self))
     (if (equal (first group) (group-name old-group))
       (progn 
@@ -519,11 +474,9 @@
       (t (setf (groups self) (append (groups self) (list (make-instance 'list-group :group-name (first group) :group-image (second group) :group-items (create-list-of-items-from-list-of-strings (third group))))))))
     (if (native-view self)
       (progn
-
         (add-group-to-gui self (get-group-with-name self (group-name list-group)))
         (#/setNeedsDisplay: (native-view self) #$YES)
-        (layout (native-view self))
-        ))
+        (layout (native-view self))))
     list-group))
 
 
@@ -564,7 +517,6 @@
 
 
 (defmethod ADD-ITEM-TO-GUI ((Self badged-image-group-list-manager-view) group group-item)
-  (print "ADDING TO GUI")
   (ns:with-ns-size (Size (NS:NS-RECT-WIDTH (#/frame (item-view group)))  (+ (row-height self) (NS:NS-RECT-HEIGHT (#/frame (item-view group)))))
     (#/setFrameSize: (item-view group) Size ))
   (let ((x (+ (left-margin self)(group-item-offset self))) (text-length 100) (item-y (- (* (row-height self) (length (group-items group))) (row-height self))))
@@ -583,9 +535,7 @@
         (case (item-detection-views group)
           (nil (setf (item-detection-views group) (list detection-view-item)))
           (t (setf (item-detection-views group) (append (item-detection-views group) (list detection-view-item)))))    
-        (#/addSubview: (item-view group) detection-view-item))
-      (print "BEFORE LET")
-      (print (image-path group-item))
+        (#/addSubview: (item-view group) detection-view-item))     
       (let ((image (make-instance 'group-item-image-view   :image-path (image-path group-item)   :group-name (group-name group) :container self :item-name (item-name group-item)  :x x :y item-y :image-name (image-name group-item)  ))) ;'image-control :src (group-image group) :x x :y y :width (row-height self) :height (row-height self)))) 
         (incf x (row-height self))
         (#/addSubview: #|items-container|# detection-view-item (create-image image group-item)))
@@ -597,7 +547,6 @@
           (#/initWithFrame: text Frame)
           (incf x text-length)     
           (#/setStringValue: text (native-string (item-name group-item)))
-          (print (ccl::lisp-string-from-nsstring (#/stringValue text)))
           (#/setBackgroundColor: text (#/whiteColor ns:ns-color))
           (#/setDrawsBackground:  text #$NO)
           (#/setBezeled: text #$NO)
@@ -699,11 +648,7 @@
 (defmethod SET-SELECTED ((Self badged-image-group-list-manager-view) group-name &key (resign "YES"))
   (remove-background-from-text-fields (native-view  self))
   
-  (with-simple-restart (cancel-pop "Stop to create view for ~s" Self)
-   (print "start of set-selected")
-    
-    
-
+  (with-simple-restart (cancel-pop "Stop to create view for ~s" Self)    
     (dolist (group (groups self))
       (setf (selected-item-name group) nil) 
       (if (equal group-name (group-name group))
@@ -752,21 +697,14 @@
 
 
 (defmethod SET-SELECTED-ITEM ((Self badged-image-group-list-manager-view) group-name item-name)
-  (print "selecting!!!")
-  (print item-name)
   (let ((i 1))
     (dolist (group (groups self))    
       (setf (is-selected group) nil)
       (if (equal group-name (group-name group))
         (progn 
-          
           (dolist (item (group-items group))
-            
-            
-                
             (if (equal item-name (item-name item))
               (progn
-                (print "INSIDE")
                 (let ((y-offset   (position item-name (group-items group) :key #'item-name :test #'equal)))
                   (setf (selected-item-name group) (item-name item))
                   (setf (is-selected group) "YES")
@@ -774,10 +712,7 @@
                     (#/setFrameOrigin: (item-selection-view group) Point ))
                   (#/setHidden: (item-selection-view group) #$NO)
                   (#/setNeedsDisplay: (item-selection-view group) #$YES)
-                 ; (unless (equal (selected-group self) group-name)
                     (set-selected self (group-name group))
-                 ;   (print "NOT")
-                  ;   )
                   (setf (selected-item-name group) (item-name item))))
               (if (item-detection-view item)
               (let ((subviews (gui::list-from-ns-array (#/subviews (item-detection-view item))))) 
