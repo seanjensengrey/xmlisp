@@ -768,12 +768,12 @@
 
 
 (objc:defmethod (#/textDidEndEditing: :void) ((self mouse-detection-text-field) Notification)
-  (declare (ignore Notification))
+ ; (declare (ignore Notification))
   (print "textdidendeditting")
   (call-next-method Notification))
 
 (objc:defmethod (#/textDidBeginEditing: :void) ((self mouse-detection-text-field) Notification)
-  (declare (ignore Notification))
+  ;(declare (ignore Notification))
   (print "TEXT DID BEGIN EDITTING")
   (call-next-method Notification))
 
