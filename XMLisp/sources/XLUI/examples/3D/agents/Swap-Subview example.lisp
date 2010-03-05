@@ -13,15 +13,15 @@
 ;; actions
 
 (defmethod SWITCH-TO-SCENE-1 ((w swapping-window) (Button bevel-button))
-  (swap-subview (part-of (view-named w "scene")) (view-named w "scene") *Scene1*))
+  (swap-subview (superview (view-named w "scene")) (view-named w "scene") *Scene1*))
 
 
 (defmethod SWITCH-TO-SCENE-2 ((w swapping-window) (Button bevel-button))
-  (swap-subview (part-of (view-named w "scene")) (view-named w "scene") *Scene2*))
+  (swap-subview (superview (view-named w "scene")) (view-named w "scene") *Scene2*))
 
 
 (defmethod SWITCH-TO-SCENE-3 ((w swapping-window) (Button bevel-button))
-  (swap-subview (part-of (view-named w "scene")) (view-named w "scene") *Scene3*))
+  (swap-subview (superview (view-named w "scene")) (view-named w "scene") *Scene3*))
 
 
 
