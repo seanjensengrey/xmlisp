@@ -143,13 +143,11 @@
         (push (lui-view (#/objectAtIndex: Subviews (- Count 1 i))) Subview-List)))))
 
 
-(defmethod PART-OF ((Self subview-manager-interface))
+(defmethod SUPERVIEW ((Self subview-manager-interface))
   (let ((Superview (#/superview (native-view Self))))
     (and (not (%null-ptr-p Superview))
          (slot-exists-p Superview 'lui-view)
          (lui-view Superview))))
-
-
 
 
 ;**********************************
@@ -183,6 +181,7 @@
 
 
 (defmethod SWAP-SUBVIEW ((View view) (Old-Subview view) (New-Subview view))
+  ;; (#/disableScreenUpdatesUntilFlush (native-window (window View)))
   ;; make compatible: new and old compatible with respect to size and origin
   (setf (x New-Subview) (x Old-Subview))
   (setf (y New-Subview) (y Old-Subview))
@@ -192,7 +191,9 @@
   (#/retain (native-view Old-Subview)) ;; no GC
   (#/replaceSubview:with: (native-view View) (native-view Old-Subview) (native-view New-Subview))
   (setf (part-of New-Subview) View)
-  (subviews-swapped (window View) Old-Subview New-Subview))
+  (subviews-swapped (window View) Old-Subview New-Subview)
+  ;; (#/flushWindow (native-window (window View)))
+  )
 
 
 (defmethod WINDOW ((Self view))

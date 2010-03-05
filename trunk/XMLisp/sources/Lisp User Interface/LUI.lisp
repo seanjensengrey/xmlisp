@@ -99,6 +99,9 @@
 (defgeneric SUBVIEWS (subview-manager-interface)
   (:documentation "Return subviews as list"))
 
+(defgeneric SUPERVIEW (subview-manager-interface)
+  (:documentation "Return my superview"))
+
 (defgeneric SWAP-SUBVIEW (subview-manager-interface old-subview new-subview)
   (:documentation "Swap <old-subview> of subview manager with <new-subview>. Prepare <new-subview> by making size and position compatible with <old-subview>"))
 
