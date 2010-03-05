@@ -118,6 +118,16 @@
     (add-subview Self Subview)))
 
 
+(defmethod SWAP-SUBVIEW ((View subview-manager-interface) (Old-Subview subview-manager-interface) (New-Subview subview-manager-interface))
+  ;; make compatible: new and old compatible with respect to size and origin
+  (#/setFrame: (native-view New-Subview) (#/frame (native-view Old-Subview)))
+  ;; adjust structure
+  (#/retain (native-view Old-Subview)) ;; no GC
+  (#/replaceSubview:with: (native-view View) (native-view Old-Subview) (native-view New-Subview))
+  (setf (part-of New-Subview) View))
+  
+
+
 (defmethod MAP-SUBVIEWS ((Self subview-manager-interface) Function &rest Args)
   (let ((Subviews (#/subviews (native-view Self))))
     (dotimes (i (#/count Subviews))
@@ -131,6 +141,15 @@
            (Subview-List nil))
       (dotimes (i Count Subview-List)
         (push (lui-view (#/objectAtIndex: Subviews (- Count 1 i))) Subview-List)))))
+
+
+(defmethod PART-OF ((Self subview-manager-interface))
+  (let ((Superview (#/superview (native-view Self))))
+    (and (not (%null-ptr-p Superview))
+         (slot-exists-p Superview 'lui-view)
+         (lui-view Superview))))
+
+
 
 
 ;**********************************
@@ -161,6 +180,19 @@
     (ns:with-ns-rect (Frame (x Self) (y Self) (width Self) (height Self))
       (#/setFrame: View Frame))
     View))
+
+
+(defmethod SWAP-SUBVIEW ((View view) (Old-Subview view) (New-Subview view))
+  ;; make compatible: new and old compatible with respect to size and origin
+  (setf (x New-Subview) (x Old-Subview))
+  (setf (y New-Subview) (y Old-Subview))
+  (set-size New-Subview (width Old-Subview) (height Old-Subview))
+  (#/setFrame: (native-view New-Subview) (#/frame (native-view Old-Subview)))
+  ;; adjust structure
+  (#/retain (native-view Old-Subview)) ;; no GC
+  (#/replaceSubview:with: (native-view View) (native-view Old-Subview) (native-view New-Subview))
+  (setf (part-of New-Subview) View)
+  (subviews-swapped (window View) Old-Subview New-Subview))
 
 
 (defmethod WINDOW ((Self view))
