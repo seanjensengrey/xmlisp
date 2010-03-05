@@ -282,17 +282,17 @@
             (#/setHidden: (item-view group) #$NO))
           (progn
             (#/setHidden: (item-view group) #$YES)))
-        (#/setNeedsDisplay: (item-view group) #$YES)
+      ;  (#/setNeedsDisplay: (item-view group) #$YES)
         (when (is-selected group)
           (#/setHidden: (selection-view group ) #$NO))       
         (ns:with-ns-point (Point (NS:NS-RECT-X (#/frame (group-view group))) (+ 0  (NS:NS-RECT-Y (#/frame (group-view group)))) )
           (#/setFrameOrigin: (selection-view group) Point ))
         (ns:with-ns-size (Size (NS:NS-RECT-WIDTH (#/frame (group-view group))) (NS:NS-RECT-HEIGHT (#/frame (group-view group))))
           (#/setFrameSize: (selection-view group) Size ))
-        (#/setNeedsDisplay: (selection-view group) #$YES)
-        (#/setNeedsDisplay: (group-view group) #$YES)
+      ;  (#/setNeedsDisplay: (selection-view group) #$YES)
+       ; (#/setNeedsDisplay: (group-view group) #$YES)
              (incf y   group-height)))) 
-  (#/setNeedsDisplay: self #$YES)
+ ; (#/setNeedsDisplay: self #$YES)
   (resize-height-of-view (lui-view self))
   (call-next-method)
   (layout-changed (lui-view self)))
@@ -311,7 +311,7 @@
         (#/setHidden: (item-selection-view group) #$YES)))))
   (let ((subviews (gui::list-from-ns-array (#/subviews self))))
     (dolist (subview subviews)
-      (#/setNeedsDisplay: subview #$YES)
+      ;(#/setNeedsDisplay: subview #$YES)
       (if (equal (type-of subview) 'LUI::mouse-detection-text-field)
         (if (equal (type-of (#/superview self)) 'LUI::ITEM-CONTAINER-VIEW)
           (ns:with-ns-point (Point (NS:NS-RECT-X (#/frame subview))  (* (- (row-height (lui-view (#/superview(#/superview (#/superview self))))) (text-height (lui-view (#/superview(#/superview (#/superview self)))))) .5 ) )
@@ -358,7 +358,8 @@
      (progn
        (set-size (lui-view (#/superview (#/superview (native-view self)))) (width (lui-view (#/superview (#/superview (native-view self))))) (height (lui-view (#/superview (#/superview (native-view self))))))
        (layout (lui-view (#/superview (#/superview (native-view self)))))
-       (display self))))
+       ;(display self)
+       )))
 
 
 (defmethod GET-GROUP-WITH-NAME ((self badged-image-group-list-manager-view) group-name)
@@ -674,10 +675,12 @@
   (if (is-disclosed (group button))
     (progn 
       (setf (is-disclosed (group button)) nil)
-      (layout (native-view self)))
+      (print (/(hemlock::time-to-run (layout (native-view self)))1000000.0))
+      )
     (progn
       (setf (is-disclosed (group button)) #$YES)
-      (layout (native-view self)))))
+      (print (/(hemlock::time-to-run (layout (native-view self))) 1000000.0))
+      )))
 
 #|
 (objc:defmethod (#/textDidEndEditing: :void) ((self mouse-detection-text-field) Notification)
