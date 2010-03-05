@@ -10,17 +10,21 @@
 (defclass APPLICATION-WINDOW (window xml-serializer)
   ((named-views :accessor named-views :initarg :named-views :initform (make-hash-table :test #'equal) :documentation "hashtable of all the named views contained in window")
    (margin :accessor margin :initarg :margin :initform *Layout-Border* :type integer :documentation "top, right, left, bottom"))
-  (:documentation "Main windows of applications that are not document-based.")
+  (:documentation "Window containing xml-serializable views.")
   (:default-initargs 
       :do-show-immediately nil))
+
+
+(defmethod REGISTER-NAMED-VIEW-IN-WINDOW ((View view) (Window application-window))
+  (unless (string= (name View) "")
+    (setf (gethash (string-upcase (name View)) (named-views Window)) View)))
 
 
 (defmethod REGISTER-NAMED-VIEWS ((Self application-window))
   (recursive-map-subviews 
    Self 
    #'(lambda (View)
-       (when (and (not (eq View Self)) (not (string= (name View) "")))
-         (setf (gethash (string-upcase (name View)) (named-views Self)) View)))))
+       (unless (eq View Self) (register-named-view-in-window View Self)))))
 
 
 (defmethod VIEW-NAMED ((Self application-window) (Name string) )
@@ -29,6 +33,17 @@
 
 (defmethod VIEW-NAMED ((Self application-window) (Name symbol))
   (gethash (symbol-name Name) (named-views Self)))
+
+
+(defmethod SUBVIEWS-SWAPPED ((Self application-window) (Old-View view) (New-View view))
+  ;; remove old name from table
+  (unless (string= (name Old-View) "")
+    (setf (gethash (string-upcase (name Old-View)) (named-views Self)) nil))
+  ;; add new name to table
+  (unless (string= (name New-View) "")
+    (setf (gethash (string-upcase (name New-View)) (named-views Self)) New-View)))
+  
+
 
 
 (defmethod INITIALIZE-INSTANCE :after ((Self application-window) &rest Args)
