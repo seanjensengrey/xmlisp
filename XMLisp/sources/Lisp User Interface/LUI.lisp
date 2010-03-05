@@ -99,6 +99,9 @@
 (defgeneric SUBVIEWS (subview-manager-interface)
   (:documentation "Return subviews as list"))
 
+(defgeneric SWAP-SUBVIEW (subview-manager-interface old-subview new-subview)
+  (:documentation "Swap <old-subview> of subview manager with <new-subview>. Prepare <new-subview> by making size and position compatible with <old-subview>"))
+
 
 (defmethod RECURSIVE-MAP-SUBVIEWS ((Self subview-manager-interface) Function &rest Args)
   (apply Function Self Args)
@@ -381,6 +384,9 @@ after any of the window controls calls stop-modal close window and return value.
 (defgeneric FIND-VIEW-CONTAINING-POINT (window x y)
   (:documentation "Return the most deeply nested view containing point x, y"))
 
+(defgeneric SUBVIEWS-SWAPPED (window Old-View New-View)
+  (:documentation "Called then when subview <Old-View> of window got replaced with <New-View>"))
+
 ;;_______________________________
 ;; default implementations       |
 ;;_______________________________
@@ -434,6 +440,12 @@ after any of the window controls calls stop-modal close window and return value.
   ;; walking the hierarchy up from agent -> view -> window 
   ;; Window is not a part of anything
   nil)
+
+
+(defmethod SUBVIEWS-SWAPPED ((Self Window) (Old-View view) (New-View view))
+  (declare (ignore Old-View New-View))
+  ;; do nothing
+  )
 
 
 ;; Events
