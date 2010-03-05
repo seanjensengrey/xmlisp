@@ -24,7 +24,7 @@
   (swap-subview (superview (view-named w "scene")) (view-named w "scene") *Scene3*))
 
 
-
+;; window
 
 (defparameter *S-Window* 
 <swapping-window track-mouse="true" title="Swap Scenes" margin="0">
@@ -32,14 +32,15 @@
     <agent-3d-view name="scene" flex="3" vflex="1">
       <text-3d text="empty" x="-0.5" size="5.0"/>
     </agent-3d-view>
-    <column align="stretch" width="130" valign="stretch" vflex="1">
-      <bevel-button text="scene 1" action="switch-to-scene-1" width="100" height="30"/>
-      <bevel-button text="scene 2" action="switch-to-scene-2"  width="100"  height="30"/>
-      <bevel-button text="scene 3" action="switch-to-scene-3"  width="100"  height="30"/>
+    <column align="stretch" width="120" valign="stretch" vflex="1">
+      <bevel-button text="scene 1" action="switch-to-scene-1" height="30"/>
+      <bevel-button text="scene 2" action="switch-to-scene-2" height="30"/>
+      <bevel-button text="scene 3" action="switch-to-scene-3" height="30"/>
     </column>
   </row>
 </swapping-window> )
 
+;; Scenes 
 
 (defparameter *Scene1* 
 <agent-3d-view name="scene" flex="3" vflex="1">
