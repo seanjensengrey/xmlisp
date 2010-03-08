@@ -89,6 +89,9 @@
 
 (defmethod FINISHED-READING :after ((Self inflatable-icon) Stream)
   (declare (ignore Stream))
+
+  (print "finished-reading :after")
+
   ;; no point in storing connectors: generate them in the right cases
   (case (surfaces Self)
     (front-and-back-connected (compute-connectors Self)))
@@ -99,17 +102,25 @@
 
 (defmethod MAKE-IMAGE-FROM-ICON ((Self inflatable-icon))
   ;; convert the icon into an RGBA image and initialize the altitude array
-  (when (resource-pathname Self (icon Self))
-    (multiple-value-bind (Image Columns Rows)
-                         (create-image-from-file (resource-pathname Self (icon Self)))
+  (format t "~%~%TEXTURE-FILE: ~A~%~%" (texture-file (part-of Self) (icon Self)))
+  
+  (when (part-of Self)
+    (when (texture-file (part-of Self) (icon Self))
+      (setf (auto-compile Self) t)
+      (multiple-value-bind (Image Columns Rows)
+                           (create-image-from-file (texture-file (part-of Self) (icon Self)))
+      (setf (image Self) Image)
       (setf (columns Self) Columns)
       (setf (rows Self) Rows)
-      (setf (image Self) Image)
       ;; don't overwrite existing altitudes
       (unless (altitudes Self)
         (setf (altitudes Self) (make-array (list Rows Columns) 
                                            :element-type 'short-float
-                                           :initial-element 0.0))))))
+                                           :initial-element 0.0)))))
+  Self))
+
+
+
 
 
 (defmethod OPEN-RESOURCE ((Self inflatable-icon))
@@ -512,9 +523,17 @@
 
 ;; HACK!! move this into LUI Cocoa
 (defmethod DRAW-AS-FLAT-TEXTURE ((Self inflatable-icon))
+
+  (print "drawing as flat texture")
+
+
   (unless (texture-id Self)
     ;; use image as texture
     (unless (image Self) (error "image of inflatable icon is undefined"))
+
+    (print (sizeof (image self)))
+    (print (image Self))
+
     (unless (= (sizeof (image Self)) (* (rows Self) (columns Self) 4)) (error "image size does not match row/column size"))
     (ccl::rlet ((&texName :long))
       (glGenTextures 1 &texName)
