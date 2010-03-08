@@ -136,6 +136,48 @@
      :max (max-value Self))) |# )
 
 
+(defmethod COPY-CONTENT-INTO ((Source inflatable-icon) (Destination inflatable-icon))
+
+ ;(inspect (image source))
+  ;; check for size compatibility to avoid disaster
+  
+  
+  (unless (and (= (rows Source) (rows Destination)) 
+               (= (columns Source) (columns Destination))
+               (= (ccl:external-call "malloc_size" :address (image Source) :size_t) (ccl:external-call "malloc_size" :address (image Source) :size_t))
+               )  
+    (error "cannot copy content of source into destination inflatable icon: incompatible sizes"))
+  
+ ; (ccl:external-call "malloc_size" :address (image Source) :size_t)
+  ;; given that they are the same size only copy content
+  (setf (is-upright Destination) (is-upright Source))
+  (setf (height Destination) (height Source))
+  (setf (dz Destination) (dz Source))
+  (setf (surfaces Destination) (surfaces Source))
+  (setf (distance Destination) (distance Source))
+  ;; arrays
+  (noise-map Source)  ;; accessor makes array if needed
+  (noise-map Destination)  ;; ;; accessor makes array if needed
+  (dotimes (Row (rows Source))
+    (dotimes (Column (columns Source))
+      (setf (aref (noise-map Destination) Row Column) (aref (noise-map Source) Row Column))
+      (setf (aref (altitudes Destination) Row Column) (aref (altitudes Source) Row Column))))
+  (setf (connectors Destination) (mapcar #'copy-instance (connectors Source)))
+  (setf (visible-alpha-threshold Destination) (visible-alpha-threshold Source))
+  ;; copy Image: slow byte copy
+  (dotimes (I (ccl:external-call "malloc_size" :address (image Source) :size_t))
+    (set-byte (image Destination) (lui::%get-byte (image Source) i) i))
+  
+  ;; flat texture optimization: do not copy texture-id -> destination should get its own texture id from OpenGL
+  (setf (is-flat Destination) (is-flat Source))
+  ;; do not compile flat textures: the display list overhead slows things down by about 2x
+  (setf (auto-compile Destination) (not (is-flat Source)))
+  ;; to make change visible we have to reset the compiled flag
+  (setf (is-compiled Destination) nil))
+
+
+
+
 #| still Carbon
 
 (defmethod COPY-CONTENT-INTO ((Source inflatable-icon) (Destination inflatable-icon))

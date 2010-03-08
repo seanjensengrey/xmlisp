@@ -615,15 +615,27 @@
 
 
 (defmethod EDIT-ICON-APPLY-ACTION ((Window inflatable-icon-editor-window) (Button button))
+ 
   (let ((Model-Editor (view-named Window 'model-editor)))
+
     ;; finalize geometry
     (compute-height (inflatable-icon Model-Editor))
+    
+    (if (container window)
+      (lui::apply-button-pressed (container window) Window)
+      (print "NOT"))
+    
+  ;  (setf (destination-inflatable-icon Window)  (xlui::load-object "lui:resources;shapes;redLobster;index.shape" :package (find-package :xlui)))
+    
     ;; save
     (when (destination-inflatable-icon Window)
-      ;; (format t "~%copy into icon")
+      ;; (format t "~%copy into icon")     
       (copy-content-into (inflatable-icon Model-Editor) (destination-inflatable-icon Window))
       (when (is-flat (destination-inflatable-icon Window))
-        (setf (update-texture-from-image-p (destination-inflatable-icon Window)) t)))))
+        (setf (update-texture-from-image-p (destination-inflatable-icon Window)) t))))
+  (if (container window)
+    (xlui::display-world (xlui::project-window (xlui::project-manager-reference (container window)))))
+  )
 
 #|
 
@@ -698,7 +710,7 @@
        ;; make shape from shape file
        ((probe-file Shape-Pathname)
         (setf (inflatable-icon Inflated-Icon-Editor) 
-              (load-object Shape-Pathname :package (find-package :xlui))))
+              (shape (load-object Shape-Pathname :package (find-package :xlui)))))
        ;; make new one
        (t
         (setf (inflatable-icon Inflated-Icon-Editor) 
@@ -717,6 +729,7 @@
     ;; proxy icons
     ;;; some day (add-window-proxy-icon Window Shape-Pathname)
     ;; wrap up
+    (setf (file window) pathname)
     (display Window)
     Window))
 
@@ -726,7 +739,7 @@
 
 (defparameter *Inflatable-Icon-Editor* (new-inflatable-icon-editor-window :width 32 :height 32))
 
-(new-inflatable-icon-editor-window-from-image "lui:resources;shapes;redLobster;redLobster.png")
+(defparameter *Inflatable-Icon-Editor* (new-inflatable-icon-editor-window-from-image "lui:resources;shapes;redLobster;redLobster.png"))
 
 (new-inflatable-icon-editor-window-from-image "lui:resources;shapes;redLobster;redLobster.png" :shape-filename "index")
 
