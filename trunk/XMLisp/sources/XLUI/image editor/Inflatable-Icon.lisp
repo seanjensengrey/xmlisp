@@ -144,7 +144,7 @@
   
   (unless (and (= (rows Source) (rows Destination)) 
                (= (columns Source) (columns Destination))
-               (= (ccl:external-call "malloc_size" :address (image Source) :size_t) (ccl:external-call "malloc_size" :address (image Source) :size_t))
+               (= (sizeof (image Source) ) (sizeof (image source) ))
                )  
     (error "cannot copy content of source into destination inflatable icon: incompatible sizes"))
   
@@ -165,7 +165,8 @@
   (setf (connectors Destination) (mapcar #'copy-instance (connectors Source)))
   (setf (visible-alpha-threshold Destination) (visible-alpha-threshold Source))
   ;; copy Image: slow byte copy
-  (dotimes (I (ccl:external-call "malloc_size" :address (image Source) :size_t))
+  ;(dotimes (I (ccl:external-call "malloc_size" :address (image Source) :size_t))
+  (dotimes (I (sizeof (image Source) ))
     (set-byte (image Destination) (lui::%get-byte (image Source) i) i))
   
   ;; flat texture optimization: do not copy texture-id -> destination should get its own texture id from OpenGL
