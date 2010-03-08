@@ -1028,6 +1028,10 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
   (call-next-method)
   (glPopMatrix))
 
+
+(defmethod HEIGHT ((Self sphere))
+  (float (* 2 (size Self))))
+
 ;_______________________________________
 ;  Sky Dome                             |
 ;_______________________________________
