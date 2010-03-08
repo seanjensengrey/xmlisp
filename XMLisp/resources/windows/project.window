@@ -14,6 +14,12 @@
     </column>
     <column align="stretch" valign="stretch" flex="4">
       <label text="Tools &amp; World" align="center"/>
+      <row align="stretch" height="50">
+      <image-button-cluster>
+        <image-button name="draw button" action="draw-tool-action" image="draw-button.png"/>
+        <image-button name="erase button" action="erase-tool-action" image="erase-button.png"/> 
+      </image-button-cluster>
+      </row>
       <world vflex="1" name="the world">
         <agent-matrix name="AGENT-MATRIX11508" rows="20" columns="20" layers="1"/>
       </world>
