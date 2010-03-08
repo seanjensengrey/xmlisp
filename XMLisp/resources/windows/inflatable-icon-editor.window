@@ -65,6 +65,7 @@
   <spacer height="15"/>
   <row minimize="vertical" align="right">
     <button text="Save" width="70" action="EDIT-ICON-SAVE-ACTION" default-button="true"/>
+     <button text="Apply" width="70" action="EDIT-ICON-APPLY-ACTION" />
   </row>
   </column>
 </inflatable-icon-editor-window>
