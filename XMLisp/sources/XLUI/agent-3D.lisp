@@ -448,7 +448,7 @@
   ;;(format t "~%hover: x=~A y=~A dx=~A dy=~A" x y dx dy)
   (let ((Agent (find-agent-at Self x y *Selection-Tolerance* *Selection-Tolerance*)))
     (when (or (not (eq Agent (agent-hovered Self))) 
-              (and Agent (subtypep (type-of Agent) 'matrix-background-agent)))  ;; hack! matrix-background-agent are shared
+              (and Agent (find-class 'matrix-background-agent nil) (subtypep (type-of Agent) 'matrix-background-agent)))  ;; hack! matrix-background-agent are shared
       (when (agent-hovered Self)
         (setf (is-hovered (agent-hovered Self)) nil)
         (mouse-hover-leave-event-handler (agent-hovered Self)))
