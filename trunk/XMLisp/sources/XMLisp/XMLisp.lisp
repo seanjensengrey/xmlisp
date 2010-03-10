@@ -6,9 +6,9 @@
 ;*********************************************************************
 ;* Author       : Alexander Repenning, alexander@agentsheets.com     *
 ;*                http://www.agentsheets.com                         *
-;* Copyright    : (c) 1996-2009, AgentSheets Inc.                    *
+;* Copyright    : (c) 1996-2010 mai, AgentSheets Inc.                *
 ;* Filename     : XMLisp.lisp                                        *
-;* Last Update  : 10/30/09                                           *
+;* Last Update  : 03/09/10                                           *
 ;* Version      :                                                    *
 ;*    1.0       : 09/19/04                                           *
 ;*    1.1       : 09/30/04 encode/decode strings in XML              *
@@ -84,7 +84,8 @@
 ;*    3.6       : 10/30/09 more stringent instantiation policy       *
 ;*                         <bla ... will result in error if there is *
 ;*                         no matching class BLA                     *
-;* Systems      : G4, OS X 10.6.1                                    *
+;*    3.7       : 03/09/10 have file slot and set ASAP               *
+;* Systems      : G4, OS X 10.6.2                                    *
 ;* Lisps        : MCL 5.0, MCL 5.2, LispWorks 4.3.7, CCL 1.4         *
 ;*                CLISP 2.33.83, CMUCL, AGL                          *
 ;* Licence      : LGPL                                               *
@@ -564,12 +565,26 @@
       (extenderp Char)))
 
 ;*******************************
+; File Methods                 *
+;*******************************
+
+(defmethod PATHNAME-FROM-STREAM ((Stream stream))
+  ;; in the most general case we just don't know what the file is
+  nil)
+
+
+(defmethod PATHNAME-FROM-STREAM ((Stream file-stream))
+  (parse-namestring Stream))
+
+
+;*******************************
 ; XML Serializer class         *
 ;*******************************
 
 (defclass XML-SERIALIZER ()
   ((content :accessor content :initarg :content :initform nil :documentation "content not wrapped up as tag or attribute, e.g. the link name of <a> tag")
-   (is-created-by-xml-reader :accessor is-created-by-xml-reader :initform t :initarg :is-created-by-xml-reader :type boolean :documentation "true if this instance was create by the xml reader: important for initialization"))
+   (is-created-by-xml-reader :accessor is-created-by-xml-reader :initform t :initarg :is-created-by-xml-reader :type boolean :documentation "true if this instance was create by the xml reader: important for initialization")
+   (file :accessor file :initform nil :initarg :file :documentation "Pathname of file containing XML expression, or nil if that cannot be determined"))
   (:default-initargs :is-created-by-xml-reader nil)
   (:documentation "Mixin to serialize objects as XML looking things"))
 
@@ -596,14 +611,6 @@
 
 (defgeneric PART-OF (Xml-Serializer)
   (:documentation "The object containing me."))
-
-
-(defgeneric FILE (Xml-Serializer)
-  (:documentation "the file containing the object"))
-
-
-(defgeneric (SETF FILE) (File Xml-Serializer)
-  (:documentation "called when load-object read in the object from a file"))
 
 
 (defgeneric ADD-OBJECT-TO-SLOT (Xml-Serializer Object Slot-Name)
@@ -909,7 +916,8 @@
        (string (encode-xml-string Value))
        (number Value)
        (symbol Value)
-       (list Value)))))
+       (list Value)
+       (pathname (namestring Value))))))
 
 
 (defvar *Warn-if-undefined-XML-Decoder-Type* nil "set to t to get warnings")
@@ -1597,14 +1605,14 @@
         (Element-Class-Name
          ;; if this name is in the table we should interpret lack of class to be an error
          (if (find-class Element-Class-Name nil)
-           (make-instance Element-Class-Name :is-created-by-xml-reader t)
+           (make-instance Element-Class-Name :is-created-by-xml-reader t :file (pathname-from-stream Stream))
            (error "element \"~A\" cannot produce instance of class \"~A\" because that class does not exist" String Element-Class-Name)))
         ;; 2) Original Case matches class name
         ((and Original-Case-Symbol (find-class Original-Case-Symbol nil))
-         (make-instance Original-Case-Symbol :is-created-by-xml-reader t))
+         (make-instance Original-Case-Symbol :is-created-by-xml-reader t :file (pathname-from-stream Stream)))
         ;; 3) readtable translated case matches class name
         ((find-class Symbol nil)
-         (make-instance Symbol :is-created-by-xml-reader t))
+         (make-instance Symbol :is-created-by-xml-reader t :file (pathname-from-stream Stream)))
         ;; 4) xml-content
         (t
          (make-instance 
@@ -1613,7 +1621,8 @@
                    'xml-content)
                (error "cannot find class \"~A\" ~%XMlisp is trying to create an instance of this class while reading \"<~A ...\"" Symbol String))
            :name Symbol
-           :is-created-by-xml-reader t)))))))
+           :is-created-by-xml-reader t
+           :file (pathname-from-stream Stream))))))))
 
 
 
@@ -1778,9 +1787,7 @@
     (with-open-file (File Filename :direction :input :if-does-not-exist If-Does-Not-Exist)
       (let ((*Xml-Stream* File))
         (declare (special *Xml-Stream*))
-        (let ((Object (read File)))
-          (setf (file Object) Filename)
-          Object)))))
+        (read File)))))
 
 
 (defmethod SAVE-OBJECT ((Self xml-serializer) Filename &key Verbose (If-Exists :error) (Xml-Header "<?xml version=\"1.0\"?>"))
