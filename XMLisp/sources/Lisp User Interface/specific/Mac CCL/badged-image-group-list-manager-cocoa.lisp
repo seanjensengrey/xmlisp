@@ -219,7 +219,8 @@
     (progn
       (unless (equal (selected-item-name (group self)) (item-name self))      
         (set-selected-item (container self) (group-name (#/superview (#/superview (#/superview self)))) (item-name self) :resign "YES"))))
-  (call-next-method event))
+  (call-next-method event)
+  )
 
 
 (objc:defmethod (#/textDidChange: :void) ((self mouse-detection-text-field) Notification)
@@ -676,56 +677,18 @@
   (if (is-disclosed (group button))
     (progn 
       (setf (is-disclosed (group button)) nil)
-      (print (/(hemlock::time-to-run (layout (native-view self)))1000000.0))
+     (layout (native-view self))
       )
     (progn
       (setf (is-disclosed (group button)) #$YES)
-      (print (/(hemlock::time-to-run (layout (native-view self))) 1000000.0))
-      )))
+       (layout (native-view self)))))
 
-#|
-(objc:defmethod (#/textDidEndEditing: :void) ((self mouse-detection-text-field) Notification)
-  ; (declare (ignore Notification))
-  (print "textdidendeditting")
-  (call-next-method Notification))
-
-
-(objc:defmethod (#/textDidBeginEditing: :void) ((self mouse-detection-text-field) Notification)
-  ;(declare (ignore Notification))
-  (print "TEXT DID BEGIN EDITTING")
-  (call-next-method Notification))
-
-
-(objc:defmethod (#/textShouldBeginEditing: :void) ((self mouse-detection-text-field) Notification)
-  ;(declare (ignore Notification))
-  (print "TEXT ----SHOULD-- BEGIN EDITTING")
-  (call-next-method Notification))
-|#
 
 (objc:defmethod (#/becomeFirstResponder  :void) ((self mouse-detection-text-field))
   (remove-background-from-text-fields (native-view (container self)))
   (#/setDrawsBackground: self #$YES)
   (call-next-method))
-#|
 
-(objc:defmethod (#/becomeFirstResponder  :<bool>) ((self ns:ns-text-view))
-  ; (#/setDrawsBackground: self #$YES)
-  (print "ns-text-view become")
-  (call-next-method))
-
-
-(objc:defmethod (#/resignFirstResponder  :<bool>) ((self ns:ns-text-view))
-  ; (#/setDrawsBackground: self #$YES)
-  (print "ns-text-view resign")
-  (call-next-method))       
-
-
-(objc:defmethod (#/resignFirstResponder  :void) ((self mouse-detection-text-field))
-  (print "RESIGN FIRST RESPONDER")
-  ; (print "setting background")
-  ;  here (#/setDrawsBackground: self #$NO)
-  (call-next-method))
-|#
 
 (defmethod REMOVE-BACKGROUND-FROM-TEXT-FIELDS ((self ns:ns-view))
   (let ((subviews (gui::list-from-ns-array (#/subviews self))))  
@@ -736,3 +699,4 @@
         (progn
           (#/setDrawsBackground: subview #$NO))
         (remove-background-from-text-fields subview)))))
+
