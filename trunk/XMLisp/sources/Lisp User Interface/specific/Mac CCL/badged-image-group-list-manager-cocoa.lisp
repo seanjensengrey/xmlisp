@@ -211,6 +211,7 @@
 
 
 (objc:defmethod (#/mouseDown: :void) ((self mouse-detection-text-field) Event)  
+  (call-next-method event)
   (unless (item-name self)
     (unless (is-selected (group self))
       (progn
@@ -219,7 +220,7 @@
     (progn
       (unless (equal (selected-item-name (group self)) (item-name self))      
         (set-selected-item (container self) (group-name (#/superview (#/superview (#/superview self)))) (item-name self) :resign "YES"))))
-  (call-next-method event)
+  
   )
 
 
@@ -485,11 +486,13 @@
           (setf (item-name text) (item-name group-item))
           (#/initWithFrame: text Frame)
           (incf x text-length)     
-          (#/setStringValue: text (native-string (item-name group-item)))
+          (#/setStringValue: text (native-string (item-name group-item)))0
           (#/setBackgroundColor: text (#/whiteColor ns:ns-color))
           (#/setDrawsBackground:  text #$NO)
           (#/setBezeled: text #$NO)
           (#/setBordered: text #$NO)
+          (#/setEditable: text #$NO)
+          (setf (text-view group-item) text)
           (setf (group text) group)
           (let ((width (calculate-width-for-text-field text)))
               (ns:with-ns-size (Size  width (NS:NS-RECT-HEIGHT (#/frame text)))
@@ -559,6 +562,7 @@
             (#/setDrawsBackground:  text #$NO)
             (#/setBezeled: text #$NO)
             (#/setBordered: text #$NO)
+            (#/setEditable: text #$NO)
             (setf (group text) group)
             (setf (text-view group) text)
             (let ((width (calculate-width-for-text-field text)))
@@ -600,6 +604,7 @@
             (ns:with-ns-size (Size (NS:NS-RECT-WIDTH (#/frame (group-view group))) (+ (row-height self) selection-offset))
               (#/setFrameSize: (selection-view group) Size )))
           (#/setHidden: (selection-view group) #$NO)
+          (#/setEditable:  (text-view group) #$YES)
           (#/setNeedsDisplay: (selection-view group) #$YES))
         (progn
           (if resign
@@ -610,6 +615,7 @@
                 (#/endEditingFor: (#/window (native-view self)) nil ))))
           (setf (selected-item-name group) nil)
           (#/setDrawsBackground:  (text-view group) #$NO)
+          (#/setEditable:  (text-view group) #$NO)
           (if (item-selection-view group)
             (#/setHidden: (item-selection-view group) #$YES))
           (setf (is-selected group) nil)
@@ -635,16 +641,20 @@
                   (#/setHidden: (item-selection-view group) #$NO)
                   (#/setNeedsDisplay: (item-selection-view group) #$YES)
                   (set-selected self (group-name group) :resign nil)
-                  (setf (selected-item-name group) (item-name item))))
-              (if (item-detection-view item)
-                (progn       
-                  (if resign
-                    (if (or
-                         (equal (type-of (#/firstResponder (#/window (native-view self)))) 'NS:NS-TEXT-VIEW )
-                         (equal (type-of (#/firstResponder (#/window (native-view self)))) 'LUI::MOUSE-DETECTION-TEXT-FIELD ))
-                      (progn
-                        (#/endEditingFor: (#/window (native-view self)) nil )))))))))
+                  (setf (selected-item-name group) (item-name item)))
+                (#/setEditable: (text-view item) #$YES))
+              (progn
+                (#/setEditable: (text-view item) #$NO)
+                (if (item-detection-view item)
+                  (progn       
+                    (if resign
+                      (if (or
+                           (equal (type-of (#/firstResponder (#/window (native-view self)))) 'NS:NS-TEXT-VIEW )
+                           (equal (type-of (#/firstResponder (#/window (native-view self)))) 'LUI::MOUSE-DETECTION-TEXT-FIELD ))
+                        (progn
+                          (#/endEditingFor: (#/window (native-view self)) nil ))))))))))
         (progn 
+          ;(#/setEditable: (text-view item) #$NO)
           (setf (selected-item-name group) nil)
           (if (item-selection-view group)
             (#/setHidden: (item-selection-view group) #$YES))))
