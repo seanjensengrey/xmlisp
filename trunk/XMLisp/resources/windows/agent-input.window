@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<get-string-from-user-window title="get string" height="110">
+<get-new-agent-info-from-user-window title="get string" height="110">
   <column align="stretch" valign="distribute">
     <editable-text  name="text"/>
      <spacer height="5"/>
@@ -15,4 +15,4 @@
       <button text="OK" action="OK-action" default-button="true"/>
     </row>
   </column>
-</get-string-from-user-window>
+</get-new-agent-info-from-user-window>
