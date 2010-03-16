@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<project-window x="100" y="50" width="1000" height="600">
+  <row align="stretch" valign="stretch">
+    <column align="stretch" valign="stretch" flex="1" width="250">
+      <label text="Agents" align="center"/>
+
+        <agent-gallery name="agent-gallery" />
+      <row align="stretch" valign="stretch" height="30">
+        <bevel-button text="Add Agent" name="add-agent" action="add-agent-action" width="85" />
+        <bevel-button text="Add Shape" name="add-shape" action="add-shape-action" width="85" />
+        <bevel-button text="Delete"    name="delete" action="delete-selected-agent" width="80" />
+      </row>
+    </column>
+    <column align="stretch" valign="stretch" flex="4">
+      <label text="Tools &amp; World" align="center"/>
+      <row align="stretch" valign="stretch" flex="1" vflex="1">
+        <image-button-cluster>
+          <image-button name="arrow button" action="arrow-tool-action" image="arrow-button.png"/>
+          <image-button name="draw button" action="draw-tool-action" image="draw-button.png"/>
+          <image-button name="erase button" action="erase-tool-action" image="erase-button.png"/> 
+        </image-button-cluster>
+        <world flex="1" vflex="1" name="the world">
+          <agent-matrix name="AGENT-MATRIX11508" rows="20" columns="20" layers="1"/>
+        </world>
+      </row>
+    </column>
+  </row>
+</project-window>
