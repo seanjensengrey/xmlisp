@@ -245,7 +245,7 @@
       (#/initWithFrame: Native-Control Frame)
       (#/setHasHorizontalScroller: Native-Control (has-horizontal-scroller Self))
       (#/setHasVerticalScroller: Native-Control (has-vertical-scroller Self))
-      (#/setAutohidesScrollers: Native-Control #$YES)
+      #-cocotron (#/setAutohidesScrollers: Native-Control #$YES)
       (#/setBorderType: Native-Control #$NSNoBorder)  ;;; #$NSLineBorder)
       (#/setDrawsBackground: Native-Control #$NO)
     Native-Control)))

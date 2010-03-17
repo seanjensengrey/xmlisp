@@ -294,7 +294,44 @@
   (initialize-event-handling button)
   (setf (images cluster) (append (images cluster) (list button))))
 
+;__________________________________________________________________________________________________
+; Image Button Cluster                                                                             |
+;                                                                                                  |
+;      <image-button-segment>                                                                      |
+;        <image-button image="draw-button.png" action="draw-tool-action" />                        | 
+;        <image-button image="erase-button.png" action="erase-tool-action" />                      |
+;      </image-button-cluster>                                                                     |
+;__________________________________________________________________________________________________
 
+
+(defclass IMAGE-BUTTON-ROW (row) 
+  ((selected-button :accessor selected-button :initform nil :documentation "currently selected button")
+   (images :accessor images :initform ())
+   )
+  (:default-initargs
+    :padding -1
+    :action 'default-action
+    :minimize :box)
+  (:documentation "a row of image-buttons. Pressing button will select it and unselect all others in same segment."))
+
+
+(defmethod CHANGE-CLUSTER-SELECTIONS ((Self image-button-row) button)
+  (dolist (image-button (images self))
+    (unless (eql image-button button)
+      (set-button-off image-button)
+      )))
+
+
+(defmethod DEFAULT-ACTION ((Window window) (Self image-button-row)))
+
+(defmethod ADD-SUBOBJECT ((cluster image-button-row) (button image-button))
+  (call-next-method)
+  (setf (in-cluster button) 'T)
+  (setf (container button) cluster)
+  (setf (user-action button) (action button))
+  (setf (action button) 'cluster-action)
+  (initialize-event-handling button)
+  (setf (images cluster) (append (images cluster) (list button))))
 ;_____________________________________________________________________
 ; Radio Button Cluster                                                |
 ;                                                                     |
