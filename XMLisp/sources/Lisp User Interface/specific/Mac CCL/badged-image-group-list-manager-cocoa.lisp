@@ -271,6 +271,7 @@
 
 (defmethod LAYOUT ((Self native-badged-image-group-list-manager-view))
   (let ((y 0))
+    
     (dolist (group (groups (lui-view self)))
       (let ((group-height (row-height (lui-view self))))
         (if (is-disclosed group)
@@ -286,10 +287,12 @@
             (#/setHidden: (item-view group) #$YES)))
         (#/setNeedsDisplay: (item-view group) #$YES)
         (when (is-selected group)
-          (#/setHidden: (selection-view group ) #$NO))       
+          (#/setHidden: (selection-view group ) #$NO))
+        ; #-cocotron (setf (width (lui-view self)) (NS:NS-RECT-WIDTH (#/frame (#/superview (#/superview (native-view self))))))
         (ns:with-ns-point (Point (NS:NS-RECT-X (#/frame (group-view group))) (+ 0  (NS:NS-RECT-Y (#/frame (group-view group)))) )
           (#/setFrameOrigin: (selection-view group) Point ))
-        (ns:with-ns-size (Size (NS:NS-RECT-WIDTH (#/frame (group-view group))) (NS:NS-RECT-HEIGHT (#/frame (group-view group))))
+        
+        (ns:with-ns-size (Size (width (lui-view self)) (NS:NS-RECT-HEIGHT (#/frame (group-view group))))
           (#/setFrameSize: (selection-view group) Size ))
         (#/setNeedsDisplay: (selection-view group) #$YES)
         (#/setNeedsDisplay: (group-view group) #$YES)
@@ -347,6 +350,21 @@
   ;do nothing 
   )
 
+(defmethod SET-SIZE ((Self badged-image-group-list-manager-view) Width Height)
+  (call-next-method self width height)
+  (print "SET SIZE")
+  (dolist (group (groups  self))
+    (ns:with-ns-size (Size (width  self) (NS:NS-RECT-HEIGHT (#/frame (group-view group))))
+      (#/setFrameSize: (selection-view group) Size ))
+    (#/setNeedsDisplay: (selection-view group) #$YES)
+    )
+  
+  (display self)
+ ; (layout (native-view self))
+  ;(resize-height-of-view self)
+  (#/setNeedsDisplay: (native-view self) #$YES)
+  )
+
 
 (defmethod RESIZE-HEIGHT-OF-VIEW ((Self badged-image-group-list-manager-view))
   (let ((height 0))
@@ -356,6 +374,8 @@
         (incf height  (row-height self))))  
     (if (> height 200)
       (setf (height self) height)))
+  #-cocotron (setf (width self) (NS:NS-RECT-WIDTH (#/frame (#/superview (#/superview (native-view self))))))
+ ; (inspect (#/superview (#/superview (native-view self))))
    (unless (equal (#/superview (native-view self)) +null-ptr+)
      (progn
        #-cocotron(set-size (lui-view (#/superview (#/superview (native-view self)))) (width (lui-view (#/superview (#/superview (native-view self))))) (height (lui-view (#/superview (#/superview (native-view self))))))

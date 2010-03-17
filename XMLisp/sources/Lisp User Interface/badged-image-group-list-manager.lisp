@@ -142,17 +142,21 @@
 
 
 (defmethod SELECT-GROUP ((Self badged-image-group-list-manager-view)group-name group-item-name)
-  (dolist (group (groups self))
-    (setf (is-selected group) nil)
-    (if (equal (group-name group) group-name)
-      (progn
+  (if (group-item-name
+       (dolist (group (groups self))
+         (setf (is-selected group) nil)
+         (if (equal (group-name group) group-name)
+           (progn
         (setf (is-selected group) "YES")
-        (if group-item-name
-          (progn
-            (dolist (item (group-items group))
-              (setf (selected-item-name group) nil)
-              (if (equal (item-name item) group-item-name)
-                (setf (selected-item-name group) (item-name item))))))))))
+             (if group-item-name
+               (progn
+                 (dolist (item (group-items group))
+                   (setf (selected-item-name group) nil)
+                   (if (equal (item-name item) group-item-name)
+                     (setf (selected-item-name group) (item-name item)))))))
+           (setf (is-selected group) nil)
+      )))
+    (set-selected self group-name)))
 
 
 #|
