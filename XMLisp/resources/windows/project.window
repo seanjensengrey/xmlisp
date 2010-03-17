@@ -13,13 +13,17 @@
       </row>
     </column>
     <column align="stretch" valign="stretch" flex="4">
+      <image-button-row>
+        <image-button name="arrow button" action="arrow-tool-action" image="arrow-button.png"/>
+        <image-button name="draw button" action="draw-tool-action" image="draw-button.png"/>
+        <image-button name="erase button" action="erase-tool-action" image="erase-button.png"/> 
+        <image-button name="rotate button" action="rotate-tool-action" image="rotate-button.png"/>
+        <image-button name="pan button" action="pan-tool-action" image="pan-button.png"/>
+        <image-button name="zoom button" action="zoom-tool-action" image="zoom-button.png"/> 
+      </image-button-row>
       <label text="Tools &amp; World" align="center"/>
       <row align="stretch" valign="stretch" flex="1" vflex="1">
-        <image-button-cluster>
-          <image-button name="arrow button" action="arrow-tool-action" image="arrow-button.png"/>
-          <image-button name="draw button" action="draw-tool-action" image="draw-button.png"/>
-          <image-button name="erase button" action="erase-tool-action" image="erase-button.png"/> 
-        </image-button-cluster>
+
         <world flex="1" vflex="1" name="the world">
           <agent-matrix name="AGENT-MATRIX11508" rows="20" columns="20" layers="1"/>
         </world>

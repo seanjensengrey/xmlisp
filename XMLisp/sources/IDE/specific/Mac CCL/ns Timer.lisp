@@ -9,7 +9,7 @@
 
 (in-package :hemlock)
 
-(export '(time-to-run))
+(export '(time-to-run time-to-run-milli))
 
 (defvar *mach-time-unit-ratio*
  (ccl::rlet ((info #>mach_timebase_info))
@@ -33,6 +33,8 @@
          (setq t4 (#_mach_absolute_time))
          (values (round (* (max (- t3 t2 (- t4 t3)) 0)  *mach-time-unit-ratio*))))))))
 
+(defmacro TIME-TO-RUN-MILLI (&body Form)
+  (/ (TIME-TO-RUN Form) 1000000.0))
 
 (defun PRINT-TIME (Time &optional (S t))
   "

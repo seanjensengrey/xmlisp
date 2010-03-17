@@ -1,15 +1,17 @@
 <?xml version="1.0"?>
-<get-new-agent-info-from-user-window title="get string" height="110">
-  <column align="stretch" valign="distribute">
+<get-new-agent-info-from-user-window title="get string" height="85">
+  <column align="stretch" valign="distribute" >
+    
+    <row align="stretch" >
     <editable-text  name="text"/>
-     <spacer height="5"/>
-     <choice-image-button name="image-selection" width="140" >                                             
+     
+     <choice-image-button name="image-selection" width="200" >                                             
         <choice-button-item text="redlobster.png"  image="images/redlobster.png"/>   
         <choice-button-item text="draw-button.png"  image="images/draw-button.png"/>             
         <choice-button-item text="erase-button.png"  image="images/erase-button.png"/> 
 
       </choice-image-button>  
-
+    </row>
     <row align="right" minimize="vertical">
       <button text="Cancel" action="cancel-action"/>
       <button text="OK" action="OK-action" default-button="true"/>
