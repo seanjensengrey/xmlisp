@@ -150,7 +150,7 @@
           ;; instantiation
           duplicate
           ;; do not export "File"
-	  ;; file
+	  file
           ;; variables
           def-element-class-name xml-tag-name-string
           ;; MOP
@@ -574,7 +574,7 @@
 
 
 (defmethod PATHNAME-FROM-STREAM ((Stream file-stream))
-  (parse-namestring Stream))
+  (truename (parse-namestring Stream)))
 
 
 ;*******************************
@@ -1888,21 +1888,12 @@
 ; File                        |
 ;_____________________________
 
-(defmethod (SETF FILE) (Container (Self xml-serializer))
-  (declare (ignore Container))
-  ;; do nothing
-  )
-
-
 (defmethod (SETF FILE) (Container (Self t))
   ;; for instance modal window dialogs return any kind of objects, make sure this is not a problem
   (declare (ignore Container))
   ;; do nothing
   )
 
-(defmethod FILE ((Self xml-serializer))
-  ;; by default we are not storing this information. Add a file slot to you object if you needs this
-  nil)
 
 ;_____________________________
 ; Print                       |
