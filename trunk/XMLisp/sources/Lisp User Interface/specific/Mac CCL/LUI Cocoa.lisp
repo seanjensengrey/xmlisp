@@ -6,6 +6,7 @@
 ;;;          0.3.1 04/27/09 Raffael Cavallaro, raffaelcavallaro@mac.com web-browser-control fixed
 ;;;          0.4   05/30/09 Full Screen Mode
 ;;;          0.4.1 02/19/10 add-subviews and add-subview for scroll-view: only allow one subview; fixed map-subiews for scroll-view
+;;;          0.4.2 03/15/10 AI file->source for image-control
 
 (in-package :LUI)
 
@@ -1073,11 +1074,11 @@
        ((src Self)
         ;; consider caching image with the same file, there is a good chance
         ;; that some image files, e.g., buttons are used frequently
-        (let ((Image #-cocotron (#/initByReferencingFile: (#/alloc ns:ns-image) (native-string (file Self)))
-                     #+cocotron (#/initWithContentsOfFile: (#/alloc ns:ns-image) (native-string (file Self)))))
+        (let ((Image #-cocotron (#/initByReferencingFile: (#/alloc ns:ns-image) (native-string (source Self)))
+                     #+cocotron (#/initWithContentsOfFile: (#/alloc ns:ns-image) (native-string (source Self)))))
           (unless #-cocotron (#/isValid Image)
                   #+cocotron (not (ccl:%null-ptr-p Image))
-            (error "cannot create image from file ~S" (file Self)))
+            (error "cannot create image from file ~S" (source Self)))
           ;; if size 0,0 use original size
           (when (and (zerop (width Self)) (zerop (height Self)))
             (let ((Size (#/size Image)))
