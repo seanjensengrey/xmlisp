@@ -201,6 +201,7 @@
 (load "lui:sources;XLUI;String-Shape")
 (load "lui:sources;XLUI;Cursor-Manager")
 (load "lui:sources;XLUI;agent-3D")
+(load "lui:sources;XLUI;shapes")
 
 ;; inflatable icons
 (load "lui:sources;XLUI;image editor;selection-mask")
