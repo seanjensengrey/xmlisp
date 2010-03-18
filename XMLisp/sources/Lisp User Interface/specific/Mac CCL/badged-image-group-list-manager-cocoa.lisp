@@ -634,7 +634,8 @@
       (if (equal group-name (group-name group))
         (progn       
           (setf (selected-item-name group) nil )
-          (#/setHidden: (item-selection-view group) #$YES)
+          (if (item-selection-view group)
+            (#/setHidden: (item-selection-view group) #$YES))
           (setf (is-selected group) "YES")
           (setf (is-highlighted group) highlight)
           (let ((selection-offset 0))          
