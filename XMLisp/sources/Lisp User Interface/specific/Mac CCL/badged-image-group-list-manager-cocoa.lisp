@@ -58,7 +58,7 @@
    (x :accessor x :initform 0 :initarg :x :documentation "screen position, pixels")
    (y :accessor y :initform 00 :initarg :y :documentation "screen position, pixels"))
   (:metaclass ns:+ns-object
-              :documentation "A view that will be composed of an two image one for the head-image and one for the badge"))
+              :documentation "A view that will be composed of two images one for the head-image and one for the badge"))
 
 
 (defmethod CREATE-BADGED-IMAGE ((self badged-image-view))
@@ -213,7 +213,7 @@
 (objc:defmethod (#/mouseDown: :void) ((self mouse-detection-text-field) Event)  
   (call-next-method event)
   (unless (item-name self)
-    (unless (is-selected (group self))
+    (unless (is-highlighted (group self))
       (progn
         (set-selected (container self) (group-name (#/superview self)) :resign nil ))))
   (if (item-name self)
@@ -286,13 +286,14 @@
           (progn
             (#/setHidden: (item-view group) #$YES)))
         (#/setNeedsDisplay: (item-view group) #$YES)
-        (when (is-selected group)
-          (#/setHidden: (selection-view group ) #$NO))
+        (if (is-highlighted group)
+          (#/setHidden: (selection-view group ) #$NO)
+          (#/setHidden: (selection-view group ) #$YES))
         ; #-cocotron (setf (width (lui-view self)) (NS:NS-RECT-WIDTH (#/frame (#/superview (#/superview (native-view self))))))
         (ns:with-ns-point (Point (NS:NS-RECT-X (#/frame (group-view group))) (+ 0  (NS:NS-RECT-Y (#/frame (group-view group)))) )
           (#/setFrameOrigin: (selection-view group) Point ))
         
-        (ns:with-ns-size (Size (width (lui-view self)) (NS:NS-RECT-HEIGHT (#/frame (group-view group))))
+        (ns:with-ns-size (Size (width (lui-view self)) (row-height (lui-view self)))
           (#/setFrameSize: (selection-view group) Size ))
         (#/setNeedsDisplay: (selection-view group) #$YES)
         (#/setNeedsDisplay: (group-view group) #$YES)
@@ -351,21 +352,37 @@
   )
 
 (defmethod SET-SIZE ((Self badged-image-group-list-manager-view) Width Height)
+  (print "HMM")
+  (call-next-method self width height))
+#|
+  ;  #-cocotron(set-size (lui-view (#/superview (#/superview (native-view self)))) (width (lui-view (#/superview (#/superview (native-view self))))) (height (lui-view (#/superview (#/superview (native-view self))))))
+  
   (call-next-method self width height)
+  #-cocotron (setf (width self) (width (lui-view (#/superview (#/superview (native-view self))))))
   (print "SET SIZE")
+  (print (width self))
+  (print (width (lui-view (#/superview (#/superview (native-view self))))))
   (dolist (group (groups  self))
     (ns:with-ns-size (Size (width  self) (NS:NS-RECT-HEIGHT (#/frame (group-view group))))
-      (#/setFrameSize: (selection-view group) Size ))
+      (#/setFrameSize: (selection-view group) Size )
+      (#/setFrameSize: (item-selection-view group) Size ))
     (#/setNeedsDisplay: (selection-view group) #$YES)
+    (#/setNeedsDisplay: (item-selection-view group) #$YES)
+    
+   ; (ns:with-ns-size (Size (width  self) (NS:NS-RECT-HEIGHT (#/frame (group-view group))))
+    ;  (#/setFrameSize: (item-selection-view group) Size ))
+    ;(#/setNeedsDisplay: (item-selection-view group) #$YES)
+    
     )
   
   (display self)
- ; (layout (native-view self))
+  ; (layout (native-view self))
   ;(resize-height-of-view self)
+  
   (#/setNeedsDisplay: (native-view self) #$YES)
+  
   )
-
-
+|#
 (defmethod RESIZE-HEIGHT-OF-VIEW ((Self badged-image-group-list-manager-view))
   (let ((height 0))
     (dolist (group (groups self))
@@ -543,7 +560,7 @@
       (unless (eql (is-disclosed group) nil)
         (if (> (length (group-items group)) 0)
           (setf height (* (row-height self) (+ 1 (length (group-items group)))))))
-      (let ((selection-image (make-instance 'image-control :src "blue-box-group.png" :x 0 :y 1 :width (width self) :height (- height 2))))
+      (let ((selection-image (make-instance 'image-control :src "blue-box.png" :x 0 :y 1 :width (width self) :height (- height 2))))
         (unless (is-selected group)
           (#/setHidden: (native-view selection-image) #$YES))
         (setf (selection-view group) (native-view selection-image))
@@ -608,22 +625,28 @@
     view))
 
 
-(defmethod SET-SELECTED ((Self badged-image-group-list-manager-view) group-name &key (resign "YES"))
+(defmethod SET-SELECTED ((Self badged-image-group-list-manager-view) group-name &key (highlight t) (resign "YES"))
+  (print "SET SELECTED")
   (remove-background-from-text-fields (native-view  self))
   (with-simple-restart (cancel-pop "Stop to create view for ~s" Self)    
     (dolist (group (groups self))
       (setf (selected-item-name group) nil) 
       (if (equal group-name (group-name group))
-        (progn         
-          (setf (is-selected group) "YES")        
+        (progn       
+          (setf (selected-item-name group) nil )
+          (#/setHidden: (item-selection-view group) #$YES)
+          (setf (is-selected group) "YES")
+          (setf (is-highlighted group) highlight)
           (let ((selection-offset 0))          
             (if (is-disclosed group)
               (setf selection-offset (* (row-height self) (length (group-items group)))))
             (ns:with-ns-point (Point (NS:NS-RECT-X (#/frame (group-view group))) (+ 0  (NS:NS-RECT-Y (#/frame (group-view group)))) )
               (#/setFrameOrigin: (selection-view group) Point ))
-            (ns:with-ns-size (Size (NS:NS-RECT-WIDTH (#/frame (group-view group))) (+ (row-height self) selection-offset))
+            ;(ns:with-ns-size (Size (NS:NS-RECT-WIDTH (#/frame (group-view group))) (+ (row-height self) selection-offset))
+            (ns:with-ns-size (Size (NS:NS-RECT-WIDTH (#/frame (group-view group)))  (row-height self) ) 
               (#/setFrameSize: (selection-view group) Size )))
-          (#/setHidden: (selection-view group) #$NO)
+          (if (is-highlighted group)
+            (#/setHidden: (selection-view group) #$NO))
           (#/setEditable:  (text-view group) #$YES)
           (#/setNeedsDisplay: (selection-view group) #$YES))
         (progn
@@ -639,6 +662,7 @@
           (if (item-selection-view group)
             (#/setHidden: (item-selection-view group) #$YES))
           (setf (is-selected group) nil)
+          (setf (is-highlighted group) nil)
           (#/setHidden: (selection-view group) #$YES)
           (#/setNeedsDisplay: (selection-view group) #$YES)))))
   (layout-changed self))
@@ -648,6 +672,7 @@
   (let ((i 1))
     (dolist (group (groups self))    
       (setf (is-selected group) nil)
+      (setf (is-highlighted group) nil)
       (if (equal group-name (group-name group))
         (progn 
           (dolist (item (group-items group))
@@ -656,12 +681,14 @@
                 (let ((y-offset   (position item-name (group-items group) :key #'item-name :test #'equal)))
                   (setf (selected-item-name group) (item-name item))
                   (setf (is-selected group) "YES")
+                  (#/setHidden: (selection-view group) #$YES)
                   (ns:with-ns-point (Point (NS:NS-RECT-X (#/frame (group-view group)))  (* 30 y-offset)  )
                     (#/setFrameOrigin: (item-selection-view group) Point ))
                   (#/setHidden: (item-selection-view group) #$NO)
                   (#/setNeedsDisplay: (item-selection-view group) #$YES)
-                  (set-selected self (group-name group) :resign nil)
-                  (setf (selected-item-name group) (item-name item)))
+                  ;(set-selected self (group-name group) :resign nil :highlight nil)
+                  ;(setf (is-highlighted group) nil)
+                  (setf (selected-item-name group) (item-name item) ))
                 (#/setEditable: (text-view item) #$YES))
               (progn
                 (#/setEditable: (text-view item) #$NO)
@@ -676,6 +703,8 @@
         (progn 
           ;(#/setEditable: (text-view item) #$NO)
           (setf (selected-item-name group) nil)
+          (#/setHidden: (selection-view group) #$YES)
+          (setf (is-highlighted group) nil)
           (if (item-selection-view group)
             (#/setHidden: (item-selection-view group) #$YES))))
       (incf i)))

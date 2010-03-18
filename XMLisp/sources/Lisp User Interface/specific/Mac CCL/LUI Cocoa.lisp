@@ -282,6 +282,11 @@
   (map-subviews Self #'(lambda (View) (set-size View (width View) (height View)))))
 
 
+(defmethod SET-SIZE-ONCE ((Self scroll-view) W H)
+  
+  ;;  (format t "~%size ~A, ~A" W H)
+  ;; need to propagate sizing to subviews: not likely to effect their sizes but needs to be done at least once
+  (map-subviews Self #'(lambda (View) (set-size View (width View) (height View)))))
       
 
 ;**********************************
