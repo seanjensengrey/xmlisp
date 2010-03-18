@@ -166,10 +166,7 @@
   ;; to make the code sharable for drag and drop we need to do the less efficial way
   ;; reinitializing the quadric every time we draw. Overhead is <= 10%
   (gluDeleteQuadric (quadric Self))
-  (setf (quadric Self) nil)
-  (call-next-method))
-
-
+  (setf (quadric Self) nil))
 
 ;_______________________________________
 ;  Cube                                 |
