@@ -20,7 +20,7 @@
 (in-package :lui)
 
 (export '(sizeof make-vector with-vector with-vector-of-size dispose-vector 
-                 make-byte-vector get-byte set-byte make-vector-of-size get-long))
+                 make-byte-vector get-byte set-byte make-vector-of-size get-long SET-BYTE-VECTOR))
 
 ;;______________________________________________________________
 ;; Universally Unique Identifier (UUID)                         |
@@ -107,6 +107,21 @@
     (dolist (Value Values &Vector)
       (setf (%get-byte &Vector Index) Value)
       (incf Index))))
+
+
+(defun SET-BYTE-VECTOR (Vector &rest Values) "
+  in:  Vector *byte, &rest Values list of byte.
+  out: Vector *byte.
+  Set the bytes of vector to new values."
+ (declare (dynamic-extent Values))
+ (when (> (length Values) (sizeof Vector))
+   (error "out of range"))
+ (let ((Offset 0))
+   (declare (fixnum Offset) 
+            (optimize (speed 3) (safety 0)))
+   (dolist (Value Values Vector)
+     (setf (%get-byte Vector Offset) Value)
+     (incf Offset))))
   
 
 (defun DISPOSE-VECTOR (Vector) "
