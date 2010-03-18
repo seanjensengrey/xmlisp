@@ -35,7 +35,7 @@
     <sphere x="3.0" texture="earth.png"/>
     <cube size="3.0" z="-3.5" texture="crate.png"/>
     <cube x="5" roll="45.0"/>
-    <sky-dome pitch="90"/>
+    <sky-dome pitch="-90"/>
   </agent-3d-view>
 </chatty-window>
 
