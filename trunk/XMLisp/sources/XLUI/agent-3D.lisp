@@ -415,8 +415,8 @@
                 (>= (abs (- y (y-start (drag-and-drop-handler Self)))) *Drag-Beging-Distance*))
         (setf (drag-proxy-window (drag-and-drop-handler Self))
               (make-instance 'drag-proxy-window
-                :x (+ (x Self) (x (window Self)))
-                :y (+ (y Self) (y (window Self)))
+                :x (+ (window-x Self) (x (window Self)))
+                :y (+ (window-y Self) (y (window Self)))
                 :width (width Self)
                 :height (height Self)
                 :use-global-glcontext t
@@ -424,8 +424,8 @@
     (when (drag-proxy-window (drag-and-drop-handler Self))
       (dragged-to
        (drag-and-drop-handler Self)
-       (+ x (x Self) (x (window Self)))
-       (+ y (y Self) (y (window Self))))))
+       (+ x (window-x Self) (x (window Self)))
+       (+ y (window-y Self) (y (window Self))))))
    ;; NOT dragging (probably camera control)
    (t
     (call-next-method))))
