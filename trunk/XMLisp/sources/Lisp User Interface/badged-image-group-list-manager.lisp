@@ -31,6 +31,7 @@
    (group-image :accessor group-image :initform nil :initarg :group-image)
    (is-disclosed :accessor is-disclosed :initform nil )
    (is-selected :accessor is-selected :initform nil :initarg :is-selected )
+   (is-highlighted :accessor is-highlighted :initform nil :initarg :is-highlighted)
    (group-items :accessor group-items :initform nil :initarg :group-items)
    (item-view :accessor item-view :initform nil :documentation "A reference to the view that contains this groups items")
    (group-view :accessor group-view :initform nil :documentation "A reference to the view that contains this group")
