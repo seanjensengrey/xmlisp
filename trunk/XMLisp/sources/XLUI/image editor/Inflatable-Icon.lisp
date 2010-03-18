@@ -89,9 +89,6 @@
 
 (defmethod FINISHED-READING :after ((Self inflatable-icon) Stream)
   (declare (ignore Stream))
-
-  (print "finished-reading :after")
-
   ;; no point in storing connectors: generate them in the right cases
   (case (surfaces Self)
     (front-and-back-connected (compute-connectors Self)))
@@ -102,8 +99,6 @@
 
 (defmethod MAKE-IMAGE-FROM-ICON ((Self inflatable-icon))
   ;; convert the icon into an RGBA image and initialize the altitude array
-  (format t "~%~%TEXTURE-FILE: ~A~%~%" (texture-file (part-of Self) (icon Self)))
-  
   (when (part-of Self)
     (when (texture-file (part-of Self) (icon Self))
       (setf (auto-compile Self) t)
