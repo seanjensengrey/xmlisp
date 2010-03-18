@@ -36,7 +36,7 @@
 (export '(create-image-from-file 
           fill-buffer
           rgba-image-red rgba-image-green rgba-image-blue rgba-image-alpha
-          set-image-rgba))
+          set-image-rgba ZERO-ALPHA-32BIT-COLOR-P))
 
 
 (defun FLIP-VERTICAL-BUFFER (Buffer Number-of-Bytes Bytes-per-Row) "
@@ -143,6 +143,13 @@
    (setf (%get-byte Image (+ Index 1)) G)
    (setf (%get-byte Image (+ Index 2)) B)
    (setf (%get-byte Image (+ Index 3)) A)))
+
+
+(defun ZERO-ALPHA-32BIT-COLOR-P (Color) "
+  in:  Color pointer to 32 RGBA color value.
+  out: is-zero boolean.
+  If the alpha of the color is zero the color is invisible."
+  (zerop (%get-byte Color 3)))
 
 
 
