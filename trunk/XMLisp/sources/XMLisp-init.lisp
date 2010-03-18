@@ -57,6 +57,17 @@
 
 (load "lui:sources;OpenGL;specific;Mac CCL;OpenGL-interface")
 
+
+;****** XMLisp
+
+(defpackage :XML
+  (:export "XML-SERIALIZER"))
+
+(load "lui:sources;XMLisp;XMLisp")
+
+;; temporarily set xmlisp package to only be :xml to avoid confusion with xml-like structures in Cocoa
+(setf xml::*XMLisp-Packages* (list (find-package :xml)))
+
 ;;****** LUI
 
 (defpackage :LUI
@@ -81,7 +92,7 @@
    "LABEL-CONTROL" "TEXT" "ALIGN"
    "EDITABLE-TEXT-CONTROL"
    "VALUE"
-   "IMAGE-CONTROL" "SRC" "FILE" "IN-CLUSTER"
+   "IMAGE-CONTROL" "SRC" "SOURCE" "IN-CLUSTER" ;; "FILE"->"SOURCE"
    "RADIO-BUTTON-CONTROL"
    "IMAGE-BUTTON-CLUSTER-CONTROL"
    "IMAGE-BUTTON-CLUSTER" "CHANGE-CLUSTER-SELECTIONS"
@@ -122,7 +133,9 @@
    ;; badged image
    "BADGED-IMAGE-GROUP-LIST-MANAGER-VIEW" "ADD-GROUP"  "ADD-GROUP-ITEM" "DELETE-GROUP" "DELETE-GROUP-ITEM" "SELECTED-GROUP" "SELECTED-GROUP-ITEM" "SELECT-GROUP" "SELECT-GROUP-ITEM"
    "PROJECT-MANAGER-REFERENCE" "AGENT-GALLERY-VIEW"
-   ))
+   )
+  (:import-from "XML"
+                "FILE"))
 
 
 
@@ -160,13 +173,9 @@
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;pop-up-image-menu-cocoa")
 
 
+;; add :xlui package
+(setf xml::*XMLisp-Packages* (append xml::*XMLisp-Packages* (list (find-package :xlui))))
 
-;****** XMLisp
-
-(defpackage :XML
-  (:export "XML-SERIALIZER"))
-
-(load "lui:sources;XMLisp;XMLisp")
 
 
 ;****** XLUI
@@ -176,6 +185,8 @@
   ;; import MOP
   (:import-from "CCL"
                 "SLOT-DEFINITION-NAME" "SLOT-DEFINITION-TYPE")
+  (:import-from "XML"
+                "FILE")
   (:export "INFLATABLE-ICON"))
 
 
