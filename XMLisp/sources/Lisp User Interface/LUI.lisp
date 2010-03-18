@@ -777,11 +777,11 @@ after any of the window controls calls stop-modal close window and return value.
     :height 0))
 
 
-(defgeneric FILE (image-control)
+(defgeneric SOURCE (image-control)
   (:documentation "If the src is local return a file specification"))
 
 
-(defmethod FILE ((Self image-control))
+(defmethod SOURCE ((Self image-control))
   (if (path self)
     (native-path (path self) (src Self))
     (native-path "lui:resources;images;" (src Self))))
