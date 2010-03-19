@@ -276,6 +276,7 @@
 
 
 (defmethod SET-SIZE ((Self scroll-view) W H)
+  (declare (ignore W H))
   (call-next-method)
   ;;  (format t "~%size ~A, ~A" W H)
   ;; need to propagate sizing to subviews: not likely to effect their sizes but needs to be done at least once
@@ -283,7 +284,7 @@
 
 
 (defmethod SET-SIZE-ONCE ((Self scroll-view) W H)
-  
+  (declare (ignore W H))
   ;;  (format t "~%size ~A, ~A" W H)
   ;; need to propagate sizing to subviews: not likely to effect their sizes but needs to be done at least once
   (map-subviews Self #'(lambda (View) (set-size View (width View) (height View)))))
@@ -489,6 +490,7 @@
   (let ((Code (in-main-thread () 
                 (#/runModalForWindow: (#/sharedApplication ns:ns-application)
                                       (native-window Self)))))
+    (declare (ignore Code))
     ;; ignore Code for now
     (in-main-thread () (#/close (native-window Self)))
     (case *Run-Modal-Return-Value*
@@ -1267,7 +1269,6 @@
 ; Show PopUp                       |
 ;__________________________________/
 ;(export '(show-string-popup))
-
 
 
 (defun show-string-popup (window list)
