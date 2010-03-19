@@ -410,10 +410,12 @@
       (let ((Window (make-instance 'native-window
                         :lui-window Self
                         :with-content-rect (ns:make-ns-rect 0 0 (width Self) (height Self))
-                        :style-mask (logior (if (title Self) #$NSTitledWindowMask 0)
-                                            (if (closeable Self) #$NSClosableWindowMask 0)
-                                            (if (resizable Self) #$NSResizableWindowMask 0)
-                                            (if (minimizable Self) #$NSMiniaturizableWindowMask 0))
+                        :style-mask (if (borderless Self)
+                                      0
+                                      (logior (if (title Self) #$NSTitledWindowMask 0)
+                                              (if (closeable Self) #$NSClosableWindowMask 0)
+                                              (if (resizable Self) #$NSResizableWindowMask 0)
+                                              (if (minimizable Self) #$NSMiniaturizableWindowMask 0)))
                         :backing #$NSBackingStoreBuffered
                         :defer t)))
         (setf (native-window Self) Window)  ;; need to have this reference for the delegate to be in place
