@@ -270,6 +270,7 @@
 
 
 (defmethod LAYOUT ((Self native-badged-image-group-list-manager-view))
+  
   (let ((y 0))
     
     (dolist (group (groups (lui-view self)))
@@ -278,6 +279,11 @@
           (incf group-height (* (row-height (lui-view self)) (length (group-items group)))))
         (ns:with-ns-size (Size (width (lui-view self)) group-height)
           (#/setFrameSize:  (group-view group ) Size))
+        (ns:with-ns-size (Size (width (lui-view self)) (NS:NS-RECT-HEIGHT (#/frame (item-view group))))
+          (#/setFrameSize:  (item-view group ) Size))
+         #| (dolist (item-view (item-detection-views group))
+            (#/setFrameSize:  item-view Size))|#
+          
         (ns:with-ns-point (Point 0 y)
           (#/setFrameOrigin: (group-view group ) Point ))
         (if (is-disclosed group)
@@ -292,7 +298,8 @@
         ; #-cocotron (setf (width (lui-view self)) (NS:NS-RECT-WIDTH (#/frame (#/superview (#/superview (native-view self))))))
         (ns:with-ns-point (Point (NS:NS-RECT-X (#/frame (group-view group))) (+ 0  (NS:NS-RECT-Y (#/frame (group-view group)))) )
           (#/setFrameOrigin: (selection-view group) Point ))
-        
+        (print "ROW HEIGHT")
+        (print (row-height (lui-view self)))
         (ns:with-ns-size (Size (width (lui-view self)) (row-height (lui-view self)))
           (#/setFrameSize: (selection-view group) Size ))
         (#/setNeedsDisplay: (selection-view group) #$YES)
@@ -314,7 +321,7 @@
     (if group
       (unless (selected-item-name group)
         (if (item-selection-view group)
-        (#/setHidden: (item-selection-view group) #$YES)))))
+          (#/setHidden: (item-selection-view group) #$YES)))))
   (let ((subviews (gui::list-from-ns-array (#/subviews self))))
     (dolist (subview subviews)
       (#/setNeedsDisplay: subview #$YES)
@@ -352,22 +359,32 @@
   )
 
 (defmethod SET-SIZE ((Self badged-image-group-list-manager-view) Width Height)
-  (print "HMM")
-  (call-next-method self width height))
-#|
-  ;  #-cocotron(set-size (lui-view (#/superview (#/superview (native-view self)))) (width (lui-view (#/superview (#/superview (native-view self))))) (height (lui-view (#/superview (#/superview (native-view self))))))
+  
+  (call-next-method self width height)
+
+  ; #-cocotron(set-size (lui-view (#/superview (#/superview (native-view self)))) (width (lui-view (#/superview (#/superview (native-view self))))) (height (lui-view (#/superview (#/superview (native-view self))))))
   
   (call-next-method self width height)
   #-cocotron (setf (width self) (width (lui-view (#/superview (#/superview (native-view self))))))
-  (print "SET SIZE")
-  (print (width self))
-  (print (width (lui-view (#/superview (#/superview (native-view self))))))
+  ;(print "SET SIZE")
+  ;(print (width self))
+  ;(print (width (lui-view (#/superview (#/superview (native-view self))))))
+  ;(inspect  (item-selection-view (first (groups self))))
   (dolist (group (groups  self))
-    (ns:with-ns-size (Size (width  self) (NS:NS-RECT-HEIGHT (#/frame (group-view group))))
+    (ns:with-ns-size (Size (width self) (NS:NS-RECT-HEIGHT (#/frame (group-view group))))
+          (#/setFrameSize:  (group-view group ) Size))
+    (ns:with-ns-size (Size (width  self) (NS:NS-RECT-HEIGHT (#/frame (item-view group))))
+      (#/setFrameSize:  (item-view group ) Size))
+    (ns:with-ns-size (Size (width  self) (row-height self))
       (#/setFrameSize: (selection-view group) Size )
-      (#/setFrameSize: (item-selection-view group) Size ))
-    (#/setNeedsDisplay: (selection-view group) #$YES)
-    (#/setNeedsDisplay: (item-selection-view group) #$YES)
+      (if (item-selection-view group)
+        (progn
+          (print "SET FRAME ITEM")
+          (#/setFrameSize: (item-selection-view group) Size )
+          (#/setNeedsDisplay: (item-selection-view group) #$YES))
+      ))
+    ;(#/setNeedsDisplay: (selection-view group) #$YES)
+    ;(#/setNeedsDisplay: (item-selection-view group) #$YES)
     
    ; (ns:with-ns-size (Size (width  self) (NS:NS-RECT-HEIGHT (#/frame (group-view group))))
     ;  (#/setFrameSize: (item-selection-view group) Size ))
@@ -382,7 +399,7 @@
   (#/setNeedsDisplay: (native-view self) #$YES)
   
   )
-|#
+
 (defmethod RESIZE-HEIGHT-OF-VIEW ((Self badged-image-group-list-manager-view))
   (let ((height 0))
     (dolist (group (groups self))
@@ -644,7 +661,7 @@
             (ns:with-ns-point (Point (NS:NS-RECT-X (#/frame (group-view group))) (+ 0  (NS:NS-RECT-Y (#/frame (group-view group)))) )
               (#/setFrameOrigin: (selection-view group) Point ))
             ;(ns:with-ns-size (Size (NS:NS-RECT-WIDTH (#/frame (group-view group))) (+ (row-height self) selection-offset))
-            (ns:with-ns-size (Size (NS:NS-RECT-WIDTH (#/frame (group-view group)))  (row-height self) ) 
+            (ns:with-ns-size (Size (width self)  (row-height self) ) 
               (#/setFrameSize: (selection-view group) Size )))
           (if (is-highlighted group)
             (#/setHidden: (selection-view group) #$NO))
