@@ -335,6 +335,7 @@ Call with most important parameters. Make other paramters accessible through *Cu
    (minimizable :accessor minimizable :initform t :initarg :minimizable :type boolean :documentation "has control to minimize into dock/taskbar")
    (resizable :accessor resizable :initform t :initarg :resizable :type boolean :documentation "has resize control")
    (closeable :accessor closeable :initform t :initarg :closeable :type boolean :documentation "has close control")
+   (borderless :accessor borderless :initform nil :initarg :borderless :type boolean :documentation "has border including title and other decoration")
    (window-needs-saving-p :accessor window-needs-saving-p :initform nil :type boolean :documentation "true if window contains objects that neeed saving")
    (full-screen :accessor full-screen :initform nil :initarg :full-screen :type boolean :documentation "is in full screen mode")
    (do-show-immediately :accessor do-show-immediately :initarg :do-show-immediately :initform t :documentation "if true will show window when creating instance")
