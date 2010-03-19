@@ -533,6 +533,31 @@
 ;__________________________________
 ; Window query functions            |
 ;__________________________________/
+(defun ORDERED-WINDOW-INDEX (Window)
+  #-:cocotron 
+  (#/orderedIndex (native-window Window))
+  #+:cocotron
+   (let ((i 0)(window-array  (#/orderedWindows (#/sharedApplication ns::ns-application)))) 
+     (dotimes (i (#/count All-Windows))
+       (let ((array-window (#/objectAtIndex: window-array i)))
+         (if (equal window array-window)
+           (return-from ordered-window-index i))
+       (incf i))
+     (return-from ordered-window-index nil))))
+
+#|
+(defun ORDERED-WINDOW-INDEX (Window)
+  #-:cocotron 
+  (#/orderedIndex (native-window Window))
+  #+:cocotron
+   (let ((i 0)(window-list (gui::list-from-ns-array  (#/orderedWindows (#/sharedApplication ns::ns-application)))))
+     
+     (dolist (array-window window-list)
+       (if (equal window array-window)
+         (return-from ordered-window-index i))
+       (incf i))
+     (return-from ordered-window-index nil)))
+|#
 
 (defun FIND-WINDOW-AT-SCREEN-POSITION (screen-x screen-y &key Type) "
   Return a LUI window at screen position x, y.
@@ -541,7 +566,7 @@
   (multiple-value-bind (x y) (lui-screen-coordinate screen-x screen-y)
     (let ((Lui-Windows nil)
           (All-Windows (#/windows (#/sharedApplication ns::ns-application))))
-      (dotimes (i (#/count All-Windows) (first (sort Lui-Windows #'< :key #'(lambda (w) (#/orderedIndex (native-window w))))))
+      (dotimes (i (#/count All-Windows) (first (sort Lui-Windows #'< :key #'(lambda (w) (ordered-window-index (native-window w))))))
         (let ((Window (#/objectAtIndex: All-Windows i)))
           (when (and 
                  (#/isVisible Window)
