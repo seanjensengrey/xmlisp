@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project-window x="100" y="50" width="1000" height="600">
+<project-window title="project" track-mouse="true" x="100" y="50" width="1000" height="600">
   <row align="stretch" valign="stretch">
     <column align="stretch" valign="stretch" flex="1" width="250">
       <label text="Agents" align="center"/>
