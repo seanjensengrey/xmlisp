@@ -59,8 +59,8 @@
 (defgeneric CLEAR-BACKGROUND (opengl-view)
   (:documentation "Set background color and clear all necessary buffers (e.g., color, alpha, stencil, depth)"))
 
-(defgeneric INIT (opengl-view)
-  (:documentation "Called before drawing for the first time"))
+(defgeneric PREPARE-OPENGL (opengl-view)
+  (:documentation "Called before drawing for the first time. No need to use with-glcontext"))
 
 (defgeneric ANIMATE (opengl-view Time)
   (:documentation "Update content but do not draw/display. Time is in micro seconds. Use time to implement frame rate independent animation"))
