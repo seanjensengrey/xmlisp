@@ -12,7 +12,8 @@
    (world2 :accessor world2 :initform nil)
    (image :accessor image :initform nil)))
 
-(defmethod initialize-instance :after ((Self game-of-life) &key)
+
+(defmethod INITIALIZE-INSTANCE :after ((Self game-of-life) &key)
   (let ((image (make-vector-of-size (* 128 128 4))))
     (dotimes (i (* 128 128))
       (set-byte image 40 (+ (* 3 i) 0))
@@ -20,12 +21,11 @@
       (set-byte image 40 (+ (* 3 i) 2)))
     (setf (image Self) image)))
 
+
 (defmethod RANDOMIZE ((Self game-of-life))
   (dotimes (i (size Self))
     (dotimes (j (size Self))
-      (setf (aref (world1 Self) i j) (random 2))))
-  (with-glcontext Self
-    (draw Self)))
+      (setf (aref (world1 Self) i j) (random 2)))))
 
 
 (defmethod COUNT-LIFE ((Self game-of-life) i j)
