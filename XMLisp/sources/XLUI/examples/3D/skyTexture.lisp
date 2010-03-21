@@ -12,7 +12,7 @@
   ())
 
 
-(defmethod INIT ((Self sky-texture-rect))
+(defmethod PREPARE-OPENGL ((Self sky-texture-rect))
   ;; GL setup
   (glClearColor 0.0 0.0 0.0 0.0)
   (glShadeModel gl_smooth)

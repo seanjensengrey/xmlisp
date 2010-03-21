@@ -256,7 +256,7 @@
                    near="0.005" far="2000.0" azimuth="0.0" zenith="0.0"/>
                    (find-package :xlui)))
   (setf (view (camera Self)) Self)
-  (init Self)
+  (prepare-opengl Self)
   ;; create the texture
   (new-image Self (img-width Self) (img-height Self)))
 
@@ -290,7 +290,7 @@
                    near="0.005" far="2000.0" azimuth="0.0" zenith="0.0"/>
                    (find-package :xlui)))
   (setf (view (camera Self)) Self)
-  (init Self)
+  (prepare-opengl Self)
   ;; create the texture
   (load-image Self "ad3d:resources;images;redlobster.png"))
 
@@ -307,7 +307,7 @@
   (:documentation "3d inflated icon editor"))
 
 
-(defmethod INIT ((Self inflated-icon-editor))
+(defmethod PREPARE-OPENGL ((Self inflated-icon-editor))
   (call-next-method)
   (glShadeModel gl_smooth)
   ;; define material

@@ -177,7 +177,7 @@
     (#\d (print (decf (rotation-speed Self) 5)))))
 
 
-(defmethod INIT ((Self gear-demo))
+(defmethod PREPARE-OPENGL ((Self gear-demo))
   (glClearColor 0.5 0.5 0.5 1.0)
   (glShadeModel gl_smooth)
   ;; define material

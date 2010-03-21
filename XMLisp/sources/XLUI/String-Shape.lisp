@@ -589,7 +589,7 @@
   ((ss-content :initform nil :accessor ss-content)))
 
 
-(defmethod INIT ((Self opengl-text))
+(defmethod PREPARE-OPENGL ((Self opengl-text))
   (call-next-method)
   ;; GL setup
   (glClearColor 1.0 1.0 1.0 0.0)

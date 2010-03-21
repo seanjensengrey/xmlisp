@@ -8,7 +8,7 @@
   ((iterations :accessor iterations :initform 5000 :type integer)))
 
 
-(defmethod INIT ((Self sierpinski))
+(defmethod PREPARE-OPENGL ((Self sierpinski))
   (glColor3f 1.0 0.0 0.0)
   ;; camera
   (aim-camera (camera Self) :eye-z 1000.0))

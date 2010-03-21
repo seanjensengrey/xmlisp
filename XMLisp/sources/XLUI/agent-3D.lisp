@@ -52,8 +52,8 @@
   (:documentation "window rendering proxy representation of agent to be dragged"))
 
 
-(defmethod INIT ((Self drag-proxy-window))
-  (init (source-view (drag-and-drop-handler Self))))
+(defmethod PREPARE-OPENGL ((Self drag-proxy-window))
+  (prepare-opengl (source-view (drag-and-drop-handler Self))))
 
 
 (defmethod LUI::DRAW-RECT ((Self drag-proxy-window))
@@ -228,7 +228,7 @@
     (animate Agent Time)))
 
 
-(defmethod INIT ((Self agent-3d-view))
+(defmethod PREPARE-OPENGL ((Self agent-3d-view))
   ;; GL setup
   (glClearColor 1.0 1.0 1.0 0.0)
   (glShadeModel GL_SMOOTH)

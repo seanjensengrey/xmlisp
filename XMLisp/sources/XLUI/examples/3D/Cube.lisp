@@ -20,11 +20,9 @@
    (rotation-speed :accessor rotation-speed :initform 0.0 :documentation "degrees per second")))
 
 
-(defmethod INIT ((Self globe-view))
+(defmethod PREPARE-OPENGL ((Self globe-view))
   ;; GL setup
   (glClearColor 0.0 0.0 0.0 0.0)
-
-
   ;; camera
   (aim-camera (camera Self) :eye-z 10.0 :near 1.0)
   (start-animation self))

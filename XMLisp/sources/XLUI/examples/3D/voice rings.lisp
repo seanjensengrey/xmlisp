@@ -12,7 +12,7 @@
   (:documentation "window with aninmation to show the location of a sound or speech source"))
 
 
-(defmethod INIT ((Self ring-view))
+(defmethod PREPARE-OPENGL ((Self ring-view))
   ;; GL setup
   (glClearColor 0.0 0.0 0.0 0.0)
   (glShadeModel GL_SMOOTH)

@@ -67,7 +67,7 @@
 
 
 (objc:defmethod (#/prepareOpenGL :void) ((Self native-opengl-view))
-  (init (lui-view Self)))
+  (prepare-opengl (lui-view Self)))
 
 
 ;; BIG MISTERY: not clear why this method needs to be here. 

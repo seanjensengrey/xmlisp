@@ -108,7 +108,7 @@
   (glEnd))
 
 
-(defmethod INIT ((Self opengl-view))
+(defmethod PREPARE-OPENGL ((Self opengl-view))
   ;; nothing
   )
 

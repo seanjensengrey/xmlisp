@@ -39,7 +39,7 @@
   (#/set (#/clearColor ns:ns-color))
   ;; (#/set (#/redColor ns:ns-color))
   (#_NSRectFill (#/bounds Self))
-  (init (lui-window Self)))
+  (prepare-opengl (lui-window Self)))
 
 
 (objc:defmethod (#/drawRect: :void) ((Self native-transparent-opengl-view) (rect :<NSR>ect))
@@ -148,7 +148,7 @@
     (funcall (display-function Self))))
 
 
-(defmethod INIT ((Self transparent-opengl-window))
+(defmethod PREPARE-OPENGL ((Self transparent-opengl-window))
   ;; (print "init")
   )
 
