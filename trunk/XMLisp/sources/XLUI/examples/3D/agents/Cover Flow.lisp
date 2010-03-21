@@ -19,7 +19,7 @@
   ((value :accessor value :initform 0.0)))
 
 
-(defmethod INIT ((Self cover-flow-view))
+(defmethod PREPARE-OPENGL ((Self cover-flow-view))
   ;; GL setup
   (glClearColor 0.0 0.0 0.0 0.0)
   (glShadeModel GL_SMOOTH)

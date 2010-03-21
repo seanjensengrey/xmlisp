@@ -9,25 +9,9 @@
    (slices :accessor slices :initform 10 :type integer)))
 
 
-(defmethod INIT ((Self circle-view))
-  ;; (with-glcontext Self  )
+(defmethod PREPARE-OPENGL ((Self circle-view))
+  (glColor3f 1.0 0.0 0.0))
 
-#|  on OS X Leopard uncommenting will result in a recursion of #/run 
- 
-> Error: Stack overflow on temp stack.
-> While executing: CCL::CHECK-NS-EXCEPTION, in process Initial(0).
-> Type :POP to abort, :R for a list of available restarts.
-> Type :? for other options.
-1 > :b
- (BFFFF720) : 0 (CHECK-NS-EXCEPTION #<A Foreign Pointer [stack-allocated] (:* #) #xB0C10>) 336
- (BFFFF730) : 1 (FUNCALL #'#<(:OBJC-DISPATCH NEXTSTEP-FUNCTIONS:|run|)> ???) 392
- (BFFFF750) : 2 (FUNCALL #'#<(:OBJC-DISPATCH NEXTSTEP-FUNCTIONS:|run|)> ???) 640
- (BFFFF760) : 3 (EVENT-LOOP NIL) 280
-1 > 
-
-|#
-   )
- 
 
 (defmethod DRAW ((Self circle-view))
   (let ((delta (/ (* (float pi 0.0) 2.0) (slices Self))))

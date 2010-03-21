@@ -22,7 +22,7 @@
                             (0.8 0.8 0.8)))))
 
 
-(defmethod INIT ((Self benchmark))
+(defmethod PREPARE-OPENGL ((Self benchmark))
   ;; GL setup
   (glClearColor 0.0 0.0 0.0 1.0)
   (glcolor3f 1.0 1.0 1.0)

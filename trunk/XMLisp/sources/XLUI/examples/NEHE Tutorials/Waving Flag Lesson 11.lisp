@@ -7,12 +7,12 @@
 (in-package :xlui)
 
 
-(defclass flag-view (agent-3d-view)
+(defclass FLAG-VIEW (agent-3d-view)
   ()
   (:documentation "NEHE Lesson 11: Waving Flag"))
 
 
-(defmethod init  ((view flag-view))
+(defmethod PREPARE-OPENGL  ((view flag-view))
   ;; Back facing polygons are filled, while front facing are only outlined.
   ;; Apparently this is a setting of "personal preference" and the topic is more
   ;; fully discussedin the Red Book.
@@ -27,12 +27,12 @@
   (glPolygonMode GL_FRONT GL_LINE))
   
 
-(defclass flag (agent-3d)
+(defclass FLAG (agent-3d)
   ((wiggle-time :accessor wiggle-time :initarg :time-elapsed :initform 0 :documentation "time since last wiggle.")
    (points :accessor points :documentation "Points on the mesh of the texture that will be 'waved.'")))
 
 
-(defmethod initialize-instance :after ((self flag) &rest initargs)
+(defmethod INITIALIZE-INSTANCE :after ((self flag) &rest initargs)
   (declare (ignore initargs))
   (let ((arr (make-array '(45 45 3) :initial-element 0.0)))
     (dotimes (x 45)
@@ -43,7 +43,7 @@
     (setf (points self) arr)))
 
 
-(defmethod draw ((agent flag))
+(defmethod DRAW ((agent flag))
   (with-slots (points) agent
     (glEnable GL_TEXTURE_2D)
     (use-texture (view agent) "AmericanFlag.png")  ;;; image in /resources/textures/
@@ -74,7 +74,7 @@
         (setf (aref points 44 y 2) hold)))))
 
 
-(defmethod animate ((agent flag) dt)
+(defmethod ANIMATE ((agent flag) dt)
   ;; frame rate independent animation
   (incf (wiggle-time agent) dt)
   (when (> (wiggle-time agent) 0.02)

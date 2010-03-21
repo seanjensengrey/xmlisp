@@ -17,7 +17,7 @@
    (rotation-speed :accessor rotation-speed :initform 0.0 :documentation "degrees per second")))
 
 
-(defmethod INIT ((Self globe-view))
+(defmethod PREPARE-OPENGL ((Self globe-view))
   ;; GL setup
   (glClearColor 0.0 0.0 0.0 0.0)
   (glShadeModel GL_SMOOTH)

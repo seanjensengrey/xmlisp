@@ -211,7 +211,7 @@
    :eye-z 0.87))
   
 
-(defmethod INIT ((Self image-editor))
+(defmethod PREPARE-OPENGL ((Self image-editor))
   "Called when the image-editor is initialized."
   (glClearColor 0.0 0.0 0.0 0.0)
   ;; Alpha

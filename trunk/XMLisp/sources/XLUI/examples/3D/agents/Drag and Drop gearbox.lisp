@@ -177,7 +177,7 @@
 ;;______________________________________________
 ;; GUI                                          |
 ;;______________________________________________
-#|
+
 <gear-box-window title="Drag cogs from this window..." track-mouse="true" margin="0" x="10" y="50">
   <column align="stretch" valign="stretch">
     <row minimize="vertical" align="center">
@@ -218,7 +218,7 @@
   </column>
 </gear-box-window> )
 
-<gear-box-window title="Drag and Drop in one window" track-mouse="true" margin="0" x="10" y="50" height="800" width="500">
+<gear-box-window title="Drag and Drop in one window" track-mouse="true" margin="0" x="10" y="200" height="800" width="500">
   <column align="stretch" valign="stretch">
     <row minimize="vertical" align="center">
       <bevel-button text="start" action="start-action" width="55"/>
@@ -227,9 +227,9 @@
     <gear-view name="gear box" vflex="1">
       <camera eye-z="10" eye-x="2.0" eye-y="4.6" center-x="2.0" center-y="4.6"/>
       <sky-dome pitch="-90" />
+      <cog-mount-grid rows="10" columns="5"/>
       <cog texture="cog24.png" draggable="true" x="-2.0"/>
       <cog texture="cog24.png" draggable="true" x="-0.9" spin-right="true"/>
-      <cog-mount-grid rows="10" columns="5"/>
     </gear-view>
     <row minimize="vertical" align="stretch" valign="middle">
        <label text="speed" align="right" width="60"/>
@@ -238,6 +238,6 @@
     </row>
   </column>
 </gear-box-window>
-|#
+
 
 ;; (camera (view-named *Gears* "gear box"))

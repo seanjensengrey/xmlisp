@@ -40,7 +40,7 @@
           (unless (and (= di 0) (= dj 0)) (incf Sum (aref w i (mod (+ j dj) s)))))))))
 
 
-(defmethod INIT ((Self game-of-life))
+(defmethod PREPARE-OPENGL ((Self game-of-life))
   ;; OpenGL setup
   (glEnable GL_TEXTURE_2D)
   (glTexEnvi GL_TEXTURE_ENV GL_TEXTURE_ENV_MODE GL_MODULATE)

@@ -8,7 +8,7 @@
   ((points :accessor points :initform nil)))
 
 
-(defmethod INIT ((Self brownian-motion))
+(defmethod PREPARE-OPENGL ((Self brownian-motion))
   ;; Alpha
   (glEnable GL_BLEND)
   (glBlendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA)
