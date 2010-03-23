@@ -40,7 +40,7 @@
       (ccl::with-autorelease-pool
           (let ((Window (make-instance 'popup-window
                           :lui-window Self
-                          :with-content-rect (ns:make-ns-rect (- (x self) (window-offset-x self)) (- (y self) (window-offset-y self)) (width Self) (height Self))
+                          :with-content-rect (ns:make-ns-rect (- (x self) (window-offset-x self)) (- (screen-height nil) (+ (y self) (window-offset-y self))) (width Self) (height Self))
                           :style-mask 0
                           :backing #$NSBackingStoreBuffered
                           :defer t)))
