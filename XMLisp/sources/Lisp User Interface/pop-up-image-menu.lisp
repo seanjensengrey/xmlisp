@@ -75,6 +75,9 @@
    (get-x-grid-position self)
    (get-y-grid-position self)))
 
+
+(defmethod SELECTED-IMAGE-NAME ((self pop-up-image-menu))
+  (elt (image-names self) (index-of-selection self)))
 ;;_______________________________
 ;; Direction Pop Up Menu         |
 ;;_______________________________
