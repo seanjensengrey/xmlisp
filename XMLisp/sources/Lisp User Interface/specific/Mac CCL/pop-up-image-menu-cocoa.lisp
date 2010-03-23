@@ -106,7 +106,7 @@
 
 (defun DISPLAY-POP-UP (List)
   (if (< 1 (length List))
-    (MAKE-POP-UP List)
+    (make-pop-up List)
     (warn "Cannot make a popup menu with an empty list")))
 
 
@@ -178,17 +178,5 @@
 
 (objc:defmethod (#/windowDidBecomeKey: :void) ((self popup-delegate) Notifaction)
    (declare (ignore Notifaction)))
-
-  
-;;_______________________________
-;; Direction Pop Up Menu         |
-;;_______________________________
-(defclass DIRECTIONAL-POP-UP-IMAGE-MENU (pop-up-image-menu)
-  ()
-  (:documentation "An image pop up menu that is used as a directional picker"))
-
-
-(defmethod image-names ((Self directional-pop-up-image-menu))
-  '("direction_north_west" "direction_north" "direction_north_east" "direction_west" "direction_center" "direction_east" "direction_south_west" "direction_south" "direction_south_east"))
 
     
