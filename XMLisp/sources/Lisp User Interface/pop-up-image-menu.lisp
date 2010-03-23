@@ -68,18 +68,18 @@
 ;; Direction Pop Up Menu         |
 ;;_______________________________
 
-(defclass DIRECTIONAL-POP-UP-IMAGE-MENU (pop-up-image-menu)
+(defclass DIRECTION-POP-UP-IMAGE-MENU (pop-up-image-menu)
   ()
   (:documentation "An image pop up menu that is used as a directional picker"))
 
 
-(defmethod IMAGE-NAMES ((Self directional-pop-up-image-menu))
+(defmethod IMAGE-NAMES ((Self direction-pop-up-image-menu))
   '("direction_north_west" "direction_north" "direction_north_east" "direction_west" "direction_center" "direction_east" "direction_south_west" "direction_south" "direction_south_east"))
 
 
 #| Example:
 
-(defparameter *Pop-Up-Menu* (make-instance 'directional-pop-up-image-menu :name-of-selection  "direction_north_west"))
+(defparameter *Pop-Up-Menu* (make-instance 'direction-pop-up-image-menu :name-of-selection  "direction_north_west"))
 
 (display-Pop-Up-menu *Pop-Up-Menu*)
 
