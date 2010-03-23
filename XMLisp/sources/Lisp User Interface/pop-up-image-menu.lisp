@@ -1,8 +1,8 @@
 (in-package :lui)
 
-;;_______________________________
-;; Pop Up Image Menu            |
-;;_______________________________
+;;*******************************
+;; Pop Up Image Menu            *
+;;*******************************
 
 (defclass POP-UP-IMAGE-MENU ()
   ((native-window :accessor native-window :initform nil)
@@ -23,13 +23,24 @@
   (:documentation "This class will pop up an an image menu that tries to display the given list of strings in a way that is as close to a square as possible"))
 
 
+;;_______________________________
+;; Specification                 |
+;;_______________________________
+
 (defgeneric DISPLAY-POP-UP-MENU (pop-up-image-menu)
   (:documentation "Pops up the menu and returns the value of the selected image"))
 
 
 (defgeneric IMAGE-NAMES (pop-up-image-menu)
-  (:documentation "Returns the list of strings that will be used by the menu"))
+  (:documentation "Returns the list of strings that will be used by the menu. Do not include file extensions, e.g. 'arrow' not 'arrow.png'"))
 
+
+(defgeneric SELECTED-ITEM-NAME (pop-up-image-menu)
+  (:documentation "Return the name of the image last selected"))
+
+;;_______________________________
+;; Implementation                |
+;;_______________________________
 
 (defmethod IMAGE-NAMES ((Self pop-up-image-menu))
   (images self))
