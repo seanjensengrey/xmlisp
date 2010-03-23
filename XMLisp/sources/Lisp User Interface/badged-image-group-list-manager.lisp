@@ -143,7 +143,7 @@
 
 
 (defmethod SELECT-GROUP ((Self badged-image-group-list-manager-view)group-name group-item-name)
-  (if (group-item-name
+  (if group-item-name
        (dolist (group (groups self))
          (setf (is-selected group) nil)
          (if (equal (group-name group) group-name)
@@ -157,7 +157,7 @@
                      (setf (selected-item-name group) (item-name item)))))))
            (setf (is-selected group) nil)
       )))
-    (set-selected self group-name)))
+    (set-selected self group-name))
 
 
 #|
