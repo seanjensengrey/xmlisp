@@ -120,7 +120,7 @@
       (unwind-protect 
           (progn
             (#/disableFlushWindow (native-window Self))
-            (#/makeKeyAndOrderFront: (native-window Self) nil)
+            #-cocotron (#/makeKeyAndOrderFront: (native-window Self) nil)
             (#/flushWindow (native-window Self))
             )
         (#/enableFlushWindow (native-window Self))))))

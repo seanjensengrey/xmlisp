@@ -455,9 +455,10 @@
 
 
 (defmethod ADD-GROUP ((Self badged-image-group-list-manager-view) group)
-
   (dolist (old-group (groups self))
-    (if (equal (first group) (group-name old-group))
+    (if (or
+         (equal (first group) (group-name old-group))
+         (equal (first group) (string-capitalize (group-name old-group))))
       (progn 
         (print "Cannot add group, a group with this name already exists")
         ;(warn "Cannot add group, a group with this name already exists")
@@ -655,14 +656,13 @@
             (#/setHidden: (item-selection-view group) #$YES))
           (setf (is-selected group) "YES")
           (setf (is-highlighted group) highlight)
-          (let ((selection-offset 0))          
-            (if (is-disclosed group)
-              (setf selection-offset (* (row-height self) (length (group-items group)))))
+                    
+            
             (ns:with-ns-point (Point (NS:NS-RECT-X (#/frame (group-view group))) (+ 0  (NS:NS-RECT-Y (#/frame (group-view group)))) )
               (#/setFrameOrigin: (selection-view group) Point ))
             ;(ns:with-ns-size (Size (NS:NS-RECT-WIDTH (#/frame (group-view group))) (+ (row-height self) selection-offset))
             (ns:with-ns-size (Size (width self)  (row-height self) ) 
-              (#/setFrameSize: (selection-view group) Size )))
+              (#/setFrameSize: (selection-view group) Size ))
           (if (is-highlighted group)
             (#/setHidden: (selection-view group) #$NO))
           (#/setEditable:  (text-view group) #$YES)

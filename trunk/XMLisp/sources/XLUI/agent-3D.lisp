@@ -62,7 +62,8 @@
   (with-glcontext (source-view (drag-and-drop-handler Self))
     (with-glcontext Self
       (clear-background Self)
-      (draw Self))))
+      (draw Self)
+      )))
 
 
 (defmethod DISPLAY ((Self drag-proxy-window))
