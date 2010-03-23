@@ -324,21 +324,16 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
 ;;*           Pop ups                        *
 ;;********************************************
 
-(defmethod SHOW-STRING-MENU ((w application-window) (Button button))
-  (print (show-string-popup w '("hello" "hello2" "hello3"))))
+(defmethod POP-UP-IMAGE-MENU-AND-DISPLAY ((Window application-window) (Button button))
+  (setf (text (view-named Window "direction"))
+        (display-pop-up-menu (make-instance 'direction-pop-up-image-menu))))
+                       
 
-
-;;General Pop Up Test
-(print (display-pop-up '("direction_north_west.png" "direction_north_west.png"   "direction_north_east.png")))
-
-;; Directional Picker Test
-(defparameter *Pop-Up-Menu* (make-instance 'directional-pop-up-image-menu :name-of-selection  "direction_north_west"))
-
-
-<application-window title="Currency Converter" width="300" height="180">
+<application-window title="DIRECTION-POP-UP-IMAGE-MENU" width="300" height="100">
   <column align="stretch" valign="stretch" padding="9">
-    <row align="stretch" minimize="vertical" valign="bottom">
-      <button text="make-event" action="pop-up-image-menu-now" width="100" default-button="true"/>
+    <row align="stretch" minimize="vertical" valign="middle">
+      <button text="pop up menu" action="pop-up-image-menu-and-display" width="120" default-button="true"/>
+      <label text="<undefined>" name="direction" width="200"/>
     </row>
   </column>
 </application-window>
