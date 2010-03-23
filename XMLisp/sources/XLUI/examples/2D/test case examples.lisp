@@ -278,29 +278,6 @@ The lawyer said, 'I don't mind all this attention, but what makes me so special?
 St. Peter replied, 'Well, I've added up all the hours for which you billed your clients, and by my calculation you must be about 193 years old!'"/>
 </application-window> 
 
-;; Popup Tests
-
-
-(defmethod show-string-menu ((w application-window) (Button button))
-  (print (show-string-popup w '("hello" "hello2" "hello3"))))
-
-;;General Pop Up Test
-(print (display-pop-up '("direction_north_west.png" "direction_north_west.png"   "direction_north_east.png"  ))) 
-
-;; Directional Picker Test
-
-(defparameter *Pop-Up-Menu* (make-instance 'directional-pop-up-image-menu :name-of-selection  "direction_north_west"))
-
-
-
-
-<application-window title="Currency Converter" width="300" height="180">
-  <column align="stretch" valign="stretch" padding="9">
-    <row align="stretch" minimize="vertical" valign="bottom">
-      <button text="make-event" action="pop-up-image-menu-now" width="100" default-button="true"/>
-    </row>
-  </column>
-</application-window>
 
 ;; Editable-Text
 
@@ -343,6 +320,28 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
   </column>
 </application-window>
 
+;;********************************************
+;;*           Pop ups                        *
+;;********************************************
+
+(defmethod SHOW-STRING-MENU ((w application-window) (Button button))
+  (print (show-string-popup w '("hello" "hello2" "hello3"))))
+
+
+;;General Pop Up Test
+(print (display-pop-up '("direction_north_west.png" "direction_north_west.png"   "direction_north_east.png")))
+
+;; Directional Picker Test
+(defparameter *Pop-Up-Menu* (make-instance 'directional-pop-up-image-menu :name-of-selection  "direction_north_west"))
+
+
+<application-window title="Currency Converter" width="300" height="180">
+  <column align="stretch" valign="stretch" padding="9">
+    <row align="stretch" minimize="vertical" valign="bottom">
+      <button text="make-event" action="pop-up-image-menu-now" width="100" default-button="true"/>
+    </row>
+  </column>
+</application-window>
 
 ;;****************************************************
 ;; IMAGES  (assumed to be in LUI:resources;images;)  *
