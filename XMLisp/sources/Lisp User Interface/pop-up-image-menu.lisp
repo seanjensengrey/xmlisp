@@ -1,4 +1,5 @@
 (in-package :lui)
+
 ;;_______________________________
 ;; Pop Up Image Menu            |
 ;;_______________________________
@@ -59,45 +60,28 @@
 
 
 (defmethod GET-SELECTION-INDICES ((Self pop-up-image-menu))
-    (values 
-     (get-x-grid-position self)
-     (get-y-grid-position self)))
-
-#| Example:
-
-(defparameter *Pop-Up-Menu* (make-instance 'directional-pop-up-image-menu :name-of-selection  "direction_north_west.png"))
-
-(display-Pop-Up-menu *Pop-Up-Menu* )
-
-|#
-
+  (values 
+   (get-x-grid-position self)
+   (get-y-grid-position self)))
 
 ;;_______________________________
 ;; Direction Pop Up Menu         |
 ;;_______________________________
+
 (defclass DIRECTIONAL-POP-UP-IMAGE-MENU (pop-up-image-menu)
   ()
   (:documentation "An image pop up menu that is used as a directional picker"))
 
 
-(defmethod image-names ((Self directional-pop-up-image-menu))
+(defmethod IMAGE-NAMES ((Self directional-pop-up-image-menu))
   '("direction_north_west" "direction_north" "direction_north_east" "direction_west" "direction_center" "direction_east" "direction_south_west" "direction_south" "direction_south_east"))
 
 
-#|Example
-(in-package :xlui)
+#| Example:
 
 (defparameter *Pop-Up-Menu* (make-instance 'directional-pop-up-image-menu :name-of-selection  "direction_north_west"))
 
-(defmethod pop-up-image-menu-now ((w application-window) (Button button))
-  (print (display-Pop-Up-menu *Pop-Up-Menu* )))
+(display-Pop-Up-menu *Pop-Up-Menu*)
 
-<application-window title="Currency Converter" width="300" height="180">
-  <column align="stretch" valign="stretch" padding="9">
-    <row align="stretch" minimize="vertical" valign="bottom">
-      <button text="make-event" action="pop-up-image-menu-now" width="100" default-button="true"/>
-    </row>
-  </column>
-</application-window>
-    
 |#
+
