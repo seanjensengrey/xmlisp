@@ -35,7 +35,7 @@
   (:documentation "Returns the list of strings that will be used by the menu. Do not include file extensions, e.g. 'arrow' not 'arrow.png'"))
 
 
-(defgeneric SELECTED-ITEM-NAME (pop-up-image-menu)
+(defgeneric SELECTED-IMAGE-NAME (pop-up-image-menu)
   (:documentation "Return the name of the image last selected"))
 
 ;;_______________________________
