@@ -27,7 +27,7 @@
 ;; Specification                 |
 ;;_______________________________
 
-(defgeneric DISPLAY-POP-UP-MENU (pop-up-image-menu)
+(defgeneric DISPLAY-POP-UP-MENU (pop-up-image-menu &key x y)
   (:documentation "Pops up the menu and returns the value of the selected image"))
 
 
@@ -96,6 +96,8 @@
 (defparameter *Pop-Up-Menu* (make-instance 'direction-pop-up-image-menu :name-of-selection  "direction_north_west"))
 
 (display-Pop-Up-menu *Pop-Up-Menu*)
+
+(display-Pop-Up-menu *Pop-Up-Menu* :x 900 :y 900)
 
 |#
 

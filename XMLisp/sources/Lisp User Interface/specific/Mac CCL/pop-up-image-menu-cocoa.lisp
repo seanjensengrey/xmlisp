@@ -15,6 +15,8 @@
   (unless (index-of-selection self)
     (setf (index-of-selection self) (position (name-of-selection self)(image-names Self):test #'equal)))
   (let ((Image (#/alloc ns:ns-image))) 
+    (unless (probe-file (image-name-pathname self (concatenate 'string (first (image-names self)) ".png")))
+      (error "Cannot load file ~A does not exist" (native-path (image-pathname self) String)))
     (#/initWithContentsOfFile: Image (native-string (image-name-pathname self (concatenate 'string (first (image-names self)) ".png"))) ); "lui:resources;buttons;"  "bevelButton-off-popup.png"))) ;(image-name-pathname self "bevelButton-off-popup")))
     (let ((width(+ 6 ( ns::ns-size-width (#/size Image)))) (height (+ 6 (ns::ns-size-height (#/size Image)))))
       (setf (image-height self) height)
@@ -30,7 +32,9 @@
         (warn "Could not find the name-of-selection in image-names")))))
 
 
-(defmethod DISPLAY-POP-UP-MENU ((Self pop-up-image-menu))
+(defmethod DISPLAY-POP-UP-MENU ((Self pop-up-image-menu) &key (x (x self)) (y (y self)))
+  (setf (x self) x)
+  (setf (y self) y)
   (with-simple-restart (cancel-pop "Stop trying to pop up ~s" Self)
     (in-main-thread ()
       (ccl::with-autorelease-pool
@@ -58,7 +62,7 @@
                       (ns:with-ns-rect (Frame (* (image-width self) current-col) (* (image-height self) current-row) (image-width self) (image-height self))                                      
                         (#/initWithFrame: Button Frame)
                         (unless (probe-file (native-path (image-pathname self) String))
-                          (warn "Cannot load file ~A does not exist" (native-path (image-pathname self) String)))
+                          (error "Cannot load file ~A does not exist" (native-path (image-pathname self) String)))
                         (#/initWithContentsOfFile: NS-Image  (native-string (native-path (image-pathname self) String)))
                         (#/setButtonType: Button #$NSOnOffButton) 
                         (#/setBezelStyle: Button #$NSShadowlessSquareBezelStyle)
