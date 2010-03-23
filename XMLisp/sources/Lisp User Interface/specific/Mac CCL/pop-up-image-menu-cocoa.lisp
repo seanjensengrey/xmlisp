@@ -47,6 +47,7 @@
             (#/setDelegate: Window (delegate Window))
             ;; content view
             (#/setContentView: Window (#/autorelease (native-view Self)))
+            (#/setHasShadow: Window #$YES)
             (#/setAcceptsMouseMovedEvents: (native-window Self) #$YES)
             (let ((current-row 0) (current-col 0))
               (let ((i 0) )
