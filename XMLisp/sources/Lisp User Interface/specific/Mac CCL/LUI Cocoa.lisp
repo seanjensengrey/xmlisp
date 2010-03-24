@@ -338,6 +338,12 @@
                           :native-event Event))))
 
 
+
+(objc:defmethod (#/becomeMainWindow :void) ((self native-window))
+  (call-next-method)
+  (has-become-main-window (lui-window Self)))
+
+
 (objc:defmethod (#/constrainFrameRect:toScreen: :<NSR>ect) ((Self native-window) (Rect :<NSR>ect) Screen)
   (declare (ignore Screen))
   ;; a nasty hack to be able move windows above the menu bar
