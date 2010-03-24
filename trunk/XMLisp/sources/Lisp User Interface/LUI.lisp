@@ -392,6 +392,9 @@ after any of the window controls calls stop-modal close window and return value.
 (defgeneric SUBVIEWS-SWAPPED (window Old-View New-View)
   (:documentation "Called then when subview <Old-View> of window got replaced with <New-View>"))
 
+(defgeneric HAS-BECOME-MAIN-WINDOW (window)
+  (:documentation "Called after the window has become the main, i.e., the foremost, window"))
+
 ;;_______________________________
 ;; default implementations       |
 ;;_______________________________
@@ -514,6 +517,12 @@ after any of the window controls calls stop-modal close window and return value.
 (defmethod SIZE-CHANGED-EVENT-HANDLER ((Self Window) Width Height)
   (declare (ignore Width Height))
   ;; nothing
+  )
+
+;; notifications
+
+(defmethod HAS-BECOME-MAIN-WINDOW ((Self window))
+  ;;(format t "~%new main window: ~A" Self)
   )
 
 
