@@ -11,11 +11,11 @@
                                   (Explanation-Text)
                                   (Is-Critical nil))
   (let ((Alert (#/init (#/alloc ns:ns-alert))))
-    (#/setMessageText: Alert Message)
-    (#/addButtonWithTitle: Alert Yes-Text)
-    (#/addButtonWithTitle: Alert No-Text)
-    (#/addButtonWithTitle: Alert Cancel-Text)
-    (when Explanation-Text (#/setInformativeText: Alert Explanation-Text))
+    (#/setMessageText: Alert (native-string Message))
+    (when Yes-Text (#/addButtonWithTitle: Alert (native-string Yes-Text)))
+    (when No-Text (#/addButtonWithTitle: Alert (native-string No-Text)))
+    (when Cancel-Text (#/addButtonWithTitle: Alert (native-string Cancel-Text)))
+    (when Explanation-Text (#/setInformativeText: Alert (native-string Explanation-Text)))
     (#/setAlertStyle: Alert (if Is-Critical #$NSCriticalAlertStyle #$NSWarningAlertStyle))
     (case (#/runModal Alert)
       (#.#$NSAlertFirstButtonReturn t)
@@ -51,7 +51,10 @@
 #| Examples: 
 
 (standard-alert-dialog "Too good to be true?")
-(standard-alert-dialog "Too good to be true?" :is-critical t)
+
+(standard-alert-dialog "Too good to be true?" :yes-text "You have been informed" :no-text nil :cancel-text nil)
+
+(standard-alert-dialog "Launch Nukes?" :is-critical t :cancel-text nil)
 
 (standard-alert-dialog "No agent or shape selected in project window" 
                        :explanation-text "Select at least one agent in world"
