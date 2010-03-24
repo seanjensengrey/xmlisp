@@ -474,6 +474,11 @@
                   <NSR>ect.size.height)))
 
 
+(defmethod SCREEN-HEIGHT ((Self null))
+  (truncate (pref (#/frame (#/mainScreen ns:ns-screen))
+                  <NSR>ect.size.height)))
+
+
 (defmethod (setf TITLE) :after (Title (self window))
   (#/setTitle: (native-window Self) (native-string Title)))
 
