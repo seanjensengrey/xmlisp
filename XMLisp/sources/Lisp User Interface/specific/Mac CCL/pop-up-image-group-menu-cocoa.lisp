@@ -1,7 +1,7 @@
 (in-package :lui)
 
 
-(defmethod DISPLAY-POP-UP-MENU ((Self pop-up-image-group-menu))
+(defmethod DISPLAY-POP-UP-MENU ((Self pop-up-image-group-menu) &key (x 100) (y 100))
   (with-simple-restart (cancel-pop "Stop trying to pop up ~s" Self)
     (in-main-thread ()
       (ccl::with-autorelease-pool
