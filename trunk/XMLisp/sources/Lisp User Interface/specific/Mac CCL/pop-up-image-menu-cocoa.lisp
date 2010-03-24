@@ -35,6 +35,13 @@
 (defmethod DISPLAY-POP-UP-MENU ((Self pop-up-image-menu) &key (x (x self)) (y (y self)))
   (setf (x self) x)
   (setf (y self) y)
+  (multiple-value-bind (x-selection-index y-selection-index)
+                             (get-selection-indices self)
+          (setf (window-offset-x self) (* x-selection-index (image-width self)))
+          (setf (window-offset-y self) (*  (- (- (number-of-rows self)  y-selection-index)1) (image-width self))))
+  (setf (window-offset-x self) (+ (window-offset-x self) (/(image-width self)2)))
+  (setf (window-offset-y self) (+ (window-offset-y self)(/(image-width self)2)))
+  (format t "x-offset= ~S y-offset= ~S" (window-offset-x self)(window-offset-y self))
   (with-simple-restart (cancel-pop "Stop trying to pop up ~s" Self)
     (in-main-thread ()
       (ccl::with-autorelease-pool
