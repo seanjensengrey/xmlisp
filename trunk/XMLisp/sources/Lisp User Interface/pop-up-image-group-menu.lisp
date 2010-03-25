@@ -69,13 +69,13 @@
 
 (defmethod IMAGE-NAMES ((Self tool-pop-up-image-group-menu))
   '(("Tools" ("draw-button" "erase-button"))
-    ("Selection" ("magic-wand-button" "arrow-button" "select-ellipse-button"))
+    ("Selection" (("blue-box" "lui:resources;images;") "arrow-button" "select-ellipse-button"))
     ("Nagivation" ("zoom-button" "pan-button" "rotate-button"))))
 
 
-(defparameter *Pop-Up-Menu* (make-instance 'tool-pop-up-image-group-menu))
+(defparameter *Pop-Up-Menu* (make-instance 'tool-pop-up-image-group-menu) )
 
-(display-pop-up-menu *Pop-Up-Menu*)
+(display-pop-up-menu *Pop-Up-Menu* :y 800 :x 800)
 
 
 |#
