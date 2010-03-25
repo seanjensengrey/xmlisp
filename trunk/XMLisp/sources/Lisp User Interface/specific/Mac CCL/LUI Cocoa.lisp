@@ -105,6 +105,20 @@
     (= (#/clickCount (native-event *Current-Event*)) 2)))
 
 
+;;*********************************
+;; Mouse Polling                  *
+;;*********************************
+
+(defun MOUSE-LOCATION () "
+  out: x y 
+  Return screen coordinates of the current mouse location"
+  (let ((Location (#/mouseLocation ns:ns-event)))
+    (values
+     (truncate (pref Location :<NSP>oint.x))
+     (truncate (- (screen-height nil) (pref Location :<NSP>oint.y))))))
+
+;(mouse-location)
+
 ;**********************************
 ;* SUBVIEW-MANAGER-INTERFACE      *
 ;**********************************
