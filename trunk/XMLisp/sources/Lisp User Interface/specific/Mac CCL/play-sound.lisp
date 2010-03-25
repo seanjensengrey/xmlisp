@@ -10,6 +10,8 @@
 
 (defparameter *Sounds* (make-hash-table :test #'equal) "Sound handles")
 
+(defvar *Secondary-Sound-File-Directory-Hook* nil "lambda () ->  directory-pathname")
+
 
 (defgeneric PLAY-SOUND (Name)
   (:documentation "Play sound in resources/sounds/ folder"))
@@ -27,6 +29,24 @@
              (native-string (native-path "lui:resources;sounds;" Name))
              #$YES))
       (#/play (gethash Name *Sounds*))))))
+
+
+(defun SOUND-FILES-IN-SOUND-FILE-DIRECTORY () "
+  out: Sound-Files lisp of pathname"
+  (directory "lui:resources;sounds;*.*"))
+
+#|
+  (append
+   ;; secondary sounds first because they have higher priority
+   (and *Secondary-Sound-File-Directory-Hook* 
+        (directory 
+         (format nil "~A*"  (mac-directory-namestring (funcall *Secondary-Sound-File-Directory-Hook*)))
+         :test #'valid-sound-file-p))
+   (directory 
+    (format nil "~A*"  (mac-directory-namestring *Sound-File-Directory*))
+    :test #'valid-sound-file-p)))
+
+|#
 
 
 #| Examples:
