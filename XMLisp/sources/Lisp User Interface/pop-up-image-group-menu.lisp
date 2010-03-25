@@ -34,6 +34,12 @@
   (setf (window-height self) (* (image-height self) (length (image-names self))))
   (setf (width self) (get-window-width self)))
 
+
+(defclass INDEXED-IMAGE-VIEW (ns:ns-image-view)
+  ((index :accessor index :initform 200  :initarg :index :documentation "index of button")
+   (lui-superview :accessor lui-superview :initform nil :initarg :lui-superview))
+  (:metaclass ns:+ns-object
+	      :documentation "Index Button"))
 ;---------------------------------
 ; Specification                  |
 ;________________________________
@@ -69,7 +75,7 @@
 ;("blue-box" "lui:resources;images;blue-box.png")
 (defmethod IMAGE-NAMES ((Self tool-pop-up-image-group-menu))
   '(("Tools" ("draw-button" "erase-button"))
-    ("Selection" (("blue-box" "lui:resources;images;blue-box.png") "arrow-button" "select-ellipse-button"))
+    ("Selection" ("magic-wand-button" "arrow-button" "select-ellipse-button"))
     ("Nagivation" ("zoom-button" "pan-button" "rotate-button"))))
 
 

@@ -48,12 +48,12 @@
                       (#/addSubview: (native-view self) Label))     
                     (dolist (Item list )
                       
-                      (let ((Button (make-instance 'indexed-button))                       
+                      (let ((indexed-view (make-instance 'indexed-image-view))                       
                             (NS-Image (#/alloc ns:ns-image))
                             (image-pathname (image-pathname self))
                             (image-name nil))
                         (ns:with-ns-rect (Frame (+ (label-width self) (* (image-width self) current-col)) (* (image-height self) current-row) (image-width self) (image-height self))                                      
-                          (#/initWithFrame: Button Frame)
+                          (#/initWithFrame: indexed-view Frame)
                           (etypecase Item
                             (list
                              (setf image-name (second item)) ;(concatenate 'string (first Item) "." (image-file-extension self)))
@@ -69,19 +69,25 @@
                              (#/initWithContentsOfFile: NS-Image  (native-string (native-path image-pathname image-name)))))
                           
                           
-            
-                          (#/setButtonType: Button #$NSOnOffButton) 
-                          (#/setBezelStyle: Button #$NSShadowlessSquareBezelStyle)
-                          (#/setShowsBorderOnlyWhileMouseInside: Button #$YES)
-                          (#/setImagePosition: Button #$NSImageOnly)                                   
-                          (#/setImage: Button NS-Image)     
+                          (setf (lui-superview indexed-view) self)
+                         ; (#/setButtonType: Button #$NSOnOffButton) 
+                         ; (#/setBezelStyle: Button #$NSShadowlessSquareBezelStyle)
+                         ; (#/setShowsBorderOnlyWhileMouseInside: Button #$YES)
+                         ; (#/setImagePosition: Button #$NSImageOnly)                                   
+                          (#/setImage: indexed-view NS-Image)     
+                         ; (#/setImageScaling: Button 1)
+                          (print "SCALING")
+                          
+                        ;  (print (#/imageScaling Button))
+                          #|
                           (#/setTarget: Button 
                                         (make-instance 'native-target 
                                           :native-control Button ;(native-view Self)
                                           :lui-control Self))
                           (#/setAction: Button (objc::@selector #/buttonAction))
-                          (setf (index Button) i)
-                          (#/addSubview: (native-view self) Button)))
+                          |#
+                          (setf (index indexed-view) i)
+                          (#/addSubview: (native-view self) indexed-view)))
                       (incf i)
                       (incf current-col))
                     (setf current-col 0)
@@ -89,7 +95,22 @@
             (#/makeKeyAndOrderFront: Window Window)
             (#/runModalForWindow: (#/sharedApplication ns:ns-application) Window)
             (#/close (native-window self))
-            (find-group-by-index self (index-of-selection self)))))))
+            ;(inspect (find-group-by-index self (index-of-selection self)))
+            (let ((selected-group (find-group-by-index self (index-of-selection self))))
+              (etypecase (second selected-group)
+                (string
+                 (values (first selected-group) (second selected-group)))
+                (list 
+                 (values (first selected-group) (first (second selected-group))))))
+                          
+                          
+                )))))
+
+
+(objc:defmethod (#/mouseDown: :void) ((self indexed-image-view) Event)
+  (call-next-method Event)
+  (setf (index-of-selection (lui-superview Self)) (index self))
+  (close-window (lui-superview self)))
 
 
 (objc:defmethod (#/buttonAction :void) ((self native-target))
