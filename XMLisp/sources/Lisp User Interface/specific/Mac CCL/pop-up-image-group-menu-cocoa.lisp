@@ -52,32 +52,36 @@
                             (NS-Image (#/alloc ns:ns-image))
                             (image-pathname (image-pathname self))
                             (image-name nil))
-                        
-                        (etypecase Item
-                          (list
-                           (setf image-name (concatenate 'string (first Item) "." (image-file-extension self)))
-                           (setf image-pathname (Second Item)))
-                          (string
-                           (setf Item (concatenate 'string Item "." (image-file-extension self)))
-                           (setf image-name Item)))
-                        
-                          (ns:with-ns-rect (Frame (+ (label-width self) (* (image-width self) current-col)) (* (image-height self) current-row) (image-width self) (image-height self))                                      
-                            (#/initWithFrame: Button Frame)
-                            (unless (probe-file (native-path image-pathname image-name))
-                              (warn "Cannot load file ~A does not exist" (native-path image-pathname image-name)))
-                            (#/initWithContentsOfFile: NS-Image  (native-string (native-path image-pathname image-name)))
-                            (#/setButtonType: Button #$NSOnOffButton) 
-                            (#/setBezelStyle: Button #$NSShadowlessSquareBezelStyle)
-                            (#/setShowsBorderOnlyWhileMouseInside: Button #$YES)
-                            (#/setImagePosition: Button #$NSImageOnly)                                   
-                            (#/setImage: Button NS-Image)     
-                            (#/setTarget: Button 
-                                          (make-instance 'native-target 
-                                            :native-control Button ;(native-view Self)
-                                            :lui-control Self))
-                            (#/setAction: Button (objc::@selector #/buttonAction))
-                            (setf (index Button) i)
-                            (#/addSubview: (native-view self) Button)))
+                        (ns:with-ns-rect (Frame (+ (label-width self) (* (image-width self) current-col)) (* (image-height self) current-row) (image-width self) (image-height self))                                      
+                          (#/initWithFrame: Button Frame)
+                          (etypecase Item
+                            (list
+                             (setf image-name (second item)) ;(concatenate 'string (first Item) "." (image-file-extension self)))
+                             ;(setf image-pathname (Second Item))
+                             (unless (probe-file  image-name)
+                               (warn "Cannot load file ~A does not exist" image-name))
+                             (#/initWithContentsOfFile: NS-Image  (native-string  (namestring image-name))))
+                            (string
+                             (setf Item (concatenate 'string Item "." (image-file-extension self)))
+                             (setf image-name Item)
+                             (unless (probe-file (native-path image-pathname image-name))
+                               (warn "Cannot load file ~A does not exist" (native-path image-pathname image-name)))
+                             (#/initWithContentsOfFile: NS-Image  (native-string (native-path image-pathname image-name)))))
+                          
+                          
+            
+                          (#/setButtonType: Button #$NSOnOffButton) 
+                          (#/setBezelStyle: Button #$NSShadowlessSquareBezelStyle)
+                          (#/setShowsBorderOnlyWhileMouseInside: Button #$YES)
+                          (#/setImagePosition: Button #$NSImageOnly)                                   
+                          (#/setImage: Button NS-Image)     
+                          (#/setTarget: Button 
+                                        (make-instance 'native-target 
+                                          :native-control Button ;(native-view Self)
+                                          :lui-control Self))
+                          (#/setAction: Button (objc::@selector #/buttonAction))
+                          (setf (index Button) i)
+                          (#/addSubview: (native-view self) Button)))
                       (incf i)
                       (incf current-col))
                     (setf current-col 0)

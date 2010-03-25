@@ -104,10 +104,12 @@
    "ADD-GROUP" "ADD-GROUP-ITEM" "DELETE-GROUP" "DELETE-GROUP-ITEM" "SELECTED-GROUP" "SELECTED-GROUP-ITEM" "SELECT-GROUP" "SELECT-GROUP-ITEM"
   
    "SHOW-STRING-POPUP"
+   
    "TAB-VIEW-CONTROL" "ADD-TAB-VIEW-ITEM"
    "TAB-VIEW-ITEM-CONTROL" "ADD-TAB-VIEW-ITEM-VIEW"
    "CHOICE-BUTTON-CONTROL" "ADD-MENU-ITEM" "GET-SELECTED-ACTION" "CHOICE-BUTTON-ACTION"
    "POP-UP-IMAGE-MENU" "DISPLAY-POP-UP-MENU" "DISPLAY-POP-UP" "SELECTED-IMAGE-NAME"
+   "POP-UP-IMAGE-GROUP-MENU" "IMAGE-NAMES"
    "DIRECTION-POP-UP-IMAGE-MENU" "DISPLAY-POP-UP"
    "COLOR-WELL-CONTROL" "COLOR" "GET-RED" "GET-GREEN" "GET-BLUE" "GET-ALPHA" "SHOW-ALPHA"
    "WEB-BROWSER-CONTROL" "URL"
@@ -172,6 +174,8 @@
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;speech")
 (load "lui:sources;Lisp User Interface;pop-up-image-menu")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;pop-up-image-menu-cocoa")
+(load "lui:sources;Lisp User Interface;pop-up-image-group-menu")
+(load "lui:sources;Lisp User Interface;specific;Mac CCL;pop-up-image-group-menu-cocoa")
 
 
 ;; add :xlui package

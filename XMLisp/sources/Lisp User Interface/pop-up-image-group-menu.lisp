@@ -5,7 +5,7 @@
 ;;*********************************
 
 
-(export '(pop-up-image-group-menu))
+;(export '(pop-up-image-group-menu))
 
 
 (defclass POP-UP-IMAGE-GROUP-MENU ()
@@ -66,10 +66,10 @@
   ()
   (:documentation "select toolbar tools"))
 
-
+;("blue-box" "lui:resources;images;blue-box.png")
 (defmethod IMAGE-NAMES ((Self tool-pop-up-image-group-menu))
   '(("Tools" ("draw-button" "erase-button"))
-    ("Selection" (("blue-box" "lui:resources;images;") "arrow-button" "select-ellipse-button"))
+    ("Selection" (("blue-box" "lui:resources;images;blue-box.png") "arrow-button" "select-ellipse-button"))
     ("Nagivation" ("zoom-button" "pan-button" "rotate-button"))))
 
 
