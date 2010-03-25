@@ -128,7 +128,7 @@
    ;; colors
    "*SYSTEM-SELECTION-COLOR*"
    ;; Multimedia
-   "PLAY-SOUND"
+   "PLAY-SOUND" "SOUND-FILES-IN-SOUND-FILE-DIRECTORY"
    "SYNTHESIZER" "SPEAK" "WILL-SPEAK-WORD" "WILL-SPEAK-PHONEME" "DID-FINISH-SPEAKING" "AVAILABLE-VOICES"
    ;; native support
    "NATIVE-STRING"
@@ -176,6 +176,8 @@
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;pop-up-image-menu-cocoa")
 (load "lui:sources;Lisp User Interface;pop-up-image-group-menu")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;pop-up-image-group-menu-cocoa")
+;; media
+(load "lui:sources;Lisp User Interface;specific;Mac CCL;play-sound")
 
 
 ;; add :xlui package
@@ -226,15 +228,6 @@
 
 (load "lui:sources;XLUI;dialogs;get-string-from-user")
 (load "lui:sources;XLUI;dialogs;get-new-agent-info-from-user-window")
-
-
-
-;******** Multimedia
-
-(defpackage :sound
-  (:use :common-lisp :ccl)
-  (:export "PLAY-SOUND"))
-
 
 
 
