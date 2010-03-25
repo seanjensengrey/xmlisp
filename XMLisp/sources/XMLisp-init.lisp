@@ -61,7 +61,7 @@
 ;****** XMLisp
 
 (defpackage :XML
-  (:export "XML-SERIALIZER"))
+  (:export "XML-SERIALIZER" "PARSE-FILE-NAME"))
 
 (load "lui:sources;XMLisp;XMLisp")
 
