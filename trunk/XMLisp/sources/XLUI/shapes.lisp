@@ -36,6 +36,13 @@
   (:documentation "Name of image used as icon in menus to represent shape"))
 
 
+(defgeneric DRAW-AS-PROXY-ICON (Shape)
+  (:documentation "display a  proxy icon at <0, 0, 0>. Used typically by project manger and visual programming language to refer to shape. A proxy icon can be a flat rendering of the shape or a miniature/simplified version of the shape itsel."))
+
+
+(defgeneric PROXY-ICON-SCALE (Shape)
+  (:documentation "the scale of the shape proxy icon"))
+
 ;_______________________________________
 ;        Implementation                 |
 ;_______________________________________
@@ -65,6 +72,33 @@
   (or (texture-file (part-of Self) Texture-Name)
       (native-path "lui:resources;textures;" Texture-Name)))
 
+
+;; Proxy Icon Methods
+
+
+(defmethod DRAW-PROXY-ICON-BACKGROUND ((Self shape))
+  (glBegin GL_QUADS)
+  (glColor3f 1.0 1.0 1.0)
+  (glVertex2i 0 0)
+  (glVertex2i 0 1)
+  (glVertex2i 1 1)
+  (glVertex2i 1 0)
+  (glEnd))
+  
+
+(defmethod DRAW-AS-PROXY-ICON ((Self shape)) 
+  ;; default: draw scaled, no lighting version of shape
+  (glPushMatrix)
+  (glScalef (proxy-icon-scale Self) (proxy-icon-scale Self) (proxy-icon-scale Self))
+  (glDisable GL_LIGHTING)
+  (draw-proxy-icon-background Self)
+  (draw Self)
+  (glDisable GL_LIGHTING) ;; some shapes are enabling lighting again!!
+  (glPopMatrix))
+
+
+(defmethod PROXY-ICON-SCALE ((Self shape))
+  0.15)
 
 
 
@@ -541,4 +575,28 @@
     (texture-file (part-of Self) Texture-Name)
     (call-next-method)))
 |#
+
+
+;__________________________
+; Missing Shape Shape       |
+;__________________________/
+
+
+(defclass MISSING-SHAPE-PLACEHOLDER (tile)
+  ()
+  (:default-initargs :texture "missing_image.png")
+  (:documentation "Used as placeholder in cases were a shape is missing. Use as singleton via the-missing-shape-placeholder"))
+
+
+(defmethod RESOURCE-PATHNAME ((Self missing-shape-placeholder) File-Name &key Check Extension)
+  (declare (ignore Check Extension))
+  (pathname (format nil "lui:resources;textures;~A" File-Name)))
+
+
+(defvar *The-Missing-Shape-Placeholder* nil "singleton of MISSING-SHAPE-PLACEHOLDER")
+
+
+(defun THE-MISSING-SHAPE-PLACEHOLDER ()
+  (or *The-Missing-Shape-Placeholder* 
+      (setq *The-Missing-Shape-Placeholder* (make-instance 'Missing-Shape-Placeholder))))
 
