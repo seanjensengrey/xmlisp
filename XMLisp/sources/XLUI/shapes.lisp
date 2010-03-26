@@ -59,7 +59,7 @@
       (setq Texture-Id (create-texture-from-file (texture-file Self Texture-Name) :verbose nil))
       (setf (gethash Texture-Name (textures Self)) Texture-Id))
     ;; make the texture active (for now assume a 2D texture
-    (glBindTexture gl_texture_2d Texture-Id)))
+    (glBindTexture GL_TEXTURE_2D Texture-Id)))
 
 
 (defmethod TEXTURE-FILE ((Self t) Texture-Name)
@@ -87,11 +87,12 @@
   
 
 (defmethod DRAW-AS-PROXY-ICON ((Self shape)) 
-  ;; default: draw scaled, no lighting version of shape
   (glPushMatrix)
   (glScalef (proxy-icon-scale Self) (proxy-icon-scale Self) (proxy-icon-scale Self))
   (glDisable GL_LIGHTING)
+  (glTranslatef 0.0 0.0 -0.01) ;; hack: avoid depth fight
   (draw-proxy-icon-background Self)
+  (glTranslatef 0.0 0.0 +0.01)
   (draw Self)
   (glDisable GL_LIGHTING) ;; some shapes are enabling lighting again!!
   (glPopMatrix))
@@ -99,8 +100,6 @@
 
 (defmethod PROXY-ICON-SCALE ((Self shape))
   0.15)
-
-
 
 ;****************************************
 ;  Main shape subclasses                *
@@ -546,8 +545,8 @@
   (call-next-method)
   (cond
    ((texture Self)
-    (glenable gl_texture_2d)
-    (gltexenvi gl_texture_env gl_texture_env_mode gl_modulate)
+    (glEnable GL_TEXTURE_2D)
+    (glTexEnvi GL_TEXTURE_ENV GL_TEXTURE_ENV_MODE GL_MODULATE)
     (use-texture Self (texture Self)))
    (t
     (glDisable GL_TEXTURE_2D)))
@@ -567,15 +566,6 @@
 
 (defmethod ICON ((Self Tile))
   (texture Self))
-
-#|
-(defmethod TEXTURE-FILE ((Self Tile) Texture-Name)
-  ;; if part of a shape-manager, get texture-file of that
-  (if (part-of Self)
-    (texture-file (part-of Self) Texture-Name)
-    (call-next-method)))
-|#
-
 
 ;__________________________
 ; Missing Shape Shape       |
