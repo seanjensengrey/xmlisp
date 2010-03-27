@@ -77,6 +77,13 @@
 (defgeneric FRAME-RATE (opengl-view)
   (:documentation "How many frames per second"))
 
+(defgeneric OBJECT-COORDINATE-VIEW-WIDTH (opengl-view)
+  (:documentation "How wide does a flat object at z=0 need to be to fill the view horizonally based on current camera setting."))
+
+(defgeneric OBJECT-COORDINATE-VIEW-HEIGHT (opengl-view)
+  (:documentation "How high does a flat object at z=0 need to be to fill the view vertically based on current camera setting."))
+
+
 ;**************************
 ;* default implementation *
 ;**************************
@@ -120,6 +127,18 @@
 (defmethod VIEW ((Self opengl-view))
   ;; I am my own view
   Self)
+
+
+(defmethod OBJECT-COORDINATE-VIEW-WIDTH ((Self opengl-view))
+  (* (/ (width Self) (height Self))
+     1.14 ;; magic! should be computed from camera view angle
+     (float (eye-z (camera Self)) 0.0)))
+
+
+(defmethod OBJECT-COORDINATE-VIEW-HEIGHT ((Self opengl-view))
+  (* (/ (object-coordinate-window-width Self) 
+        (width Self))
+     (height Self)))
 
 ;_______________________________
 ; Events                        |
