@@ -20,6 +20,7 @@
 
 (objc:defmethod (#/mouseDown: :void) ((self group-detection-view) Event)
   ;(declare (ignore Event))
+  (remove-background-and-end-editting-for-all-text-fields (native-view (container self)))
   (call-next-method Event)
   (if (container self)
     (set-selected (container self) (group-name self))))
@@ -44,10 +45,11 @@
 
 (objc:defmethod (#/mouseDown: :void) ((self item-detection-view) Event)
  ;(declare (ignore Event))
+  (remove-background-and-end-editting-for-all-text-fields (native-view (container self)))
   (call-next-method Event)
   (if (container self)
     (progn
-      (set-selected-item (container self) (group-name (#/superview (#/superview self)))(item-name self) :resign "YES"))))
+      (set-selected-item (container self) (group-name (#/superview (#/superview self)))(item-name self) ))))
 
 
 (defclass BADGED-IMAGE-VIEW (group-detection-view)
@@ -119,7 +121,7 @@
 
 
 (defmethod SELECT ((self group-item-image-view))
-  (set-selected-item (container self)  (group-name  (#/superview(#/superview (#/superview self))))(item-name self) :resign "YES"))
+  (set-selected-item (container self)  (group-name  (#/superview(#/superview (#/superview self))))(item-name self) ))
 
 
 (defmethod DOUBLE-CLICKED ((self group-item-image-view))
@@ -179,12 +181,11 @@
 
 
 (objc:defmethod (#/mouseDown: :void) ((self mouse-detecting-image-view) Event)
-  ;(declare (ignore Event))
+  (remove-background-and-end-editting-for-all-text-fields (native-view (container (#/superview (#/superview  self)))))
   (call-next-method Event)
   (select (#/superview self)) 
   (if (> ( #/clickCount Event) 1)
-    (double-clicked (#/superview self)))
-  )
+    (double-clicked (#/superview self))))
 
 
 (defmethod LAYOUT ((Self mouse-detecting-image-view))
@@ -210,18 +211,24 @@
   )
 
 
-(objc:defmethod (#/mouseDown: :void) ((self mouse-detection-text-field) Event)  
-  (call-next-method event)
+(objc:defmethod (#/mouseDown: :void) ((self mouse-detection-text-field) Event)    
+  (remove-background-and-end-editting-for-all-text-fields (native-view (container self)))
   (unless (item-name self)
-    (unless (is-highlighted (group self))
-      (progn
-        (set-selected (container self) (group-name (#/superview self)) :resign nil ))))
-  (if (item-name self)
     (progn
-      (unless (equal (selected-item-name (group self)) (item-name self))      
-        (set-selected-item (container self) (group-name (#/superview (#/superview (#/superview self)))) (item-name self) :resign "YES"))))
-  
-  )
+      (if (is-highlighted (group self))
+        (progn
+          (#/setDrawsBackground: self #$YES)
+          (call-next-method event)))
+      (set-selected (container self) (group-name (#/superview self)) :resign nil )))
+  (if (item-name self)
+    (progn 
+      (if (and
+           (equal (string-capitalize (selected-item-name (group self))) (string-capitalize (item-name self)))
+           (and (selected-item-name (group self)) (item-name self)))
+        (progn
+          (#/setDrawsBackground: self #$YES)
+          (call-next-method event)))
+      (set-selected-item (container self) (group-name (#/superview (#/superview (#/superview self)))) (item-name self) ))))
 
 
 (objc:defmethod (#/textDidChange: :void) ((self mouse-detection-text-field) Notification)
@@ -298,8 +305,6 @@
         ; #-cocotron (setf (width (lui-view self)) (NS:NS-RECT-WIDTH (#/frame (#/superview (#/superview (native-view self))))))
         (ns:with-ns-point (Point (NS:NS-RECT-X (#/frame (group-view group))) (+ 0  (NS:NS-RECT-Y (#/frame (group-view group)))) )
           (#/setFrameOrigin: (selection-view group) Point ))
-        (print "ROW HEIGHT")
-        (print (row-height (lui-view self)))
         (ns:with-ns-size (Size (width (lui-view self)) (row-height (lui-view self)))
           (#/setFrameSize: (selection-view group) Size ))
         (#/setNeedsDisplay: (selection-view group) #$YES)
@@ -364,12 +369,8 @@
 
   ; #-cocotron(set-size (lui-view (#/superview (#/superview (native-view self)))) (width (lui-view (#/superview (#/superview (native-view self))))) (height (lui-view (#/superview (#/superview (native-view self))))))
   
-  (call-next-method self width height)
+  ;(call-next-method self width height)
   #-cocotron (setf (width self) (width (lui-view (#/superview (#/superview (native-view self))))))
-  ;(print "SET SIZE")
-  ;(print (width self))
-  ;(print (width (lui-view (#/superview (#/superview (native-view self))))))
-  ;(inspect  (item-selection-view (first (groups self))))
   (dolist (group (groups  self))
     (ns:with-ns-size (Size (width self) (NS:NS-RECT-HEIGHT (#/frame (group-view group))))
           (#/setFrameSize:  (group-view group ) Size))
@@ -379,7 +380,6 @@
       (#/setFrameSize: (selection-view group) Size )
       (if (item-selection-view group)
         (progn
-          (print "SET FRAME ITEM")
           (#/setFrameSize: (item-selection-view group) Size )
           (#/setNeedsDisplay: (item-selection-view group) #$YES))
       ))
@@ -644,7 +644,7 @@
 
 
 (defmethod SET-SELECTED ((Self badged-image-group-list-manager-view) group-name &key (highlight t) (resign "YES"))
-  (print "SET SELECTED")
+  
   (remove-background-from-text-fields (native-view  self))
   (with-simple-restart (cancel-pop "Stop to create view for ~s" Self)    
     (dolist (group (groups self))
@@ -668,6 +668,7 @@
           (#/setEditable:  (text-view group) #$YES)
           (#/setNeedsDisplay: (selection-view group) #$YES))
         (progn
+          (setf (is-highlighted group) nil)
           (if resign
             (if (or
                  (equal (type-of (#/firstResponder (#/window (native-view self)))) 'NS:NS-TEXT-VIEW )
@@ -686,9 +687,10 @@
   (layout-changed self))
 
 
-(defmethod SET-SELECTED-ITEM ((Self badged-image-group-list-manager-view) group-name item-name  &key (resign nil))
+(defmethod SET-SELECTED-ITEM ((Self badged-image-group-list-manager-view) group-name item-name  )
   (let ((i 1))
     (dolist (group (groups self))    
+      ;(inspect group)
       (setf (is-selected group) nil)
       (setf (is-highlighted group) nil)
       (if (equal group-name (group-name group))
@@ -709,17 +711,9 @@
                   (setf (selected-item-name group) (item-name item) ))
                 (#/setEditable: (text-view item) #$YES))
               (progn
-                (#/setEditable: (text-view item) #$NO)
-                (if (item-detection-view item)
-                  (progn       
-                    (if resign
-                      (if (or
-                           (equal (type-of (#/firstResponder (#/window (native-view self)))) 'NS:NS-TEXT-VIEW )
-                           (equal (type-of (#/firstResponder (#/window (native-view self)))) 'LUI::MOUSE-DETECTION-TEXT-FIELD ))
-                        (progn
-                          (#/endEditingFor: (#/window (native-view self)) nil ))))))))))
+                (#/setEditable: (text-view item) #$NO)))))
         (progn 
-          ;(#/setEditable: (text-view item) #$NO)
+    
           (setf (selected-item-name group) nil)
           (#/setHidden: (selection-view group) #$YES)
           (setf (is-highlighted group) nil)
@@ -760,12 +754,13 @@
       (setf (is-disclosed (group button)) #$YES)
        (layout (native-view self)))))
 
-
+#|
 (objc:defmethod (#/becomeFirstResponder  :void) ((self mouse-detection-text-field))
-  (remove-background-from-text-fields (native-view (container self)))
-  (#/setDrawsBackground: self #$YES)
+  ;(remove-background-from-text-fields (native-view (container self)))
+  (print "BECOME")
+  ;(#/setDrawsBackground: self #$YES)
   (call-next-method))
-
+|#
 
 (defmethod REMOVE-BACKGROUND-FROM-TEXT-FIELDS ((self ns:ns-view))
   (let ((subviews (gui::list-from-ns-array (#/subviews self))))  
@@ -776,4 +771,14 @@
         (progn
           (#/setDrawsBackground: subview #$NO))
         (remove-background-from-text-fields subview)))))
+
+
+(defmethod remove-background-and-end-editting-for-all-text-fields((self ns:ns-view))
+
+    (if (or
+         (equal (type-of (#/firstResponder (#/window  self))) 'NS:NS-TEXT-VIEW )
+         (equal (type-of (#/firstResponder (#/window  self))) 'LUI::MOUSE-DETECTION-TEXT-FIELD ))
+      (progn
+        (#/endEditingFor: (#/window  self) nil )))
+    (remove-background-from-text-fields  self))
 
