@@ -142,6 +142,12 @@
   (call-next-method Event))
 
 
+(objc:defmethod (#/mouseDown: :void) ((self popup-window) Event)
+  (call-next-method event)
+  (print "Down"))
+
+
+
 #|  Attemp to track off window mouse events
 (objc:defmethod (#/resignKeyWindow :void) ((Self popup-window))
   ;(print "resigned!!!!"))
@@ -154,11 +160,16 @@
 ;; Popup window view             |
 ;;_______________________________
 
-(defclass POPUP-WINDOW-VIEW (native-window-view)
-  ()
+(defclass POPUP-WINDOW-VIEW (ns:ns-view)
+  ((lui-winodw :accessor lui-window :initform nil :initarg :lui-window))
   (:metaclass ns:+ns-object
               :documentation "popup-window-view"))
-    
+
+
+(objc:defmethod (#/isFlipped :<BOOL>) ((self popup-window-view))
+  ;; Flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
+
 
 (objc:defmethod (#/mouseDown: :void) ((self popup-window-view) Event)
   (declare (ignore Event)))
@@ -174,8 +185,8 @@
 
 
 
-(defclass POPUP-DELEGATE(window-delegate)
-  ()
+(defclass POPUP-DELEGATE(ns:ns-object)
+  ((lui-winodw :accessor lui-window :initform nil :initarg :lui-window))
   (:metaclass ns:+ns-object
 	      :documentation "window delegate"))
 
