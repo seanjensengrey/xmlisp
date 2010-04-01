@@ -1,7 +1,9 @@
 (in-package :lui)
 
 
-;(export '( badged-image-group-list-manager-view group-name row-height group-list superview group-item-offset edit-group group-view ))
+;;*********************************
+;; BADGED IMAGE GROUP LIST MANAGER*
+;;*********************************
 
 
 (defclass BADGED-IMAGE-GROUP-LIST-MANAGER-VIEW (view)
@@ -11,6 +13,7 @@
    (y :accessor y :initform 890 :initarg :y :documentation "screen position, pixels")
    (width :accessor width :initform 300 :initarg :width :documentation "width in pixels")
    (height :accessor height :initform 300 :initarg :height :documentation "height in pixels")
+   (minimum-width :accessor minimum-width :initform 200 :documentation "the minimum bounds for the width of this view")
    (group-list :accessor group-list :initform nil :initarg :group-list :documentation "a list of the groups")
    (groups :accessor groups :initform nil :initarg :groups :documentation "a list of group objects")
    (row-height :accessor row-height :initform 30 :initarg :row-height :documentation "the height of each row in the list")
@@ -22,6 +25,11 @@
    (window :accessor window :initform nil)
    (left-margin :accessor left-margin :initform 0))
    (:documentation "This class will is a view that contains groups of items that are identified by a badge image."))
+
+
+;;*********************************
+;; LIST GROUP                     *
+;;*********************************
 
 
 (defclass LIST-GROUP ()
@@ -46,6 +54,11 @@
    (:documentation "A group consists of a name an image and a list of group items."))
 
 
+;;*********************************
+;; LIST GROUP ITEM                *
+;;*********************************
+
+
 (defclass LIST-GROUP-ITEM ()
   ((item-name :accessor item-name :initform nil :initarg :item-name :documentation "the name of the item")
    (image-name :accessor image-name :initform nil :initarg :image-name :documentation "the name of the item's image file")
@@ -53,6 +66,11 @@
    (item-detection-view :accessor item-detection-view :initform nil :initarg :item-detection-view :documentation "a reference the items detection view")
    (text-view :accessor text-view :initform nil :documentation "a reference to the item's text field"))
    (:documentation "A group consists of a name an image and a list of group items."))
+
+
+;---------------------------------
+; Specification                  |
+;________________________________
 
 
 (defgeneric add-group (badged-image-group-list-manager-view group)
@@ -92,16 +110,21 @@
   (:documentation "Returns the image to use for the badge of the specified group."))
 
 
-(defgeneric select-group (badged-image-group-list-manager-view group-name item-name)
+(defgeneric set-selected (badged-image-group-list-manager-view group-name &key highlight resign)
   (:documentation "Select the specifiecd group."))
 
 
-(defgeneric select-group-item (badged-image-group-list-manager-view group-name group-item-name)
+(defgeneric set-selected-item (badged-image-group-list-manager-view group-name item-name)
   (:documentation "Select the specifiecd group-item of the specified group."))
 
 
 (defgeneric layout-changed (badged-image-group-list-manager-view)
   (:documentation "This method will be called everytime the layout changes.  This method should be overrided to do things like update the status of buttons that are dependent on selections of groups or items.  "))
+
+
+;---------------------------------
+; Implementation                  |
+;________________________________
 
 
 (defmethod MAKE-SELECTION ((self badged-image-group-list-manager-view) group-name)
