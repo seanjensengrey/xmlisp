@@ -47,13 +47,11 @@
 
 
 (defclass LIST-GROUP-ITEM ()
-  (
-   (item-name :accessor item-name :initform nil :initarg :item-name :documentation "the name of the item")
+  ((item-name :accessor item-name :initform nil :initarg :item-name :documentation "the name of the item")
    (image-name :accessor image-name :initform nil :initarg :image-name :documentation "the name of the item's image file")
    (image-path :accessor image-path :initform "lui:resources;images;" :initarg :image-path :documentation "the path to the item's image file")
    (item-detection-view :accessor item-detection-view :initform nil :initarg :item-detection-view :documentation "a reference the items detection view")
-   (text-view :accessor text-view :initform nil :documentation "a reference to the item's text field")
-    )
+   (text-view :accessor text-view :initform nil :documentation "a reference to the item's text field"))
    (:documentation "A group consists of a name an image and a list of group items."))
 
 
