@@ -20,15 +20,6 @@
     list-of-items))
 
 
-(defmethod remove-background-and-end-editting-for-all-text-fields((self ns:ns-view))
-    (if (or
-         (equal (type-of (#/firstResponder (#/window  self))) 'NS:NS-TEXT-VIEW )
-         (equal (type-of (#/firstResponder (#/window  self))) 'LUI::MOUSE-DETECTION-TEXT-FIELD ))
-      (progn
-        (#/endEditingFor: (#/window  self) nil )))
-    (remove-background-from-text-fields  self))
-
-
 (defmethod REMOVE-BACKGROUND-FROM-TEXT-FIELDS ((self ns:ns-view))
   (let ((subviews (gui::list-from-ns-array (#/subviews self))))  
     (dolist (subview subviews)
@@ -40,11 +31,20 @@
         (remove-background-from-text-fields subview)))))
 
 
+(defmethod remove-background-and-end-editting-for-all-text-fields((self ns:ns-view))
+  (if (or
+       (equal (type-of (#/firstResponder (#/window  self))) 'NS:NS-TEXT-VIEW )
+       (equal (type-of (#/firstResponder (#/window  self))) 'LUI::MOUSE-DETECTION-TEXT-FIELD ))
+      (progn
+        (#/endEditingFor: (#/window  self) nil )))
+  (remove-background-from-text-fields  self))
+
+
 (defmethod GET-GROUP-WITH-NAME ((self badged-image-group-list-manager-view) group-name)
   (dolist (group (groups self))
     (if (equal (group-name group) group-name)
       (progn 
-      (return-from get-group-with-name group))))
+        (return-from get-group-with-name group))))
   nil)
 
 
@@ -56,14 +56,10 @@
         (incf height  (row-height self))))  
     (if (> height 200)
       (setf (height self) height)))
- ; #-cocotron (setf (width self) (NS:NS-RECT-WIDTH (#/frame (#/superview (#/superview (native-view self))))))
- ; (inspect (#/superview (#/superview (native-view self))))
   (unless (equal (#/superview (native-view self)) +null-ptr+)
-     (progn
-       #-cocotron(set-size (lui-view (#/superview (#/superview (native-view self))))   (width (lui-view (#/superview (#/superview (native-view self))))) (height (lui-view (#/superview (#/superview (native-view self))))))
-       #-cocotron(layout (lui-view (#/superview (#/superview (native-view self)))))
-       ;(display self)
-       )))
+    (progn
+      #-cocotron(set-size (lui-view (#/superview (#/superview (native-view self))))   (width (lui-view (#/superview (#/superview (native-view self))))) (height (lui-view (#/superview (#/superview (native-view self))))))
+      #-cocotron(layout (lui-view (#/superview (#/superview (native-view self))))))))
 
 
 ;;*********************************
@@ -75,6 +71,18 @@
   ()
   (:metaclass ns:+ns-object
 	      :documentation ""))
+
+
+(objc:defmethod (#/isFlipped :<BOOL>) ((self layout-view))
+  ;; Flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
+
+
+(defmethod LAYOUT ((Self layout-view)) 
+  (let ((subviews (gui::list-from-ns-array (#/subviews self))))  
+    (dolist (subview subviews)
+      (unless (equal (type-of subview) 'LUI::NATIVE-IMAGE)
+        (layout subview)))))
 
 
 ;;**********************************************
@@ -90,8 +98,7 @@
 
 
 (defmethod LAYOUT ((Self native-badged-image-group-list-manager-view))
-  (let ((y 0))
-    
+  (let ((y 0)) 
     (dolist (group (groups (lui-view self)))
       (let ((group-height (row-height (lui-view self))))
         (if (is-disclosed group)
@@ -100,8 +107,8 @@
           (#/setFrameSize:  (group-view group ) Size))
         (ns:with-ns-size (Size (width (lui-view self)) (NS:NS-RECT-HEIGHT (#/frame (item-view group))))
           (#/setFrameSize:  (item-view group ) Size))
-         #| (dolist (item-view (item-detection-views group))
-            (#/setFrameSize:  item-view Size))|#          
+        #| (dolist (item-view (item-detection-views group))
+             (#/setFrameSize:  item-view Size))|#          
         (ns:with-ns-point (Point 0 y)
           (#/setFrameOrigin: (group-view group ) Point ))
         (if (is-disclosed group)
@@ -120,7 +127,7 @@
           (#/setFrameSize: (selection-view group) Size ))
         (#/setNeedsDisplay: (selection-view group) #$YES)
         (#/setNeedsDisplay: (group-view group) #$YES)
-             (incf y   group-height)))) 
+        (incf y   group-height)))) 
   (#/setNeedsDisplay: self #$YES)
   (resize-height-of-view (lui-view self))
   (call-next-method)
@@ -145,14 +152,6 @@
               :documentation "This is a view that will detect mouse input fo the group and will also containt all the other views for the group"))
 
 
-(objc:defmethod (#/mouseDown: :void) ((self group-detection-view) Event)
-  ;(declare (ignore Event))
-  (remove-background-and-end-editting-for-all-text-fields (native-view (container self)))
-  (call-next-method Event)
-  (if (container self)
-    (set-selected (container self) (group-name self))))
-
-
 (defmethod UPDATE-IMAGE ((self group-detection-view))
   (let ((subviews (gui::list-from-ns-array (#/subviews self))))  
     (dolist (subview subviews)
@@ -160,6 +159,14 @@
            (equal (type-of subview) 'lui::group-item-image-view)
            (equal (type-of subview) 'lui::badged-image-view))
         (update-image subview)))))
+
+
+(objc:defmethod (#/mouseDown: :void) ((self group-detection-view) Event)
+  ;(declare (ignore Event))
+  (remove-background-and-end-editting-for-all-text-fields (native-view (container self)))
+  (call-next-method Event)
+  (if (container self)
+    (set-selected (container self) (group-name self))))
 
 
 (defmethod LAYOUT ((Self group-detection-view))
@@ -228,6 +235,7 @@
     (progn
       (set-selected-item (container self) (group-name (#/superview (#/superview self)))(item-name self) ))))
 
+
 ;;*********************************
 ;; MOUSE DETECTING IMAGE VIEW     *
 ;;*********************************
@@ -237,6 +245,78 @@
   ()
   (:metaclass ns:+ns-object
               :documentation "A view that display an image and detects mouse events."))
+
+
+;;*********************************
+;; GROUP ITEM IMAGE VIEW          *
+;;*********************************
+
+
+(defclass GROUP-ITEM-IMAGE-VIEW (group-detection-view)
+  ((image-name :accessor image-name :initform nil :initarg :image-name)
+   (image-path :accessor image-path :initform "lui:resources;images" :initarg :image-path)
+   (image-size :accessor image-size :initform 28 :initarg :image-size)
+   (x :accessor x :initform 0 :initarg :x :documentation "screen position, pixels")
+   (y :accessor y :initform 00 :initarg :y :documentation "screen position, pixels")
+   (item-name :accessor item-name :initform nil :initarg :item-name))
+  (:metaclass ns:+ns-object
+              :documentation "Group Item Image View"))
+
+
+(defmethod SELECT ((self group-item-image-view))
+  (set-selected-item (container self)  (group-name  (#/superview(#/superview (#/superview self))))(item-name self) ))
+
+
+(defmethod DOUBLE-CLICKED ((self group-item-image-view))
+  (edit-group-item (container self) (group-name self)(item-name self)))
+
+
+(defmethod CREATE-IMAGE ((self group-item-image-view)(list-item list-group-item))
+  (ns:with-ns-point (Point (x self) (y self))
+    (#/setFrameOrigin: Self Point))
+  (ns:with-ns-size (Size (image-size self) (image-size self))
+    (#/setFrameSize:  Self Size))
+  (let ((image (make-instance 'image-control :path (image-path list-item)  :src (image-name self) :x 0 :y 0 :width (image-size self) :height (image-size self)))) 
+    (let ((image-view (#/alloc mouse-detecting-image-view)))
+      (ns:with-ns-rect (Frame 0 0 (image-size self) (image-size self))
+        (#/initWithFrame: image-view Frame )
+        (#/setImage: image-view (#/image (native-view image)))
+        (#/setImageScaling: image-view #$NSScaleToFit)
+        (#/addSubview: self image-view))
+      self)))
+
+
+(defmethod UPDATE-IMAGE ((self group-item-image-view)) 
+  (let ((subviews (gui::list-from-ns-array (#/subviews self))))   
+    (dolist (subview subviews)
+      (if (equal (type-of subview) 'lui::mouse-detecting-image-view)
+        (progn
+          (#/removeFromSuperviewWithoutNeedingDisplay subview)
+          (let ((image (make-instance 'image-control  :path (image-path self)  :src (image-name self) :x 0 :y 0 :width (image-size self) :height (image-size self)))) 
+            (let ((image-view (#/alloc mouse-detecting-image-view)))
+              (ns:with-ns-rect (Frame 0 0 (image-size self) (image-size self))
+                (#/initWithFrame: image-view Frame )
+                (#/setImage: image-view (#/image (native-view image)))
+                (#/setImageScaling: image-view #$NSScaleToFit)
+                (#/addSubview: self image-view)))))))))
+
+
+(objc:defmethod (#/isFlipped :<BOOL>) ((self mouse-detecting-image-view))
+  ;; Flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
+
+
+(objc:defmethod (#/mouseDown: :void) ((self mouse-detecting-image-view) Event)
+  (remove-background-and-end-editting-for-all-text-fields (native-view (container (#/superview (#/superview  self)))))
+  (call-next-method Event)
+  (select (#/superview self)) 
+  (if (> ( #/clickCount Event) 1)
+    (double-clicked (#/superview self))))
+
+
+(defmethod LAYOUT ((Self mouse-detecting-image-view))
+  ;do nothing 
+)
 
 
 ;;*********************************
@@ -301,65 +381,6 @@
   (edit-group (container self) (group-name self)))
 
 
-;;*********************************
-;; GROUP ITEM IMAGE VIEW          *
-;;*********************************
-
-
-(defclass GROUP-ITEM-IMAGE-VIEW (group-detection-view)
-  ((image-name :accessor image-name :initform nil :initarg :image-name)
-   (image-path :accessor image-path :initform "lui:resources;images" :initarg :image-path)
-   (image-size :accessor image-size :initform 28 :initarg :image-size)
-   (x :accessor x :initform 0 :initarg :x :documentation "screen position, pixels")
-   (y :accessor y :initform 00 :initarg :y :documentation "screen position, pixels")
-   (item-name :accessor item-name :initform nil :initarg :item-name))
-  (:metaclass ns:+ns-object
-              :documentation "Group Item Image View"))
-
-
-(defmethod SELECT ((self group-item-image-view))
-  (set-selected-item (container self)  (group-name  (#/superview(#/superview (#/superview self))))(item-name self) ))
-
-
-(defmethod DOUBLE-CLICKED ((self group-item-image-view))
-  (edit-group-item (container self) (group-name self)(item-name self)))
-
-
-(defmethod CREATE-IMAGE ((self group-item-image-view)(list-item list-group-item))
-  (ns:with-ns-point (Point (x self) (y self))
-    (#/setFrameOrigin: Self Point))
-  (ns:with-ns-size (Size (image-size self) (image-size self))
-    (#/setFrameSize:  Self Size))
-  (let ((image (make-instance 'image-control :path (image-path list-item)  :src (image-name self) :x 0 :y 0 :width (image-size self) :height (image-size self)))) 
-    (let ((image-view (#/alloc mouse-detecting-image-view)))
-      (ns:with-ns-rect (Frame 0 0 (image-size self) (image-size self))
-        (#/initWithFrame: image-view Frame )
-        (#/setImage: image-view (#/image (native-view image)))
-        (#/setImageScaling: image-view #$NSScaleToFit)
-        (#/addSubview: self image-view))
-      self)))
-
-
-(defmethod UPDATE-IMAGE ((self group-item-image-view)) 
-  (let ((subviews (gui::list-from-ns-array (#/subviews self))))   
-    (dolist (subview subviews)
-      (if (equal (type-of subview) 'lui::mouse-detecting-image-view)
-        (progn
-          (#/removeFromSuperviewWithoutNeedingDisplay subview)
-          (let ((image (make-instance 'image-control  :path (image-path self)  :src (image-name self) :x 0 :y 0 :width (image-size self) :height (image-size self)))) 
-            (let ((image-view (#/alloc mouse-detecting-image-view)))
-              (ns:with-ns-rect (Frame 0 0 (image-size self) (image-size self))
-                (#/initWithFrame: image-view Frame )
-                (#/setImage: image-view (#/image (native-view image)))
-                (#/setImageScaling: image-view #$NSScaleToFit)
-                (#/addSubview: self image-view)))))))))
-
-
-
-
-
-
-
 
 ;;*********************************
 ;; MOUSE DETECTION TEXT FIELD     *
@@ -380,99 +401,6 @@
       (if (< width 50)
         (setf width 50))
       width)))
-
-;;*********************************
-;; GROUP DISCLOSURE BUTTON        *
-;;*********************************
-
-
-(defclass GROUP-DISCLOSURE-BUTTON (bevel-button-control)
-  ((group :accessor group :initform nil :initarg :group)
-   (container :accessor container :initform nil :initarg :container))
-  (:documentation "A button that is meant to display a disclosure item and has a group ascociated with it.  "))
-
-
-(defmethod INITIALIZE-INSTANCE :after  ((Self group-disclosure-button) &rest Initargs)
-  (declare (ignore initargs))
-  (#/setButtonType: (native-view self) #$NSOnOffButton)
-  (#/setImagePosition: (native-view self) #$NSImageOnly)
-  (#/setBezelStyle: (native-view self) #$NSDisclosureBezelStyle))
-
-
-(defmethod initialize-event-handling ((Self group-disclosure-button))
-  (#/setTarget: (native-view Self) 
-                (make-instance 'native-disclosure-target 
-                  :container (container self)
-                  :native-control (native-view Self)
-                  :lui-control Self))
-  (#/setAction: (native-view Self) (objc::@selector #/activateAction)))
-
-
-(defmethod DISCLOSURE-ACTION((self badged-image-group-list-manager-view) (button group-disclosure-button))
-  (if (is-disclosed (group button))
-    (progn 
-      (setf (is-disclosed (group button)) nil)
-     (layout (native-view self))
-      )
-    (progn
-      (setf (is-disclosed (group button)) #$YES)
-       (layout (native-view self)))))
-
-
-(defmethod LAYOUT ((Self group-disclosure-button))
-  ;do nothing 
-  )
-
-
-;;*********************************
-;; NATIVE DISCLOSURE BUTTON       *
-;;*********************************
-
-
-(defclass native-disclosure-target (ns:ns-object)
-  ((native-control :accessor native-control :initarg :native-control)
-   (lui-control :accessor lui-control :initarg :lui-control)
-   (container :accessor container :initarg :container))
-  (:metaclass ns:+ns-object)
-  (:documentation "receives action events and forwards them to lui control"))
-
-
-(objc:defmethod (#/activateAction :void) ((self native-disclosure-target))
-  (funcall 'disclosure-action (container self) (lui-control self)))
-
-
-
-
-
-   
-              
-
-(objc:defmethod (#/isFlipped :<BOOL>) ((self layout-view))
-  ;; Flip to coordinate system to 0, 0 = upper left corner
-  #$YES)
-
-
-
-
-
-(objc:defmethod (#/isFlipped :<BOOL>) ((self mouse-detecting-image-view))
-  ;; Flip to coordinate system to 0, 0 = upper left corner
-  #$YES)
-
-
-(objc:defmethod (#/mouseDown: :void) ((self mouse-detecting-image-view) Event)
-  (remove-background-and-end-editting-for-all-text-fields (native-view (container (#/superview (#/superview  self)))))
-  (call-next-method Event)
-  (select (#/superview self)) 
-  (if (> ( #/clickCount Event) 1)
-    (double-clicked (#/superview self))))
-
-
-(defmethod LAYOUT ((Self mouse-detecting-image-view))
-  ;do nothing 
-)
-
-
 
 
 (objc:defmethod (#/isFlipped :<BOOL>) ((self mouse-detection-text-field))
@@ -514,20 +442,63 @@
   (call-next-method Notification))
 
 
+;;*********************************
+;; GROUP DISCLOSURE BUTTON        *
+;;*********************************
 
 
+(defclass GROUP-DISCLOSURE-BUTTON (bevel-button-control)
+  ((group :accessor group :initform nil :initarg :group)
+   (container :accessor container :initform nil :initarg :container))
+  (:documentation "A button that is meant to display a disclosure item and has a group ascociated with it.  "))
 
 
+(defmethod INITIALIZE-INSTANCE :after  ((Self group-disclosure-button) &rest Initargs)
+  (declare (ignore initargs))
+  (#/setButtonType: (native-view self) #$NSOnOffButton)
+  (#/setImagePosition: (native-view self) #$NSImageOnly)
+  (#/setBezelStyle: (native-view self) #$NSDisclosureBezelStyle))
 
 
-(defmethod LAYOUT ((Self layout-view)) 
-  (let ((subviews (gui::list-from-ns-array (#/subviews self))))  
-    (dolist (subview subviews)
-      (unless (equal (type-of subview) 'LUI::NATIVE-IMAGE)
-        (layout subview)))))
+(defmethod initialize-event-handling ((Self group-disclosure-button))
+  (#/setTarget: (native-view Self) 
+                (make-instance 'native-disclosure-target 
+                  :container (container self)
+                  :native-control (native-view Self)
+                  :lui-control Self))
+  (#/setAction: (native-view Self) (objc::@selector #/activateAction)))
 
 
+(defmethod DISCLOSURE-ACTION((self badged-image-group-list-manager-view) (button group-disclosure-button))
+  (if (is-disclosed (group button))
+    (progn 
+      (setf (is-disclosed (group button)) nil)
+     (layout (native-view self)))
+    (progn
+      (setf (is-disclosed (group button)) #$YES)
+       (layout (native-view self)))))
 
+
+(defmethod LAYOUT ((Self group-disclosure-button))
+  ;do nothing 
+  )
+
+
+;;*********************************
+;; NATIVE DISCLOSURE TARGET       *
+;;*********************************
+
+
+(defclass native-disclosure-target (ns:ns-object)
+  ((native-control :accessor native-control :initarg :native-control)
+   (lui-control :accessor lui-control :initarg :lui-control)
+   (container :accessor container :initarg :container))
+  (:metaclass ns:+ns-object)
+  (:documentation "receives action events and forwards them to lui control"))
+
+
+(objc:defmethod (#/activateAction :void) ((self native-disclosure-target))
+  (funcall 'disclosure-action (container self) (lui-control self)))
 
 
 (defmethod SET-SIZE ((Self badged-image-group-list-manager-view) Width Height)
@@ -536,10 +507,10 @@
   ;(call-next-method self width height)
   #-cocotron 
   (if (> (-(width (lui-view (#/superview (#/superview (native-view self)))))1)  (minimum-width self))
-      (setf (width self) (-(width (lui-view (#/superview (#/superview (native-view self)))))1)))
+    (setf (width self) (-(width (lui-view (#/superview (#/superview (native-view self)))))1)))
   (dolist (group (groups  self))
     (ns:with-ns-size (Size (width self) (NS:NS-RECT-HEIGHT (#/frame (group-view group))))
-          (#/setFrameSize:  (group-view group ) Size))
+      (#/setFrameSize:  (group-view group ) Size))
     (ns:with-ns-size (Size (width  self) (NS:NS-RECT-HEIGHT (#/frame (item-view group))))
       (#/setFrameSize:  (item-view group ) Size))
     (ns:with-ns-size (Size (width  self) (row-height self))
@@ -547,11 +518,9 @@
       (if (item-selection-view group)
         (progn
           (#/setFrameSize: (item-selection-view group) Size )
-          (#/setNeedsDisplay: (item-selection-view group) #$YES)))) )
-  
+          (#/setNeedsDisplay: (item-selection-view group) #$YES)))) )  
   (display self)
   (#/setNeedsDisplay: (native-view self) #$YES))
-
 
 
 (defmethod DELETE-GROUP ((Self badged-image-group-list-manager-view) group-name)
@@ -760,11 +729,10 @@
             (#/setHidden: (item-selection-view group) #$YES))
           (setf (is-selected group) "YES")
           (setf (is-highlighted group) highlight)
-            (ns:with-ns-point (Point (NS:NS-RECT-X (#/frame (group-view group))) (+ 0  (NS:NS-RECT-Y (#/frame (group-view group)))) )
-              (#/setFrameOrigin: (selection-view group) Point ))
-            ;(ns:with-ns-size (Size (NS:NS-RECT-WIDTH (#/frame (group-view group))) (+ (row-height self) selection-offset))
-            (ns:with-ns-size (Size (width self)  (row-height self) ) 
-              (#/setFrameSize: (selection-view group) Size ))
+          (ns:with-ns-point (Point (NS:NS-RECT-X (#/frame (group-view group))) (+ 0  (NS:NS-RECT-Y (#/frame (group-view group)))) )
+            (#/setFrameOrigin: (selection-view group) Point ))
+          (ns:with-ns-size (Size (width self)  (row-height self) ) 
+            (#/setFrameSize: (selection-view group) Size ))
           (if (is-highlighted group)
             (#/setHidden: (selection-view group) #$NO))
           (#/setEditable:  (text-view group) #$YES)
@@ -792,7 +760,6 @@
 (defmethod SET-SELECTED-ITEM ((Self badged-image-group-list-manager-view) group-name item-name)
   (let ((i 1))
     (dolist (group (groups self))    
-      ;(inspect group)
       (setf (is-selected group) nil)
       (setf (is-highlighted group) nil)
       (if (equal group-name (group-name group))
@@ -808,14 +775,11 @@
                     (#/setFrameOrigin: (item-selection-view group) Point ))
                   (#/setHidden: (item-selection-view group) #$NO)
                   (#/setNeedsDisplay: (item-selection-view group) #$YES)
-                  ;(set-selected self (group-name group) :resign nil :highlight nil)
-                  ;(setf (is-highlighted group) nil)
                   (setf (selected-item-name group) (item-name item) ))
                 (#/setEditable: (text-view item) #$YES))
               (progn
                 (#/setEditable: (text-view item) #$NO)))))
         (progn 
-    
           (setf (selected-item-name group) nil)
           (#/setHidden: (selection-view group) #$YES)
           (setf (is-highlighted group) nil)
@@ -823,7 +787,6 @@
             (#/setHidden: (item-selection-view group) #$YES))))
       (incf i)))
   (layout-changed self))
-
 
 
 #|
