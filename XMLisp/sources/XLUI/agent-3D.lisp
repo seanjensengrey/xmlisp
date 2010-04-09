@@ -653,9 +653,12 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 (defmethod DRAW :before ((Self agent-3d))
   ;; deal with selection: may have to make sure we have a valid context
   (glPushName (reference-id Self))
+
   ;; BEGIN display with transformations
   (glPushmatrix)
-    (cond
+
+  
+  (cond
      ;; simple: no rotation
      ((and (not (has-shade Self)) (= (roll Self) 0.0) (= (heading Self) 0.0) (= (pitch Self) 0.0))
       ;; translate to world coordinate
