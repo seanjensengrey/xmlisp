@@ -13,7 +13,7 @@
 
 ;; edit to point to root folder containing /sources  /resources  etc.
 (setf (logical-pathname-translations "lui")
-      '(("**;*.*" "home:XMLISPTEMP;XMLisp;**;")))
+      '(("**;*.*" "home:working copies;XMLisp svn;trunk;XMLisp;**;")))
 
 
 #-cocotron
