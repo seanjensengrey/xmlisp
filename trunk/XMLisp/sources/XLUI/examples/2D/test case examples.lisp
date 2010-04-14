@@ -338,6 +338,21 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
   </column>
 </application-window>
 
+
+(setq w
+ <application-window title="resizable button and window">                                            
+  <column  align="center" valign="middle" flex="3">                                                  
+    <pop-up width="200" name="pop">                                                                            
+      <pop-up-item text="on ground" action="test" />                                                 
+      <pop-up-item text="upright" action="test2"/>                                                    
+      <pop-up-item text="wrap around cube" action="test3"/>                                          
+    </pop-up>                                                                                         
+  </column>                                                                                          
+</application-window>    )
+
+
+(lui::SET-SELECTED-ITEM-WITH-TITLE (view-named w "pop") "upright")
+
 ;;****************************************************
 ;; IMAGES  (assumed to be in LUI:resources;images;)  *
 ;;****************************************************

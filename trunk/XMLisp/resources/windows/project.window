@@ -37,7 +37,13 @@
       <row align="stretch" valign="stretch" flex="1" vflex="1">
         <column align="stretch" valign="stretch" flex="1" vflex="1">
           <world flex="1" vflex="1" name="the world">
-            <agent-matrix name="AGENT-MATRIX11508" rows="20" columns="20" layers="1"/>
+            <agent-matrix name="AGENT-MATRIX11508" rows="20" columns="20" layers="1">
+                  <agent_agent col="3" shape-name="agent-cube"/>
+     <agent_agent col="4" shape-name="agent-cube"/>
+    <agent_agent col="6" shape-name="agent-cube"/>
+    <agent_agent col="7" shape-name="agent-cube"/>
+       <agent_agent col="9" shape-name="agent-cube"/>
+             </agent-matrix>
           </world>
           <status-bar name="status-bar" text="bla"/>
         </column>
