@@ -12,8 +12,23 @@
 ;***************** Settings
 
 ;; edit to point to root folder containing /sources  /resources  etc.
+#-cocotron
 (setf (logical-pathname-translations "lui")
-      '(("**;*.*" "home:working copies;XMLisp svn;trunk;XMLisp;**;")))
+      '(("**;*.*" "home:working copies;Xmlisp svn;trunk;XMLisp;**;")))
+
+#+cocotron
+(setf (logical-pathname-translations "mac-home")
+`((,(make-pathname :host "mac-home"
+                   :directory '(:absolute :wild-inferiors)
+                   :name :wild
+                   :type :wild
+                   :version :wild)
+   #p"z:/**/*.*")))
+
+
+#+cocotron
+(setf (logical-pathname-translations "lui")
+      '(("**;*.*" "mac-home:working copies;Xmlisp svn;trunk;XMLisp;**;")))
 
 
 #-cocotron
@@ -101,7 +116,7 @@
    "CHECKBOX-CONTROL" "START-CHECKED" "IMAGE-ON-RIGHT"
    "IMAGE-BUTTON-CONTROL" "IMAGE" "CONTAINER" "CLUSTER-ACTION" "USER-ACTION" "SET-BUTTON-OFF"
    "RADIO-BUTTON-CONTROL" "ADD-ITEM" "FINALIZE-CLUSTER" "RADIO-ACTION"
-   "POPUP-BUTTON-CONTROL"  "POPUP-ACTION"
+   "POPUP-BUTTON-CONTROL"  "POPUP-ACTION" "SET-SELECTED-ITEM-WITH-TITLE"
    "ADD-GROUP" "ADD-GROUP-ITEM" "DELETE-GROUP" "DELETE-GROUP-ITEM" "SELECTED-GROUP" "SELECTED-GROUP-ITEM" "SELECT-GROUP" "SELECT-GROUP-ITEM"
   
    "SHOW-STRING-POPUP"
