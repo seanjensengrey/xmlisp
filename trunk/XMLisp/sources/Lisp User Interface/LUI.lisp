@@ -507,9 +507,10 @@ after any of the window controls calls stop-modal close window and return value.
   ;; nada
   )
 
+
 (defmethod VIEW-MOUSE-MOVED-EVENT-HANDLER ((Self window) x y dx dy)
   (declare (ignore X Y DX DY))
-  ;; (format t "~%mouse moved x=~A y=~A dx=~A dy=~A" x y dx dy)
+  ;(format t "~%mouse moved x=~A y=~A dx=~A dy=~A" x y dx dy)
   ;; nothing
   )
 
@@ -773,6 +774,21 @@ after any of the window controls calls stop-modal close window and return value.
 (defmethod initialize-event-handling ((Self editable-text-control))
   ;; not clickable
   )
+
+
+(defclass STATUS-BAR-CONTROL (control)
+  ((align :accessor align :initform :left :initarg :align :type keyword :documentation ":left, :center , :right, :justified"))
+  (:documentation "status bar")
+  (:default-initargs
+    :text ""
+    :width 100
+    :height 20))
+
+
+(defmethod initialize-event-handling ((Self editable-text-control))
+  ;; not clickable
+  )
+
 
 ;__________________________________
 ; Image                             |

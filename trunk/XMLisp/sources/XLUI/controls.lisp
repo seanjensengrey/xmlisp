@@ -488,6 +488,30 @@
   ;; not a good idea for end users
   nil)
   
+
+;__________________________________________________________________
+; Status Bar                                                       |
+;                                                                  |
+; <status-bar text="bla"/>                                         |
+;__________________________________________________________________
+
+(defclass STATUS-BAR (status-bar-control xml-layout-interface)
+  ((action :accessor action :initform 'print-window-and-dialog-action :type layout-value :initarg :action :documentation "method: window dialog"))
+  (:default-initargs
+    :width 100 
+    :height 20)
+  (:documentation "Editable Text"))
+
+
+(defmethod PRINT-SLOTS ((Self status-bar))
+  '(x y width height))
+
+
+(defmethod SYMBOL-COMPLETION-ENABLED-P ((Self status-bar))
+  ;; not a good idea for end users
+  nil)
+
+
 ;__________________________________________________________________
 ; Editable-Number                                                  |
 ;                                                                  |
