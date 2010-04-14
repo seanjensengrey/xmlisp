@@ -1119,6 +1119,53 @@
 
 
 ;__________________________________
+; STATUS BAR                   |
+;__________________________________/
+
+(defclass native-status-bar (ns:ns-text-field)
+  ((lui-view :accessor lui-view :initarg :lui-view))
+  (:metaclass ns:+ns-object))
+
+
+(defmethod make-native-object ((Self status-bar-control))
+  (let ((Native-Control (make-instance 'native-status-bar :lui-view Self)))
+    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+      (#/initWithFrame: Native-Control Frame)
+      (#/setDrawsBackground: Native-Control nil)
+      (#/setEditable: Native-Control #$NO)
+      (#/setStringValue: Native-Control (native-string (text Self)))
+      #| (ecase (align Self)
+        (:left (#/alignLeft: Native-Control Native-Control))
+        (:center (#/alignCenter: Native-Control Native-Control))
+        (:right (#/alignRight: Native-Control Native-Control))
+        (:justified (#/alignJustified: Native-Control Native-Control))) |# )  
+    Native-Control))
+
+
+(defmethod (setf text) :after (Text (Self status-bar-control))
+  (#/setStringValue: (native-view Self) (native-string Text)))
+
+
+(defmethod VALUE ((Self status-bar-control))
+  (ccl::lisp-string-from-nsstring 
+   (#/stringValue (native-view Self))))
+
+(defmethod (setf VALUE)  (Text (Self status-bar-control))
+  (#/setStringValue: (native-view Self) (native-string Text)))
+
+
+(defmethod MAP-SUBVIEWS ((Self status-bar-control) Function &rest Args)
+  (declare (ignore Function Args))
+  ;; no Cocoa digging
+  )
+
+
+(defmethod SUBVIEWS ((Self status-bar-control))
+  ;; no Cocoa digging
+  )
+
+
+;__________________________________
 ; IMAGE                            |
 ;__________________________________/
 

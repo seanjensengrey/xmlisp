@@ -83,7 +83,9 @@
 (defmethod LAYOUT ((Self layout-view)) 
   (let ((subviews (gui::list-from-ns-array (#/subviews self))))  
     (dolist (subview subviews)
-      (unless (equal (type-of subview) 'LUI::NATIVE-IMAGE)
+      (unless (or 
+               (equal (type-of subview) 'LUI::NATIVE-IMAGE)
+               (equal (type-of subview) 'LUI::NATIVE-STATUS-BAR))
         (layout subview)))))
 
 
@@ -586,6 +588,11 @@
           (#/setHidden: (native-view selection-image) #$YES))
         (setf (item-selection-view group) (native-view selection-image))
         (#/addSubview: (item-view group) (native-view selection-image))))
+    (let ((item-counter (make-instance 'status-bar-control :text "0" :x x :y item-y :width 40 :height (- (row-height self) 2 ))))
+      (#/addSubview: (item-view group) (native-view item-counter))
+      (setf (item-counter group-item) item-counter)
+      (incf x 45))
+    
     (let ((detection-view-item (#/alloc item-detection-view)))
       (ns:with-ns-rect (detection-frame 0 item-y (width self) (row-height self))
         (setf (group-name detection-view-item) (group-name group))
@@ -595,7 +602,9 @@
         (case (item-detection-views group)
           (nil (setf (item-detection-views group) (list detection-view-item)))
           (t (setf (item-detection-views group) (append (item-detection-views group) (list detection-view-item)))))    
-        (#/addSubview: (item-view group) detection-view-item))     
+        (#/addSubview: (item-view group) detection-view-item))  
+      
+        
       (let ((image (make-instance 'group-item-image-view   :image-path (image-path group-item)   :group-name (group-name group) :container self :item-name (item-name group-item)  :x x :y item-y :image-name (image-name group-item)  ))) ;'image-control :src (group-image group) :x x :y y :width (row-height self) :height (row-height self)))) 
         (incf x (row-height self))
         (#/addSubview: #|items-container|# detection-view-item (create-image image group-item)))
@@ -822,6 +831,25 @@
   (layout-changed self)
   (layout (native-view self)))
 
+
+(defmethod INCREMENT-ITEM-COUNTER ((Self badged-image-group-list-manager-view) group-name item-name &key (number-of-agents 1))
+  (dolist (group (groups self))     
+    (if (equal group-name (group-name group))
+      (dolist (item (group-items group))      
+        (if (equal item-name (item-name item))   
+          (progn
+            (let ((item-counter-value (read-from-string (value (item-counter item)))))
+              (incf item-counter-value number-of-agents)
+              (setf (VALUE (item-counter item))  (write-to-string item-counter-value )))
+            )
+          )))))
+
+
+(defmethod CLEAR-ITEM-COUNTERS ((Self badged-image-group-list-manager-view) )
+  (dolist (group (groups self))     
+    (dolist (item (group-items group))          
+      (setf (VALUE (item-counter item))  (write-to-string 0)))))
+  
 
 #|
 (objc:defmethod (#/becomeFirstResponder  :void) ((self mouse-detection-text-field))
