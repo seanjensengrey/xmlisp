@@ -22,7 +22,7 @@
 
 (defclass SHAPE (agent-3d)
   ((height :accessor height :initform 1s0 :initarg :height)
-   (turn-height :accessor turn-height :initform 0s0 :initarg :turn-height :type single-float :documentation "height around which shapes will be turned. Default to floor")
+   (turn-height :accessor turn-height :initform 0.0 :initarg :turn-height :type single-float :documentation "height around which shapes will be turned. Default to floor")
    (textures :accessor textures :initform (make-hash-table :test #'equal))
    ;; (shade :accessor shade :initform nil :type string-or-null :documentation "used as floor shadow in unit size")
    ))
@@ -299,6 +299,9 @@
    (bottom-texture :accessor bottom-texture :initform nil :documentation "texture file name")
    (dx :accessor dx :initform 1.0 :initarg :dx)
    (dy :accessor dy :initform 1.0 :initarg :dy))
+  (:default-initargs 
+      :height 1.0
+    :turn-height 0.5)
   (:documentation "Box has six different textures"))
 
 
