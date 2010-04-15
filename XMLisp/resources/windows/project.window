@@ -1,39 +1,43 @@
 <?xml version="1.0"?>
-<project-window title="project" track-mouse="true" x="100" y="50" width="1000" height="600">
+<project-window title="project" track-mouse="true" x="100" y="50" width="1000" height="600" margin="0">
   <row align="stretch" valign="stretch">
     <column align="stretch" valign="stretch" flex="1" width="250">
-      <label text="Agents" align="center"/>
+      <row valign="middle" align="center" height="32" src="gradient-transparent.png">
+        <label text="Agents" width="120" align="center"/>
+      </row>
       <scroll-box vflex="1" name="agent-scroll-box">
         <agent-gallery name="agent-gallery" />
       </scroll-box>
       <row align="stretch" valign="stretch" height="30">
         <bevel-button text="Add Agent" name="add-agent" action="add-agent-action" width="85" />
         <bevel-button text="Add Shape" name="add-shape" action="add-shape-action" width="85" />
-        <bevel-button text="Delete"    name="delete" action="delete-selected-agent" width="80" />
+        <bevel-button text="Delete"    name="delete"    action="delete-selected-agent" width="80" />
       </row>
     </column>
     <column align="stretch" valign="stretch" flex="4">
-      <row valign="middle" height="28">
-      <image-button-row>
-        <image-button name="run button" action="run-action" image="run-button.png"/> 
-        <image-button name="stop button" action="stop-action" image="stop-button.png"/> 
-        <image-button name="step button" action="step-action" image="step-button.png"/>
-      </image-button-row>
-      <spacer width="10"/>
-      <image-button-row>
-        <image-button name="arrow button" action="arrow-tool-action" image="arrow-button.png"/>
-        <image-button name="draw button" action="draw-tool-action" image="draw-button.png"/>
-        <image-button name="volume insert button" action="volume-insert-tool-action" image="select-rect-button.png"/>
-        <image-button name="erase button" action="erase-tool-action" image="erase-button.png"/> 
-        <image-button name="rotate button" action="rotate-tool-action" image="rotate-button.png"/>
-        <image-button name="pan button" action="pan-tool-action" image="pan-button.png"/>
-        <image-button name="zoom button" action="zoom-tool-action" image="zoom-button.png"/>    
-      </image-button-row>
-      <bevel-button text="Clear" name="clear-button" action="clear-tool-action" width="85" height="28" />
-
+      <row valign="middle" align="center" height="32" src="gradient-transparent.png">
+        <label text="World:" width="45" />
+        <pop-up name="world-name" width="150" /> 
+        <spacer width="10"/>
+        <image-button-row>
+          <image-button name="run button"  action="run-action"  image="run-button.png"/> 
+          <image-button name="stop button" action="stop-action" image="stop-button.png"/> 
+          <image-button name="step button" action="step-action" image="step-button.png"/>
+        </image-button-row>
+        <spacer width="10"/>
+        <image-button-row>
+          <image-button name="arrow button" action="arrow-tool-action" image="arrow-button.png"/>
+          <image-button name="draw button" action="draw-tool-action" image="draw-button.png"/>
+          <image-button name="volume insert button" action="volume-insert-tool-action" image="select-rect-button.png"/>
+          <image-button name="erase button" action="erase-tool-action" image="erase-button.png"/> 
+          <image-button name="rotate button" action="rotate-tool-action" image="rotate-button.png"/>
+          <image-button name="pan button" action="pan-tool-action" image="pan-button.png"/>
+          <image-button name="zoom button" action="zoom-tool-action" image="zoom-button.png"/>    
+        </image-button-row>
+        <spacer width="8"/>
+        <image-button name="reload button"  action="reload-tool-action"  image="reload-button.png"/> 
+        <bevel-button text="Clear" name="clear-button" action="clear-tool-action" width="65" height="28" />
       </row>
-
-      <label text="Tools &amp; World" align="center"/>
       <row align="stretch" valign="stretch" flex="1" vflex="1">
         <column align="stretch" valign="stretch" flex="1" vflex="1">
           <world flex="1" vflex="1" name="the world">
