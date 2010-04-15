@@ -870,6 +870,10 @@
 (defmethod SET-BUTTON-OFF ((Self image-button-control))
   (#/setState: (native-view self) #$NSOffState))
 
+
+(defmethod SET-BUTTON-ON ((Self image-button-control))
+  (#/setState: (native-view self) #$NSOnState))
+
 ;__________________________________
 ; RADIO BUTTON                     |
 ;__________________________________/
