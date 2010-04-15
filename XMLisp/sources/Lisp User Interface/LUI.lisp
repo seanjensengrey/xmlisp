@@ -612,6 +612,7 @@ after any of the window controls calls stop-modal close window and return value.
     :width 72
     :height 32))
 
+
 (defclass CHECKBOX-CONTROL (control)
   ((start-checked :accessor start-checked :initform nil :initarg :start-checked )
    (image-on-right :accessor image-on-right :initform nil :initarg :image-on-right))
@@ -620,8 +621,7 @@ after any of the window controls calls stop-modal close window and return value.
       :action 'default-action))
 
 
-
-(defmethod DEFAULT-ACTION((window window) (self checkbox-control))
+(defmethod DEFAULT-ACTION ((window window) (self checkbox-control))
   (declare (ignore window))
   (declare (ignore self)))
 
@@ -636,13 +636,12 @@ after any of the window controls calls stop-modal close window and return value.
   (:documentation "Button Image"))
 
 
-(defmethod DEFAULT-ACTION((window window) (self image-button-control))
+(defmethod DEFAULT-ACTION ((window window) (self image-button-control))
   (declare (ignore window))
   (declare (ignore self)))
 
 
-
-(defmethod CLUSTER-ACTION((window window) (self image-button-control))
+(defmethod CLUSTER-ACTION ((window window) (self image-button-control))
   (funcall 'change-cluster-selections (container self) self)
   (funcall (user-action self) window self))
 
@@ -656,7 +655,7 @@ after any of the window controls calls stop-modal close window and return value.
   (:documentation "Popup Button"))
 
 
-(defmethod POPUP-ACTION((window window) (self popup-Button-Control))
+(defmethod POPUP-ACTION ((window window) (self popup-Button-Control))
   (unless (eql (get-selected-action self) NIL)
     (let ((action (get-selected-action self)))
       (funcall action Window Self))))
