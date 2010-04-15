@@ -135,7 +135,7 @@
 
 (defmethod SWAP-SUBVIEW ((View subview-manager-interface) (Old-Subview subview-manager-interface) (New-Subview subview-manager-interface))
   ;; make compatible: new and old compatible with respect to size and origin
-  (#/setFrame: (native-view New-Subview) (#/frame (native-view Old-Subview)))
+  (set-size New-Subview (width Old-Subview) (height Old-Subview))
   ;; adjust structure
   (#/retain (native-view Old-Subview)) ;; no GC
   (#/replaceSubview:with: (native-view View) (native-view Old-Subview) (native-view New-Subview))
