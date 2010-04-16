@@ -118,7 +118,7 @@
    "RADIO-BUTTON-CONTROL" "ADD-ITEM" "FINALIZE-CLUSTER" "RADIO-ACTION"
    "POPUP-BUTTON-CONTROL"  "POPUP-ACTION" "SET-SELECTED-ITEM-WITH-TITLE"
    "ADD-GROUP" "ADD-GROUP-ITEM" "DELETE-GROUP" "DELETE-GROUP-ITEM" "SELECTED-GROUP" "SELECTED-GROUP-ITEM" "SELECT-GROUP" "SELECT-GROUP-ITEM"
-  
+   "SCROLLER-CONTROL" 
    "SHOW-STRING-POPUP"
    
    "TAB-VIEW-CONTROL" "ADD-TAB-VIEW-ITEM"
@@ -350,5 +350,16 @@
 #| 
 
 (build-xmlisp)
+
+|#
+
+#|
+(in-package :xlui)
+(setf q
+<application-window>
+<agent-3d-view>
+<cube/>
+</agent-3d-view>
+</application-window>)
 
 |#

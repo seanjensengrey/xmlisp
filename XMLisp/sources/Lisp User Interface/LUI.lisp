@@ -707,6 +707,26 @@ after any of the window controls calls stop-modal close window and return value.
 (let ((action (get-selected-action self)))
     (funcall action Window Self)))
 |#
+
+
+;__________________________________
+; Scroller                         |
+;__________________________________/
+
+
+(defclass SCROLLER-CONTROL (control)
+  (
+   )
+  (:documentation "Scroller")
+  (:default-initargs 
+      :action 'scroll-action))
+
+
+(defmethod SCROLL-ACTION ((window window) (self scroller-control))
+  (declare (ignore window))
+  (declare (ignore self)))
+
+
 ;__________________________________
 ; Seperator                        |
 ;__________________________________/

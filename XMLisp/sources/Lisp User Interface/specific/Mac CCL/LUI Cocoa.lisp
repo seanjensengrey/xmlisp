@@ -139,7 +139,9 @@
   ;; adjust structure
   (#/retain (native-view Old-Subview)) ;; no GC
   (#/replaceSubview:with: (native-view View) (native-view Old-Subview) (native-view New-Subview))
-  (setf (part-of New-Subview) View))
+  (setf (part-of New-Subview) View)
+  ;; set size again to give views such as opengl views a chance to reestablish themselves
+  (set-size New-Subview (width Old-Subview) (height Old-Subview)))
   
 
 
@@ -341,6 +343,7 @@
 
 
 (objc:defmethod (#/mouseMoved: :void) ((self native-window) Event)
+  
   (let ((mouse-loc (#/locationInWindow event)))
     (view-event-handler (lui-window Self) 
                         (make-instance 'mouse-event
@@ -349,7 +352,8 @@
                           :dx (truncate (#/deltaX Event))
                           :dy (truncate (#/deltaY Event))
                           :event-type (native-to-lui-event-type (#/type event))
-                          :native-event Event))))
+                          :native-event Event)))
+  )
 
 
 
@@ -836,7 +840,39 @@
 (defmethod (setf text) :after (Text (Self checkbox-control))
   (#/setTitle: (native-view Self) (native-string Text)))
 
+;__________________________________
+; SCROLLER CONTROL                 |
+;__________________________________/
 
+
+(defclass native-scroller (ns:ns-scroller)
+  ((lui-view :accessor lui-view :initarg :lui-view))
+  (:metaclass ns:+ns-object))
+
+
+(defmethod make-native-object ((Self scroller-control))
+  (let ((Native-Control (make-instance 'native-scroller :lui-view Self)))
+    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+      (#/initWithFrame: Native-Control Frame)
+      (#/setFloatValue:knobProportion: Native-Control .2 .2)
+      (#/setArrowsPosition: Native-Control #$NSScrollerArrowsMinEnd ) 
+      (#/setEnabled: Native-Control #$YES)
+      (#/setControlSize: Native-Control #$NSRegularControlSize)
+      (print (#/usableParts Native-Control))
+      (print (#/checkSpaceForParts Native-Control))
+      Native-Control)))
+
+
+
+(defmethod VALUE ((Self scroller-control))
+  (#/floatValue (native-view self)))
+
+
+#|
+(defmethod initialize-event-handling ((Self row))
+  ;; no event handling for rows
+  )
+|#
 ;__________________________________
 ;  Image Button                    |
 ;__________________________________/

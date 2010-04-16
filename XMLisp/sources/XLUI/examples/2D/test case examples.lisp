@@ -35,6 +35,9 @@ NOT RECOMMENDED: if you load the entire buffer at once then you just get a mess 
 </application-window> 
 
 
+
+
+
 <application-window title="resizable button and window">
   <bevel-button text="this button&#10;will assume window size&#10;when&#10;you resize the window"/>
 </application-window>
@@ -338,6 +341,7 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
   </column>
 </application-window>
 
+;; Pop up button control
 
 (setq w
  <application-window title="resizable button and window">                                            
@@ -351,7 +355,7 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
 </application-window>    )
 
 
-(lui::SET-SELECTED-ITEM-WITH-TITLE (view-named w "pop") "upright")
+(SET-SELECTED-ITEM-WITH-TITLE (view-named w "pop") "upright")
 
 ;;****************************************************
 ;; IMAGES  (assumed to be in LUI:resources;images;)  *
@@ -410,6 +414,28 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
     <button text="on top" x="100" y="140"/>
   </canvas>
 </application-window>
+
+
+;;********************************************
+;;*          SCROLLER                        *
+;;********************************************
+
+
+<application-window x="100" y="100" width="300" height="176" title="valign='middle'"minimizable="false">
+  <row valign="middle">
+    <bevel-button name="button" width="100" text="SCROLL-ME"/>
+    <scroller action="my-scroll-action"  height="200"/>
+  </row>
+</application-window> 
+
+(defmethod MY-SCROLL-ACTION ((window window) (self scroller-control))
+  (print (knob-position self))
+  (let ((button (view-named Window "button")))
+    (set-position button 0 (* (value self) (- (height window) 20)))
+    (display window)
+    ;(#/setNeedsDisplay: (lui::native-window window))
+    )
+  (print "MY SCROLL ACITON"))
 
 
 ;;********************************************
