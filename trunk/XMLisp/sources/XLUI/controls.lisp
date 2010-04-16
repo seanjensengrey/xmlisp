@@ -273,7 +273,7 @@
     :padding -1
     :action 'default-action
     :minimize :box)
-  (:documentation "a row of image-buttons. Pressing button will select it and unselect all others in same segment."))
+  (:documentation "a column of image-buttons. Pressing a button will select it and unselect all others in same segment."))
 
 
 (defmethod CHANGE-CLUSTER-SELECTIONS ((Self image-button-cluster) button)
@@ -324,6 +324,7 @@
 
 (defmethod DEFAULT-ACTION ((Window window) (Self image-button-row)))
 
+
 (defmethod ADD-SUBOBJECT ((cluster image-button-row) (button image-button))
   (call-next-method)
   (setf (in-cluster button) 'T)
@@ -332,6 +333,8 @@
   (setf (action button) 'cluster-action)
   (initialize-event-handling button)
   (setf (images cluster) (append (images cluster) (list button))))
+
+
 ;_____________________________________________________________________
 ; Radio Button Cluster                                                |
 ;                                                                     |
@@ -365,9 +368,11 @@
    (action :accessor action :initform 'print-window-and-dialog-action  :type symbol :documentation "method: window dialog"))
   (:documentation "a radio button item"))
 
+
 (defmethod FINISHED-READING ((Self radio-button-cluster) Stream)
   (declare (ignore Stream))
   (finalize-cluster Self))
+
 
 (defmethod ADD-SUBOBJECT ((radio-control radio-button-cluster) (Item radio-item))
   (add-item radio-control (text Item) (action Item)))
@@ -458,6 +463,7 @@
 ; <check-box text="important" action="snap-sound" width="90"/>     |
 ;__________________________________________________________________
 
+
 (defclass CHECK-BOX (checkbox-control xml-layout-interface)
   (title :accessor )
   (:default-initargs
@@ -465,12 +471,26 @@
     :height 15))
 
 
+;__________________________________________________________________
+; Check Box                                                        |
+;                                                                  |
+; <check-box text="important" action="snap-sound" width="90"/>     |
+;__________________________________________________________________
+
+
+(defclass  SCROLLER (scroller-control xml-layout-interface)
+  (title :accessor )
+  (:default-initargs
+    :width 15 
+    :height 150))
+
 
 ;__________________________________________________________________
 ; Editable-Text                                                    |
 ;                                                                  |
 ; <editable-text text="bla"/>                                      |
 ;__________________________________________________________________
+
 
 (defclass EDITABLE-TEXT (editable-text-control xml-layout-interface)
   ((action :accessor action :initform 'print-window-and-dialog-action :type layout-value :initarg :action :documentation "method: window dialog"))
@@ -494,6 +514,7 @@
 ;                                                                  |
 ; <status-bar text="bla"/>                                         |
 ;__________________________________________________________________
+
 
 (defclass STATUS-BAR (status-bar-control xml-layout-interface)
   ((action :accessor action :initform 'print-window-and-dialog-action :type layout-value :initarg :action :documentation "method: window dialog"))
