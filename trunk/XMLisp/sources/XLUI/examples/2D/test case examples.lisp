@@ -420,22 +420,23 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
 ;;*          SCROLLER                        *
 ;;********************************************
 
-<application-window x="100" y="100" width="300" height="176" title="valign='middle'"minimizable="false">
-  <row valign="middle">
-    <bevel-button name="button" width="100" text="SCROLL-ME"/>
-    <scroller action="my-scroll-action"  height="200"/>
+<application-window title="scrolling" margin="0">
+  <row valign="stretch" align="distribute">
+    <column>
+      <bevel-button name="button" width="100" height="26" text="SCROLL-ME" vflex="0"/>
+    </column>
+    <scroller action="my-scroll-action" vflex="1" height="200"/>
   </row>
 </application-window> 
 
 
 (defmethod MY-SCROLL-ACTION ((window window) (self scroller-control))
-  (print (knob-position self))
+  ;;(print (knob-position self))
   (let ((button (view-named Window "button")))
     (set-position button 0 (* (value self) (- (height window) 20)))
     (display window)
     ;(#/setNeedsDisplay: (lui::native-window window))
-    )
-  (print "MY SCROLL ACITON"))
+    ))
 
 
 ;;********************************************
