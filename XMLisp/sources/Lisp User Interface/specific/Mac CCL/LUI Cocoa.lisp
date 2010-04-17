@@ -845,19 +845,20 @@
 ;__________________________________/
 
 
-(defclass native-scroller (ns:ns-scroller)
+(defclass NATIVE-SCROLLER (ns:ns-scroller)
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
 
 
-(defmethod make-native-object ((Self scroller-control))
+(defmethod MAKE-NATIVE-OBJECT ((Self scroller-control))
   (let ((Native-Control (make-instance 'native-scroller :lui-view Self)))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+      (#/setControlSize: Native-Control #$NSMiniControlSize)
+      (#/sizeToFit Native-Control)
       (#/initWithFrame: Native-Control Frame)
       (#/setFloatValue:knobProportion: Native-Control .2 .2)
       (#/setArrowsPosition: Native-Control #$NSScrollerArrowsMinEnd ) 
       (#/setEnabled: Native-Control #$YES)
-      (#/setControlSize: Native-Control #$NSRegularControlSize)
       (print (#/usableParts Native-Control))
       (print (#/checkSpaceForParts Native-Control))
       Native-Control)))
