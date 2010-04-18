@@ -345,7 +345,7 @@
   ;; http://www.opengl.org/discussion_boards/ubbthreads.php?ubb=showflat&Number=235603 
   (unless (agents Self) (return-from find-agent-at))
   (with-glcontext-no-flush Self
-    (with-vector-of-size (&Selection-Array bufsize)
+    (with-vector-of-size (&Selection-Array (* bufsize (ccl::foreign-size #>GLuint :bytes)))
       (not-in-render-mode-error-check) ;; this should never happen
       (let ((Agent nil))
         (unwind-protect
