@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<new-world-dialog title="New World Specifications"  resizable="false" width="350" height="280" >
+  <column align="stretch" valign="stretch" padding="10" name="testcolumn">
+    <row align="stretch" minimize="vertical" valign="middle">
+     <label text="Name:" flex="1" />
+     <editable-text text="it's a new world" name="world name" width="200" action="new-world-edit-name-action"/>
+    </row>
+    <row align="stretch" minimize="vertical" valign="middle">
+     <label text="Number of Rows:" flex="1" />
+     <editable-number name="rows" text="20" width="50" />
+    </row>
+    <row align="stretch" minimize="vertical" valign="middle">
+     <label text="Number of Columns:" flex="1" />
+     <editable-number name="columns" text="20" width="50" />
+    </row>
+    <row align="stretch" minimize="vertical" valign="middle">
+     <label text="Number of Layers:" flex="1" />
+     <editable-number name="layers" text="1" width="50" />
+    </row>
+    <row align="stretch" minimize="vertical" valign="middle">
+     <check-box name="grid" text="Show grid" start-checked="true"/>
+    </row>
+    <row align="stretch" minimize="vertical" valign="middle">
+     <check-box name="background" text="Background" width="100" action="enable-background-info"/>
+     <label text="&lt;no file selected&gt;" width="110" name="background-file" />
+     <button text="Choose image..." width="120" name="background-button" action="choose-background-image" />
+    </row>
+    <row align="right" valign="bottom" vflex="1">
+      <button text="Cancel" action="cancel-adding-world-action" />
+      <button text="OK" action="add-new-world-action" default-button="true"/>
+    </row>
+  </column>
+</new-world-dialog>
