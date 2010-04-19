@@ -18,6 +18,8 @@
       <row valign="middle" align="center" height="32" src="gradient-transparent.png">
         <label text="World:" width="45" />
         <pop-up name="world-name" width="150" /> 
+        <image-button name="add world button"  action="add-new-world-action"  image="plus-button.png"/>
+        <bevel-button text="Save" name="save-button" action="save-the-world-action" width="65" height="28" />
         <spacer width="10"/>
         <image-button-row>
           <image-button name="run button"  action="run-action"  image="run-button.png"/> 
@@ -42,12 +44,7 @@
         <column align="stretch" valign="stretch" flex="1" vflex="1">
           <world flex="1" vflex="1" name="the world">
             <agent-matrix name="AGENT-MATRIX11508" rows="20" columns="20" layers="1">
-                  <agent_agent col="3" shape-name="agent-cube"/>
-     <agent_agent col="4" shape-name="agent-cube"/>
-    <agent_agent col="6" shape-name="agent-cube"/>
-    <agent_agent col="7" shape-name="agent-cube"/>
-       <agent_agent col="9" shape-name="agent-cube"/>
-             </agent-matrix>
+            </agent-matrix>
           </world>
           <status-bar name="status-bar" text="bla"/>
         </column>
