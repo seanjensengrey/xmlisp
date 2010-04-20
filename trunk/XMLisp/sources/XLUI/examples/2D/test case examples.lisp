@@ -512,7 +512,6 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
 
 (defmethod ADD-AGENT-ACTION ((w application-window) (Button button))
   (let ((image-badge (value (view-named w "image-badge"))) (name (value (view-named w "text-field"))))
-    ;(setf (window image-badge) w)
     (add-group image-badge `(,name "redlobster.png"  (("shape5" "redlobster.png")( "shape4" "redlobster.png"))))))
 
 
