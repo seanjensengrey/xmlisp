@@ -1,0 +1,334 @@
+<?xml version="1.0"?>
+<virtual-key-table comments="Mac and Win">
+  <virtual-key name="A">
+    <key-binding platform="mac" code="0"/>
+    <key-binding platform="win" code="65"/>
+  </virtual-key>
+  <virtual-key name="B">
+    <key-binding platform="mac" code="11"/>
+    <key-binding platform="win" code="66"/>
+  </virtual-key>
+  <virtual-key name="C">
+    <key-binding platform="mac" code="8"/>
+    <key-binding platform="win" code="67"/>
+  </virtual-key>
+  <virtual-key name="D">
+    <key-binding platform="mac" code="2"/>
+    <key-binding platform="win" code="68"/>
+  </virtual-key>
+  <virtual-key name="E">
+    <key-binding platform="mac" code="14"/>
+    <key-binding platform="win" code="69"/>
+  </virtual-key>
+  <virtual-key name="F">
+    <key-binding platform="mac" code="3"/>
+    <key-binding platform="win" code="70"/>
+  </virtual-key>
+  <virtual-key name="G">
+    <key-binding platform="mac" code="5"/>
+    <key-binding platform="win" code="71"/>
+  </virtual-key>
+  <virtual-key name="H">
+    <key-binding platform="mac" code="4"/>
+    <key-binding platform="win" code="72"/>
+  </virtual-key>
+  <virtual-key name="I">
+    <key-binding platform="mac" code="34"/>
+    <key-binding platform="win" code="73"/>
+  </virtual-key>
+  <virtual-key name="J">
+    <key-binding platform="mac" code="38"/>
+    <key-binding platform="win" code="74"/>
+  </virtual-key>
+  <virtual-key name="K">
+    <key-binding platform="mac" code="40"/>
+    <key-binding platform="win" code="75"/>
+  </virtual-key>
+  <virtual-key name="L">
+    <key-binding platform="mac" code="37"/>
+    <key-binding platform="win" code="76"/>
+  </virtual-key>
+  <virtual-key name="M">
+    <key-binding platform="mac" code="46"/>
+    <key-binding platform="win" code="77"/>
+  </virtual-key>
+  <virtual-key name="N">
+    <key-binding platform="mac" code="45"/>
+    <key-binding platform="win" code="78"/>
+  </virtual-key>
+  <virtual-key name="O">
+    <key-binding platform="mac" code="31"/>
+    <key-binding platform="win" code="79"/>
+  </virtual-key>
+  <virtual-key name="P">
+    <key-binding platform="mac" code="35"/>
+    <key-binding platform="win" code="80"/>
+  </virtual-key>
+  <virtual-key name="Q">
+    <key-binding platform="mac" code="12"/>
+    <key-binding platform="win" code="81"/>
+  </virtual-key>
+  <virtual-key name="R">
+    <key-binding platform="mac" code="15"/>
+    <key-binding platform="win" code="82"/>
+  </virtual-key>
+  <virtual-key name="S">
+    <key-binding platform="mac" code="1"/>
+    <key-binding platform="win" code="83"/>
+  </virtual-key>
+  <virtual-key name="T">
+    <key-binding platform="mac" code="17"/>
+    <key-binding platform="win" code="84"/>
+  </virtual-key>
+  <virtual-key name="U">
+    <key-binding platform="mac" code="32"/>
+    <key-binding platform="win" code="85"/>
+  </virtual-key>
+  <virtual-key name="V">
+    <key-binding platform="mac" code="9"/>
+    <key-binding platform="win" code="86"/>
+  </virtual-key>
+  <virtual-key name="W">
+    <key-binding platform="mac" code="13"/>
+    <key-binding platform="win" code="87"/>
+  </virtual-key>
+  <virtual-key name="X">
+    <key-binding platform="mac" code="7"/>
+    <key-binding platform="win" code="88"/>
+  </virtual-key>
+  <virtual-key name="Y">
+    <key-binding platform="mac" code="16"/>
+    <key-binding platform="win" code="89"/>
+  </virtual-key>
+  <virtual-key name="Z">
+    <key-binding platform="mac" code="6"/>
+    <key-binding platform="win" code="90"/>
+  </virtual-key>
+  <virtual-key name="0">
+    <key-binding platform="mac" code="29"/>
+    <key-binding platform="win" code="48"/>
+  </virtual-key>
+  <virtual-key name="1">
+    <key-binding platform="mac" code="18"/>
+    <key-binding platform="win" code="49"/>
+  </virtual-key>
+  <virtual-key name="2">
+    <key-binding platform="mac" code="19"/>
+    <key-binding platform="win" code="50"/>
+  </virtual-key>
+  <virtual-key name="3">
+    <key-binding platform="mac" code="20"/>
+    <key-binding platform="win" code="51"/>
+  </virtual-key>
+  <virtual-key name="4">
+    <key-binding platform="mac" code="21"/>
+    <key-binding platform="win" code="52"/>
+  </virtual-key>
+  <virtual-key name="5">
+    <key-binding platform="mac" code="23"/>
+    <key-binding platform="win" code="53"/>
+  </virtual-key>
+  <virtual-key name="6">
+    <key-binding platform="mac" code="22"/>
+    <key-binding platform="win" code="54"/>
+  </virtual-key>
+  <virtual-key name="7">
+    <key-binding platform="mac" code="26"/>
+    <key-binding platform="win" code="55"/>
+  </virtual-key>
+  <virtual-key name="8">
+    <key-binding platform="mac" code="28"/>
+    <key-binding platform="win" code="56"/>
+  </virtual-key>
+  <virtual-key name="9">
+    <key-binding platform="mac" code="25"/>
+    <key-binding platform="win" code="57"/>
+  </virtual-key>
+  <virtual-key name="esc">
+    <key-binding platform="mac" code="53"/>
+    <key-binding platform="win" code="27"/>
+  </virtual-key>
+  <virtual-key name="tab">
+    <key-binding platform="mac" code="48"/>
+    <key-binding platform="win" code="9"/>
+  </virtual-key>
+  <virtual-key name="caps lock">
+    <key-binding platform="mac" code="57"/>
+    <key-binding platform="win" code="9"/>
+  </virtual-key>
+  <virtual-key name="shift">
+    <key-binding platform="mac" label="" code="56" symbol-code="5"/>
+    <key-binding platform="win" code="16"/>
+  </virtual-key>
+  <virtual-key name="control">
+    <key-binding platform="mac" code="59"/>
+    <key-binding platform="win" code="17"/>
+  </virtual-key>
+  <virtual-key name="option">
+    <key-binding platform="mac" label="" code="58" symbol-code="7"/>
+    <key-binding label="alt" platform="win" code="18" comments="also called the menu key"/>
+  </virtual-key>
+  <virtual-key name="command" comments="there is no real equivalent">
+    <key-binding platform="mac" label="" code="55" symbol-code="17"/>
+  </virtual-key>
+  <virtual-key name="space">
+    <key-binding platform="mac" code="49"/>
+    <key-binding platform="win" code="32"/>
+  </virtual-key>
+  <virtual-key name="return">
+    <key-binding platform="mac" code="36"/>
+    <key-binding platform="win" code="13" comments="same as enter??"/>
+  </virtual-key>
+  <virtual-key name="enter">
+    <key-binding platform="mac" code="76"/>
+  </virtual-key>
+  <virtual-key name="delete">
+    <key-binding platform="mac" code="51"/>
+    <key-binding platform="win" code="46"/>
+  </virtual-key>
+  <virtual-key name="f1">
+    <key-binding platform="mac" code="122"/>
+    <key-binding platform="win" code="112"/>
+  </virtual-key>
+  <virtual-key name="f2">
+    <key-binding platform="mac" code="120"/>
+    <key-binding platform="win" code="113"/>
+  </virtual-key>
+  <virtual-key name="f3">
+    <key-binding platform="mac" code="99"/>
+    <key-binding platform="win" code="114"/>
+  </virtual-key>
+  <virtual-key name="f4">
+    <key-binding platform="mac" code="118"/>
+    <key-binding platform="win" code="115"/>
+  </virtual-key>
+  <virtual-key name="f5">
+    <key-binding platform="mac" code="96"/>
+    <key-binding platform="win" code="116"/>
+  </virtual-key>
+  <virtual-key name="f6">
+    <key-binding platform="mac" code="97"/>
+    <key-binding platform="win" code="117"/>
+  </virtual-key>
+  <virtual-key name="f7">
+    <key-binding platform="mac" code="98"/>
+    <key-binding platform="win" code="118"/>
+  </virtual-key>
+  <virtual-key name="f8">
+    <key-binding platform="mac" code="100"/>
+    <key-binding platform="win" code="119"/>
+  </virtual-key>
+  <virtual-key name="f9">
+    <key-binding platform="mac" code="101"/>
+    <key-binding platform="win" code="120"/>
+  </virtual-key>
+  <virtual-key name="f10">
+    <key-binding platform="mac" code="109"/>
+    <key-binding platform="win" code="121"/>
+  </virtual-key>
+  <virtual-key name="f11">
+    <key-binding platform="mac" code="99"/>
+    <key-binding platform="win" code="122"/>
+  </virtual-key>
+  <virtual-key name="f12">
+    <key-binding platform="mac" code="111"/>
+    <key-binding platform="win" code="123"/>
+  </virtual-key>
+  <virtual-key name="f13">
+    <key-binding platform="mac" code="105"/>
+    <key-binding platform="win" code="124"/>
+  </virtual-key>
+  <virtual-key name="f14">
+    <key-binding platform="mac" code="107"/>
+    <key-binding platform="win" code="125"/>
+  </virtual-key>
+  <virtual-key name="f15">
+    <key-binding platform="mac" code="113"/>
+    <key-binding platform="win" code="126"/>
+  </virtual-key>
+  <virtual-key name="left arrow">
+    <key-binding label="" platform="mac" code="123" symbol-code="24"/>
+    <key-binding platform="win" code="37"/>
+  </virtual-key>
+  <virtual-key name="right arrow">
+    <key-binding label="" platform="mac" code="124" symbol-code="26"/>
+    <key-binding platform="win" code="39"/>
+  </virtual-key>
+  <virtual-key name="up arrow">
+    <key-binding label="" platform="mac" code="126" symbol-code="25"/>
+    <key-binding platform="win" code="38"/>
+  </virtual-key>
+  <virtual-key name="down arrow">
+    <key-binding label="" platform="mac" code="125" symbol-code="16"/>
+    <key-binding platform="win" code="40"/>
+  </virtual-key>
+  <virtual-key name="page down">
+    <key-binding platform="mac" code="121"/>
+    <key-binding platform="win" code="34"/>
+  </virtual-key>
+  <virtual-key name="page up">
+    <key-binding platform="mac" code="116"/>
+    <key-binding platform="win" code="33"/>
+  </virtual-key>
+  <virtual-key name="oem 1">
+    <key-binding label="; :" platform="mac" code="41"/>
+    <key-binding label="; :" platform="win" code="186"/>
+  </virtual-key>
+  <virtual-key name="oem 2">
+    <key-binding label="/ ?" platform="mac" code="44"/>
+    <key-binding label="/ ?" platform="win" code="191"/>
+  </virtual-key>
+  <virtual-key name="oem 3">
+    <key-binding label="` ~" platform="mac" code="50"/>
+    <key-binding label="` ~" platform="win" code="192"/>
+  </virtual-key>
+  <virtual-key name="oem 4">
+    <key-binding label="[ {" platform="mac" code="33"/>
+    <key-binding label="[ {" platform="win" code="219"/>
+  </virtual-key>
+  <virtual-key name="oem 5">
+    <key-binding label="\ |" platform="mac" code="42"/>
+    <key-binding label="\ |" platform="win" code="220"/>
+  </virtual-key>
+  <virtual-key name="oem 6">
+    <key-binding label="] }" platform="mac" code="30"/>
+    <key-binding label="] }" platform="win" code="221"/>
+  </virtual-key>
+  <virtual-key name="oem 7">
+    <key-binding label="&#39; &quot;" platform="mac" code="39"/>
+    <key-binding label="&#39; &quot;" platform="win" code="221"/>
+  </virtual-key>
+  <virtual-key name="oem 8">
+    <key-binding label="&#39; &quot;" platform="mac" code="30"/>
+    <key-binding label="&#39; &quot;" platform="win" code="221"/>
+  </virtual-key>
+  <virtual-key name="comma">
+    <key-binding label=", &lt;" platform="mac" code="43"/>
+    <key-binding label=", &lt;" platform="win" code="188"/>
+  </virtual-key>
+  <virtual-key name="plus">
+    <key-binding label="= +" platform="mac" code="24"/>
+    <key-binding label="= +" platform="win" code="187"/>
+  </virtual-key>
+  <virtual-key name="minus">
+    <key-binding label="- _" platform="mac" code="27"/>
+    <key-binding label="- _" platform="win" code="189"/>
+  </virtual-key>
+  <virtual-key name="period">
+    <key-binding label=". &gt;" platform="mac" code="47"/>
+    <key-binding label=". &gt;" platform="win" code="190"/>
+  </virtual-key>
+  <virtual-key name="home">
+    <key-binding platform="mac" code="115"/>
+    <key-binding platform="win" code="36"/>
+  </virtual-key>
+  <virtual-key name="end">
+    <key-binding platform="mac" code="119"/>
+    <key-binding platform="win" code="35"/>
+  </virtual-key>
+  <virtual-key name="help">
+    <key-binding platform="mac" code="114"/>
+    <key-binding platform="win" code="47"/>
+  </virtual-key>
+  <link url="http://nehe.gamedev.net/data/articles/article.asp?article=09"/>
+</virtual-key-table>
