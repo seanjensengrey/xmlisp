@@ -343,19 +343,19 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
 
 ;; Pop up button control
 
-(setq w
+(defparameter *Window* 
  <application-window title="resizable button and window">                                            
   <column  align="center" valign="middle" flex="3">                                                  
     <pop-up width="200" name="pop">                                                                            
-      <pop-up-item text="on ground" action="test" />                                                 
+      <pop-up-item text="on ground" action="test" /> 
       <pop-up-item text="upright" action="test2"/>                                                    
       <pop-up-item text="wrap around cube" action="test3"/>                                          
-    </pop-up>                                                                                         
-  </column>                                                                                          
-</application-window>    )
+    </pop-up>                                                                    
+  </column>                                                                                     
+</application-window>)
 
 
-(SET-SELECTED-ITEM-WITH-TITLE (view-named w "pop") "upright")
+(set-selected-item-with-title (view-named *Window*  "pop") "upright")
 
 ;;****************************************************
 ;; IMAGES  (assumed to be in LUI:resources;images;)  *
@@ -431,13 +431,9 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
 
 
 (defmethod MY-SCROLL-ACTION ((window window) (self scroller-control))
-  ;;(print (knob-position self))
   (let ((button (view-named Window "button")))
     (set-position button 0 (* (value self) (- (height window) 20)))
-    (display window)
-    ;(#/setNeedsDisplay: (lui::native-window window))
-    ))
-
+    (display window)))
 
 ;;********************************************
 ;;*           OpenGL (3D)                    *
@@ -507,11 +503,34 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
   </column>
 </application-window>
 
-#|
-(defmethod GO-TO-URL ((w application-window) (button image-button))
-  (let ((url (value (view-named w "image-badge"))))
-    (add-g
-|#
+;;********************************************
+;;*    badged-image-group-list-manager       *
+;;********************************************
+;; A Special class for 2 level image + text list with disclosable content
+
+;; button actions
+
+(defmethod ADD-AGENT-ACTION ((w application-window) (Button button))
+  (let ((image-badge (value (view-named w "image-badge"))) (name (value (view-named w "text-field"))))
+    ;(setf (window image-badge) w)
+    (add-group image-badge `(,name "redlobster.png"  (("shape5" "redlobster.png")( "shape4" "redlobster.png"))))))
+
+
+(defmethod DELETE-SELECTED-AGENT ((w application-window) (Button button))
+  (let ((image-badge (value (view-named w "image-badge"))))
+    (delete-group image-badge  (selected-group image-badge))))
+
+
+(defmethod ADD-SHAPE-ACTION ((w application-window) (Button button))
+  (let ((image-badge (value (view-named w "image-badge"))) (name (value (view-named w "text-field"))))
+    (add-group-item image-badge (selected-group image-badge) `(,name "redlobster.png"))))
+
+    
+(defmethod DELETE-SHAPE-ACTION ((w application-window) (Button button))
+  (let ((image-badge (value (view-named w "image-badge"))))
+    (delete-group-item image-badge  (selected-group image-badge) (selected-group-item image-badge))))
+
+;; window 
 
 <application-window title="agent-gallery" margin="0" height="500">
   <column align="stretch" valign="stretch">  
@@ -525,33 +544,10 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
       <bevel-button text="Add Shape" action="add-shape-action" width="95" />
       <bevel-button text="Delete"  action="delete-selected-agent" width="80" />
     </row>
-
     <editable-text  name="text-field" height="20" text="lobster?"/>  
   </column>
 </application-window> 
 
-
-
-(defmethod add-agent-action ((w application-window) (Button button))
-  (SHOW-AGENT-INPUT-WINDOW button)
-  (let ((image-badge (value (view-named w "image-badge"))) (name (value (view-named w "text-field"))))
-    ;(setf (window image-badge) w)
-    (add-group image-badge `(,name "redlobster.png"  (("shape5" "redlobster.png")( "shape4" "redlobster.png"))))
-    ))
-
-(defmethod delete-selected-agent ((w application-window) (Button button))
-  (let ((image-badge (value (view-named w "image-badge"))) (name (value (view-named w "text-field"))))
-    (delete-group image-badge  (selected-group image-badge)))) 
-
-(defmethod add-shape-action ((w application-window) (Button button))
-  (let ((image-badge (value (view-named w "image-badge"))) (name (value (view-named w "text-field"))))
-    ;(setf (window image-badge) w)
-    (add-group-item image-badge (selected-group image-badge) `(,name "redlobster.png"))
-    ))
-    
-(defmethod delete-shape-action ((w application-window) (Button button))
-  (let ((image-badge (value (view-named w "image-badge"))) (name (value (view-named w "text-field"))))
-    (delete-group-item image-badge  (selected-group image-badge) (selected-group-item image-badge)))) 
     
 ;; ************************
 ;; *  WEB BROWSER         *
@@ -720,6 +716,10 @@ opengl documentation browser
   ((red :accessor red :type float :initarg :red)
    (green :accessor green :type float :initarg :green)
    (blue :accessor blue :type float :initarg :blue)))
+
+
+(defmethod PRINT-SLOTS ((Color rgb-color))
+  '(red green blue))
 
 
 <color-picker-dialog title="color picker" height="180">
