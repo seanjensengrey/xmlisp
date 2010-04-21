@@ -853,7 +853,10 @@
 (defmethod MAKE-NATIVE-OBJECT ((Self scroller-control))
   (let ((Native-Control (make-instance 'native-scroller :lui-view Self)))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
-      (#/setControlSize: Native-Control #$NSMiniControlSize)
+      (if (small-scroller-size self)
+        (progn
+          (setf (width self) (- (width self) 4))
+          (#/setControlSize: Native-Control #$NSSmallControlSize)))
       (#/sizeToFit Native-Control)
       (#/initWithFrame: Native-Control Frame)
       (#/setFloatValue:knobProportion: Native-Control 0.0 (knob-proportion self))
