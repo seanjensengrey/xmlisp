@@ -748,6 +748,7 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defclass SCROLLER-CONTROL (control)
   ((knob-proportion :accessor knob-proportion :initform .2 :documentation "This value must a float between 0.0 and 1.0 and is used to determine what portion of the scroller the knob takes up.  ")
+   (small-scroller-size :accessor small-scroller-size :initform nil :documentation "if this accessor is set to true the scroller will be created with the smaller size")
    )
   (:documentation "Scroller")
   (:default-initargs 

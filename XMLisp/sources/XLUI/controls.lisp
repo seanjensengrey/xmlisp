@@ -513,7 +513,7 @@
 (defclass  SCROLLER (scroller-control xml-layout-interface)
   (title :accessor )
   (:default-initargs
-    :width 15 
+    :width 15
     :height 150))
 
 

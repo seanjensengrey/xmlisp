@@ -420,6 +420,16 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
 ;;*          SCROLLER                        *
 ;;********************************************
 
+
+;;Example 1
+
+
+(defmethod MY-SCROLL-ACTION ((window window) (self scroller-control))
+  (let ((button (view-named Window "button")))
+    (set-position button 0 (* (value self) (- (height window) 20)))
+    (display window)))
+
+
 <application-window title="scrolling" margin="0">
   <row valign="stretch" align="distribute">
     <column>
@@ -430,10 +440,31 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
 </application-window> 
 
 
-(defmethod MY-SCROLL-ACTION ((window window) (self scroller-control))
-  (let ((button (view-named Window "button")))
-    (set-position button 0 (* (value self) (- (height window) 20)))
-    (display window)))
+;;Example 2
+(defmethod GL-SCROLL-ACTION ((window window) (self scroller-control))
+  (setf (y-translation (view-named window "opengl")) (* -1 (value self)))
+  (display (view-named window "opengl")))
+
+
+(defclass TRANSLATING-TRIANGLE-OPENGL-DIALOG (opengl-dialog)
+  ((y-translation :accessor y-translation :initform 0.0)))
+
+
+(defmethod DRAW ((Self translating-triangle-opengl-dialog))
+  (glTranslatef 0.0 (y-translation self) 0.0)
+  (glBegin GL_TRIANGLES)  
+    (glVertex3f 0.0 1.1 0.0)  
+    (glVertex3f -0.6 0.0 0.0)    
+    (glVertex3f 0.6 0.0 0.0)
+  (glEnd))
+
+
+<application-window title="scrolling" margin="0">
+  <row valign="stretch" align="distribute">
+      <translating-triangle-opengl-dialog name="opengl" vflex="3"/>
+    <scroller small-scroller-size="true" action="gl-scroll-action" vflex="1" height="200"/>
+  </row>
+</application-window> 
 
 ;;********************************************
 ;;*           OpenGL (3D)                    *
