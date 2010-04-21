@@ -217,6 +217,38 @@
   (declare (ignore self)))
 
 
+;_______________________________________________
+;  Popup Image Button                           |
+;                                               |
+;<popup-image-button image="redo-button.png"/>  |
+;_______________________________________________|
+
+
+(defclass POPUP-IMAGE-BUTTON (popup-image-button-control xml-layout-interface)
+  ()
+  (:default-initargs
+      :width 22
+    :height 22)
+  (:documentation "Compact button containing image"))
+
+
+(defclass POP-UP-IMAGE-ITEM (xml-serializer)
+  ((text :accessor text :initform "untitled")
+   (action :accessor action :initform 'default-action  :type symbol :documentation "method: window dialog")
+   (enable-preticate :accessor enable-preticate :initform nil :type symbol :documentation "Enable preticate of this item")
+   )
+  (:documentation "a pop up menu item"))
+
+
+(defmethod ADD-SUBOBJECT ((Button popup-image-button-control) (Item pop-up-image-item))
+  (add-popup-item Button (text Item) (action Item)(enable-preticate item)))
+
+
+(defmethod FINISHED-READING ((Self popup-image-button) Stream)
+  ;do nothing
+(declare (ignore Stream)))
+
+
 ;___________________________________________________________________________________________________________________________________
 ; Choice Image Button                                                                                                               |
 ;    <choice-image-button width="180">                                                                                              |
