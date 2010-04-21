@@ -856,13 +856,16 @@
       (#/setControlSize: Native-Control #$NSMiniControlSize)
       (#/sizeToFit Native-Control)
       (#/initWithFrame: Native-Control Frame)
-      (#/setFloatValue:knobProportion: Native-Control .2 .2)
+      (#/setFloatValue:knobProportion: Native-Control 0.0 (knob-proportion self))
       (#/setArrowsPosition: Native-Control #$NSScrollerArrowsMinEnd ) 
       (#/setEnabled: Native-Control #$YES)
       (print (#/usableParts Native-Control))
       (print (#/checkSpaceForParts Native-Control))
       Native-Control)))
 
+
+(defmethod SET-SCROLLER-POSITION ((Self scroller-control) float)
+  (#/setFloatValue:knobProportion: (native-view self) float .2))
 
 
 (defmethod VALUE ((Self scroller-control))
@@ -924,6 +927,8 @@
 (defmethod make-native-object ((Self radio-button-control))
   (let ((Native-Control (make-instance 'native-radio-button :lui-view Self))
         (prototype (#/init (#/alloc ns:ns-button-cell))))
+    (unless (elements self)
+      (setf (elements self) (#/init (#/alloc ns:ns-mutable-array))))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
       (#/setTitle: prototype (native-string "Option"))
       (#/setButtonType: prototype #$NSRadioButton)
@@ -973,6 +978,18 @@
     (setf (actions Self) (append (actions Self) (list action)))
     (setf (elements Self) (#/arrayByAddingObject: (elements Self) item))))
 
+
+;__________________________________
+; IMAGE BUTTON CLUSTER CONTROL     |
+;__________________________________/
+
+
+(defmethod INITIALIZE-INSTANCE :after ((Self radio-button-control) &rest Args)
+  (declare (ignore Args))
+  (setf (elements self) (#/init (#/alloc ns:ns-mutable-array)))
+  (call-next-method))
+
+
 ;__________________________________
 ; Popup Button                     |
 ;__________________________________/
@@ -1007,6 +1024,99 @@
       (setf (actions Self) (append (actions Self) (list Action))))
     (warn "Cannot add item with the same title (~S)" Text)))
 
+
+;__________________________________
+; Popup Image Button Item          |
+;__________________________________/
+
+
+(defclass native-popup-image-button-item (ns:ns-menu-item)
+  ((lui-view :accessor lui-view :initarg :lui-view))
+  (:metaclass ns:+ns-object))
+
+
+(defmethod INVOKE-ACTION ((Self popup-image-button-item-control))  
+  (funcall (action Self) (window (popup-image-button self)) (target Self)))
+
+
+(defmethod make-native-object ((Self popup-image-button-item-control))
+  (let ((Native-Control (make-instance 'native-popup-image-button-item :lui-view Self)))
+    (#/initWithTitle:action:keyEquivalent: Native-Control (native-string (text self)) (objc::@selector #/activateAction) (native-string ""))
+    Native-Control))
+
+
+;__________________________________
+; Popup Image Button               |
+;__________________________________/
+
+
+(defclass native-popup-image-button (ns:ns-button)
+  ((lui-view :accessor lui-view :initarg :lui-view))
+  (:metaclass ns:+ns-object))
+
+
+(defmethod make-native-object ((Self popup-image-button-control))
+  (let ((Native-Control (make-instance 'native-popup-image-button :lui-view Self)))
+    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+      (let ((Path (native-path "lui:resources;buttons;" (image Self)))
+            (NS-Image (#/alloc ns:ns-image)))
+        (unless (probe-file Path) (error "no such image file for button ~A" (image Self)))
+        (#/initWithContentsOfFile: NS-Image  (native-string (native-path "lui:resources;buttons;" (image Self))))
+        (#/initWithFrame: Native-Control Frame)
+        (#/setImageScaling: Native-Control 1)   
+        (#/setButtonType: Native-Control #$NSOnOffButton)   ;;;NSMomentaryPushInButton)
+        (#/setImagePosition: Native-Control #$NSImageOnly)
+        (#/setImage: Native-Control NS-Image)
+        (#/setBezelStyle: Native-Control #$NSShadowlessSquareBezelStyle)
+        (#/setTitle: Native-Control (native-string (text Self))))
+      (let ((menu (#/alloc ns:ns-menu)))
+      (ns:with-ns-rect (Frame2 0 0 50 50)
+        (#/initWithTitle: menu (native-string "MENU"))
+        (#/insertItemWithTitle:action:keyEquivalent:atIndex: menu (native-string "TITLe") (objc::@selector #/activateAction) (native-string "") 0)
+        (#/setAutoenablesItems: menu #$NO)
+        (let ((pop-up-button-cell (#/alloc ns:ns-pop-up-button-cell)))
+          (#/setAutoenablesItems: pop-up-button-cell #$NO)
+          (#/initTextCell:pullsDown: pop-up-button-cell (native-string "HELLO") #$YES)
+          (#/setMenu: pop-up-button-cell menu)
+          (setf (menu self) menu)
+          (setf (popup-menu-cell self) pop-up-button-cell))))
+    Native-Control)))
+
+
+(defmethod POPUP-IMAGE-BUTTON-ACTION ((w window) (Button popup-image-button-control))
+  (dolist (item (items button))
+    (if (funcall (enable-preticate  item) w item)
+      (#/setEnabled: (native-view item) #$YES)
+      (#/setEnabled: (native-view item) #$NO)))
+  (ns:with-ns-rect (Frame 0 0 10 10)
+    (#/performClickWithFrame:inView: (popup-menu-cell button) frame (native-view button))))
+
+
+(defmethod ADD-POPUP-ITEM ((Self popup-image-button-control) Text Action preticate)
+  (let ((item (make-instance 'popup-image-button-item-control  :text text :action action :popup-image-button self )))
+    (if preticate
+      (setf (enable-preticate item) preticate))
+    (case (items self)
+          (nil (setf (items self) (list item)))
+          (t (setf (items self) (append (items self) (list item)))))
+    (#/addItem: (menu self) (native-view item) )))
+
+#|
+(defmethod ENABLE-ITEM ((Self popup-image-button-control) index)
+  (#/setEnabled: (#/itemAtIndex: (menu self) index) #$YES))
+
+
+(defmethod ENABLE-ITEM-WITH-TITLE ((Self popup-image-button-control) title)
+  (#/setEnabled: (#/itemWithTitle: (menu self) (native-string title)) #$YES))
+
+
+(defmethod DISABLE-ITEM ((Self popup-image-button-control) index)
+  (#/setEnabled: (#/itemAtIndex: (menu self) index)  #$NO))
+
+
+(defmethod DISABLE-ITEM-WITH-TITLE ((Self popup-image-button-control) title)
+  (#/setEnabled: (#/itemWithTitle: (menu self) (native-string title)) #$NO))
+|#
 
 ;__________________________________
 ; Choice Button                   |

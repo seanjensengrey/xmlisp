@@ -585,7 +585,8 @@ after any of the window controls calls stop-modal close window and return value.
   (native-view Self))
 
 
-(defmethod INVOKE-ACTION ((Self control))
+(defmethod INVOKE-ACTION ((Self control))  
+  ;;(format t "~%action=~A window=~A target=~A" (action Self) (window Self) (target Self))
   (funcall (action Self) (window Self) (target Self)))
 
 
@@ -661,8 +662,39 @@ after any of the window controls calls stop-modal close window and return value.
       (funcall action Window Self))))
 
 
+(defclass POPUP-IMAGE-BUTTON-CONTROL (control)
+  (
+   (image :accessor image :initform nil :initarg :image :documentation "filename")
+   (popup-menu-cell :accessor popup-menu-cell :initform nil :documentation "popup menu cell for this button")
+   (menu :accessor menu :initform nil :documentation "popup menu cell for this button")
+   (items :accessor items :initform nil :documentation " a list of the items of control"))
+  (:default-initargs
+      :text ""
+    :action 'popup-image-button-action)
+  (:documentation "Popup Image Button"))
+
+
+(defmethod POPUP-IMAGE-BUTTON-ACTION ((window window) (self popup-image-Button-Control))
+  (unless (eql (get-selected-action self) NIL)
+    (let ((action (get-selected-action self)))
+      (funcall action Window Self))))
+
+
+(defclass POPUP-IMAGE-BUTTON-ITEM-CONTROL (control)
+  ((popup-image-button :accessor popup-image-button :initform nil :initarg :popup-image-button :documentation "the window this item is contained inside")
+   (enable-preticate :accessor enable-preticate :initarg :enable-preticate :initform 'default-enable-preticate))
+  (:default-initargs
+      :text ""
+    :action 'popup-action)
+  (:documentation "Popup Image Button"))
+
+
+(defmethod DEFAULT-ENABLE-PRETICATE ((window window) (self popup-image-button-item-control))
+  t)
+
+
 (defclass RADIO-BUTTON-CONTROL (control)
-  ((elements :initarg :elements :accessor elements :initform (#/init (#/alloc ns:ns-mutable-array)))
+  ((elements :initarg :elements :accessor elements :initform nil)
    (actions :initarg :actions :accessor actions  :initform ()
             :documentation "list of actions"))
   (:default-initargs
@@ -691,7 +723,7 @@ after any of the window controls calls stop-modal close window and return value.
 
 
 (defclass IMAGE-BUTTON-CLUSTER-CONTROL (control)
-  ((elements :initarg :elements :accessor elements :initform (#/init (#/alloc ns:ns-mutable-array)))
+  ((elements :initarg :elements :accessor elements :initform nil)
    (actions :initarg :actions :accessor actions  :initform ()
             :documentation "list of actions"))
   (:default-initargs
@@ -715,7 +747,7 @@ after any of the window controls calls stop-modal close window and return value.
 
 
 (defclass SCROLLER-CONTROL (control)
-  (
+  ((knob-proportion :accessor knob-proportion :initform .2 :documentation "This value must a float between 0.0 and 1.0 and is used to determine what portion of the scroller the knob takes up.  ")
    )
   (:documentation "Scroller")
   (:default-initargs 
