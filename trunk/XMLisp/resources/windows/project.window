@@ -5,15 +5,15 @@
       <row valign="middle" align="center" height="32" src="gradient-transparent.png">
         <label text="Agents" width="120" align="center"/>
       </row>
-      <scroll-box vflex="1"  name="agent-scroll-box">
-        <agent-gallery selected-group-changed-action="selected-agent-changed-action" vflex="1" name="agent-gallery" />
+      <scroll-box vflex="1" name="agent-scroll-box">
+        <agent-gallery name="agent-gallery" selected-group-changed-action="SWITCH-TO-BEHAVIOR" />
       </scroll-box>
       <row align="stretch" valign="stretch" height="25">
-        <agent-shape-plus-button image="plus-button.png"  >
+        <agent-shape-plus-button image="plus-button.png" >
           <pop-up-image-item action="add-agent-action" text="New Agent" />
           <pop-up-image-item enable-preticate="shape-enable-preticate" action="add-shape-action" text="New Shape" />
         </agent-shape-plus-button>
-        <bevel-button text="Delete"    name="delete"    action="delete-selected-agent" width="80" />
+        <bevel-button text="Delete" name="delete" action="delete-selected-agent" width="80" />
       </row>
     </column>
     <column align="stretch" valign="stretch" flex="4" vflex="1">
@@ -58,11 +58,11 @@
         <visual-agentalk-view name="conditions" flex="1" vflex="1">
           <test/>
         </visual-agentalk-view>
-        <scroller/>
+        <scroller small-scroller-size="true"/>
         <visual-agentalk-view name="behavior" flex="3" vflex="1"/>
-        <scroller action="scroll-behavior"/>
+        <scroller small-scroller-size="true" action="scroll-behavior"/>
         <visual-agentalk-view name="actions" flex="1" vflex="1"/>
-        <scroller/>
+        <scroller small-scroller-size="true"/>
       </row>
    </column>
   </row>
