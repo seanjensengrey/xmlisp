@@ -214,7 +214,8 @@
                 "SLOT-DEFINITION-NAME" "SLOT-DEFINITION-TYPE")
   (:import-from "XML"
                 "FILE")
-  (:export "INFLATABLE-ICON"))
+  (:export "INFLATABLE-ICON"
+           "SAVE-THE-WORLD"))
 
 
 (setq xml::*xmlisp-packages* (list (find-package :xlui) (find-package :xml)))
