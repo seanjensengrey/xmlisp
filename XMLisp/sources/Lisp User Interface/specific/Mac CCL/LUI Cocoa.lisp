@@ -841,7 +841,7 @@
   (#/setTitle: (native-view Self) (native-string Text)))
 
 ;__________________________________
-; SCROLLER CONTROL                 |
+; SCROLLER-CONTROL CONTROL                 |
 ;__________________________________/
 
 
@@ -853,6 +853,7 @@
 (defmethod MAKE-NATIVE-OBJECT ((Self scroller-control))
   (let ((Native-Control (make-instance 'native-scroller :lui-view Self)))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+      #-cocotron 
       (if (small-scroller-size self)
         (progn
           (setf (width self) (- (width self) 4))
@@ -1066,7 +1067,7 @@
         (unless (probe-file Path) (error "no such image file for button ~A" (image Self)))
         (#/initWithContentsOfFile: NS-Image  (native-string (native-path "lui:resources;buttons;" (image Self))))
         (#/initWithFrame: Native-Control Frame)
-        (#/setImageScaling: Native-Control 1)   
+        ;(#/setImageScaling: Native-Control 1)   
         (#/setButtonType: Native-Control #$NSOnOffButton)   ;;;NSMomentaryPushInButton)
         (#/setImagePosition: Native-Control #$NSImageOnly)
         (#/setImage: Native-Control NS-Image)
@@ -1092,7 +1093,10 @@
       (#/setEnabled: (native-view item) #$YES)
       (#/setEnabled: (native-view item) #$NO)))
   (ns:with-ns-rect (Frame 0 0 10 10)
-    (#/performClickWithFrame:inView: (popup-menu-cell button) frame (native-view button))))
+    (#/performClickWithFrame:inView: (popup-menu-cell button) frame (native-view button))
+   ; (#/attachPopUpWithFrame:inView: (popup-menu-cell button) frame (native-view button))
+   ; (#/performClick: (popup-menu-cell button) (native-view button))
+    ))
 
 
 (defmethod ADD-POPUP-ITEM ((Self popup-image-button-control) Text Action preticate)
@@ -1537,4 +1541,14 @@
     (#/removeFromSuperview (native-view Pop-up))
     (ccl::lisp-string-from-nsstring  (#/titleOfSelectedItem (native-view Pop-Up)))))
 
+(defun show-string-popup-with-actions (window string-action-list)
+    (let ((Pop-up (make-instance 'popup-button-control )))
+      (dolist (String list)
+        (add-item Pop-Up String nil))
+      (add-subviews window Pop-up)
+      (#/setTransparent: (native-view Pop-Up) #$YES)
+      (#/performClick:  (native-view Pop-up) +null-ptr+)
+      (#/removeFromSuperview (native-view Pop-up))
+      (ccl::lisp-string-from-nsstring  (#/titleOfSelectedItem (native-view Pop-Up)))
+      ))
 
