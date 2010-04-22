@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <project-window title="project" track-mouse="true" x="100" y="50" width="1000" height="600" margin="0">
-  <row align="stretch" valign="stretch">
+  <row align="stretch" valign="stretch" >
     <column align="stretch" valign="stretch" flex="1" width="250">
       <row valign="middle" align="center" height="32" src="gradient-transparent.png">
         <label text="Agents" width="120" align="center"/>
@@ -13,11 +13,10 @@
           <pop-up-image-item action="add-agent-action" text="New Agent" />
           <pop-up-image-item enable-preticate="shape-enable-preticate" action="add-shape-action" text="New Shape" />
         </agent-shape-plus-button>
-        
         <bevel-button text="Delete"    name="delete"    action="delete-selected-agent" width="80" />
       </row>
     </column>
-    <column align="stretch" valign="stretch" flex="4">
+    <column align="stretch" valign="stretch" flex="4" vflex="1">
       <row valign="middle" align="center" height="32" src="gradient-transparent.png">
         <label text="World:" width="45" />
         <pop-up name="world-name" width="150" /> 
@@ -55,7 +54,16 @@
           <status-bar name="status-bar" text="bla"/>
         </column>
       </row>
-      
-    </column>
+      <row vflex="1" valign="stretch" align="stretch">
+        <visual-agentalk-view name="conditions" flex="1" vflex="1">
+          <test/>
+        </visual-agentalk-view>
+        <scroller/>
+        <visual-agentalk-view name="behavior" flex="3" vflex="1"/>
+        <scroller action="scroll-behavior"/>
+        <visual-agentalk-view name="actions" flex="1" vflex="1"/>
+        <scroller/>
+      </row>
+   </column>
   </row>
 </project-window>
