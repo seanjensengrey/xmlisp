@@ -156,7 +156,7 @@
 
 (defmacro SLIDER () "
   Access the delay-time value of the world set via slider"
-  `(animation-time Self))
+  `(user-animation-time Self))
 
 
 ;_________________________________________
