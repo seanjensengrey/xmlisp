@@ -1527,16 +1527,14 @@
 ;(export '(show-string-popup))
 
 
-(defun show-string-popup (window list)
-    (let ((Pop-up (make-instance 'popup-button-control )))
-      (dolist (String list)
-        (add-item Pop-Up String nil))
-      (add-subviews window Pop-up)
-      (#/setTransparent: (native-view Pop-Up) #$YES)
-      (#/performClick:  (native-view Pop-up) +null-ptr+)
-      (#/removeFromSuperview (native-view Pop-up))
-      (ccl::lisp-string-from-nsstring  (#/titleOfSelectedItem (native-view Pop-Up)))
-      ))
- 
+(defun SHOW-STRING-POPUP (window list)
+  (let ((Pop-up (make-instance 'popup-button-control )))
+    (dolist (String list)
+      (add-item Pop-Up String nil))
+    (add-subviews window Pop-up)
+    (#/setTransparent: (native-view Pop-Up) #$YES)
+    (#/performClick:  (native-view Pop-up) +null-ptr+)
+    (#/removeFromSuperview (native-view Pop-up))
+    (ccl::lisp-string-from-nsstring  (#/titleOfSelectedItem (native-view Pop-Up)))))
 
 
