@@ -50,18 +50,37 @@
   nil)
 
 
-(defmethod RESIZE-HEIGHT-OF-VIEW ((Self badged-image-group-list-manager-view))
+(defmethod RESIZE-HEIGHT-OF-VIEW ((Self badged-image-group-list-manager-view) &key (call-set-size t))
   (let ((height 0))
     (dolist (group (groups self))
       (if (is-disclosed group)
         (incf height (+  (row-height self)  (* (row-height self) (length (group-items group)))))
         (incf height  (row-height self))))  
     (if (> height 200)
-      (setf (height self) height)))
+      (setf (height self) height))
   (unless (equal (#/superview (native-view self)) +null-ptr+)
     (progn
-      #-cocotron(set-size (lui-view (#/superview (#/superview (native-view self))))   (width (lui-view (#/superview (#/superview (native-view self))))) (height (lui-view (#/superview (#/superview (native-view self))))))
-      #-cocotron(layout (lui-view (#/superview (#/superview (native-view self))))))))
+      
+      #-cocotron
+      (if call-set-size
+        (progn
+          
+          (set-size (lui-view (#/superview (#/superview (native-view self))))   (width (lui-view (#/superview (#/superview (native-view self))))) (height (lui-view (#/superview (#/superview (native-view self))))))
+          (layout (lui-view (#/superview (#/superview (native-view self)))))
+          ))
+      
+      (if (lui-view (#/superview (#/superview (native-view self))))
+        (progn
+          (print "HEIGHTS")
+          (print height)
+          (print (height (lui-view (#/superview (#/superview (native-view self))))))
+          (if (> (height (lui-view (#/superview (#/superview (native-view self))))) (height self))
+            (setf (height self) (height (lui-view (#/superview (#/superview (native-view self))))))
+            )
+
+          ))
+      ; #-cocotron 
+      ))))
 
 
 ;;*********************************
@@ -141,6 +160,7 @@
 (objc:defmethod (#/mouseDown: :void) ((self native-badged-image-group-list-manager-view) Event)
   (declare (ignore Event))
   (set-selected (lui-view self) nil))
+
 
 
 ;;*********************************
@@ -531,9 +551,10 @@
 
 
 (defmethod SET-SIZE ((Self badged-image-group-list-manager-view) Width Height)
-  (call-next-method self width height)
+  (call-next-method)
   ; #-cocotron(set-size (lui-view (#/superview (#/superview (native-view self)))) (width (lui-view (#/superview (#/superview (native-view self))))) (height (lui-view (#/superview (#/superview (native-view self))))))
   ;(call-next-method self width height)
+  
   #-cocotron 
   (if (> (-(width (lui-view (#/superview (#/superview (native-view self)))))1)  (minimum-width self))
     (setf (width self) (-(width (lui-view (#/superview (#/superview (native-view self)))))1)))
@@ -548,6 +569,16 @@
         (progn
           (#/setFrameSize: (item-selection-view group) Size )
           (#/setNeedsDisplay: (item-selection-view group) #$YES)))) )  
+  #|
+  (if (and 
+       (#/superview (native-view self)) 
+       (#/superview (#/superview (native-view self))) 
+       (lui-view (#/superview (#/superview (native-view self))))
+       
+       )
+    (setf (height self) (- (height (lui-view (#/superview (#/superview (native-view self)))))1))) 
+  |#
+  (resize-height-of-view self :call-set-size nil)
   (display self)
   (#/setNeedsDisplay: (native-view self) #$YES))
 
@@ -757,6 +788,7 @@
 
 (defmethod SET-SELECTED ((Self badged-image-group-list-manager-view) group-name &key (highlight t) (resign "YES"))
   ;(remove-background-from-text-fields (native-view  self))
+  
   (with-simple-restart (cancel-pop "Stop to create view for ~s" Self)    
     (dolist (group (groups self))
       (setf (selected-item-name group) nil) 
@@ -765,6 +797,8 @@
           (setf (selected-item-name group) nil )
           (if (item-selection-view group)
             (#/setHidden: (item-selection-view group) #$YES))
+          (unless (is-selected group)
+            (selected-group-changed self ))
           (setf (is-selected group) "YES")
           (setf (is-highlighted group) highlight)
           (ns:with-ns-point (Point (NS:NS-RECT-X (#/frame (group-view group))) (+ 0  (NS:NS-RECT-Y (#/frame (group-view group)))) )
@@ -795,6 +829,11 @@
   (layout-changed self))
 
 
+(defmethod SELECTED-GROUP-CHANGED ((Self badged-image-group-list-manager-view) )
+  (inspect (lui-window (#/window (native-view self) ))))
+  ;(funcall (selected-group-changed-action self) (window self) self ))
+
+
 (defmethod SET-SELECTED-ITEM ((Self badged-image-group-list-manager-view) group-name item-name)
   (let ((i 1))
     (dolist (group (groups self))    
@@ -802,6 +841,8 @@
       (setf (is-highlighted group) nil)
       (if (equal group-name (group-name group))
         (progn 
+          (unless (is-selected group)
+            (selected-group-changed self ))
           (dolist (item (group-items group))
             (if (equal item-name (item-name item))
               (progn
