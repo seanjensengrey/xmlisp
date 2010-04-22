@@ -788,7 +788,7 @@
 
 (defmethod SET-SELECTED ((Self badged-image-group-list-manager-view) group-name &key (highlight t) (resign "YES"))
   ;(remove-background-from-text-fields (native-view  self))
-  
+  (let ((previously-selected-group-name  (selected-group self)))
   (with-simple-restart (cancel-pop "Stop to create view for ~s" Self)    
     (dolist (group (groups self))
       (setf (selected-item-name group) nil) 
@@ -797,8 +797,7 @@
           (setf (selected-item-name group) nil )
           (if (item-selection-view group)
             (#/setHidden: (item-selection-view group) #$YES))
-          (unless (is-selected group)
-            (selected-group-changed self ))
+          
           (setf (is-selected group) "YES")
           (setf (is-highlighted group) highlight)
           (ns:with-ns-point (Point (NS:NS-RECT-X (#/frame (group-view group))) (+ 0  (NS:NS-RECT-Y (#/frame (group-view group)))) )
@@ -826,6 +825,8 @@
           (setf (is-highlighted group) nil)
           (#/setHidden: (selection-view group) #$YES)
           (#/setNeedsDisplay: (selection-view group) #$YES)))))
+    (unless (equal previously-selected-group-name  (selected-group self))
+      (selected-group-changed self )))
   (layout-changed self))
 
 
