@@ -830,19 +830,19 @@
 
 
 (defmethod SELECTED-GROUP-CHANGED ((Self badged-image-group-list-manager-view) )
-  (inspect (lui-window (#/window (native-view self) ))))
-  ;(funcall (selected-group-changed-action self) (window self) self ))
+  (funcall (selected-group-changed-action self) (lui-window (#/window (native-view self) )) self ))
 
 
 (defmethod SET-SELECTED-ITEM ((Self badged-image-group-list-manager-view) group-name item-name)
   (let ((i 1))
+    (unless (equal (selected-group self) group-name)
+            (selected-group-changed self ))
     (dolist (group (groups self))    
       (setf (is-selected group) nil)
       (setf (is-highlighted group) nil)
       (if (equal group-name (group-name group))
         (progn 
-          (unless (is-selected group)
-            (selected-group-changed self ))
+          
           (dolist (item (group-items group))
             (if (equal item-name (item-name item))
               (progn
