@@ -59,7 +59,7 @@
           <test/>
         </visual-agentalk-view>
         <scroller small-scroller-size="true"/>
-        <visual-agentalk-view name="behavior" flex="3" vflex="1"/>
+        <visual-agentalk-view name="behavior" content-changed-action="behavior-changed" flex="3" vflex="1"/>
         <scroller small-scroller-size="true" action="scroll-behavior"/>
         <visual-agentalk-view name="actions" flex="1" vflex="1"/>
         <scroller small-scroller-size="true"/>
