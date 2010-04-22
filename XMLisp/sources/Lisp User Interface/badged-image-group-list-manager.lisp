@@ -7,7 +7,8 @@
 
 
 (defclass BADGED-IMAGE-GROUP-LIST-MANAGER-VIEW (view)
-  ((native-window :accessor native-window :initform nil)
+  ((selected-group-changed-action :accessor selected-group-changed-action  :type symbol :initform 'default-selected-group-changed-action)
+   (native-window :accessor native-window :initform nil)
    (native-view :accessor native-view :initform nil)
    (x :accessor x :initform 400 :initarg :x :documentation "screen position, pixels")
    (y :accessor y :initform 890 :initarg :y :documentation "screen position, pixels")
@@ -126,6 +127,10 @@
 ;---------------------------------
 ; Implementation                  |
 ;________________________________
+
+
+(defmethod DEFAULT-SELECTED-GROUP-CHANGED-ACTION ((window window)(self badged-image-group-list-manager-view))
+  (print "DEFAULT SELECTED GROUP CHANGED ACTION"))
 
 
 (defmethod MAKE-SELECTION ((self badged-image-group-list-manager-view) group-name)
