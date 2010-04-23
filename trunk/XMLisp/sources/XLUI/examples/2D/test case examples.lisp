@@ -441,6 +441,7 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
 
 
 ;;Example 2
+
 (defmethod GL-SCROLL-ACTION ((window window) (self scroller-control))
   (setf (y-translation (view-named window "opengl")) (* -1 (value self)))
   (display (view-named window "opengl")))
