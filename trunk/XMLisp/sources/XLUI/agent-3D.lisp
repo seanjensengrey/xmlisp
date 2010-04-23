@@ -198,7 +198,8 @@
    (drag-and-drop-handler :accessor drag-and-drop-handler :initform nil :documentation "drag and drop handler")
    (agent-hovered :accessor agent-hovered :initform nil :documentation "the agent currently hovered over")
    (agents-selected :accessor agents-selected :initform nil :documentation "list of agents currenly selected")
-   (render-mode :accessor render-mode :initform gl_render :documentation "value: gl_render gl_select or gl_feedback"))
+   (render-mode :accessor render-mode :initform gl_render :documentation "value: gl_render gl_select or gl_feedback")
+   (content-changed-action :accessor content-changed-action :initform 'content-changed-default-action :initarg :content-changed-action-action :type symbol :documentation "method by this name will be called on the window containing control and the target of the control when the content of this view changed"))
   (:documentation "View containing agents"))
 
 
@@ -208,6 +209,10 @@
 
 (defgeneric BROADCAST-TO-AGENTS (agent-3d-view Function &rest Args)
   (:documentation "Apply <Function> with <Args> first to me and then to all my sub agents"))
+
+
+(defgeneric CONTENT-CHANGED (agent-3d-view)
+  (:documentation "Content changed, some agents must have been edited"))
 
 ;________________________________
 ; implementations                |
@@ -263,6 +268,15 @@
   ;; compose the scene
   ;;(compose-scene Self)
   )
+
+;; Content Changed events
+
+(defmethod CONTENT-CHANGED ((Self agent-3d-view))
+  (funcall (content-changed-action Self)  (window Self) Self))
+
+
+(defmethod CONTENT-CHANGED-DEFAULT-ACTION ((Window window) (View agent-3d-view))
+  (format t "~%Content of view: ~A in window of type: ~A changed" View (type-of Window)))
 
 
 ;; accessing Agents
