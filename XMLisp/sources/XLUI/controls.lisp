@@ -310,9 +310,11 @@
 
 (defmethod CHANGE-CLUSTER-SELECTIONS ((Self image-button-cluster) button)
   (dolist (image-button (images self))
-    (unless (eql image-button button)
-      (set-button-off image-button)
-      )))
+    (if (not (equal image-button button))
+      (progn        
+        (set-button-off image-button)
+        (setf (selected-in-cluster image-button) nil))
+      (setf (selected-in-cluster image-button) t))))
 
 
 (defmethod DEFAULT-ACTION ((Window window) (Self image-button-cluster)))
@@ -349,9 +351,11 @@
 
 (defmethod CHANGE-CLUSTER-SELECTIONS ((Self image-button-row) button)
   (dolist (image-button (images self))
-    (unless (eql image-button button)
-      (set-button-off image-button)
-      )))
+    (if (not (equal image-button button))
+      (progn        
+        (set-button-off image-button)
+        (setf (selected-in-cluster image-button) nil))
+      (setf (selected-in-cluster image-button) t))))
 
 
 (defmethod DEFAULT-ACTION ((Window window) (Self image-button-row)))
