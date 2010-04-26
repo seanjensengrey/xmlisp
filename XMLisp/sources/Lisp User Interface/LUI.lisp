@@ -663,15 +663,16 @@ after any of the window controls calls stop-modal close window and return value.
 
 
 (defclass POPUP-IMAGE-BUTTON-CONTROL (control)
-  (
-   (image :accessor image :initform nil :initarg :image :documentation "filename")
+  ((image :accessor image :initform nil :initarg :image :documentation "filename")
    (popup-menu-cell :accessor popup-menu-cell :initform nil :documentation "popup menu cell for this button")
    (menu :accessor menu :initform nil :documentation "popup menu cell for this button")
-   (items :accessor items :initform nil :documentation " a list of the items of control"))
+   (popup-button :accessor popup-button :documentation "an invisible popup butoton")
+   (items :accessor items :initform nil  :documentation " a list of the items of control"))
   (:default-initargs
       :text ""
     :action 'popup-image-button-action)
   (:documentation "Popup Image Button"))
+
 
 
 (defmethod POPUP-IMAGE-BUTTON-ACTION ((window window) (self popup-image-Button-Control))
@@ -682,14 +683,14 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defclass POPUP-IMAGE-BUTTON-ITEM-CONTROL (control)
   ((popup-image-button :accessor popup-image-button :initform nil :initarg :popup-image-button :documentation "the window this item is contained inside")
-   (enable-preticate :accessor enable-preticate :initarg :enable-preticate :initform 'default-enable-preticate))
+   (enable-predicate :accessor enable-predicate :initarg :enable-predicate :initform 'default-enable-predicate))
   (:default-initargs
       :text ""
     :action 'popup-action)
   (:documentation "Popup Image Button"))
 
 
-(defmethod DEFAULT-ENABLE-PRETICATE ((window window) (self popup-image-button-item-control))
+(defmethod DEFAULT-ENABLE-PREDICATE ((window window) (self popup-image-button-item-control))
   t)
 
 
