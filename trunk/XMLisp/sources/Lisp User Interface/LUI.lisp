@@ -631,7 +631,9 @@ after any of the window controls calls stop-modal close window and return value.
   ((image :accessor image :initform nil :initarg :image :documentation "filename")
    (container :accessor container :initform nil)
    (in-cluster :accessor in-cluster :initform nil)
-   (user-action :accessor user-action :initform nil))
+   (user-action :accessor user-action :initform nil)
+   (selected-in-cluster :accessor selected-in-cluster :initform nil)
+   )
   (:default-initargs
       :text "")
   (:documentation "Button Image"))

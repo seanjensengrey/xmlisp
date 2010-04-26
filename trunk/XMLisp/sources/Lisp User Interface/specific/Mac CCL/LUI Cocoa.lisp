@@ -907,6 +907,17 @@
       Native-Control)))
 
 
+(objc:defmethod (#/drawRect: :void) ((self native-button-image) (rect :<NSR>ect))
+  (call-next-method rect)
+  
+  (print (selected-in-cluster (lui-view self)))
+  #+cocotron
+  (if (selected-in-cluster (lui-view self))
+    (progn
+      
+      (#/set (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color .2 .2 .2 .62))
+      (#/fillRect: ns:ns-bezier-path rect))))
+
 (defmethod (setf text) :after (Text (Self image-button-control))
   (#/setTitle: (native-view Self) (native-string Text)))
 
