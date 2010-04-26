@@ -1001,7 +1001,11 @@
 (defclass native-popup-button (ns:ns-pop-up-button)
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
-
+#|
+(objc:defmethod (#/performClick: :void) ((self native-popup-button) sender)
+  (print "perform")
+  (call-next-method))
+|#
 
 (defmethod make-native-object ((Self popup-button-control))
   (let ((Native-Control (make-instance 'native-popup-button :lui-view Self)))
@@ -1029,6 +1033,16 @@
     (warn "Cannot add item with the same title (~S)" Text)))
 
 
+(defmethod ADD-NS-MENU-ITEM ((Self popup-button-control) Item)
+  (if (equal (#/indexOfItemWithTitle: (native-view Self) (native-string (Text item))) -1)
+    (progn
+      (print "1")
+      (#/addItem: (#/menu (native-view Self)) (native-view Item))
+      (print "2")
+      (setf (actions Self) (append (actions Self) (list (Action item)))))
+    (warn "Cannot add item with the same title (~S)" (Text item))))
+
+
 ;__________________________________
 ; Popup Image Button Item          |
 ;__________________________________/
@@ -1053,6 +1067,80 @@
 ; Popup Image Button               |
 ;__________________________________/
 
+
+
+(defclass native-popup-image-button (ns:ns-button)
+  ((lui-view :accessor lui-view :initarg :lui-view))
+  (:metaclass ns:+ns-object))
+
+
+(defmethod make-native-object ((Self popup-image-button-control))
+  (let ((Native-Control (make-instance 'native-popup-image-button :lui-view Self)))
+    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+      (let ((Path (native-path "lui:resources;buttons;" (image Self)))
+            (NS-Image (#/alloc ns:ns-image)))
+        (unless (probe-file Path) (error "no such image file for button ~A" (image Self)))
+        (#/initWithContentsOfFile: NS-Image  (native-string (native-path "lui:resources;buttons;" (image Self))))
+        (#/initWithFrame: Native-Control Frame)
+        ;(#/setImageScaling: Native-Control 1)   
+        (#/setButtonType: Native-Control #$NSOnOffButton)   ;;;NSMomentaryPushInButton)
+        (#/setImagePosition: Native-Control #$NSImageOnly)
+        (#/setImage: Native-Control NS-Image)
+        (#/setBezelStyle: Native-Control #$NSShadowlessSquareBezelStyle)
+        (#/setTitle: Native-Control (native-string (text Self))))
+      (let ((Pop-up (make-instance 'popup-button-control )))
+        (#/setTransparent: (native-view Pop-Up) #$YES)
+        (setf (popup-button self) pop-up)
+        )
+    Native-Control)))
+
+
+(defmethod POPUP-IMAGE-BUTTON-ACTION ((w window) (Button popup-image-button-control))
+  
+  (dolist (item (items button))
+    (if (funcall (enable-predicate  item) w item)
+      (#/setEnabled: (native-view item) #$YES)
+      (#/setEnabled: (native-view item) #$NO)))
+  (ns:with-ns-rect (Frame 0 0 10 10)
+    ;(SHOW-STRING-POPUP-FROM-ITEM-LIST  w (items Button))
+    (add-subviews (window button) (popup-button button))
+    (#/performClick:  (native-view (popup-button button)) +null-ptr+)
+    (#/removeFromSuperview (native-view (popup-button button)))
+    ;(#/performClickWithFrame:inView: (popup-menu-cell button) frame (native-view button))
+    ; (#/attachPopUpWithFrame:inView: (popup-menu-cell button) frame (native-view button))
+    ; (#/performClick: (popup-menu-cell button) (native-view button))
+    ))
+
+
+(defun SHOW-STRING-POPUP-FROM-ITEM-LIST (window item-list)
+    (let ((Pop-up (make-instance 'popup-button-control )))
+      (dolist (item item-list)
+        (add-ns-menu-item Pop-Up item))
+      (add-subviews window Pop-up)
+      (#/setTransparent: (native-view Pop-Up) #$YES)
+      (#/performClick:  (native-view Pop-up) +null-ptr+)
+      (#/removeFromSuperview (native-view Pop-up))
+      (ccl::lisp-string-from-nsstring  (#/titleOfSelectedItem (native-view Pop-Up)))
+      ))
+
+
+(defmethod ADD-POPUP-ITEM ((Self popup-image-button-control) Text Action predicate)
+  (let ((item (make-instance 'popup-image-button-item-control  :text text :action action :popup-image-button self )))
+    (if predicate
+      (setf (enable-predicate item) predicate))
+    (case (items self)
+          (nil (setf (items self) (list item)))
+          (t (setf (items self) (append (items self) (list item)))))
+    (add-ns-menu-item (popup-button self) item)
+    ;(#/addItem: (menu self) (native-view item) )
+    ))
+
+
+
+
+;; Cocotron unfriendly implementation
+
+#|
 
 (defclass native-popup-image-button (ns:ns-button)
   ((lui-view :accessor lui-view :initarg :lui-view))
@@ -1089,7 +1177,7 @@
 
 (defmethod POPUP-IMAGE-BUTTON-ACTION ((w window) (Button popup-image-button-control))
   (dolist (item (items button))
-    (if (funcall (enable-preticate  item) w item)
+    (if (funcall (enable-predicate  item) w item)
       (#/setEnabled: (native-view item) #$YES)
       (#/setEnabled: (native-view item) #$NO)))
   (ns:with-ns-rect (Frame 0 0 10 10)
@@ -1102,11 +1190,13 @@
 (defmethod ADD-POPUP-ITEM ((Self popup-image-button-control) Text Action preticate)
   (let ((item (make-instance 'popup-image-button-item-control  :text text :action action :popup-image-button self )))
     (if preticate
-      (setf (enable-preticate item) preticate))
+      (setf (enable-predicate item) preticate))
     (case (items self)
           (nil (setf (items self) (list item)))
           (t (setf (items self) (append (items self) (list item)))))
     (#/addItem: (menu self) (native-view item) )))
+|#
+
 
 #|
 (defmethod ENABLE-ITEM ((Self popup-image-button-control) index)
@@ -1541,14 +1631,6 @@
     (#/removeFromSuperview (native-view Pop-up))
     (ccl::lisp-string-from-nsstring  (#/titleOfSelectedItem (native-view Pop-Up)))))
 
-(defun show-string-popup-with-actions (window string-action-list)
-    (let ((Pop-up (make-instance 'popup-button-control )))
-      (dolist (String list)
-        (add-item Pop-Up String nil))
-      (add-subviews window Pop-up)
-      (#/setTransparent: (native-view Pop-Up) #$YES)
-      (#/performClick:  (native-view Pop-up) +null-ptr+)
-      (#/removeFromSuperview (native-view Pop-up))
-      (ccl::lisp-string-from-nsstring  (#/titleOfSelectedItem (native-view Pop-Up)))
-      ))
+
+
 

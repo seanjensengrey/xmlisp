@@ -235,13 +235,13 @@
 (defclass POP-UP-IMAGE-ITEM (xml-serializer)
   ((text :accessor text :initform "untitled")
    (action :accessor action :initform 'default-action  :type symbol :documentation "method: window dialog")
-   (enable-preticate :accessor enable-preticate :initform nil :type symbol :documentation "Enable preticate of this item")
+   (enable-predicate :accessor enable-predicate :initform nil :type symbol :documentation "Enable predicate of this item")
    )
   (:documentation "a pop up menu item"))
 
 
 (defmethod ADD-SUBOBJECT ((Button popup-image-button-control) (Item pop-up-image-item))
-  (add-popup-item Button (text Item) (action Item)(enable-preticate item)))
+  (add-popup-item Button (text Item) (action Item)(enable-predicate item)))
 
 
 (defmethod FINISHED-READING ((Self popup-image-button) Stream)
