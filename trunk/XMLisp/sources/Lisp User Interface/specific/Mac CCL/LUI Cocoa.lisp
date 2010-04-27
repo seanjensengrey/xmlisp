@@ -909,8 +909,6 @@
 
 (objc:defmethod (#/drawRect: :void) ((self native-button-image) (rect :<NSR>ect))
   (call-next-method rect)
-  
-  (print (selected-in-cluster (lui-view self)))
   #+cocotron
   (if (selected-in-cluster (lui-view self))
     (progn
