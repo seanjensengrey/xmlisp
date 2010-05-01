@@ -1373,27 +1373,15 @@
      <spacer height="10"/>
      <color-well name="color well" action="pick-color-action" color="FF00FF"/>
    </column>
-  <image-editor name="image editor" image="" flex="1" vflex="1"/>
+  <image-editor name="image editor" image="lui:resources;images;redlobster.png" flex="1" vflex="1"/>
   </row>
 </image-editor-window>
 
 
-<image-editor-window margin="20" title="Image Editor">
-  <image-editor image="/Users/alex/Desktop/aqua_blue.png"/>
+<image-editor-window margin="0" title="Image Editor">
+  <image-editor image="lui:resources;images;redlobster.png"/>
 </image-editor-window>
 
-
-(defparameter w (make-instance 'image-editor-window 
-                  :window-show t
-                  :file (choose-file-dialog :directory "ccl:resources;textures;")
-                  :on-image-saved #'(lambda (Pathname) (print Pathname))))
-
-
-(load-image-from-file w (choose-file-dialog :directory "ccl:resources;textures;"))
-
-(setf (tolerance (image-editor-view w)) 100)
-
-(erase-all (image-editor-view w))
 
 
 |#
