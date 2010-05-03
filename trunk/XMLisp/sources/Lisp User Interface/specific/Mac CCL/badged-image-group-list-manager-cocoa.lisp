@@ -51,36 +51,37 @@
 
 
 (defmethod RESIZE-HEIGHT-OF-VIEW ((Self badged-image-group-list-manager-view) &key (call-set-size t))
+  
   (let ((height 0))
     (dolist (group (groups self))
       (if (is-disclosed group)
         (incf height (+  (row-height self)  (* (row-height self) (length (group-items group)))))
         (incf height  (row-height self))))  
-    (if (> height 200)
-      (setf (height self) height))
-  (unless (equal (#/superview (native-view self)) +null-ptr+)
-    (progn
-      
-      #-cocotron
-      (if call-set-size
-        (progn
-          
-          (set-size (lui-view (#/superview (#/superview (native-view self))))   (width (lui-view (#/superview (#/superview (native-view self))))) (height (lui-view (#/superview (#/superview (native-view self))))))
-          (layout (lui-view (#/superview (#/superview (native-view self)))))
-          ))
-      
-      (if (lui-view (#/superview (#/superview (native-view self))))
-        (progn
-          (print "HEIGHTS")
-          (print height)
-          (print (height (lui-view (#/superview (#/superview (native-view self))))))
-          (if (> (height (lui-view (#/superview (#/superview (native-view self))))) (height self))
-            (setf (height self) (height (lui-view (#/superview (#/superview (native-view self))))))
-            )
+    ;(if (> height 200)
+    (setf (height self) height)
+    ;)
 
-          ))
-      ; #-cocotron 
-      ))))
+    (unless (equal (#/superview (native-view self)) +null-ptr+)
+      (progn
+        
+        #-cocotron
+        (if call-set-size
+          (progn
+            
+            (set-size (lui-view (#/superview (#/superview (native-view self))))   (width (lui-view (#/superview (#/superview (native-view self))))) (height (lui-view (#/superview (#/superview (native-view self))))))
+            (layout (lui-view (#/superview (#/superview (native-view self)))))
+            ))
+        
+        (if (lui-view (#/superview (#/superview (native-view self))))
+          (progn
+            (if (> (height (lui-view (#/superview (#/superview (native-view self))))) (height self))
+              (setf (height self) (height (lui-view (#/superview (#/superview (native-view self))))))
+              )
+            
+            ))
+        
+        ; #-cocotron 
+        ))))
 
 
 ;;*********************************
@@ -118,6 +119,13 @@
    )
   (:metaclass ns:+ns-object
 	      :documentation ""))
+
+
+(objc:defmethod (#/drawRect: :void) ((self native-badged-image-group-list-manager-view) (rect :<NSR>ect))
+  (call-next-method rect)
+      (#/set (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color .2 .2 .2 1.0))
+      (#/fillRect: ns:ns-bezier-path rect)
+)
 
 
 (defmethod LAYOUT ((Self native-badged-image-group-list-manager-view))
@@ -300,7 +308,7 @@
     (#/setFrameOrigin: Self Point))
   (ns:with-ns-size (Size (image-size self) (image-size self))
     (#/setFrameSize:  Self Size))
-  (let ((image (make-instance 'image-control :path (image-path list-item)  :src (image-name self) :x 0 :y 0 :width (image-size self) :height (image-size self)))) 
+  (let ((image (make-instance 'image-control :image-path (image-path list-item)  :src (image-name self) :x 0 :y 0 :width (image-size self) :height (image-size self)))) 
     (let ((image-view (#/alloc mouse-detecting-image-view)))
       (ns:with-ns-rect (Frame 0 0 (image-size self) (image-size self))
         (#/initWithFrame: image-view Frame )
@@ -316,7 +324,7 @@
       (if (equal (type-of subview) 'lui::mouse-detecting-image-view)
         (progn
           (#/removeFromSuperviewWithoutNeedingDisplay subview)
-          (let ((image (make-instance 'image-control  :path (image-path self)  :src (image-name self) :x 0 :y 0 :width (image-size self) :height (image-size self)))) 
+          (let ((image (make-instance 'image-control  :image-path (image-path self)  :src (image-name self) :x 0 :y 0 :width (image-size self) :height (image-size self)))) 
             (let ((image-view (#/alloc mouse-detecting-image-view)))
               (ns:with-ns-rect (Frame 0 0 (image-size self) (image-size self))
                 (#/initWithFrame: image-view Frame )
@@ -380,7 +388,7 @@
                (group-items (list-group (#/superview self)))
                (elt (group-items (list-group (#/superview self))) 0))
             (progn
-              (let ((image (make-instance 'image-control :path (image-path (elt (group-items (list-group (#/superview self))) 0)) :src (image-name (elt (group-items (list-group (#/superview self))) 0)) :x 0 :y 0 :width (badge-image-size self) :height (badge-image-size self)))) 
+              (let ((image (make-instance 'image-control :image-path (image-path (elt (group-items (list-group (#/superview self))) 0)) :src (image-name (elt (group-items (list-group (#/superview self))) 0)) :x 0 :y 0 :width (badge-image-size self) :height (badge-image-size self)))) 
                 (#/setImage: badge-image-view (#/image (native-view image)))
                 ))
             (#/setImage: badge-image-view (#/image (native-view badge-image)))))
@@ -552,6 +560,7 @@
 
 (defmethod SET-SIZE ((Self badged-image-group-list-manager-view) Width Height)
   (call-next-method)
+  
   ; #-cocotron(set-size (lui-view (#/superview (#/superview (native-view self)))) (width (lui-view (#/superview (#/superview (native-view self))))) (height (lui-view (#/superview (#/superview (native-view self))))))
   ;(call-next-method self width height)
   
@@ -635,9 +644,10 @@
           (t (setf (item-detection-views group) (append (item-detection-views group) (list detection-view-item)))))    
         (#/addSubview: (item-view group) detection-view-item))  
       
-        
+      
       (let ((image (make-instance 'group-item-image-view   :image-path (image-path group-item)   :group-name (group-name group) :container self :item-name (item-name group-item)  :x x :y item-y :image-name (image-name group-item)  ))) ;'image-control :src (group-image group) :x x :y y :width (row-height self) :height (row-height self)))) 
         (incf x (row-height self))
+        
         (#/addSubview: #|items-container|# detection-view-item (create-image image group-item)))
       (let ((text (#/alloc mouse-detection-text-field))) 
         (ns:with-ns-rect (Frame x  item-y  text-length (text-height self))
@@ -666,7 +676,10 @@
       (setf x (+ (left-margin self)(group-item-offset self)))
       (setf (list-item detection-view-item) group-item)
       (setf (item-detection-view group-item) detection-view-item)))
-  (update-image (group-view group)))
+  
+  (update-image (group-view group))
+  
+  )
 
 
 (defmethod ADD-GROUP-TO-GUI ((Self badged-image-group-list-manager-view) group)
@@ -760,6 +773,8 @@
 
 (defmethod ADD-GROUP-ITEM ((Self badged-image-group-list-manager-view) group-name item &key (image-path "lui:resources;images;"))
   (setf (first item) (string-capitalize (first item)))
+  
+  
   ;(setf group-name (string-capitalize group-name))
   (let ((list-item (make-instance 'list-group-item :item-name (first item) :image-path image-path :image-name (second item))))
 
@@ -777,7 +792,8 @@
     (add-item-to-gui self group list-item)
 
     (#/setHidden: (item-view group) #$NO))
-  (layout (native-view self))
+    (layout (native-view self))
+    
   "SUCCESS"))
 
 
