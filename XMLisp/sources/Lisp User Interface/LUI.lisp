@@ -692,6 +692,15 @@ after any of the window controls calls stop-modal close window and return value.
   (:documentation "Popup Image Button"))
 
 
+(defclass POPUP-IMAGE-BUTTON-SUBMENU-CONTROL (control)
+  ((popup-image-button :accessor popup-image-button :initform nil :initarg :popup-image-button :documentation "the window this item is contained inside")
+   (enable-predicate :accessor enable-predicate :initarg :enable-predicate :initform 'default-enable-predicate))
+  (:default-initargs
+      :text ""
+    :action 'popup-action)
+  (:documentation "Popup Image Button Submenu"))
+
+
 (defmethod DEFAULT-ENABLE-PREDICATE ((window window) (self popup-image-button-item-control))
   t)
 
@@ -738,6 +747,37 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defmethod IMAGE-CLUSTER-ACTION ((window window) (self Radio-Button-Control))
   (print "CLUSTER"))
+
+
+;__________________________________
+; String List                      |
+;__________________________________/
+
+
+(defclass STRING-LIST-CONTROL (control)
+  ((lui-view :accessor lui-view :initform nil)
+   (selected-string :accessor selected-string :initform nil)
+   )
+  (:default-initargs
+      :text ""
+    :action 'popup-action)
+  (:documentation "Popup Image Button Submenu"))
+
+
+;__________________________________
+; String List Vie                  |
+;__________________________________/
+
+
+(defclass STRING-LIST-VIEW-CONTROL (control)
+  ((list-items :accessor list-items :initform nil :documentation "The list of strings displayed in this list")
+   (item-height :accessor  item-height :initform 16 :documentation "The height of an item in the list")
+   (selected-string :accessor selected-string :initform nil)
+   )
+  (:default-initargs
+      :text ""
+    :action 'popup-action)
+  (:documentation "Popup Image Button Submenu"))
 
 
 ;__________________________________
@@ -846,7 +886,8 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defclass IMAGE-CONTROL (control)
   ((src :accessor src :initform nil :initarg :src :documentation "URL: so far only filename")
-  (path :accessor path :initform nil :initarg :path :documentation "if this accesor is nil then the image-control will looks for 
+   (scale-proportionally :accessor scale-proportionally :initarg :scale-proportionally :type boolean :initform nil :documentation "If true the image will scale proportionally instead of scale to fit")
+  (image-path :accessor image-path :initform nil :initarg :image-path :documentation "if this accesor is nil then the image-control will looks for 
         the image in the resources;images directory, if not it will look for the src image at the location specified by this accessor"))
   (:documentation "image. If size is 0,0 use original image size")
   (:default-initargs 
@@ -859,8 +900,8 @@ after any of the window controls calls stop-modal close window and return value.
 
 
 (defmethod SOURCE ((Self image-control))
-  (if (path self)
-    (native-path (path self) (src Self))
+  (if (image-path self)
+    (native-path (image-path self) (src Self))
     (native-path "lui:resources;images;" (src Self))))
 
 
