@@ -120,13 +120,13 @@
   (:metaclass ns:+ns-object
 	      :documentation ""))
 
-
+#|
 (objc:defmethod (#/drawRect: :void) ((self native-badged-image-group-list-manager-view) (rect :<NSR>ect))
   (call-next-method rect)
       (#/set (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color .2 .2 .2 1.0))
       (#/fillRect: ns:ns-bezier-path rect)
 )
-
+|#
 
 (defmethod LAYOUT ((Self native-badged-image-group-list-manager-view))
   (let ((y 0)) 
@@ -628,11 +628,12 @@
           (#/setHidden: (native-view selection-image) #$YES))
         (setf (item-selection-view group) (native-view selection-image))
         (#/addSubview: (item-view group) (native-view selection-image))))
+    #|
     (let ((item-counter (make-instance 'status-bar-control :text "0" :x x :y item-y :width 40 :height (- (row-height self) 2 ))))
       (#/addSubview: (item-view group) (native-view item-counter))
       (setf (item-counter group-item) item-counter)
       (incf x 45))
-    
+    |#
     (let ((detection-view-item (#/alloc item-detection-view)))
       (ns:with-ns-rect (detection-frame 0 item-y (width self) (row-height self))
         (setf (group-name detection-view-item) (group-name group))
