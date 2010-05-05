@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<palette>
+
+  <category title="basic conditions" disclosed="true">
+    <see shape="bla">
+      <direction dcol="1"/>
+    </see>
+    <see shape="bla">
+      <direction dcol="1"/>
+    </see>
+  </category>
+
+  <category title="attributes" disclosed="true">
+    <test expression1="age" operator="&lt;" expression2="21"/>
+  </category>
+
+</palette>
