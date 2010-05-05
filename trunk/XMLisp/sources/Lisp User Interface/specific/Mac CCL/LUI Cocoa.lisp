@@ -405,9 +405,10 @@
     (setf (height (lui-window Self)) (truncate (pref (#/frame Content-View) <NSR>ect.size.height)))
     (size-changed-event-handler (lui-window Self) (width (lui-window Self)) (height (lui-window Self)))))
 
+
 (objc:defmethod (#/windowDidEndLiveResize: :void) ((self window-delegate) Notification)
   (print "-------------DID END LIVE RESIZE-------------")
-  (call-next-method)
+  ;;(call-next-method)
   )
 
 
