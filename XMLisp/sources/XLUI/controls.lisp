@@ -124,7 +124,9 @@
 ;;***********************************************
 
 (defclass IMG (image-control xml-layout-interface)
-  ((alt :accessor alt :initform "" :type string :documentation "HTML img alt attribute: use for tooltips"))
+  ((alt :accessor alt :initform "" :type string :documentation "HTML img alt attribute: use for tooltips")
+   
+   )
   (:documentation "Image in HTML style"))
 
 
@@ -232,6 +234,11 @@
   (:documentation "Compact button containing image"))
 
 
+(defmethod FINISHED-READING ((Self popup-image-button) Stream)
+  ;do nothing
+(declare (ignore Stream)))
+
+
 (defclass POP-UP-IMAGE-ITEM (xml-serializer)
   ((text :accessor text :initform "untitled")
    (action :accessor action :initform 'default-action  :type symbol :documentation "method: window dialog")
@@ -244,9 +251,26 @@
   (add-popup-item Button (text Item) (action Item)(enable-predicate item)))
 
 
-(defmethod FINISHED-READING ((Self popup-image-button) Stream)
-  ;do nothing
-(declare (ignore Stream)))
+(defclass POP-UP-IMAGE-SUBMENU ( popup-image-button-submenu-control xml-serializer)
+  (
+   ;(text :accessor text :initform "untitled")
+   ;(action :accessor action :initform 'default-action  :type symbol :documentation "method: window dialog")
+   ;(enable-predicate :accessor enable-predicate :initform nil :type symbol :documentation "Enable predicate of this item")
+   )
+  (:documentation "a pop up menu item"))
+
+
+(defmethod ADD-SUBOBJECT ((Button popup-image-button-control) (Item pop-up-image-submenu))
+  (add-popup-submenu2 Button Item (text Item) (action item) (enable-predicate item)))
+
+
+(defmethod ADD-SUBOBJECT ((Button popup-image-button-submenu-control) (Item pop-up-image-item))
+  
+  (add-item-to-submenu Button (text Item) (action item) (enable-predicate item)))
+
+
+(defmethod ADD-SUBOBJECT ((supermenu pop-up-image-submenu) (submenu pop-up-image-submenu))
+  (add-submenu-to-submenu supermenu submenu (text submenu) (action submenu) (enable-predicate submenu)))
 
 
 ;___________________________________________________________________________________________________________________________________
@@ -506,11 +530,49 @@
     :width 100 
     :height 15))
 
+;__________________________________________________________________
+; STRING List                                                      |
+;                                                                  |
+;                                                                  |
+;__________________________________________________________________
+
+#|
+(defclass  STRING-LIST (string-list-control xml-layout-interface)
+  (title :accessor )
+  (:default-initargs
+    :width 15
+    :height 150))
+|#
+
+
+(defclass STRING-LIST-ITEM (xml-serializer)
+  ((text :accessor text :initform "untitled")
+   
+   )
+  (:documentation "a pop up menu item"))
+
+
+(defclass STRING-LIST (string-list-view-control xml-layout-interface)
+  (title :accessor )
+  (:default-initargs
+   :action 'default-action
+   :width 15
+   :height 150))
+
+
+(defmethod ADD-SUBOBJECT ((string-list string-list) (string-list-item string-list-item))
+  (add-string-list-item string-list  (text string-list-item)) )
+
+
+(defmethod DEFAULT-ACTION2 ((window window) (self string-list))
+  (declare (ignore window))
+  (declare (ignore self))
+  (print "DEFUALT ACTION 2"))
 
 ;__________________________________________________________________
-; Check Box                                                        |
+; Scroller                                                         |
 ;                                                                  |
-; <check-box text="important" action="snap-sound" width="90"/>     |
+;                                                                  |
 ;__________________________________________________________________
 
 
