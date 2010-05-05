@@ -21,7 +21,7 @@
 
 
 (defclass SHAPE (agent-3d)
-  ((height :accessor height :initform 1s0 :initarg :height)
+  ((depth :accessor depth :initform 1s0 :initarg :depth)
    (turn-height :accessor turn-height :initform 0.0 :initarg :turn-height :type single-float :documentation "height around which shapes will be turned. Default to floor")
    (textures :accessor textures :initform (make-hash-table :test #'equal))
    ;; (shade :accessor shade :initform nil :type string-or-null :documentation "used as floor shadow in unit size")
@@ -157,8 +157,13 @@
   (glPopMatrix))
 
 
-(defmethod HEIGHT ((Self sphere))
+(defmethod DEPTH ((Self sphere))
   (float (* 2 (size Self)) 0.0))
+
+
+(defmethod TURN-HEIGHT ((Self sphere))
+  ;; if not specified use radius
+  (float (size Self) 0.0))
 
 
 (defmethod ICON ((Self Sphere))
@@ -300,7 +305,7 @@
    (dx :accessor dx :initform 1.0 :initarg :dx)
    (dy :accessor dy :initform 1.0 :initarg :dy))
   (:default-initargs 
-      :height 1.0
+      :depth 1.0
     :turn-height 0.5)
   (:documentation "Box has six different textures"))
 
@@ -333,7 +338,7 @@
     ;; slow immediate mode to render
     (let ((X (dx Self))
           (Y (dy Self))
-          (Z (height Self)))
+          (Z (depth Self)))
       ;; front
       (when (or (front-texture Self) (texture Self))
         (use-texture Self (or (front-texture Self) (texture Self)))
@@ -403,15 +408,16 @@
 
 (defclass CYLINDER (shape)
   ((base-radius :accessor base-radius :initform 1.0d0 :type double-float :documentation "The radius of the cylinder at z = 0")
-   (top-radius :accessor top-radius :initform 0.0d0 :type double-float :documentation "The radius of the cylinder at z = height")
-   (height :accessor height :initform 1.0d0 :type double-float :documentation "The height of the cylinder")
+   (top-radius :accessor top-radius :initform 0.0d0 :type double-float :documentation "The radius of the cylinder at z = depth")
    (texture :accessor texture :initform nil :initarg :texture :documentation "texture file name")
    (quadric :accessor quadric :initform nil))
+  (:default-initargs 
+      :depth 1.0)
   (:documentation "Cylinder"))
 
 
 (defmethod PRINT-SLOTS ((Self cylinder))
-  `(x y z roll pitch heading base-radius top-radius height texture))
+  `(x y z roll pitch heading base-radius top-radius depth texture))
 
 
 (defmethod BOUNDING-BOX-WIDTH ((Self cylinder))
@@ -423,7 +429,7 @@
 
 
 (defmethod BOUNDING-BOX-DEPTH ((Self cylinder))
-  (float (height Self) 0.0))
+  (float (depth Self) 0.0))
 
 
 (defmethod DRAW-BOUNDING-BOX ((Self cylinder) Red Green Blue &optional Alpha)
@@ -454,7 +460,7 @@
    (t
     (glDisable gl_texture_2d)))
   ;; render cylinder
-  (gluCylinder (quadric Self) (base-radius Self) (top-radius Self) (height Self) 40 4)
+  (gluCylinder (quadric Self) (base-radius Self) (top-radius Self) (depth Self) 40 4)
   (gluDeleteQuadric (quadric Self))
   (setf (quadric Self) nil))
 
@@ -528,6 +534,8 @@
   ((width :accessor width :initform 1.0 :type float :initarg :width :documentation "width")
    (height :accessor height :initform 1.0 :type float :initarg :height :documentation "height")
    (texture :accessor texture :initform nil :initarg :texture :documentation "texture file name"))
+  (:default-initargs 
+      :depth 0.05)
   (:documentation "Tile"))
 
 
@@ -540,7 +548,7 @@
 
 
 (defmethod BOUNDING-BOX-DEPTH ((Self tile))
-  0.2)
+  (depth Self)) ;; was 0.2
 
 
 (defmethod DRAW ((Self tile))
