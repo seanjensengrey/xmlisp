@@ -619,7 +619,7 @@
   (let ((Model-Editor (view-named Window 'model-editor)))
 
     ;; finalize geometry
-    (compute-height (inflatable-icon Model-Editor))
+    (compute-depth (inflatable-icon Model-Editor))
     
     (if (container window)
       (lui::apply-button-pressed (container window) Window)
@@ -641,7 +641,7 @@
 
 (defmethod EDIT-ICON-OK-ACTION ((Window inflatable-icon-editor-window) (Button button))
   ;; finalize geometry
-  (compute-height (inflatable-icon (view-named Window 'model-editor)))
+  (compute-depth (inflatable-icon (view-named Window 'model-editor)))
   ;; save
   (when (destination-inflatable-icon Window)
     ;;(format t "~%copy into icon")
@@ -653,7 +653,7 @@
 
 (defmethod EDIT-ICON-SAVE-ACTION ((Window inflatable-icon-editor-window) (Button button))
   ;; finalize geometry
-  (compute-height (inflatable-icon (view-named Window 'model-editor)))
+  (compute-depth (inflatable-icon (view-named Window 'model-editor)))
   (window-save Window)
   (if (container window)
     (lui::save-button-pressed (container window))
