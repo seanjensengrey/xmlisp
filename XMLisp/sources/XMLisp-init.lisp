@@ -214,7 +214,8 @@
   (:import-from "XML"
                 "FILE")
   (:export "INFLATABLE-ICON"
-           "SAVE-THE-WORLD"))
+           "SAVE-THE-WORLD"
+           "DEPTH"))
 
 
 (setq xml::*xmlisp-packages* (list (find-package :xlui) (find-package :xml)))
