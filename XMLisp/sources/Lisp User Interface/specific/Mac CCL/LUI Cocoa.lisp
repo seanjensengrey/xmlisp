@@ -1303,7 +1303,7 @@
         (#/setBezelStyle: Native-Control #$NSShadowlessSquareBezelStyle)
         (#/setTitle: Native-Control (native-string (text Self))))
       (let ((Pop-up (make-instance 'popup-button-control :x 0 :y -20 )))        
-        (#/setTransparent: (native-view Pop-Up) #$NO)
+        (#/setTransparent: (native-view Pop-Up) #$YES)
         (setf (popup-button self) pop-up)
         )
     Native-Control)))
