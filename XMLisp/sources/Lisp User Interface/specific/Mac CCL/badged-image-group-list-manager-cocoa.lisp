@@ -852,7 +852,8 @@
 
 
 (defmethod SET-SELECTED-ITEM ((Self badged-image-group-list-manager-view) group-name item-name)
-  (let ((i 1))
+  (let ((i 1)
+        (previously-selected-group-name  (selected-group self)))
     (unless (equal (selected-group self) group-name)
             (selected-group-changed self ))
     (dolist (group (groups self))    
@@ -886,7 +887,9 @@
               (#/setHidden: (item-selection-view group) #$YES)
               (#/setNeedsDisplay: (item-selection-view group) #$YES)
               ))))
-      (incf i)))
+      (incf i))
+    (unless (equal previously-selected-group-name  (selected-group self))
+      (selected-group-changed self )))
   (layout-changed self)
   (layout (native-view self)))
 

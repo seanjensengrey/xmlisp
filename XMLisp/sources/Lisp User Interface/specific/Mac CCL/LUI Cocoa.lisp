@@ -992,7 +992,12 @@
       (#/addSubview:  (Native-view self) text)
       )
   (case (list-items self)
-    (nil (setf (list-items self) (list text)))
+    (nil 
+     (progn
+       (setf (list-items self) (list text))
+       (setf (is-selected (first (list-items self))) t)
+       (display self)
+       ))
     (t (setf (list-items self) (append (list-items self) (list text)))))
   
   ))
@@ -1005,7 +1010,11 @@
       (#/removeFromSuperview subview)))
   (setf (list-items self) nil)
   (dolist (item list)
-    (add-string-list-item self item)))
+    (add-string-list-item self item))
+  (setf (is-selected (first (list-items self))) t)
+  (setf (selected-string self) (text (first (list-items self))))
+  ;(#/setNeedsDisplay: (native-view self) #$YES)
+  (display self))
   
 
 
