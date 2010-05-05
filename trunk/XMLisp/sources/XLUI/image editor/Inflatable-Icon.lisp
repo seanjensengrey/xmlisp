@@ -22,8 +22,9 @@
 ;*    1.3.1     : 06/26/07 surfaces slot                             *
 ;*    1.3.2     : 08/16/07 preserve connectors                       *
 ;*    1.4       : 09/27/07 flat icons can be superfast               *
-;*    1.4.1     : 10/12/07 *Minimal-Inflatable-Icon-Height*          *
+;*    1.4.1     : 10/12/07 *Minimal-Inflatable-Icon-Depth*           *
 ;*    2.0       : 02/09/10 CCL Cocoa                                 *
+;*    2.1       : 05/05/10 AI: height --> depth                      *
 ;* Systems      : Intel-Mac, OS X 10.6.2, CCL 1.4                    *
 ;* Abstract     : 3D shapes derived from 2D icons/images             *
 ;*                                                                   *
@@ -33,7 +34,8 @@
 
 
 (defclass INFLATABLE-ICON (agent-3d)
-  ((height :accessor height :initform 0s0 :initarg :height)
+  ((depth :accessor depth :initform 0s0 :initarg :depth)
+   (turn-height :accessor turn-height :initform 0.0 :initarg :turn-height :type single-float :documentation "height around which shapes will be turned. Default to floor")
    (rows :accessor rows :initform 32 :initarg :rows)
    (columns :accessor columns :initform 32 :initarg :columns)
    (steps :accessor steps :initform 10)
@@ -72,8 +74,8 @@
 (defgeneric COPY-CONTENT-INTO (Source-Inflatable-Icon Destination-Inflatable-Icon)
   (:documentation "Copy the content of the source inflatable icon, image, pressure, etc. into the destination inflable icon"))
 
-(defgeneric COMPUTE-HEIGHT (Inflatable-Icon)
-  (:documentation "Compute the height of the inflatable icon based on its content, inflation, and faces"))
+(defgeneric COMPUTE-DEPTH (Inflatable-Icon)
+  (:documentation "Compute the depth of the inflatable icon based on its content, inflation, and faces"))
 
 (defgeneric UPDATE-TEXTURE-FROM-IMAGE (Inflatable-Icon &optional Image)
   (:documentation "Update the texture from the current image"))
@@ -84,7 +86,7 @@
 ;********************************************************
 
 (defmethod PRINT-SLOTS ((Self inflatable-icon))
-  `(icon rows columns height pressure steps noise max-value is-upright surfaces altitudes distance dz is-flat))
+  `(icon rows columns depth pressure steps noise max-value is-upright surfaces altitudes distance dz is-flat))
 
 
 (defmethod FINISHED-READING :after ((Self inflatable-icon) Stream)
@@ -146,7 +148,7 @@
  ; (ccl:external-call "malloc_size" :address (image Source) :size_t)
   ;; given that they are the same size only copy content
   (setf (is-upright Destination) (is-upright Source))
-  (setf (height Destination) (height Source))
+  (setf (depth Destination) (depth Source))
   (setf (dz Destination) (dz Source))
   (setf (surfaces Destination) (surfaces Source))
   (setf (distance Destination) (distance Source))
@@ -184,7 +186,7 @@
     (error "cannot copy content of source into destination inflatable icon: incompatible sizes"))
   ;; given that they are the same size only copy content
   (setf (is-upright Destination) (is-upright Source))
-  (setf (height Destination) (height Source))
+  (setf (depth Destination) (depth Source))
   (setf (dz Destination) (dz Source))
   (setf (surfaces Destination) (surfaces Source))
   (setf (distance Destination) (distance Source))
@@ -224,13 +226,13 @@
       (when (pixel-visible-p Self (- (rows Self) Row) Column) (return-from max-visible-pixel-row (- (rows Self) Row))))))
       
 
-(defvar *Minimal-Inflatable-Icon-Height* 0.01 "> 0 to avoid having flattened icons pile up in 0 height stack")
+(defvar *Minimal-Inflatable-Icon-depth* 0.01 "> 0 to avoid having flattened icons pile up in 0 depth stack")
 
 
-(defmethod COMPUTE-HEIGHT ((Self inflatable-icon))
+(defmethod COMPUTE-DEPTH ((Self inflatable-icon))
   ;; this can just be a heuristic: maybe ability for user to change
-  (setf (height Self)
-        (max *Minimal-Inflatable-Icon-Height*
+  (setf (depth Self)
+        (max *Minimal-Inflatable-Icon-depth*
              (cond
               ((is-upright Self)
                (float (/ (max-visible-pixel-row Self) (rows Self)) 0.0))
@@ -741,9 +743,9 @@
                        (altitude-at Self R (+ C 1))
                        (altitude-at Self R (- C 1)))))) 
          0s0))
-  ;; adjust height?
-  (when (> (aref (altitudes Self) R C) (height Self))
-    (setf (height Self) (aref (altitudes Self) R C))))
+  ;; adjust depth?
+  (when (> (aref (altitudes Self) R C) (depth Self))
+    (setf (depth Self) (aref (altitudes Self) R C))))
 
 
               
