@@ -354,7 +354,7 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
   </column>                                                                                     
 </application-window>)
 
-
+(#/performClick: (lui::native-view (view-named *Window*  "pop")) lui::+null-ptr+)
 (set-selected-item-with-title (view-named *Window*  "pop") "upright")
 
 ;;****************************************************
@@ -415,8 +415,58 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
   </canvas>
 </application-window>
 
-
 ;;********************************************
+;;*  String List                             *
+;;********************************************
+
+;;Exmaple 1
+<application-window title="scrolling" margin="0">
+  <string-list action="default-action3" width="50">
+    <string-list-item text="ITEM1"/>
+    <string-list-item text="ITEM2"/>
+    <string-list-item text="ITEM3"/>
+    <string-list-item text="ITEM5"/>
+    <string-list-item text="ITEM6"/>
+    <string-list-item text="ITEM7"/>
+  </string-list>
+</application-window> 
+
+
+;;Example 2 The Menu
+
+
+<application-window title="My Menu" margin="0">
+  <row> 
+    <column width="100">
+      <label align="center" width="100" text="Courses"/>
+      <string-list action="course-change-action" width="100">
+        <string-list-item text="Salads"/>
+        <string-list-item text="Appetizers"/>
+        <string-list-item text="Main Courses"/>
+        <string-list-item text="Desserts"/>
+      </string-list>
+    </column>
+    <spacer/>
+    <column width="200">
+      <label align="center" width="100" text="Choices"/>
+      <string-list name="column2" action="default-action3" width="200"/>
+    </column>
+  </row>
+</application-window>
+
+
+(defmethod COURSE-CHANGE-ACTION ((window window) (self string-list))
+  (cond
+   ((equal "Salads" (selected-string self ))
+    (set-list (view-named window "column2") (list "Caesar" "Gorgonzola w/ hearts of romaine" "organic mixed greens")))
+   ((equal "Appetizers" (selected-string self ))
+    (set-list (view-named window "column2") (list "Grilled Pork Shoulder" "Asparagus Soup" "Farm Spinach Custard ")))
+   ((equal "Main Courses" (selected-string self ))
+    (set-list (view-named window "column2") (list "Riso Superfino Carnaroli" "Russet Potato Gnocchi" "Farm Rabbit Agnolotti")))
+   ((equal "Desserts" (selected-string self ))
+    (set-list (view-named window "column2") (list "Starwberry-Rhubarb Tart" "Caramel Shake" "Chocolate Torta" "Gelati and Sorbet" "Bombolini")))))
+
+ ;;********************************************
 ;;*          SCROLLER                        *
 ;;********************************************
 

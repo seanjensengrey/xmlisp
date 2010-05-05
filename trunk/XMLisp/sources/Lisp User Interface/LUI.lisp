@@ -658,11 +658,6 @@ after any of the window controls calls stop-modal close window and return value.
   (:documentation "Popup Button"))
 
 
-(defmethod POPUP-ACTION ((window window) (self popup-Button-Control))
-  (unless (eql (get-selected-action self) NIL)
-    (let ((action (get-selected-action self)))
-      (funcall action Window Self))))
-
 
 (defclass POPUP-IMAGE-BUTTON-CONTROL (control)
   ((image :accessor image :initform nil :initarg :image :documentation "filename")
@@ -677,10 +672,7 @@ after any of the window controls calls stop-modal close window and return value.
 
 
 
-(defmethod POPUP-IMAGE-BUTTON-ACTION ((window window) (self popup-image-Button-Control))
-  (unless (eql (get-selected-action self) NIL)
-    (let ((action (get-selected-action self)))
-      (funcall action Window Self))))
+
 
 
 (defclass POPUP-IMAGE-BUTTON-ITEM-CONTROL (control)
@@ -715,9 +707,7 @@ after any of the window controls calls stop-modal close window and return value.
   (:documentation "radio-button"))
 
 
-(defmethod RADIO-ACTION ((window window) (self Radio-Button-Control))
-  (let ((action (get-selected-action self)))
-    (funcall action Window Self)))
+
 
 
 (defclass CHOICE-BUTTON-CONTROL (control)

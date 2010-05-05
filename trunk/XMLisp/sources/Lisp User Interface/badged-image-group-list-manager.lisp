@@ -20,7 +20,7 @@
    (row-height :accessor row-height :initform 30 :initarg :row-height :documentation "the height of each row in the list")
    (text-height :accessor text-height :initform 15 :initarg :text-height :documentation "the height of the text field")
    (superview :accessor superview :initform nil :documentation "the superview of this view")
-   (group-item-offset :accessor group-item-offset :initform 20 :documentation "the X offset of the group items")
+   (group-item-offset :accessor group-item-offset :initform 40 :documentation "the X offset of the group items")
    (head-image-name :accessor head-image-name :initform "color-wheel-button.png" :initarg :head-image-name :documentation "the image that will be used as the group image")
   ; (update-action :accessor update-action :initarg :update-action :initform 'layout-changed)
    (window :accessor window :initform nil)

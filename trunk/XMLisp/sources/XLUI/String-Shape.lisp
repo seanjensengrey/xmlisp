@@ -281,6 +281,7 @@
 ;__________________________
 
 (defmethod DISPLAY-VERTEX-ARRAYS ((Self string-shape))
+  
   (glEnable gl_texture_2d)
   (cond
    ;; Color!

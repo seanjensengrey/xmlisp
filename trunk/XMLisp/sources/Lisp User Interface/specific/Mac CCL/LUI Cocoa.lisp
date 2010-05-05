@@ -148,6 +148,7 @@
 (defmethod MAP-SUBVIEWS ((Self subview-manager-interface) Function &rest Args)
   (let ((Subviews (#/subviews (native-view Self))))
     (dotimes (i (#/count Subviews))
+      
       (apply Function (lui-view (#/objectAtIndex: Subviews i)) Args))))
 
 
@@ -405,12 +406,12 @@
     (setf (height (lui-window Self)) (truncate (pref (#/frame Content-View) <NSR>ect.size.height)))
     (size-changed-event-handler (lui-window Self) (width (lui-window Self)) (height (lui-window Self)))))
 
-
+#|
 (objc:defmethod (#/windowDidEndLiveResize: :void) ((self window-delegate) Notification)
   (print "-------------DID END LIVE RESIZE-------------")
-  ;;(call-next-method)
+  (call-next-method)
   )
-
+|#
 
 (objc:defmethod (#/windowDidMove: :void) ((self window-delegate) Notification)
   (declare (ignore Notification))
@@ -979,7 +980,7 @@
       (setf (container text) self)
       (setf (text text) string)
       (#/initWithFrame: text Frame2)
-      (print string)
+      
       ;(#/setStringValue: text (native-string (item-name group-item)))
       (#/insertText: text (native-string string))
       (#/setBackgroundColor: text (#/whiteColor ns:ns-color))
@@ -998,7 +999,7 @@
   
 
 (defmethod SET-LIST ((Self string-list-view-control) list)
-  (print "SET LIT")
+  
   (let ((subviews (gui::list-from-ns-array (#/subviews (native-view self))))) 
     (dolist (subview subviews)
       (#/removeFromSuperview subview)))
@@ -1144,6 +1145,11 @@
   (elt (actions self)  (#/indexOfObject: (elements Self) (#/selectedCell (native-view self)))))
 
 
+(defmethod RADIO-ACTION ((window window) (self Radio-Button-Control))
+  (let ((action (get-selected-action self)))
+    (funcall action Window Self)))
+
+
 (defmethod FINALIZE-CLUSTER ((Self radio-button-control))
   (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
     (let ((prototype (#/init (#/alloc ns:ns-button-cell))))
@@ -1181,6 +1187,8 @@
 (defclass native-popup-button (ns:ns-pop-up-button)
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
+
+
 #|
 (objc:defmethod (#/performClick: :void) ((self native-popup-button) sender)
   (print "perform")
@@ -1202,6 +1210,12 @@
   (elt (actions self)  (#/indexOfSelectedItem (native-view self))))
 
 
+(defmethod POPUP-ACTION ((window window) (self popup-Button-Control))
+  (unless (eql (get-selected-action self) NIL)
+    (let ((action (get-selected-action self)))
+      (funcall action Window Self))))
+
+
 (defmethod SET-SELECTED-ITEM-WITH-TITLE ((Self popup-button-control) text)
   (#/selectItemWithTitle: (native-view self) (native-string text)))
 
@@ -1216,10 +1230,8 @@
 
 (defmethod ADD-NS-MENU-ITEM ((Self popup-button-control) Item)
   (if (equal (#/indexOfItemWithTitle: (native-view Self) (native-string (Text item))) -1)
-    (progn
-      (print "1")
+    (progn   
       (#/addItem: (#/menu (native-view Self)) (native-view Item))
-      (print "2")
       (setf (actions Self) (append (actions Self) (list (Action item)))))
     (warn "Cannot add item with the same title (~S)" (Text item))))
 
@@ -1263,7 +1275,6 @@
   (let ((Native-Control (make-instance 'native-popup-image-button-submenu :lui-view Self)))
     (#/initWithTitle: Native-Control (native-string (text self)) )
     (#/setAutoenablesItems: native-control #$NO)
-    (print "1")
     Native-Control))
 
 
@@ -1291,35 +1302,41 @@
         (#/setImage: Native-Control NS-Image)
         (#/setBezelStyle: Native-Control #$NSShadowlessSquareBezelStyle)
         (#/setTitle: Native-Control (native-string (text Self))))
-      (let ((Pop-up (make-instance 'popup-button-control )))
-        (#/setTransparent: (native-view Pop-Up) #$YES)
+      (let ((Pop-up (make-instance 'popup-button-control :x 0 :y -20 )))        
+        (#/setTransparent: (native-view Pop-Up) #$NO)
         (setf (popup-button self) pop-up)
         )
     Native-Control)))
 
 
 (defmethod POPUP-IMAGE-BUTTON-ACTION ((w window) (Button popup-image-button-control))
-  
+  (print "THIS")
   (dolist (item (items button))
     (if (funcall (enable-predicate item) w item)
       (#/setEnabled: (native-view item) #$YES)
       (#/setEnabled: (native-view item) #$NO)))
   (ns:with-ns-rect (Frame 0 0 10 10)
-    (add-subviews (window button) (popup-button button))
+    (add-subviews button (popup-button button))
     (ns:with-ns-point (Point 0 0)    
       
       (let* ((event2 (#/alloc ns:ns-event))
              (item (#/selectedItem (native-view (popup-button button))))
-             (action (#/action item))
-             (target (#/action item))
-             )
+            ; (action (#/action item))
+            ; (target (#/action item))
+             )        
         (#/trackMouse:inRect:ofView:untilMouseUp: (#/cell (native-view (popup-button button))) event2 (#/bounds (native-view (popup-button button))) (native-view (popup-button button)) #$NO)
-        
-         (#/setState: (#/cell (native-view (popup-button button))) #$NSOffState)
+        (#/setState: (#/cell (native-view (popup-button button))) #$NSOffState)
         #+cocotron
-         (#/sendAction:to: (native-view (popup-button button)) (#/action (native-view (popup-button button))) (#/target (native-view (popup-button button))))
-      (print "2")
-      (#/removeFromSuperview (native-view (popup-button button))) ))))
+        (#/sendAction:to: (native-view (popup-button button)) (#/action (native-view (popup-button button))) (#/target (native-view (popup-button button))))
+        (#/removeFromSuperview (native-view (popup-button button))) ))))
+
+#|
+(defmethod POPUP-IMAGE-BUTTON-ACTION ((window window) (self popup-image-Button-Control))
+  (print "THAT")
+  (unless (eql (get-selected-action self) NIL)
+    (let ((action (get-selected-action self)))
+      (funcall action Window Self))))
+|#
 
 #|
 (objc:defmethod (#/mouseDown: :void) ((self native-popup-button) Event)
@@ -1358,6 +1375,7 @@
 
 
 (defmethod ADD-POPUP-SUBMENU ((Self popup-image-button-control) Text action predicate)
+  (declare (ignore  predicate))
   (let ((menu (make-instance 'popup-image-button-submenu-control)))
     (add-item (popup-button self) text action)
     ;(#/addItemWithTitle:action:keyEquivalent: (native-view menu) (native-string "SUB MENU ITEM 1") (objc::@selector #/activateAction) (native-string ""))
@@ -1366,14 +1384,14 @@
 
 
 (defmethod ADD-POPUP-SUBMENU2 ((Self popup-image-button-control) Menu text action predicate)
-  
+  (declare (ignore  predicate))
     (add-item (popup-button self) text action)
     ;(#/addItemWithTitle:action:keyEquivalent: (native-view menu) (native-string "SUB MENU ITEM 1") (objc::@selector #/activateAction) (native-string ""))
     (#/setSubmenu: (#/itemWithTitle: (native-view (popup-button self)) (native-string text)) (native-view menu))
     )
 
 (defmethod ADD-SUBMENU-TO-SUBMENU ((Self popup-image-button-submenu-control) new-menu text action predicate)
-  
+  (declare (ignore  text action predicate))
   (#/addItemWithTitle:action:keyEquivalent: (native-view self) (native-string (text new-menu)) (objc::@selector #/activateAction)(native-string ""))
   ;(#/addItemWithTitle:action:keyEquivalent: (native-view menu) (native-string "SUB MENU ITEM 1") (objc::@selector #/activateAction) (native-string ""))
   (#/setSubmenu: (#/itemWithTitle: (native-view self) (native-string (text new-menu))) (native-view new-menu))
@@ -1381,6 +1399,7 @@
 
 
 (defmethod ADD-ITEM-TO-SUBMENU ((Self popup-image-button-submenu-control) Text action predicate)
+  (declare (ignore action predicate))
   (#/addItemWithTitle:action:keyEquivalent: (native-view self) (native-string text) (objc::@selector #/activateAction) (native-string ""))
   ;   (#/setSubmenu: (#/itemWithTitle: (native-view (popup-button self)) (native-string text)) menu)
   )
@@ -1429,14 +1448,9 @@
     (if (funcall (enable-predicate  item) w item)
       (#/setEnabled: (native-view item) #$YES)
       (#/setEnabled: (native-view item) #$NO)))
-  (ns:with-ns-rect (Frame 0 0 100 100)
-    (print "1")
-    
-    (let ((event2 (#/alloc ns:ns-event)))
-      (print "2")
+  (ns:with-ns-rect (Frame 0 0 100 100)    
+    (let ((event2 (#/alloc ns:ns-event)))     
       (#/trackMouse:inRect:ofView:untilMouseUp: (#/cell (native-view (popup-button button))) event2 (#/bounds (native-view (popup-button button))) (native-view (popup-button button)) #$NO))
-    
-    (print "3")    
     (#/setState: (#/cell (native-view (popup-button button))) #$NSOffState)
     (#/setNeedsDisplay: (native-view (popup-button button)) #$YES)
     ;  (#/setState:  (popup-menu-cell button) #$NSOnState)

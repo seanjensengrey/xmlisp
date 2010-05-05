@@ -630,9 +630,11 @@
     ;; save
     (when (destination-inflatable-icon Window)
       ;; (format t "~%copy into icon")     
+      
       (copy-content-into (inflatable-icon Model-Editor) (destination-inflatable-icon Window))
       (when (is-flat (destination-inflatable-icon Window))
-        (setf (update-texture-from-image-p (destination-inflatable-icon Window)) t))))
+        (setf (update-texture-from-image-p (destination-inflatable-icon Window)) t)
+        )))
   (if (container window)
     (xlui::display-world (xlui::project-window (xlui::project-manager-reference (container window)))))
   )
@@ -655,6 +657,12 @@
   ;; finalize geometry
   (compute-depth (inflatable-icon (view-named Window 'model-editor)))
   (window-save Window)
+  (let ((shape-manager (load-object (make-pathname :name "index" :type "shape"  :directory (pathname-directory (file window))):package (find-package :xlui)))
+        (Model-Editor (view-named Window 'model-editor)))
+    
+    (setf (shape shape-manager) (inflatable-icon Model-Editor))
+    (save shape-manager))
+  
   (if (container window)
     (lui::save-button-pressed (container window))
     (print "NOT")))
