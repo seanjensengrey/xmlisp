@@ -71,3 +71,37 @@
   <sphere draggable="true" x="0.0" texture="earth.png"/>
 </agent-3d-view>)
 
+
+;;Simple Example
+#| 
+(defmethod SWITCH-TO-1 ((w swapping-window) (Button bevel-button))
+  (swap-subview (superview (view-named w "scene")) (view-named w "scene") *Scene-1*)
+  
+  )
+
+(defmethod SWITCH-TO-2 ((w swapping-window) (Button bevel-button))
+  (swap-subview (superview (view-named w "scene")) (view-named w "scene") *Scene1*)
+  (set-size (view-named w "scene")  (width (view-named w "scene")) (height (view-named w "scene"))))
+
+(defparameter *S-Window* 
+<swapping-window track-mouse="true" title="Swap Scenes" margin="0">
+  <row align="stretch" valign="stretch">
+    <rectangle name="scene" flex="3" vflex="1"/>
+    <column align="stretch" width="120" valign="stretch" vflex="1">
+      <bevel-button text="scene 1" action="switch-to-1" height="30"/>
+      <bevel-button text="scene 2" action="switch-to-2" height="30"/>
+   </column>
+  </row>
+</swapping-window> )
+
+(defparameter *Scene-1* 
+<rectangle name="scene" color="FF0000"/> )
+
+
+(defparameter *Scene-2* 
+<rectangle name="scene" color="0000FF"/> )
+|#
+
+
+
+

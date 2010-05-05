@@ -114,13 +114,14 @@
               (unless glContext (error "cannot share OpenGLContext of view ~A" View-to-Share)))))
       (#/release Pixel-Format)
       ;; make surface of OpenGL view transparent
-      #-cocotron (#/setValues:forParameter: (#/openGLContext (native-view Self)) {0} #$NSOpenGLCPSurfaceOpacity)
+      (#/setValues:forParameter: (#/openGLContext (native-view Self)) {0} #$NSOpenGLCPSurfaceOpacity)
       (#/setContentView: (native-window Self) (native-view Self))
       ;; UGLY: the disable/enable is prevents a flicker showing the background briefly. Not clear why needed
       (unwind-protect 
           (progn
             (#/disableFlushWindow (native-window Self))
-            #-cocotron (#/makeKeyAndOrderFront: (native-window Self) nil)
+            ;#- cocotron 
+            (#/makeKeyAndOrderFront: (native-window Self) nil)
             (#/flushWindow (native-window Self))
             )
         (#/enableFlushWindow (native-window Self))))))
@@ -128,6 +129,7 @@
 
 (defmethod DRAW-RECT ((Self transparent-opengl-window))
   ;; may need to specialized
+  
   (with-glcontext Self
     (clear-background Self)
     (draw Self)))

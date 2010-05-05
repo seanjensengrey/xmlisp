@@ -180,7 +180,9 @@
   Return time in seconds passed since last animation."
   #+:X8632-target (declare (optimize (safety 2))) ;; avoid 2^32 nano second time warps in CCL 32bit
   #-windows-target
+  
   (let ((Time (#_mach_absolute_time)))
+
     (prog1
         (if (zerop (animation-time Self))
           0.0                           ;First time through
@@ -190,6 +192,7 @@
                         (#_mach_timebase_info info)
                         (/ (ccl::pref info #>mach_timebase_info.numer)
                            (ccl::pref info #>mach_timebase_info.denom))))))
+      
       (setf (animation-time Self) Time)))
   #+windows-target
   (let ((Time (rlet ((now #>FILETIME))
@@ -211,6 +214,7 @@
 
 (defmethod ANIMATE-OPENGL-VIEW-ONCE ((Self opengl-view))
   (animate Self (delta-time Self))
+  
   (with-glcontext Self
     (clear-background Self)
     (draw Self))
