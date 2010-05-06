@@ -65,7 +65,13 @@
     (#/setNeedsDisplay: (#/contentView self) #$YES)))
 
 
-(objc:defmethod (#/isFlipped :<BOOL>) ((self popup-window-view))
+(defclass POPUP-GROUP-WINDOW-VIEW (popup-window-view)
+  ((lui-winodw :accessor lui-window :initform nil :initarg :lui-window))
+  (:metaclass ns:+ns-object
+              :documentation "popup-group-window-view"))
+
+
+(objc:defmethod (#/isFlipped :<BOOL>) ((self popup-group-window-view))
   ;; Flip to coordinate system to 0, 0 = upper left corner
   #$NO)
 
@@ -135,7 +141,7 @@
                           :defer t)))
             (#/setAcceptsMouseMovedEvents: Window #$YES)
             (setf (native-window Self) Window)  ;; need to have this reference for the delegate to be in place
-            (setf (native-view Self) (make-instance 'popup-window-view :lui-window Self ))              
+            (setf (native-view Self) (make-instance 'popup-group-window-view :lui-window Self ))              
             ;; setup delegate
             (setf (delegate Window) (make-instance 'popup-delegate :lui-window Self))
             (#/setDelegate: Window (delegate Window))
