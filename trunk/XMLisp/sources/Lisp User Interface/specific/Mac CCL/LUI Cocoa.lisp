@@ -348,7 +348,6 @@
 
 
 (objc:defmethod (#/mouseMoved: :void) ((self native-window) Event)
-  
   (let ((mouse-loc (#/locationInWindow event)))
     (view-event-handler (lui-window Self) 
                         (make-instance 'mouse-event
@@ -357,8 +356,15 @@
                           :dx (truncate (#/deltaX Event))
                           :dy (truncate (#/deltaY Event))
                           :event-type (native-to-lui-event-type (#/type event))
-                          :native-event Event)))
-  )
+                          :native-event Event))))
+
+
+(objc:defmethod (#/keyDown: :void) ((self native-window) event)
+  (view-event-handler (lui-window Self)
+                      (make-instance 'key-event 
+                        :key-code (#/keyCode Event)
+                        :event-type (native-to-lui-event-type (#/type event))
+                        :native-event Event)))
 
 
 
@@ -664,6 +670,8 @@
                           :dy (truncate (#/deltaY Event))
                           :event-type (native-to-lui-event-type (#/type event))
                           :native-event Event))))
+
+
 
 
 (objc:defmethod (#/isFlipped :<BOOL>) ((self native-window-view))
