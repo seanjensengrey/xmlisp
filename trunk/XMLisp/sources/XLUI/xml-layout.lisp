@@ -176,7 +176,7 @@
        (case (align Self)
          (:stretch 
           (if (> (flex Subview) 0) 
-            (truncate (* (flex Subview)  ;; proportional to flex
+            (ceiling (* (flex Subview)  ;; proportional to flex
                          (/ (- w 
                                (* (1+ (length (subviews Self))) (padding Self))
                                Constant-Width)
@@ -284,7 +284,7 @@
         (case (valign Self)
           (:stretch 
            (if (> (vflex Subview) 0) 
-            (truncate (* (vflex Subview)  ;; proportional to vertical flex
+            (ceiling (* (vflex Subview)  ;; proportional to vertical flex
                          (/ (- h 
                                (* (1+ (length (subviews Self))) (padding Self))
                                Constant-Height)
