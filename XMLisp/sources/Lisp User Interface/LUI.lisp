@@ -644,9 +644,7 @@ after any of the window controls calls stop-modal close window and return value.
   (declare (ignore self)))
 
 
-(defmethod CLUSTER-ACTION ((window window) (self image-button-control))
-  (funcall 'change-cluster-selections (container self) self)
-  (funcall (user-action self) window self))
+
 
 
 (defclass POPUP-BUTTON-CONTROL (control)
@@ -717,11 +715,6 @@ after any of the window controls calls stop-modal close window and return value.
       :text ""
     :action 'choice-button-action)
   (:documentation "Popup Button"))
-
-
-(defmethod CHOICE-BUTTON-ACTION ((window window) (self choice-button-Control))
-  (let ((action (get-selected-action self)))
-    (funcall action Window Self)))
 
 
 (defclass IMAGE-BUTTON-CLUSTER-CONTROL (control)

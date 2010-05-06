@@ -341,6 +341,11 @@
       (setf (selected-in-cluster image-button) t))))
 
 
+(defmethod CLUSTER-ACTION ((window window) (self image-button-control))
+  (funcall 'change-cluster-selections (container self) self)
+  (funcall (user-action self) window self))
+
+
 (defmethod DEFAULT-ACTION ((Window window) (Self image-button-cluster)))
 
 (defmethod ADD-SUBOBJECT ((cluster image-button-cluster) (button image-button))

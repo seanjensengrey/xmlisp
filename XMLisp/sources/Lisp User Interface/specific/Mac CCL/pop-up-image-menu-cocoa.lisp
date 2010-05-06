@@ -16,7 +16,7 @@
     (setf (index-of-selection self) (position (name-of-selection self)(image-names Self):test #'equal)))
   (let ((Image (#/alloc ns:ns-image))) 
     (unless (probe-file (image-name-pathname self (concatenate 'string (first (image-names self)) ".png")))
-      (error "Cannot load file ~A does not exist" (native-path (image-pathname self) String)))
+      (error "Cannot load file ~A does not exist" (native-path (image-pathname self) (concatenate 'string (first (image-names self)) ".png"))))
     (#/initWithContentsOfFile: Image (native-string (image-name-pathname self (concatenate 'string (first (image-names self)) ".png"))) ); "lui:resources;buttons;"  "bevelButton-off-popup.png"))) ;(image-name-pathname self "bevelButton-off-popup")))
     (let ((width(+ 6 ( ns::ns-size-width (#/size Image)))) (height (+ 6 (ns::ns-size-height (#/size Image)))))
       (setf (image-height self) height)

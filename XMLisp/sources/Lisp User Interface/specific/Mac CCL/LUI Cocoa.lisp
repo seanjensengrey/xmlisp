@@ -1320,6 +1320,7 @@
 
 (defmethod POPUP-IMAGE-BUTTON-ACTION ((w window) (Button popup-image-button-control))
   (dolist (item (items button))
+    
     (if (funcall (enable-predicate item) w item)
       (#/setEnabled: (native-view item) #$YES)
       (#/setEnabled: (native-view item) #$NO)))
@@ -1328,7 +1329,7 @@
     (ns:with-ns-point (Point 0 0)    
       
       (let* ((event2 (#/alloc ns:ns-event))
-             (item (#/selectedItem (native-view (popup-button button))))
+             ;(item (#/selectedItem (native-view (popup-button button))))
             ; (action (#/action item))
             ; (target (#/action item))
              )        
@@ -1524,6 +1525,10 @@
 (defmethod GET-SELECTED-ACTION ((Self choice-button-control))
   (elt (actions self)  (#/indexOfSelectedItem (native-view self))))
 
+
+(defmethod CHOICE-BUTTON-ACTION ((window window) (self choice-button-Control))
+  (let ((action (get-selected-action self)))
+    (funcall action Window Self)))
 
 
 (defmethod ADD-MENU-ITEM ((Self choice-button-control) text action Image-pathname)

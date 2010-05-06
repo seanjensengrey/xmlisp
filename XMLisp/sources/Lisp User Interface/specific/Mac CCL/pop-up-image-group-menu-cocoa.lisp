@@ -5,6 +5,26 @@
 ;________________________________
 
 
+(defmethod GET-WINDOW-WIDTH ((Self pop-up-image-group-menu))
+  (let ((longest-row 0))
+    (dolist (group (image-names self))
+      (let* ((group-name (first group)) 
+             (size (#/sizeWithAttributes: (native-string group-name) (#/dictionary ns:ns-dictionary))))
+        (if (< (label-width self) (+ 15 (ns::ns-size-width size)))
+          (setf (label-width self) (+ 15 (ns::ns-size-width size))))
+        (let ((group-length (label-width self)))
+          (setf group-length (- (+ group-length (* (+ 1 (length (second group))) (image-width self))) (image-width self)))
+          (if (> group-length longest-row)
+            (setf longest-row group-length)))))
+    (return-from GET-WINDOW-WIDTH longest-row)))
+
+
+(defmethod INITIALIZE-INSTANCE :after  ((Self pop-up-image-group-menu) &rest Initargs)
+  (declare (ignore initargs))
+  (setf (window-height self) (+ (image-preview-height self)(shape-text-box-height self) (* (image-height self) (length (image-names self)))))
+  (setf (width self) (get-window-width self)))
+
+
 (defclass GROUP-MENU-POPUP-WINDOW (popup-window)
   ((groups :accessor groups :initform nil :documentation "a list of the groups contained in this window"))
     (:metaclass ns:+ns-object
@@ -208,16 +228,5 @@
   (#/stopModal (#/sharedApplication ns:ns-application)))
     
 
-(defmethod GET-WINDOW-WIDTH ((Self pop-up-image-group-menu))
-  (let ((longest-row 0))
-    (dolist (group (image-names self))
-      (let* ((group-name (first group)) 
-             (size (#/sizeWithAttributes: (native-string group-name) (#/dictionary ns:ns-dictionary))))
-        (if (< (label-width self) (+ 15 (ns::ns-size-width size)))
-          (setf (label-width self) (+ 15 (ns::ns-size-width size))))
-        (let ((group-length (label-width self)))
-          (setf group-length (- (+ group-length (* (+ 1 (length (second group))) (image-width self))) (image-width self)))
-          (if (> group-length longest-row)
-            (setf longest-row group-length)))))
-    (return-from GET-WINDOW-WIDTH longest-row)))
+
 
