@@ -1319,7 +1319,6 @@
 
 
 (defmethod POPUP-IMAGE-BUTTON-ACTION ((w window) (Button popup-image-button-control))
-  (print "THIS")
   (dolist (item (items button))
     (if (funcall (enable-predicate item) w item)
       (#/setEnabled: (native-view item) #$YES)
