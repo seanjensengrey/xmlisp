@@ -559,6 +559,7 @@
 
 
 (defmethod SET-SIZE ((Self badged-image-group-list-manager-view) Width Height)
+  (declare (ignore Width Height))
   (call-next-method)
   
   ; #-cocotron(set-size (lui-view (#/superview (#/superview (native-view self)))) (width (lui-view (#/superview (#/superview (native-view self))))) (height (lui-view (#/superview (#/superview (native-view self))))))

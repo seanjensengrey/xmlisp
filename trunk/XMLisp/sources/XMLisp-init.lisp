@@ -224,6 +224,11 @@
 (setq xml::*xmlisp-packages* (list (find-package :xlui) (find-package :xml)))
 
 
+;; badged image group list manager
+(load "lui:sources;Lisp User Interface;badged-image-group-list-manager")
+(load "lui:sources;Lisp User Interface;specific;Mac CCL;badged-image-group-list-manager-cocoa")
+
+
 (load "lui:sources;XLUI;xml-layout")
 (load "lui:sources;XLUI;controls")      ;; LOTS of undefined functions still!
 (load "lui:sources;XLUI;application-window")
@@ -348,9 +353,7 @@
    :if-exists :supersede))
 
 
-;; badged image group list manager
-(load "lui:sources;Lisp User Interface;badged-image-group-list-manager")
-(load "lui:sources;Lisp User Interface;specific;Mac CCL;badged-image-group-list-manager-cocoa")
+
 
 
 #| 

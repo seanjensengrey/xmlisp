@@ -32,10 +32,7 @@
   (:documentation "This class will pop up an an image menu that is seperated into groups.  It displays the given list of strings sorted by group."))
 
 
-(defmethod INITIALIZE-INSTANCE :after  ((Self pop-up-image-group-menu) &rest Initargs)
-  (declare (ignore initargs))
-  (setf (window-height self) (+ (image-preview-height self)(shape-text-box-height self) (* (image-height self) (length (image-names self)))))
-  (setf (width self) (get-window-width self)))
+
 
 
 ;---------------------------------
