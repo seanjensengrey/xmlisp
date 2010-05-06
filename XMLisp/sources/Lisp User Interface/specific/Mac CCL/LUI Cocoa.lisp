@@ -1311,7 +1311,8 @@
         (#/setImage: Native-Control NS-Image)
         (#/setBezelStyle: Native-Control #$NSShadowlessSquareBezelStyle)
         (#/setTitle: Native-Control (native-string (text Self))))
-      (let ((Pop-up (make-instance 'popup-button-control :x 0 :y -20 )))        
+      (let ((Pop-up (make-instance 'popup-button-control :x 0 :y -20 )))  
+        (#/setAutoenablesItems: (native-view pop-up) #$NO)
         (#/setTransparent: (native-view Pop-Up) #$YES)
         (setf (popup-button self) pop-up)
         )
@@ -1319,11 +1320,12 @@
 
 
 (defmethod POPUP-IMAGE-BUTTON-ACTION ((w window) (Button popup-image-button-control))
-  (dolist (item (items button))
-    
-    (if (funcall (enable-predicate item) w item)
-      (#/setEnabled: (native-view item) #$YES)
-      (#/setEnabled: (native-view item) #$NO)))
+  
+  (dotimes (i (length (items button)))
+    (let ((item (#/itemAtIndex: (native-view (popup-button button))i)))
+      (if (funcall (enable-predicate (elt (items button) i)) w (elt (items button) i))
+        (#/setEnabled: item #$YES)
+        (#/setEnabled: item #$NO))))
   (ns:with-ns-rect (Frame 0 0 10 10)
     (add-subviews button (popup-button button))
     (ns:with-ns-point (Point 0 0)    
