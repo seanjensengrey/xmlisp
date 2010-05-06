@@ -54,7 +54,6 @@
           <status-bar name="status-bar" text="bla"/>
         </column>
       </row>
-
       <row vflex="1" valign="stretch" align="stretch">
         <column vflex="1" width="250" valign="stretch" align="stretch">
           <row src="gradient-transparent.png" height="24" valign="middle" align="center"  >
@@ -66,8 +65,9 @@
           </row>
          </column>
         <column vflex="1" flex="1" valign="stretch" align="stretch">
-          <row src="gradient-transparent.png" height="24" valign="middle" align="center"  >
-             <label text="Behavior: <select an agent>" name="agent name" width="200" align="center"/>
+          <row src="gradient-transparent.png" height="24" valign="middle" align="center" flex="1" >
+             <img src="missing_image.png" name="agent image"/>
+             <label text="Behavior: <select an agent>" name="agent name" width="200"/>
           </row>
           <row vflex="1" valign="stretch" align="stretch">
             <visual-agentalk-view name="behavior" content-changed-action="behavior-changed" flex="3" vflex="1"/>
