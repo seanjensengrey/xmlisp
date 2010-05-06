@@ -53,6 +53,11 @@
   (:documentation "LUI mouse crossplatform event"))
 
 
+(defclass KEY-EVENT (event)
+  ((key-code :accessor key-code :initarg :key-code :type fixnum :documentation "hardware-independent code"))
+  (:documentation "LUI key crossplatform event"))
+
+
 (defgeneric NATIVE-TO-LUI-EVENT-TYPE (t)
   (:documentation "return LUI event type"))
 
@@ -252,14 +257,20 @@ Call with most important parameters. Make other paramters accessible through *Cu
       (setf *View-Last-Clicked* Subview))
     ;; forward event with relative coordinates to ALL subviews overlapping click position
     (mouse-event-handler Subview (- x (x Subview)) (- y (y Subview)) DX DY Event))
-  ;; and dispatch event to window
+  ;; and dispatch event to view
   (case (event-type Event)
-    (:left-mouse-down (view-left-mouse-down-event-handler Self x y))
+    (:left-mouse-down 
+     (when (and (<= 0 x (width Self))
+                (<= 0 y (height Self)))
+       (view-left-mouse-down-event-handler Self x y)))
     (:left-mouse-up (view-left-mouse-up-event-handler Self x y))
     (:left-mouse-dragged
      (when (equal Self *View-Last-Clicked*)
        (view-left-mouse-dragged-event-handler Self x y dx dy)))
-    (:mouse-moved (view-mouse-moved-event-handler Self x y dx dy))
+    (:mouse-moved 
+     (when (and (<= 0 x (width Self))
+                (<= 0 y (height Self)))
+       (view-mouse-moved-event-handler Self x y dx dy)))
     (t (format t "not handling ~A event yet~%" (event-type Event)))))
 
 
@@ -395,6 +406,12 @@ after any of the window controls calls stop-modal close window and return value.
 (defgeneric HAS-BECOME-MAIN-WINDOW (window)
   (:documentation "Called after the window has become the main, i.e., the foremost, window"))
 
+(defgeneric MOUSE-EVENT-HANDLER (Window X Y DX DY Event)
+  (:documentation "Invoked on mouse event"))
+
+(defgeneric KEY-EVENT-HANDLER (Window Event)
+  (:documentation "Invoked on key event"))
+
 ;;_______________________________
 ;; default implementations       |
 ;;_______________________________
@@ -478,6 +495,10 @@ after any of the window controls calls stop-modal close window and return value.
     (t (format t "not handling ~A event yet~%" (event-type Event)))))
 
 
+(defmethod KEY-EVENT-HANDLER ((Self window) Event)
+  (format t "~%window key event ~A" (native-event Event)))
+
+
 (defmethod VIEW-EVENT-HANDLER ((Self Window) Event)
   ;; generic event hander
   (let ((*Current-Event* Event))
@@ -488,6 +509,12 @@ after any of the window controls calls stop-modal close window and return value.
   (let ((*Current-Event* Event))
     (with-simple-restart (abandon-view-event-handler "Stop event handling of event ~S of window ~S" Event Self)
       (mouse-event-handler Self (x Event) (y Event) (dx Event) (dy Event) Event))))
+
+
+(defmethod VIEW-EVENT-HANDLER ((Self Window) (Event key-event))
+  (let ((*Current-Event* Event))
+    (with-simple-restart (abandon-view-event-handler "Stop event handling of event ~S of window ~S" Event Self)
+      (key-event-handler Self Event))))
 
 
 (defmethod VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER ((Self window) X Y)
