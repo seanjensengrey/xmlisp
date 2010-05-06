@@ -214,6 +214,10 @@
 (defgeneric CONTENT-CHANGED (agent-3d-view)
   (:documentation "Content changed, some agents must have been edited"))
 
+
+(defgeneric AGENT-SELECTED (agent-3d-view agent)
+  (:documentation "Invoke after <agent> has been selected"))
+
 ;________________________________
 ; implementations                |
 ;________________________________
@@ -453,6 +457,7 @@
       (setf (is-selected Agent) t)
       ;; for now selection is a sigleton set
       (setf (agents-selected Self) (list Agent))
+      (agent-selected Self Agent)
       ;; trigger event
       (mouse-click-event-handler Agent)
       ;; setup potential drag and drop
@@ -841,6 +846,12 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 (defmethod MOUSE-HOVER-LEAVE-EVENT-HANDLER ((Self agent-3d))
   ;; (format t "~%leaving: ~A" Self)
   (display (view Self)))
+
+
+(defmethod AGENT-SELECTED ((Self agent-3d-view) (Agent agent-3d))
+  ;; do notthing
+  )
+
 
 ;; picking
 
