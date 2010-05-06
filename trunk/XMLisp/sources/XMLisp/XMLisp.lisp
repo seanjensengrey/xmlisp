@@ -6,9 +6,9 @@
 ;*********************************************************************
 ;* Author       : Alexander Repenning, alexander@agentsheets.com     *
 ;*                http://www.agentsheets.com                         *
-;* Copyright    : (c) 1996-2010 mai, AgentSheets Inc.                *
+;* Copyright    : (c) 1996-2010, AgentSheets Inc.                    *
 ;* Filename     : XMLisp.lisp                                        *
-;* Last Update  : 03/09/10                                           *
+;* Last Update  : 05/06/10                                           *
 ;* Version      :                                                    *
 ;*    1.0       : 09/19/04                                           *
 ;*    1.1       : 09/30/04 encode/decode strings in XML              *
@@ -85,6 +85,7 @@
 ;*                         <bla ... will result in error if there is *
 ;*                         no matching class BLA                     *
 ;*    3.7       : 03/09/10 have file slot and set ASAP               *
+;*    3.8       : 05/06/10 SBLC compatibility by John Morrison       *
 ;* Systems      : G4, OS X 10.6.2                                    *
 ;* Lisps        : MCL 5.0, MCL 5.2, LispWorks 4.3.7, CCL 1.4         *
 ;*                CLISP 2.33.83, CMUCL, AGL                          *
@@ -116,10 +117,10 @@
 ;; probably not a good idea to just USE that entire package
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
+  #+:clozure-common-lisp 
+  (import '(ccl:slot-definition-name ccl:slot-definition-type ccl:slot-definition-initform ccl:class-slots))
   #+:mcl
   (import '(ccl:slot-definition-name ccl:slot-definition-type ccl:slot-definition-initform))
-  #+(or :ccl-5.1 :openmcl)
-  (import '(ccl:class-slots))
   #+:clisp
   (import '(clos:class-slots clos:slot-definition-name
             clos:slot-definition-type clos:slot-definition-initform))
@@ -128,7 +129,10 @@
             mop:slot-definition-initform))
   #+:common-lispworks
   (import '(harlequin-common-lisp:class-slots harlequin-common-lisp:slot-definition-name
-            harlequin-common-lisp:slot-definition-type harlequin-common-lisp:slot-definition-initform)))
+            harlequin-common-lisp:slot-definition-type harlequin-common-lisp:slot-definition-initform))
+  #+:sbcl 
+  (import '(sb-mop:class-slots sb-mop:slot-definition-name
+                               sb-mop:slot-definition-type sb-mop:slot-definition-initform)))
 
 
 (export '(;; CODEC
