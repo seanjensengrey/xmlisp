@@ -865,7 +865,7 @@
 ;__________________________________
 ; STRING-LIST-CONTROL              |
 ;__________________________________/
-
+;;This code was an implementation of the string-list using the ns-browser, this would provide a more elegant solution but does not currently work on cocotron.  
 
 (defclass NATIVE-STRING-LIST (ns:ns-browser)
   ((lui-view :accessor lui-view :initarg :lui-view))
@@ -882,20 +882,27 @@
   
   ;; no Cocoa digging
   )
+
+
 #|
 (objc:defmethod (#/browser:numberOfRowsInColumn: :<NSI>nteger) ((self native-string-list) browser column)
   (print "DELEGATE")
   10)
+
 
 (objc:defmethod (#/browser:willDisplayCell:atRow:column: :void) ((self native-string-list) sender cell row column)
   (print "WILL DISPLAY")
   (#/setStringValue: cell (native-string "YEAH"))
   (native-string "YEAH"))
 |#
+
+
 #|
 (objc:defmethod (#/browser:createRowsForColumn:inMatrix: :void) ((self native-string-list) sender  column Matrix)
   (print "CREATE ROWS"))
 |#
+
+
 (defmethod MAKE-NATIVE-OBJECT ((Self string-list-control))
   (let ((Native-Control (make-instance 'native-string-list :lui-view Self)))
     (#/setDelegate: Native-Control Native-Control)
@@ -927,10 +934,9 @@
 
 (objc:defmethod (#/drawRect: :void) ((self string-list-text-view) (rect :<NSR>ect))
   (call-next-method rect)
-
   (if (is-selected self)
     (progn
-      
+      ;; Draw the selected item with a blue selection background.  
       (#/set (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color 0.0 0.2 1.0 .6))
       (#/fillRect: ns:ns-bezier-path rect))))
 
@@ -959,8 +965,8 @@
 
 (objc:defmethod (#/drawRect: :void) ((self native-string-list-view) (rect :<NSR>ect))
   (call-next-method rect)
-      (#/set (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color .2 .2 .2 .3))
-      (#/strokeRect: ns:ns-bezier-path rect))
+  (#/set (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color .2 .2 .2 .3))
+  (#/strokeRect: ns:ns-bezier-path rect))
 
 
 (objc:defmethod (#/isFlipped :<BOOL>) ((self native-string-list-view))
@@ -982,40 +988,30 @@
 
 
 (defmethod ADD-STRING-LIST-ITEM ((Self string-list-view-control) string)
-  
+  "Adds an item to the string-list that will display the text contained in the variable string"
   (let ((text (#/alloc string-list-text-view))) 
     (ns:with-ns-rect (Frame2 0 (* (item-height self) (length (list-items self))) (width self)  20 )
       (setf (container text) self)
       (setf (text text) string)
       (#/initWithFrame: text Frame2)
-      
-      ;(#/setStringValue: text (native-string (item-name group-item)))
       (#/insertText: text (native-string string))
       (#/setBackgroundColor: text (#/whiteColor ns:ns-color))
       (#/setDrawsBackground:  text #$YES)
       (#/setEditable: text #$NO)
       (#/setSelectable: text #$NO)
-      
-      
-      (#/addSubview:  (Native-view self) text)
-      )
-  (case (list-items self)
-    (nil 
-     (progn
+      (#/addSubview:  (Native-view self) text))
+    (case (list-items self)
+      (nil 
        (setf (list-items self) (list text))
        (setf (is-selected (first (list-items self))) t)
-       (display self)
-       ))
-    (t (setf (list-items self) (append (list-items self) (list text)))))
-  
-  ))
-  
+       (display self))
+      (t (setf (list-items self) (append (list-items self) (list text)))))))
 
-(defmethod SET-LIST ((Self string-list-view-control) list)
-  
-  (let ((subviews (gui::list-from-ns-array (#/subviews (native-view self))))) 
-    (dolist (subview subviews)
-      (#/removeFromSuperview subview)))
+
+(defmethod SET-LIST ((Self string-list-view-control) list) 
+  "Used to set the string-list to a given list instead setting the list string by string.  Also will select the first item in the list.  "
+  (dolist (subview (gui::list-from-ns-array (#/subviews (native-view self))))
+    (#/removeFromSuperview subview))
   (setf (list-items self) nil)
   (dolist (item list)
     (add-string-list-item self item))
@@ -1023,12 +1019,14 @@
   (setf (selected-string self) (text (first (list-items self))))
   ;(#/setNeedsDisplay: (native-view self) #$YES)
   (display self))
-  
+
 
 
 (defmethod initialize-event-handling ((Self string-list-view-control))
   ;; no event handling for rows
   )
+
+
 ;__________________________________
 ; SCROLLER-CONTROL                 |
 ;__________________________________/
@@ -1043,10 +1041,10 @@
   (let ((Native-Control (make-instance 'native-scroller :lui-view Self)))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
       #-cocotron 
-      (if (small-scroller-size self)
-        (progn
+      ;;cocotron does not support the NSSmallControlSize
+      (when (small-scroller-size self)
           (setf (width self) (- (width self) 4))
-          (#/setControlSize: Native-Control #$NSSmallControlSize)))
+          (#/setControlSize: Native-Control #$NSSmallControlSize))
       (#/sizeToFit Native-Control)
       (#/initWithFrame: Native-Control Frame)
       (#/setFloatValue:knobProportion: Native-Control 0.0 (knob-proportion self))
@@ -1101,7 +1099,6 @@
   #+cocotron
   (if (selected-in-cluster (lui-view self))
     (progn
-      
       (#/set (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color .2 .2 .2 .62))
       (#/fillRect: ns:ns-bezier-path rect))))
 
@@ -1140,8 +1137,7 @@
         (#/setTitle: cell (native-string "options3"))
         (#/setButtonType: cell #$NSRadioButton)       
         (#/setTitle: (#/objectAtIndex: cells '0) #@"Option1")
-        (#/putCell:atRow:column: Native-Control cell '1 '0)
-        ))
+        (#/putCell:atRow:column: Native-Control cell '1 '0)))
     Native-Control))
 
 
@@ -1236,12 +1232,12 @@
 (defmethod SET-SELECTED-ITEM-WITH-TITLE ((Self popup-button-control) text)
   (#/selectItemWithTitle: (native-view self) (native-string text)))
 
+
 (defmethod ADD-ITEM ((Self popup-button-control) Text Action)
   (if (equal (#/indexOfItemWithTitle: (native-view Self) (native-string Text)) -1)
     (progn
       (#/addItemWithTitle: (native-view Self) (native-string Text))
-      (setf (actions Self) (append (actions Self) (list Action)))
-      )
+      (setf (actions Self) (append (actions Self) (list Action))))
     (warn "Cannot add item with the same title (~S)" Text)))
 
 
@@ -1277,7 +1273,6 @@
 ; Popup Image Button Submenu       |
 ;__________________________________/
 
-
 (defclass native-popup-image-button-submenu (ns:ns-menu)
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
@@ -1298,7 +1293,6 @@
 ;__________________________________
 ; Popup Image Button               |
 ;__________________________________/
-
 
 (defclass native-popup-image-button (ns:ns-button)
   ((lui-view :accessor lui-view :initarg :lui-view))
@@ -1776,7 +1770,6 @@
 ; Color Well                       |
 ;__________________________________/
 
-
 (defclass NATIVE-COLOR-WELL (ns:ns-color-well)
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
@@ -1938,8 +1931,6 @@
 ;__________________________________
 ; Show PopUp                       |
 ;__________________________________/
-;(export '(show-string-popup))
-
 
 (defun SHOW-STRING-POPUP (window list)
   (let ((Pop-up (make-instance 'popup-button-control )))
