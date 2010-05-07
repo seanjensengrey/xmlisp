@@ -293,15 +293,11 @@
 
 
 (defmethod SET-SIZE ((Self scroll-view) W H)
-  
   (declare (ignore W H))
-  
   (call-next-method)
   ;;  (format t "~%size ~A, ~A" W H)
   ;; need to propagate sizing to subviews: not likely to effect their sizes but needs to be done at least once
-  (map-subviews Self #'(lambda (View) (set-size View (width View) (height View))))
-
-  )
+  (map-subviews Self #'(lambda (View) (set-size View (width View) (height View)))))
 
 
 (defmethod SET-SIZE-ONCE ((Self scroll-view) W H)
@@ -579,6 +575,7 @@
 ;__________________________________
 ; Window query functions            |
 ;__________________________________/
+
 ;;This method still has lots of issues:
 ;;First, I have to add one to i.  This seems to cause the return value to to match up with orderedIndex but also seems very dangerous, and unlikely
 ;;to be a universal solution.  This was tested by making four different application windows and commenting the first three lines of this method so 
@@ -878,29 +875,9 @@
   )
 
 
-(defmethod SUBVIEWS ((Self string-list-control) )
-  
+(defmethod SUBVIEWS ((Self string-list-control) )  
   ;; no Cocoa digging
   )
-
-
-#|
-(objc:defmethod (#/browser:numberOfRowsInColumn: :<NSI>nteger) ((self native-string-list) browser column)
-  (print "DELEGATE")
-  10)
-
-
-(objc:defmethod (#/browser:willDisplayCell:atRow:column: :void) ((self native-string-list) sender cell row column)
-  (print "WILL DISPLAY")
-  (#/setStringValue: cell (native-string "YEAH"))
-  (native-string "YEAH"))
-|#
-
-
-#|
-(objc:defmethod (#/browser:createRowsForColumn:inMatrix: :void) ((self native-string-list) sender  column Matrix)
-  (print "CREATE ROWS"))
-|#
 
 
 (defmethod MAKE-NATIVE-OBJECT ((Self string-list-control))
@@ -908,11 +885,6 @@
     (#/setDelegate: Native-Control Native-Control)
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
       (#/initWithFrame: Native-Control Frame)
-      (print "CELL")
-      (print (#/selectedCell Native-Control))
-  ;    (print (#/loadedCellAtRow:column: Native-Control 0 0))
-      (print (#/matrixInColumn: Native-Control 0))
-    ;  (print (#/browser:isColumnValid: Native-control Native-Control 0))
       (#/setDelegate: Native-Control Native-Control)
       Native-Control)))
 
@@ -957,7 +929,6 @@
 ; STRING-LIST-VIEW-CONTROL         |
 ;__________________________________/
 
-
 (defclass NATIVE-STRING-LIST-VIEW (ns:ns-view)
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
@@ -965,8 +936,11 @@
 
 (objc:defmethod (#/drawRect: :void) ((self native-string-list-view) (rect :<NSR>ect))
   (call-next-method rect)
-  (#/set (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color .2 .2 .2 .3))
-  (#/strokeRect: ns:ns-bezier-path rect))
+  (#/set (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color 1.0 1.0 1.0 1.0))
+  (#/fillRect: ns:ns-bezier-path rect)
+  ;(#/set (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color .2 .2 .2 .3))
+  ;(#/strokeRect: ns:ns-bezier-path rect)
+  )
 
 
 (objc:defmethod (#/isFlipped :<BOOL>) ((self native-string-list-view))
@@ -984,6 +958,7 @@
   (let ((Native-Control (make-instance 'native-string-list-view :lui-view Self)))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
       (#/initWithFrame: Native-Control Frame)
+      ;(#/setBackgroundColor: self (#/whiteColor ns:ns-color))
       Native-Control)))
 
 
@@ -1031,7 +1006,6 @@
 ; SCROLLER-CONTROL                 |
 ;__________________________________/
 
-
 (defclass NATIVE-SCROLLER (ns:ns-scroller)
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
@@ -1063,15 +1037,9 @@
   (#/floatValue (native-view self)))
 
 
-#|
-(defmethod initialize-event-handling ((Self row))
-  ;; no event handling for rows
-  )
-|#
 ;__________________________________
 ;  Image Button                    |
 ;__________________________________/
-
 
 (defclass native-button-image (ns:ns-button)
   ((lui-view :accessor lui-view :initarg :lui-view))
@@ -1117,7 +1085,6 @@
 ; RADIO BUTTON                     |
 ;__________________________________/
 
-
 (defclass native-radio-button (ns:ns-matrix)
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
@@ -1143,15 +1110,6 @@
 
 (defmethod (setf text) :after (Text (Self radio-button-control))
   (#/setTitle: (native-view Self) (native-string Text)))
-
-
-#||
-(defmethod INITIALIZE-INSTANCE :after ((Self radio-button-control) &rest Args)
-  (declare (ignore Args))
-  (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
-    (let ((prototype (#/init (#/alloc ns:ns-button-cell))))
-      (#/initWithFrame:mode:prototype:numberOfRows:numberOfColumns: (Native-Control Self) Frame #$NSRadioModeMatrix prototype '4 '1))))
-||#
 
 
 (defmethod GET-SELECTED-ACTION ((Self radio-button-control))
@@ -1186,7 +1144,6 @@
 ; IMAGE BUTTON CLUSTER CONTROL     |
 ;__________________________________/
 
-
 (defmethod INITIALIZE-INSTANCE :after ((Self radio-button-control) &rest Args)
   (declare (ignore Args))
   (setf (elements self) (#/init (#/alloc ns:ns-mutable-array)))
@@ -1202,16 +1159,11 @@
   (:metaclass ns:+ns-object))
 
 
-#|
-(objc:defmethod (#/performClick: :void) ((self native-popup-button) sender)
-  (print "perform")
-  (call-next-method))
-|#
-
 (defmethod make-native-object ((Self popup-button-control))
   (let ((Native-Control (make-instance 'native-popup-button :lui-view Self)))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
       (#/initWithFrame:pullsDown: Native-Control Frame #$NO)
+      ;(#/setControlSize: (#/cell native-control)  #$NSMiniControlSize)
     Native-Control)))
 
 
@@ -1252,7 +1204,6 @@
 ;__________________________________
 ; Popup Image Button Item          |
 ;__________________________________/
-
 
 (defclass native-popup-image-button-item (ns:ns-menu-item)
   ((lui-view :accessor lui-view :initarg :lui-view))
@@ -1343,24 +1294,7 @@
         (#/sendAction:to: (native-view (popup-button button)) (#/action (native-view (popup-button button))) (#/target (native-view (popup-button button))))
         (#/removeFromSuperview (native-view (popup-button button))) ))))
 
-#|
-(defmethod POPUP-IMAGE-BUTTON-ACTION ((window window) (self popup-image-Button-Control))
-  (print "THAT")
-  (unless (eql (get-selected-action self) NIL)
-    (let ((action (get-selected-action self)))
-      (funcall action Window Self))))
-|#
 
-#|
-(objc:defmethod (#/mouseDown: :void) ((self native-popup-button) Event)
-  (print "MOUSE DOWN")
-  (let ((event2 (#/alloc ns:ns-event)))
-  (#/trackMouse:inRect:ofView:untilMouseUp: (#/cell self) event2 (#/bounds self) self #$NO))
-  (#/setState: (#/cell self) #$NSOffState)
-  (#/setNeedsDisplay: self #$YES)
-  ;(call-next-method Event)
-  )
-|#
 (defun SHOW-STRING-POPUP-FROM-ITEM-LIST (window item-list)
     (let ((Pop-up (make-instance 'popup-button-control )))
       (dolist (item item-list)
@@ -1416,95 +1350,6 @@
   (#/addItemWithTitle:action:keyEquivalent: (native-view self) (native-string text) (objc::@selector #/activateAction) (native-string ""))
   ;   (#/setSubmenu: (#/itemWithTitle: (native-view (popup-button self)) (native-string text)) menu)
   )
-
-
-
-;; Cocotron unfriendly implementation
-
-#|
-
-(defclass native-popup-image-button (ns:ns-button)
-  ((lui-view :accessor lui-view :initarg :lui-view))
-  (:metaclass ns:+ns-object))
-
-
-(defmethod make-native-object ((Self popup-image-button-control))
-  (let ((Native-Control (make-instance 'native-popup-image-button :lui-view Self)))
-    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
-      (let ((Path (native-path "lui:resources;buttons;" (image Self)))
-            (NS-Image (#/alloc ns:ns-image)))
-        (unless (probe-file Path) (error "no such image file for button ~A" (image Self)))
-        (#/initWithContentsOfFile: NS-Image  (native-string (native-path "lui:resources;buttons;" (image Self))))
-        (#/initWithFrame: Native-Control Frame)
-        ;(#/setImageScaling: Native-Control 1)   
-        (#/setButtonType: Native-Control #$NSOnOffButton)   ;;;NSMomentaryPushInButton)
-        (#/setImagePosition: Native-Control #$NSImageOnly)
-        (#/setImage: Native-Control NS-Image)
-        (#/setBezelStyle: Native-Control #$NSShadowlessSquareBezelStyle)
-        (#/setTitle: Native-Control (native-string (text Self))))
-      (let ((menu (#/alloc ns:ns-menu)))
-      (ns:with-ns-rect (Frame2 0 0 50 50)
-        (#/initWithTitle: menu (native-string "MENU"))
-        (#/insertItemWithTitle:action:keyEquivalent:atIndex: menu (native-string "TITLe") (objc::@selector #/activateAction) (native-string "") 0)
-        (#/setAutoenablesItems: menu #$NO)
-        (let ((pop-up-button-cell (#/alloc ns:ns-pop-up-button-cell)))
-          (#/setAutoenablesItems: pop-up-button-cell #$NO)
-          (#/initTextCell:pullsDown: pop-up-button-cell (native-string "HELLO") #$YES)
-          (#/setMenu: pop-up-button-cell menu)
-          (setf (menu self) menu)
-          (setf (popup-menu-cell self) pop-up-button-cell))))
-    Native-Control)))
-
-
-(defmethod POPUP-IMAGE-BUTTON-ACTION ((w window) (Button popup-image-button-control))
-  (dolist (item (items button))
-    (if (funcall (enable-predicate  item) w item)
-      (#/setEnabled: (native-view item) #$YES)
-      (#/setEnabled: (native-view item) #$NO)))
-  (ns:with-ns-rect (Frame 0 0 100 100)    
-    (let ((event2 (#/alloc ns:ns-event)))     
-      (#/trackMouse:inRect:ofView:untilMouseUp: (#/cell (native-view (popup-button button))) event2 (#/bounds (native-view (popup-button button))) (native-view (popup-button button)) #$NO))
-    (#/setState: (#/cell (native-view (popup-button button))) #$NSOffState)
-    (#/setNeedsDisplay: (native-view (popup-button button)) #$YES)
-    ;  (#/setState:  (popup-menu-cell button) #$NSOnState)
-    ;   (#/setNeedsDisplay: (native-view button) #$YES)
-    ;  (#/drawWithFrame:inView: (popup-menu-cell button)frame (native-view button))
-    ;   (#/setNeedsDisplay: (native-view button) #$YES)
-    ;(#/setNeedsDisplay: (popup-menu-cell button) #$YES)
-    ; (#/sendAction:to: (native-view (popup-button button)) (#/action (native-view (popup-button button))) (#/target (native-view (popup-button button))))
-    ; (#/performClickWithFrame:inView: (popup-menu-cell button) frame (native-view button))
-    ; (#/attachPopUpWithFrame:inView: (popup-menu-cell button) frame (native-view button))
-    ; (#/performClick: (popup-menu-cell button) (native-view button))
-    ))
-
-
-(defmethod ADD-POPUP-ITEM ((Self popup-image-button-control) Text Action preticate)
-  (let ((item (make-instance 'popup-image-button-item-control  :text text :action action :popup-image-button self )))
-    (if preticate
-      (setf (enable-predicate item) preticate))
-    (case (items self)
-          (nil (setf (items self) (list item)))
-          (t (setf (items self) (append (items self) (list item)))))
-    (#/addItem: (menu self) (native-view item) )))
-
-|#
-
-#|
-(defmethod ENABLE-ITEM ((Self popup-image-button-control) index)
-  (#/setEnabled: (#/itemAtIndex: (menu self) index) #$YES))
-
-
-(defmethod ENABLE-ITEM-WITH-TITLE ((Self popup-image-button-control) title)
-  (#/setEnabled: (#/itemWithTitle: (menu self) (native-string title)) #$YES))
-
-
-(defmethod DISABLE-ITEM ((Self popup-image-button-control) index)
-  (#/setEnabled: (#/itemAtIndex: (menu self) index)  #$NO))
-
-
-(defmethod DISABLE-ITEM-WITH-TITLE ((Self popup-image-button-control) title)
-  (#/setEnabled: (#/itemWithTitle: (menu self) (native-string title)) #$NO))
-|#
 
 ;__________________________________
 ; Choice Button                   |
