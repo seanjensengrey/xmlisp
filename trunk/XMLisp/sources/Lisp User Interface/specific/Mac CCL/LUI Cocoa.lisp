@@ -860,36 +860,6 @@
 
 
 ;__________________________________
-; STRING-LIST-CONTROL              |
-;__________________________________/
-;;This code was an implementation of the string-list using the ns-browser, this would provide a more elegant solution but does not currently work on cocotron.  
-
-(defclass NATIVE-STRING-LIST (ns:ns-browser)
-  ((lui-view :accessor lui-view :initarg :lui-view))
-  (:metaclass ns:+ns-object))
-
-
-(defmethod MAP-SUBVIEWS ((Self string-list-control) Function &rest Args)
-  (declare (ignore Function Args))
-  ;; no Cocoa digging
-  )
-
-
-(defmethod SUBVIEWS ((Self string-list-control) )  
-  ;; no Cocoa digging
-  )
-
-
-(defmethod MAKE-NATIVE-OBJECT ((Self string-list-control))
-  (let ((Native-Control (make-instance 'native-string-list :lui-view Self)))
-    (#/setDelegate: Native-Control Native-Control)
-    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
-      (#/initWithFrame: Native-Control Frame)
-      (#/setDelegate: Native-Control Native-Control)
-      Native-Control)))
-
-
-;__________________________________
 ; STRING-LIST-TEXT-VIEW            |
 ;__________________________________/
 
