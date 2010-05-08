@@ -83,7 +83,7 @@
 
 (defparameter *Pop-Up-Menu* (make-instance 'tool-pop-up-image-group-menu) )
 
-(display-pop-up-menu *Pop-Up-Menu* :y 800 :x 800)
+(display-pop-up-menu *Pop-Up-Menu* )
 
 
 |#
