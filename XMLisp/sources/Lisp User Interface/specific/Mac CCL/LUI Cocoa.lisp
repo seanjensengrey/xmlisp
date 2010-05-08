@@ -693,13 +693,11 @@
      (error (condition) (format t "~%invoke control action error ~%  control: ~A ~%  error: ~A" (lui-control Self) Condition))))
 
 
-(defmethod initialize-event-handling ((Self control))
-  
+(defmethod INITIALIZE-EVENT-HANDLING ((Self control))
   (#/setTarget: (native-view Self) 
                 (make-instance 'native-target 
                   :native-control (native-view Self)
                   :lui-control Self))
-  
   (#/setAction: (native-view Self) (objc::@selector #/activateAction)))
 
 
