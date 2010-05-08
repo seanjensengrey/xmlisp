@@ -125,9 +125,14 @@
           (incf i))))))
 
 
-(defmethod DISPLAY-POP-UP-MENU ((Self pop-up-image-group-menu) &key (x 100) (y 100))
-  (setf (x self) x)
-  (setf (y self) y)
+(defmethod DISPLAY-POP-UP-MENU ((Self pop-up-image-group-menu) &key (x nil) (y nil))
+  (if (and x y)
+    (progn
+      (setf (x self) x)
+      (setf (y self) y))
+    (progn
+      (setf (x self) (NS:NS-POINT-X (#/mouseLocation ns:ns-event)))
+      (setf (y self) (NS:NS-POINT-Y (#/mouseLocation ns:ns-event)))))
   (setf (window-height self) (+ (image-preview-height self)(shape-text-box-height self) (* (image-height self) (length (image-names self)))))
   (setf (width self) (get-window-width self))
   (with-simple-restart (cancel-pop "Stop trying to pop up ~s" Self)
@@ -152,7 +157,7 @@
               (dolist (group (image-names self))
                 (let ((group-name (first group)) 
                       (list (elt group 1))             
-                        (label (#/alloc ns:ns-text-field)))
+                      (label (#/alloc ns:ns-text-field)))
                   (ns:with-ns-rect (Frame (* (image-width self) current-col) (+ (image-preview-height self)(shape-text-box-height self)(* (image-height self) current-row)) (label-width self) #|(* (image-width self) 4)|# (image-height self))   
                     (#/initWithFrame: Label Frame)
                     (#/setTextColor: Label  (#/blackColor ns:ns-color))
@@ -201,6 +206,7 @@
               (ns:with-ns-rect (Frame 0 (image-preview-height self) (width self) (shape-text-box-height self))
                 (#/initWithFrame: shape-text-box Frame)
                 (#/setEditable: shape-text-box #$NO)
+                (#/setSelectable: shape-text-box #$NO)
                 (#/setBackgroundColor: shape-text-box (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color .9 .9 .9 1.0));(#/lightGrayColor ns:ns-color))
                 (#/setAlignment: shape-text-box #$NSCenterTextAlignment)
                 (setf (shape-text-box self) shape-text-box)
