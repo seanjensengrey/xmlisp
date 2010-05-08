@@ -3,7 +3,10 @@
 
   <category title="basic actions" disclosed="true">
     <move/>
-    <move/>
+    <move-random/>
+    <move-random-on/>
+    <change/>
+    <new/>
   </category>
 
 
