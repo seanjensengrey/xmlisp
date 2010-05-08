@@ -170,6 +170,7 @@
 
 
 (defmethod SELECT-GROUP ((Self badged-image-group-list-manager-view)group-name group-item-name)
+  (print "SELECT GROUP")
   (if group-item-name
        (dolist (group (groups self))
          (setf (is-selected group) nil)
@@ -184,7 +185,10 @@
                      (setf (selected-item-name group) (item-name item)))))))
            (setf (is-selected group) nil)
       )))
-    (set-selected self group-name))
+  (print "S2")
+    (set-selected self group-name)
+  (print "S3")
+  )
 
 
 #|
