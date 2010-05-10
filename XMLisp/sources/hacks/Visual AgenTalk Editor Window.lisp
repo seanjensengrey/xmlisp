@@ -39,6 +39,7 @@
 
 
 (defmethod SWITCH-TO-BEHAVIOR ((Window window) (Button bevel-button))
+  (print "SBC")
   (let ((Agent-Name 
          (show-string-popup 
           Window
