@@ -624,9 +624,7 @@
     (if (container window)
       (lui::apply-button-pressed (container window) Window)
       (print "NOT"))
-    
-  ;  (setf (destination-inflatable-icon Window)  (xlui::load-object "lui:resources;shapes;redLobster;index.shape" :package (find-package :xlui)))
-    
+       
     ;; save
     (when (destination-inflatable-icon Window)
       ;; (format t "~%copy into icon")     
@@ -747,9 +745,9 @@
 
 (defparameter *Inflatable-Icon-Editor* (new-inflatable-icon-editor-window :width 32 :height 32))
 
-(defparameter *Inflatable-Icon-Editor* (new-inflatable-icon-editor-window-from-image "lui:resources;shapes;redLobster;redLobster.png"))
+(defparameter *Inflatable-Icon-Editor* (new-inflatable-icon-editor-window-from-image "lui:resources;templates;shapes;redLobster;redLobster.png"))
 
-(new-inflatable-icon-editor-window-from-image "lui:resources;shapes;redLobster;redLobster.png" :shape-filename "index")
+(new-inflatable-icon-editor-window-from-image "lui:resources;templates;shapes;redLobster;redLobster.png" :shape-filename "index")
 
 
 

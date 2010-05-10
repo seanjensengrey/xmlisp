@@ -799,7 +799,7 @@
 
 (defmethod INITIALIZE-INSTANCE :after ((Self lobster-inflatable-icon) &rest Args)
   (declare (ignore Args))
-  (let ((Pathname  "lui:resources;shapes;redLobster;redLobster.png"))
+  (let ((Pathname  "lui:resources;templates;shapes;redLobster;redLobster.png"))
     (setf (icon Self) (format nil "~A.~A" (pathname-name Pathname) (pathname-type Pathname)))
     (setf (auto-compile Self) t)
     ;; convert the icon into an RGBA image and initialize the altitude array
@@ -808,7 +808,7 @@
       (setf (image Self) Image)
       (setf (rows Self) Rows)
       (setf (columns Self) Columns)
-      (setf (altitudes Self) (altitudes (load-object "lui:resources;shapes;redLobster;index.shape" :package (find-package :xlui)))))))
+      (setf (altitudes Self) (altitudes (load-object "lui:resources;templates;shapes;redLobster;index.shape" :package (find-package :xlui)))))))
 
 
 
@@ -819,7 +819,7 @@
 
 
 (inspect 
- (make-inflatable-icon-from-image-file "lui:resources;shapes;redLobster;redLobster.png")
+ (make-inflatable-icon-from-image-file "lui:resources;templates;shapes;redLobster;redLobster.png")
 
 <application-window>
   <agent-3d-view>
