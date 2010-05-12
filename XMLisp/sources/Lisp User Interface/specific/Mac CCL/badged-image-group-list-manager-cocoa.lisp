@@ -427,9 +427,7 @@
               :documentation "A text field that detects mouse events.  "))
 
 
-(defmethod CALCULATE-WIDTH-FOR-TEXT-FIELD ((self mouse-detection-text-field))
-  (print (NS:NS-SIZE-WIDTH (#/sizeWithAttributes: (#/string self) (#/dictionary ns:ns-dictionary))))
-  (print (- (width (container self)) 50))
+(defmethod CALCULATE-WIDTH-FOR-TEXT-FIELD ((self mouse-detection-text-field)) 
   ;(if (< (NS:NS-SIZE-WIDTH (#/sizeWithAttributes: (#/string self) (#/dictionary ns:ns-dictionary)))  (- (width (container self)) 50))
     ; (let ((width (* 1.25 (NS:NS-SIZE-WIDTH (#/sizeWithAttributes: (#/stringValue self) (#/dictionary ns:ns-dictionary))))))
     (let ((width (* 1.25 (NS:NS-SIZE-WIDTH (#/sizeWithAttributes: (#/string self) (#/dictionary ns:ns-dictionary))))))
