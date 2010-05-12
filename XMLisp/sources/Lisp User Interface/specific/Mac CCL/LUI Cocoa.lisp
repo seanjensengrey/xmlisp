@@ -530,7 +530,7 @@
   (when (#/isVisible (native-window Self))
     (error "cannot run modal a window that is already visible"))
   (let ((Code (in-main-thread () 
-                (#/runModalForWindow: (#/sharedApplication ns:ns-application)
+                              (#/runModalForWindow: (#/sharedApplication ns:ns-application)
                                       (native-window Self)))))
     (declare (ignore Code))
     ;; ignore Code for now
@@ -1153,10 +1153,12 @@
   (#/selectItemWithTitle: (native-view self) (native-string text)))
 
 
-(defmethod ADD-ITEM ((Self popup-button-control) Text Action)
+(defmethod ADD-ITEM ((Self popup-button-control) Text Action )
   (if (equal (#/indexOfItemWithTitle: (native-view Self) (native-string Text)) -1)
-    (progn
+    (progn 
       (#/addItemWithTitle: (native-view Self) (native-string Text))
+      ;(print (#/selectedItem (native-view Self)))
+      ;(#/setKeyEquivalent: (#/selectedItem (native-view Self)) (native-string "d"))
       (setf (actions Self) (append (actions Self) (list Action))))
     (warn "Cannot add item with the same title (~S)" Text)))
 
@@ -1222,9 +1224,14 @@
   (let ((Native-Control (make-instance 'native-popup-image-button :lui-view Self)))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
       (let ((Path (native-path "lui:resources;buttons;" (image Self)))
-            (NS-Image (#/alloc ns:ns-image)))
+            (NS-Image (#/alloc ns:ns-image))
+            (disclosure-Image (#/alloc ns:ns-image)))
         (unless (probe-file Path) (error "no such image file for button ~A" (image Self)))
         (#/initWithContentsOfFile: NS-Image  (native-string (native-path "lui:resources;buttons;" (image Self))))
+        (#/initWithContentsOfFile: disclosure-image  (native-string (native-path "lui:resources;buttons;" "disclosureDown4.png")))
+        (#/setFlipped: disclosure-image #$YES)
+        (#/setFlipped: ns-image #$YES)
+        (setf (disclosure-image self) disclosure-image)
         (#/initWithFrame: Native-Control Frame)
         ;(#/setImageScaling: Native-Control 1)   
         (#/setButtonType: Native-Control #$NSOnOffButton)   ;;;NSMomentaryPushInButton)
@@ -1235,13 +1242,22 @@
       (let ((Pop-up (make-instance 'popup-button-control :x 0 :y -20 )))  
         (#/setAutoenablesItems: (native-view pop-up) #$NO)
         (#/setTransparent: (native-view Pop-Up) #$YES)
-        (setf (popup-button self) pop-up)
-        )
-    Native-Control)))
+        (setf (popup-button self) pop-up))
+      Native-Control)))
+
+
+(objc:defmethod (#/drawRect: :void) ((self native-popup-image-button) (rect :<NSR>ect))
+  ;; if there is an error make this restartable from alternate console
+  (if (draw-disclosure (lui-view self))
+    (progn
+      (ns:with-ns-rect (Frame (- (NS:NS-RECT-WIDTH rect) 10) 0 10 (NS:NS-RECT-HEIGHT rect))
+        (#/drawInRect:fromRect:operation:fraction: (disclosure-image (lui-view self)) Frame #$NSZeroRect #$NSCompositeCopy 1.0))
+      (ns:with-ns-rect (Frame 0 0 (- (NS:NS-RECT-WIDTH rect) 10)  (NS:NS-RECT-HEIGHT rect) )
+        (#/drawInRect:fromRect:operation:fraction: (#/image self) Frame #$NSZeroRect #$NSCompositeCopy 1.0)))
+    (#/drawInRect:fromRect:operation:fraction: (#/image self) rect #$NSZeroRect #$NSCompositeCopy 1.0)))
 
 
 (defmethod POPUP-IMAGE-BUTTON-ACTION ((w window) (Button popup-image-button-control))
-  
   (dotimes (i (length (items button)))
     (let ((item (#/itemAtIndex: (native-view (popup-button button))i)))
       (if (funcall (enable-predicate (elt (items button) i)) w (elt (items button) i))
@@ -1250,17 +1266,17 @@
   (ns:with-ns-rect (Frame 0 0 10 10)
     (add-subviews button (popup-button button))
     (ns:with-ns-point (Point 0 0)    
-      
       (let* ((event2 (#/alloc ns:ns-event))
              ;(item (#/selectedItem (native-view (popup-button button))))
-            ; (action (#/action item))
-            ; (target (#/action item))
+             ; (action (#/action item))
+             ; (target (#/action item))
              )        
         (#/trackMouse:inRect:ofView:untilMouseUp: (#/cell (native-view (popup-button button))) event2 (#/bounds (native-view (popup-button button))) (native-view (popup-button button)) #$NO)
         (#/setState: (#/cell (native-view (popup-button button))) #$NSOffState)
         #+cocotron
         (#/sendAction:to: (native-view (popup-button button)) (#/action (native-view (popup-button button))) (#/target (native-view (popup-button button))))
-        (#/removeFromSuperview (native-view (popup-button button))) ))))
+       ; (#/removeFromSuperview (native-view (popup-button button)))
+        ))))
 
 
 (defun SHOW-STRING-POPUP-FROM-ITEM-LIST (window item-list)
@@ -1275,7 +1291,7 @@
       ))
 
 
-(defmethod ADD-POPUP-ITEM ((Self popup-image-button-control) Text Action predicate)
+(defmethod ADD-POPUP-ITEM ((Self popup-image-button-control) Text Action predicate key-equivalent)
   (let ((item (make-instance 'popup-image-button-item-control  :text text :action action :popup-image-button self )))
     (if predicate
       (setf (enable-predicate item) predicate))
@@ -1284,12 +1300,13 @@
           (t (setf (items self) (append (items self) (list item)))))
     ;(add-ns-menu-item (popup-button self) item)
     (add-item (popup-button self) text action)
-    
+    (if key-equivalent
+      (#/setKeyEquivalent: (#/lastItem (native-view (popup-button self))) (native-string key-equivalent)))
     ;(#/addItem: (menu self) (native-view item) )
     ))
 
 
-(defmethod ADD-POPUP-SUBMENU ((Self popup-image-button-control) Text action predicate)
+(defmethod ADD-POPUP-SUBMENU ((Self popup-image-button-control) Text action predicate )
   (declare (ignore  predicate))
   (let ((menu (make-instance 'popup-image-button-submenu-control)))
     (add-item (popup-button self) text action)
@@ -1746,7 +1763,10 @@
 ;__________________________________/
 
 (defun SHOW-STRING-POPUP (window list)
-  (let ((Pop-up (make-instance 'popup-button-control )))
+  (print (y window))
+  (print (rational (NS:NS-POINT-Y (#/mouseLocation ns:ns-event))))
+  (print (NS:NS-RECT-HEIGHT (#/frame (#/mainScreen ns:ns-screen))))
+  (let ((Pop-up (make-instance 'popup-button-control  :width 1 :height 1 :x   (- (rational (NS:NS-POINT-X (#/mouseLocation ns:ns-event)))(x window))  :y   (-  (- (NS:NS-RECT-HEIGHT (#/frame (#/mainScreen ns:ns-screen)))(NS:NS-POINT-Y (#/mouseLocation ns:ns-event)))(y window))  )))
     (dolist (String list)
       (add-item Pop-Up String nil))
     (add-subviews window Pop-up)

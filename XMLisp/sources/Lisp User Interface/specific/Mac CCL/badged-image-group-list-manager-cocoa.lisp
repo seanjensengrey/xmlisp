@@ -806,18 +806,15 @@
 
 (defmethod SET-SELECTED ((Self badged-image-group-list-manager-view) group-name &key (highlight t) (resign "YES"))
   ;(remove-background-from-text-fields (native-view  self))
-  (print "SS1")
   (let ((previously-selected-group-name  (selected-group self)))
   (with-simple-restart (cancel-pop "Stop to create view for ~s" Self)    
     (dolist (group (groups self))
       (setf (selected-item-name group) nil) 
       (if (equal group-name (group-name group))
         (progn   
-          (print "SS2")
           (setf (selected-item-name group) nil )
           (if (item-selection-view group)
             (#/setHidden: (item-selection-view group) #$YES))
-          (print "SS3")
           (setf (is-selected group) "YES")
           (setf (is-highlighted group) highlight)
           (ns:with-ns-point (Point (NS:NS-RECT-X (#/frame (group-view group))) (+ 0  (NS:NS-RECT-Y (#/frame (group-view group)))) )
@@ -827,8 +824,7 @@
           (if (is-highlighted group)
             (#/setHidden: (selection-view group) #$NO))
          ; (#/setEditable:  (text-view group) #$YES)
-          (#/setNeedsDisplay: (selection-view group) #$YES)
-          (print "SS4"))
+          (#/setNeedsDisplay: (selection-view group) #$YES))
         (progn
           (setf (is-highlighted group) nil)
           (if resign
@@ -846,21 +842,13 @@
           (setf (is-highlighted group) nil)
           (#/setHidden: (selection-view group) #$YES)
           (#/setNeedsDisplay: (selection-view group) #$YES)))))
-    (print "SS5")
     (unless (equal previously-selected-group-name  (selected-group self))
-      (progn
-        (print "SS5.2")
-        (selected-group-changed self )
-        (print "SS5.3"))))
-  (print "SS6")
-  (layout-changed self)
-  (print "SS10"))
+      (selected-group-changed self )))
+  (layout-changed self))
 
 
-(defmethod SELECTED-GROUP-CHANGED ((Self badged-image-group-list-manager-view) )
-  (print "SSG")
-  (funcall (selected-group-changed-action self) (lui-window (#/window (native-view self) )) self )
-  (print "SSG2"))
+(defmethod SELECTED-GROUP-CHANGED ((Self badged-image-group-list-manager-view) ) 
+  (funcall (selected-group-changed-action self) (lui-window (#/window (native-view self) )) self ))
 
 
 (defmethod SET-SELECTED-ITEM ((Self badged-image-group-list-manager-view) group-name item-name)

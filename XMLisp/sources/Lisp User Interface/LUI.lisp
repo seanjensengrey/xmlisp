@@ -660,6 +660,7 @@ after any of the window controls calls stop-modal close window and return value.
    (in-cluster :accessor in-cluster :initform nil)
    (user-action :accessor user-action :initform nil)
    (selected-in-cluster :accessor selected-in-cluster :initform nil)
+   (key-equivalent :accessor key-equivalent :initform "")
    )
   (:default-initargs
       :text "")
@@ -689,7 +690,10 @@ after any of the window controls calls stop-modal close window and return value.
    (popup-menu-cell :accessor popup-menu-cell :initform nil :documentation "popup menu cell for this button")
    (menu :accessor menu :initform nil :documentation "popup menu cell for this button")
    (popup-button :accessor popup-button :documentation "an invisible popup butoton")
-   (items :accessor items :initform nil  :documentation " a list of the items of control"))
+   (items :accessor items :initform nil  :documentation " a list of the items of control")
+   (disclosure-image :accessor disclosure-image :initform nil )
+   (draw-disclosure :accessor draw-disclosure :initform t :type boolean)
+   )
   (:default-initargs
       :text ""
     :action 'popup-image-button-action)
@@ -702,7 +706,8 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defclass POPUP-IMAGE-BUTTON-ITEM-CONTROL (control)
   ((popup-image-button :accessor popup-image-button :initform nil :initarg :popup-image-button :documentation "the window this item is contained inside")
-   (enable-predicate :accessor enable-predicate :initarg :enable-predicate :initform 'default-enable-predicate))
+   (enable-predicate :accessor enable-predicate :initarg :enable-predicate :initform 'default-enable-predicate)
+   )
   (:default-initargs
       :text ""
     :action 'popup-action)

@@ -85,18 +85,19 @@
         </column>
       </row>
       <row align="center" valign="stretch" height="24" src="gradient-transparent.png">
-        <row align="center" valign="stretch" height="24" src="gradient-transparent.png">
         <agent-shape-plus-button image="plus-button.png" >
           <pop-up-image-item action="add-rule-action" text="New Rule" />
           <pop-up-image-item action="add-method-action" text="New Method" />
         </agent-shape-plus-button>
         <image-button name="delete vat button" image="minus-button.png" action="delete-selected-command" />
-        </row>
-        <row align="right" valign="stretch" height="24" src="gradient-transparent.png">
-          <label align="right" width="35" text="Off"/>
-          <slider  value="5.0" max-value="10.0" min-value="0.0" action="conversational-slider-action"/>
-          <label align="right" width="45" text="Chatty"/>
-        </row>
+        <popup-image-button image="actionButton.png" width="55" draw-disclosure="false">
+          <pop-up-image-item action="test-action" text="Test" />
+          <pop-up-image-item action="duplicate-action" key-equivalent="d" text="Duplicate"/>
+          <pop-up-image-item action="explain-action" text="Explain"/>
+        </popup-image-button> 
+        <label align="right" width="35" text="Off"/>
+        <slider  value="5.0" max-value="10.0" min-value="0.0" action="conversational-slider-action"/>
+        <label align="right" width="45" text="Chatty"/>  
       </row>
    </column>
   </row>
