@@ -686,7 +686,6 @@
 
 (defmethod ADD-GROUP-TO-GUI ((Self badged-image-group-list-manager-view) group)
   (let ((x (left-margin self)) (text-length 100))
-    
     (let ((height (row-height self)))
       (unless (eql (is-disclosed group) nil)
         (if (> (length (group-items group)) 0)
@@ -753,6 +752,9 @@
 
 
 (defmethod ADD-GROUP ((Self badged-image-group-list-manager-view) group)
+  (if (< (width self) (width (lui-view (#/superview (#/superview (native-view self))))))
+    (setf (width self) (width (lui-view (#/superview (#/superview (native-view self)))))))
+  
   (dolist (old-group (groups self))
     (if (or
          (equal (first group) (group-name old-group))
@@ -767,6 +769,8 @@
       (t (setf (groups self) (append (groups self) (list (make-instance 'list-group :group-name (first group) :group-image (second group) :group-items (create-list-of-items-from-list-of-strings (third group))))))))
     (if (native-view self)
       (progn
+        (if (< (width self) (width (lui-view (#/superview (#/superview (native-view self))))))
+          (setf (width self) (width (lui-view (#/superview (#/superview (native-view self)))))))
         (add-group-to-gui self (get-group-with-name self (group-name list-group)))
         (#/setNeedsDisplay: (native-view self) #$YES)
         (layout (native-view self))))
