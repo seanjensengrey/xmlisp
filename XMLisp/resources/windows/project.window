@@ -5,8 +5,9 @@
       <row valign="middle" align="center" height="32" src="gradient-transparent.png">
         <label text="Agents" width="120" align="center"/>
       </row>
+      <img src="gallery-directions.png" name="gallery directions"/>
       <scroll-box vflex="1" name="agent-scroll-box">
-        <agent-gallery name="agent-gallery" selected-group-changed-action="SWITCH-TO-BEHAVIOR" />
+        <agent-gallery name="agent-gallery" selected-group-changed-action="SWITCH-TO-BEHAVIOR" height="10" width="100"/>
       </scroll-box>
       <row align="center" valign="stretch" height="24" src="gradient-transparent.png">
         <agent-shape-plus-button image="plus-button.png" >
@@ -48,8 +49,8 @@
       <row align="stretch" valign="stretch" flex="1" vflex="1">
         <column align="stretch" valign="stretch" flex="1" vflex="1">
           <world flex="1" vflex="1" name="the world">
-            <agent-matrix name="AGENT-MATRIX11508" rows="20" columns="20" layers="1">
-            </agent-matrix>
+             <text-3d text="Click on the '+' button" x="-3.0" y="0.2" size="5.0"/>
+             <text-3d text="above to add a world" x="-3.0" y="-0.5" size="5.0"/>
           </world>
           <status-bar name="status-bar" text="bla"/>
         </column>
