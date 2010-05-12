@@ -1108,6 +1108,12 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
   (when (string-shape Self)
     (draw (string-shape Self))))
 
+
+(defmethod PRINT-SLOTS ((Self text-3d))
+  '(text x y size))
+
+
+
 ;*********************************
 ;* Agent Camera                  *
 ;*********************************
