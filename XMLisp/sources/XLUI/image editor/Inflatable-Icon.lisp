@@ -33,10 +33,8 @@
 (in-package :xlui)
 
 
-(defclass INFLATABLE-ICON (agent-3d)
-  ((depth :accessor depth :initform 0s0 :initarg :depth)
-   (turn-height :accessor turn-height :initform 0.0 :initarg :turn-height :type single-float :documentation "height around which shapes will be turned. Default to floor")
-   (rows :accessor rows :initform 32 :initarg :rows)
+(defclass INFLATABLE-ICON (shape) ;; agent-3d
+  ((rows :accessor rows :initform 32 :initarg :rows)
    (columns :accessor columns :initform 32 :initarg :columns)
    (steps :accessor steps :initform 10)
    (pressure :accessor pressure :initform 0.0 :type short-float)
@@ -60,7 +58,9 @@
    (texture-id :accessor texture-id :initform nil :documentation "OpenGL texture name")
    (is-flat :accessor is-flat :initform nil :type boolean :documentation "speed optimized rendering if flat")
    (update-texture-from-image-p :accessor update-texture-from-image-p :initform nil :documentation "set this flag to t to trigger texture update"))
-  (:documentation "High polygon count 3D object made from inflated icon"))
+  (:documentation "High polygon count 3D object made from inflated icon")
+  (:default-initargs 
+      :depth 0.0))
 
 
 
