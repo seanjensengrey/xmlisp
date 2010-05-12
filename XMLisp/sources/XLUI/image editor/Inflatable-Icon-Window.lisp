@@ -663,10 +663,6 @@
 
     ;; finalize geometry
     (compute-depth (inflatable-icon Model-Editor))
-    
-    (if (container window)
-      (lui::apply-button-pressed (container window) Window)
-      (print "NOT"))
        
     ;; save
     (when (destination-inflatable-icon Window)
