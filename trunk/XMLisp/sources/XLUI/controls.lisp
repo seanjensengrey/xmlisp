@@ -243,12 +243,13 @@
   ((text :accessor text :initform "untitled")
    (action :accessor action :initform 'default-action  :type symbol :documentation "method: window dialog")
    (enable-predicate :accessor enable-predicate :initform nil :type symbol :documentation "Enable predicate of this item")
+   (key-equivalent :accessor key-equivalent :initform nil)
    )
   (:documentation "a pop up menu item"))
 
 
 (defmethod ADD-SUBOBJECT ((Button popup-image-button-control) (Item pop-up-image-item))
-  (add-popup-item Button (text Item) (action Item)(enable-predicate item)))
+  (add-popup-item Button (text Item) (action Item)(enable-predicate item)(key-equivalent item)))
 
 
 (defclass POP-UP-IMAGE-SUBMENU ( popup-image-button-submenu-control xml-serializer)
