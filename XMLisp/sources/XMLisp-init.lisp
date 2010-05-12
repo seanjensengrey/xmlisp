@@ -220,7 +220,8 @@
                 "FILE")
   (:export "INFLATABLE-ICON"
            "SAVE-THE-WORLD"
-           "DEPTH"))
+           "DEPTH"
+           "PROJECT-CHOOSER" "OPEN-PROJECT-ACTION" "CREATE-NEW-PROJECT-ACTION" "OPEN-PROJECT"))
 
 
 (setq xml::*xmlisp-packages* (list (find-package :xlui) (find-package :xml)))
