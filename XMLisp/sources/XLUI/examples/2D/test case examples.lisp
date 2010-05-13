@@ -354,8 +354,6 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
   </column>                                                                                     
 </application-window>)
 
-(#/performClick: (lui::native-view (view-named *Window*  "pop")) lui::+null-ptr+)
-(set-selected-item-with-title (view-named *Window*  "pop") "upright")
 
 ;;****************************************************
 ;; IMAGES  (assumed to be in LUI:resources;images;)  *
