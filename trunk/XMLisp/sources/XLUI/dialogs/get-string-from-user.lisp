@@ -30,6 +30,8 @@
   (let ((Window (load-object "lui:resources;windows;get-string-from-user.window" :package (find-package :xlui))))
     (when Initial-String
       (setf (value (view-named Window "text")) Initial-String))
+    (ns:with-ns-point (Point (NS:NS-POINT-X (#/mouseLocation ns:ns-event)) (NS:NS-POINT-Y (#/mouseLocation ns:ns-event)))
+      (#/setFrameOrigin: (lui::native-window window ) Point ))
     (setf (title Window) Message)
     (show-and-run-modal Window)))
 

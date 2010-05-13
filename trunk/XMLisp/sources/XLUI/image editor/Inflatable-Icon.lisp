@@ -134,7 +134,7 @@
 
 
 (defmethod COPY-CONTENT-INTO ((Source inflatable-icon) (Destination inflatable-icon))
-
+  (print "COPY CONTENT INTO")
  ;(inspect (image source))
   ;; check for size compatibility to avoid disaster
   
