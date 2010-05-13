@@ -369,10 +369,19 @@
                    (or (null Priority-Max) (> (selection-priority Agent) Priority-Max)
                        (null Closest-Agent) (< (second Hit-Record) Z-Min)))
           ;;(format t "~%~A: ~A" (type-of Agent) (when Agent (selection-priority Agent)))
-
-          (setq Closest-Agent Agent)
-          (if (not (equal (type-of agent) 'AGENT-MATRIX))
-            (setf Closest-Agent2 Agent))
+          #|
+          (if (and layer agent (not (equal (type-of agent) 'AGENT-MATRIX)))
+            (setf Closest-Agent (make-instance 'matrix-agent :x (x agent) :y (y agent) :z (z agent) )))
+          |#
+          ;(if layer
+            ;(setf Closest-Agent (duplicate agent))
+          (setf Closest-Agent agent)
+          (setf Closest-Agent2 (duplicate agent))
+            ;)
+          #|  
+          (if (and layer agent (not (equal (type-of agent) 'AGENT-MATRIX)))
+            (setf Closest-Agent2 (make-instance 'matrix-agent :x (x agent) :y (y agent) :z (z agent) )))
+          |#
         ;  (print (name Closest-agent))
 
           (setq Z-Min (second Hit-Record))
@@ -408,6 +417,19 @@
         (print (layer closest-agent2))))
     |#
     ;(print (type-of closest-agent))
+    ;(inspect closest-agent2)
+    (if closest-agent2
+      (progn
+        (print "LAYER")
+        #|
+        (if layer 
+          (setf closest-agent closest-agent2))
+        |#
+        ;(print (layer closest-agent))
+
+        ;(print (layer closest-agent2))
+        ))
+
     Closest-Agent))
 
 
@@ -1013,6 +1035,13 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 (defmethod UNSELECT ((Self agent-3d))
   (setf (is-selected Self) nil))
 
+
+(defmethod FIND-CONTAINER-BY-TYPE ((Self agent-3d) Type)
+  (let ((Agent Self))
+    (loop
+      (when (subtypep (type-of Agent) Type) (return Agent))
+      (setq Agent (part-of Agent))
+      (unless Agent (return nil)))))
 
 
 ;______________________________

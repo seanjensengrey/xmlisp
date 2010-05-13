@@ -529,6 +529,7 @@
   (setq *Run-Modal-Return-Value* nil)
   (when (#/isVisible (native-window Self))
     (error "cannot run modal a window that is already visible"))
+  (in-main-thread () (#/makeKeyAndOrderFront: (native-window self) (native-window self)))
   (let ((Code (in-main-thread () 
                               (#/runModalForWindow: (#/sharedApplication ns:ns-application)
                                       (native-window Self)))))
@@ -1253,7 +1254,9 @@
       (ns:with-ns-rect (Frame (- (NS:NS-RECT-WIDTH rect) 10) 0 10 (NS:NS-RECT-HEIGHT rect))
         (#/drawInRect:fromRect:operation:fraction: (disclosure-image (lui-view self)) Frame #$NSZeroRect #$NSCompositeCopy 1.0))
       (ns:with-ns-rect (Frame 0 0 (- (NS:NS-RECT-WIDTH rect) 10)  (NS:NS-RECT-HEIGHT rect) )
-        (#/drawInRect:fromRect:operation:fraction: (#/image self) Frame #$NSZeroRect #$NSCompositeCopy 1.0)))
+        ;(call-next-method frame)
+        (#/drawInRect:fromRect:operation:fraction: (#/image self) Frame #$NSZeroRect #$NSCompositeCopy 1.0)
+        ))
     (#/drawInRect:fromRect:operation:fraction: (#/image self) rect #$NSZeroRect #$NSCompositeCopy 1.0)))
 
 
