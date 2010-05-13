@@ -10,7 +10,7 @@
         <agent-gallery name="agent-gallery" selected-group-changed-action="SWITCH-TO-BEHAVIOR" height="10" width="100"/>
       </scroll-box>
       <row align="center" valign="stretch" height="24" src="gradient-transparent.png">
-        <agent-shape-plus-button image="plus-button.png" >
+        <agent-shape-plus-button width="38" image="plus-button.png" >
           <pop-up-image-item action="add-agent-action" text="New Agent" />
           <pop-up-image-item enable-predicate="shape-enable-predicate" action="add-shape-action" text="New Shape" />
         </agent-shape-plus-button>
@@ -86,12 +86,12 @@
         </column>
       </row>
       <row align="center" valign="stretch" height="24" src="gradient-transparent.png">
-        <agent-shape-plus-button image="plus-button.png" >
+        <agent-shape-plus-button width="38" image="plus-button.png" >
           <pop-up-image-item action="add-rule-action" text="New Rule" />
           <pop-up-image-item action="add-method-action" text="New Method" />
         </agent-shape-plus-button>
         <image-button name="delete vat button" image="minus-button.png" action="delete-selected-command" />
-        <popup-image-button image="actionButton.png" width="55" draw-disclosure="false">
+        <popup-image-button image="actionButton.png" width="38" draw-disclosure="false">
           <pop-up-image-item action="test-action" text="Test" />
           <pop-up-image-item action="duplicate-action" key-equivalent="d" text="Duplicate"/>
           <pop-up-image-item action="explain-action" text="Explain"/>
