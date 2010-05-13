@@ -420,7 +420,7 @@
     ;(inspect closest-agent2)
     (if closest-agent2
       (progn
-        (print "LAYER")
+        ;(print "LAYER")
         #|
         (if layer 
           (setf closest-agent closest-agent2))

@@ -86,7 +86,7 @@
         </column>
       </row>
       <row align="center" valign="stretch" height="24" src="gradient-transparent.png">
-        <agent-shape-plus-button width="38" image="plus-button.png" >
+        <agent-shape-plus-button width="38"  image="plus-button.png" >
           <pop-up-image-item action="add-rule-action" text="New Rule" />
           <pop-up-image-item action="add-method-action" text="New Method" />
         </agent-shape-plus-button>

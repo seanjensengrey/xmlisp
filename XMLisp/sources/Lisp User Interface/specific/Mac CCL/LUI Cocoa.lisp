@@ -1278,7 +1278,7 @@
         (#/setState: (#/cell (native-view (popup-button button))) #$NSOffState)
         #+cocotron
         (#/sendAction:to: (native-view (popup-button button)) (#/action (native-view (popup-button button))) (#/target (native-view (popup-button button))))
-       ; (#/removeFromSuperview (native-view (popup-button button)))
+         (#/removeFromSuperview (native-view (popup-button button)))
         ))))
 
 
