@@ -593,10 +593,12 @@
     ;; update GUI: pressure is 0.0
     (setf (value (view-named Window 'pressure_slider)) 0.0)
     (setf (text (view-named Window 'pressuretext)) "0.0")
-    (setf (pressure (inflatable-icon (view-named Window 'model-editor))) 0.0)
+    (setf (pressure (inflatable-icon (view-named Window 'model-editor))) 0.0) 
     ;; enable flat texture optimization
     (setf (is-flat (inflatable-icon (view-named Window 'model-editor))) t)
     (change-icon-action Window (view-named Window 'icon-editor))
+    (unless (view (inflatable-icon (view-named Window 'model-editor)))
+      (setf (view (inflatable-icon (view-named Window 'model-editor))) (view-named Window 'model-editor)))
     (update-texture-from-image (inflatable-icon (view-named Window 'model-editor)))
     ;; update for user
     (display Model-Editor)))
@@ -629,7 +631,7 @@
         ;(setf (update-texture-from-image-p (destination-inflatable-icon Window)) t)
         )))
   (if (container window)
-    (xlui::display-world (xlui::project-window (xlui::project-manager-reference (container window))))))
+    (display-world (project-window project-manager-reference (container window))))))
 
 
 #|
@@ -654,15 +656,12 @@
         (Model-Editor (view-named Window 'model-editor)))
     (setf (shape shape-manager) (inflatable-icon Model-Editor)) 
     (save shape-manager))
-  (let ((Model-Editor (view-named Window 'model-editor)))
-
+  (let ((Model-Editor (view-named Window 'model-editor)
     ;; finalize geometry
     (compute-depth (inflatable-icon Model-Editor))
-       
     ;; save
     (when (destination-inflatable-icon Window)
       ;; (format t "~%copy into icon")     
-      
       (copy-content-into (inflatable-icon Model-Editor) (destination-inflatable-icon Window))
       (when (is-flat (destination-inflatable-icon Window))
         ;(setf (update-texture-from-image-p (destination-inflatable-icon Window)) t)
