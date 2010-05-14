@@ -338,29 +338,12 @@
 
 (defmethod FIND-CLOSEST-AGENT-IN-HIT-RECORD ((Self agent-3d-view) Hit-Number Selection-Array &optional Agent-Type Layer)
   (let ((Closest-Agent nil)
-        (Closest-Agent2 nil)
         (Z-Min nil)
         (Priority-Max nil))
     ;; look at all hit records
     (dolist (Hit-Record (get-selection-array-hit-records Hit-Number Selection-Array))
-      #|
-      (print "start LOOP1")
-      (if (and closest-agent (layer closest-agent) (not (equal (type-of closest-agent) 'AGENT-MATRIX)))
-        (progn
-          (print (layer closest-agent))
-          (print (layer closest-agent2))))
-      |#
       ;; indentify the agent that is closest
       (dolist (Agent (mapcar #'(lambda (Name) (find-agent-by-reference-id Self Name)) (first Hit-Record)))
-        #|
-        (print "IN LOOP2")
-        
-        (print Agent)
-        (if (and closest-agent (layer closest-agent) (not (equal (type-of closest-agent) 'AGENT-MATRIX)))
-        (progn
-          (print (layer closest-agent))
-          (print (layer closest-agent2))))
-        |#
         (when (and Agent
                    (or (null Agent-Type)
                        (and Agent-Type (subtypep (type-of Agent) Agent-Type)))
@@ -369,67 +352,9 @@
                    (or (null Priority-Max) (> (selection-priority Agent) Priority-Max)
                        (null Closest-Agent) (< (second Hit-Record) Z-Min)))
           ;;(format t "~%~A: ~A" (type-of Agent) (when Agent (selection-priority Agent)))
-          #|
-          (if (and layer agent (not (equal (type-of agent) 'AGENT-MATRIX)))
-            (setf Closest-Agent (make-instance 'matrix-agent :x (x agent) :y (y agent) :z (z agent) )))
-          |#
-          ;(if layer
-            ;(setf Closest-Agent (duplicate agent))
           (setf Closest-Agent agent)
-          (setf Closest-Agent2 (duplicate agent))
-            ;)
-          #|  
-          (if (and layer agent (not (equal (type-of agent) 'AGENT-MATRIX)))
-            (setf Closest-Agent2 (make-instance 'matrix-agent :x (x agent) :y (y agent) :z (z agent) )))
-          |#
-        ;  (print (name Closest-agent))
-
           (setq Z-Min (second Hit-Record))
-          (setq Priority-Max (selection-priority Agent))
-          #|
-          (print "FOUND")
-          
-          (if (and Agent (layer agent) (not (equal (type-of Agent) 'AGENT-MATRIX)))
-            (print (layer agent)))
-          |#
-          
-          ))
-      #|
-      (print "END loop1")
-      ;(inspect closest-agent)
-      (print closest-agent)
-      (if (and closest-agent (layer closest-agent) (not (equal (type-of closest-agent) 'AGENT-MATRIX)))
-        (progn
-          (print (layer closest-agent))
-          (print (layer closest-agent2))))
-      |#
-      
-      )
-    #|
-    (print "CLOSEST After Loop")
-    ;(inspect closest-agent)
-    ;(inspect closest-agent)
-    (if (and closest-agent (layer closest-agent) (not (equal (type-of closest-agent) 'AGENT-MATRIX)))
-      (progn
-        (print "WHA")
-       ; (inspect closest-agent)
-        (print (layer closest-agent))
-        (print (layer closest-agent2))))
-    |#
-    ;(print (type-of closest-agent))
-    ;(inspect closest-agent2)
-    (if closest-agent2
-      (progn
-        ;(print "LAYER")
-        #|
-        (if layer 
-          (setf closest-agent closest-agent2))
-        |#
-        ;(print (layer closest-agent))
-
-        ;(print (layer closest-agent2))
-        ))
-
+          (setq Priority-Max (selection-priority Agent)))))
     Closest-Agent))
 
 
