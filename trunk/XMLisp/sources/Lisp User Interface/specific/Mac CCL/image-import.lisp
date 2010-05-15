@@ -91,7 +91,7 @@
   Create an image buffer from <Filename>
   - File must be 32 bit ARGB compatible, e.g., .png with mask or 24 bit RGB."
   (when Verbose (format t "CREATE-IMAGE-FROM-FILE: ~A~%" Filename))
-  (let* ((Image-Representation (ns-image-rep-from-file (native-string (namestring (translate-logical-pathname Filename))))))
+  (let* ((Image-Representation (#/retain (ns-image-rep-from-file (native-string (namestring (translate-logical-pathname Filename)))))))
     ;; should massage data: GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV for best performance
     ;; http://developer.apple.com/documentation/graphicsimaging/Conceptual/OpenGL-MacProgGuide/opengl_texturedata/opengl_texturedata.html
     (when (%null-ptr-p Image-Representation)
