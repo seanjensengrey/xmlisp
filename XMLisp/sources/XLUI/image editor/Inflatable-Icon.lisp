@@ -63,7 +63,6 @@
       :depth 0.0))
 
 
-
 ;********************************************************
 ;* Specification                                        *
 ;********************************************************
@@ -117,9 +116,6 @@
   Self))
 
 
-
-
-
 (defmethod OPEN-RESOURCE ((Self inflatable-icon))
   (call-next-method)
   (make-image-from-icon Self)
@@ -134,18 +130,12 @@
 
 
 (defmethod COPY-CONTENT-INTO ((Source inflatable-icon) (Destination inflatable-icon))
-  (print "COPY CONTENT INTO")
- ;(inspect (image source))
+  ;;; (print "COPY CONTENT INTO")
   ;; check for size compatibility to avoid disaster
-  
-  
   (unless (and (= (rows Source) (rows Destination)) 
-               (= (columns Source) (columns Destination))
-               (= (sizeof (image Source) ) (sizeof (image source) ))
-               )  
+               (= (columns Source) (columns Destination)))
+               ;; sizeof does not work for these images!! (= (print (sizeof (image Source) )) (print (sizeof (image Destination)))))
     (error "cannot copy content of source into destination inflatable icon: incompatible sizes"))
-  
- ; (ccl:external-call "malloc_size" :address (image Source) :size_t)
   ;; given that they are the same size only copy content
   (setf (is-upright Destination) (is-upright Source))
   (setf (depth Destination) (depth Source))
@@ -161,11 +151,9 @@
       (setf (aref (altitudes Destination) Row Column) (aref (altitudes Source) Row Column))))
   (setf (connectors Destination) (mapcar #'copy-instance (connectors Source)))
   (setf (visible-alpha-threshold Destination) (visible-alpha-threshold Source))
-  ;; copy Image: slow byte copy
-  ;(dotimes (I (ccl:external-call "malloc_size" :address (image Source) :size_t))
-  (dotimes (I (sizeof (image Source) ))
-    (set-byte (image Destination) (lui::%get-byte (image Source) i) i))
-  
+  ;; copy Image: slow byte-by-byte copy
+  (dotimes (I (* 4 (rows Source) (columns Source)))
+    (set-byte (image Destination) (get-byte (image Source) i) i))
   ;; flat texture optimization: do not copy texture-id -> destination should get its own texture id from OpenGL
   (setf (is-flat Destination) (is-flat Source))
   ;; do not compile flat textures: the display list overhead slows things down by about 2x
