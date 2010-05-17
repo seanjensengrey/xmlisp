@@ -993,8 +993,6 @@
       (#/setFloatValue:knobProportion: Native-Control 0.0 (knob-proportion self))
       (#/setArrowsPosition: Native-Control #$NSScrollerArrowsMinEnd ) 
       (#/setEnabled: Native-Control #$YES)
-      (print (#/usableParts Native-Control))
-      (print (#/checkSpaceForParts Native-Control))
       Native-Control)))
 
 
@@ -1766,9 +1764,6 @@
 ;__________________________________/
 
 (defun SHOW-STRING-POPUP (window list)
-  (print (y window))
-  (print (rational (NS:NS-POINT-Y (#/mouseLocation ns:ns-event))))
-  (print (NS:NS-RECT-HEIGHT (#/frame (#/mainScreen ns:ns-screen))))
   (let ((Pop-up (make-instance 'popup-button-control  :width 1 :height 1 :x   (- (rational (NS:NS-POINT-X (#/mouseLocation ns:ns-event)))(x window))  :y   (-  (- (NS:NS-RECT-HEIGHT (#/frame (#/mainScreen ns:ns-screen)))(NS:NS-POINT-Y (#/mouseLocation ns:ns-event)))(y window))  )))
     (dolist (String list)
       (add-item Pop-Up String nil))

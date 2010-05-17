@@ -143,8 +143,7 @@
 
 
 (objc:defmethod (#/mouseDown: :void) ((self popup-window) Event)
-  (call-next-method event)
-  (print "Down"))
+  (call-next-method event))
 
 
 
