@@ -131,7 +131,7 @@
 (defmethod DRAW ((Self sphere))
   (unless (is-visible Self) (return-from draw))
   (glTranslatef 0.5 0.5 (float (size Self) 0.0))
-  (glEnable GL_LIGHTING)
+  ;; (glEnable GL_LIGHTING)
   (glTexEnvi GL_TEXTURE_ENV GL_TEXTURE_ENV_MODE GL_MODULATE)
   (initialize-quadric Self)
   (cond
