@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<edit-shape-window title="get string" width="500" height="300">
+  <column align="stretch" valign="distribute">
+
+    <row align="stretch" valign="stretch" height="150" > 
+      <label align="left" width="90" text="Shape:"/>
+      <column flex="1">
+        <label align="center" width="100" text="Type"/>
+        <string-list name="shape-list"  action="shape-changed-action" width="100">
+          <string-list-item text="Inflatable Icon"/>
+          <string-list-item text="Cube"/>
+          <string-list-item text="Tile"/>
+          <string-list-item text="Sphere"/>
+        </string-list>
+      </column>
+      <spacer/>
+      <column flex="1">
+        <label align="center" width="100" name="shape-image-label" text="Image"/>
+        <string-list name="column2" action="image-changed-action" width="100"/>
+      </column>
+      <spacer/>
+      <column flex="2" vflex="2">
+        <label align="center" width="100" name="Shape Preview" text="Shape Preview"/>
+        <3d-agent-preview-view height="135"  name="shape-preview">
+          <cube texture="crate.png"/>
+        </3d-agent-preview-view>
+      </column>
+    </row>
+    <row align="right" minimize="vertical">
+      <button text="Cancel" action="cancel-action"/>
+      <button text="OK" action="OK-action" default-button="true"/>
+    </row>
+  </column>
+</edit-shape-window>
