@@ -184,13 +184,14 @@
               :documentation "This is a view that will detect mouse input fo the group and will also containt all the other views for the group"))
 
 
-(defmethod UPDATE-IMAGE ((self group-detection-view))
+(defmethod UPDATE-IMAGE ((self group-detection-view) &key (image-name nil))
+  (print "UPDATE")
   (let ((subviews (gui::list-from-ns-array (#/subviews self))))  
     (dolist (subview subviews)
       (if (or
            (equal (type-of subview) 'lui::group-item-image-view)
            (equal (type-of subview) 'lui::badged-image-view))
-        (update-image subview)))))
+        (update-image subview :image-name image-name)))))
 
 
 (objc:defmethod (#/mouseDown: :void) ((self group-detection-view) Event)
@@ -318,13 +319,19 @@
       self)))
 
 
-(defmethod UPDATE-IMAGE ((self group-item-image-view)) 
+(defmethod UPDATE-IMAGE ((self group-item-image-view) &key (image-name nil)) 
+  (print "GROUP ITEM UPDATE")
+  (if image-name
+    (setf (image-name self) image-name))
   (let ((subviews (gui::list-from-ns-array (#/subviews self))))   
     (dolist (subview subviews)
       (if (equal (type-of subview) 'lui::mouse-detecting-image-view)
         (progn
           (#/removeFromSuperviewWithoutNeedingDisplay subview)
+          (print (image-name self))
           (let ((image (make-instance 'image-control  :image-path (image-path self)  :src (image-name self) :x 0 :y 0 :width (image-size self) :height (image-size self)))) 
+            (print (image-name self))
+            (print "AFTER")
             (let ((image-view (#/alloc mouse-detecting-image-view)))
               (ns:with-ns-rect (Frame 0 0 (image-size self) (image-size self))
                 (#/initWithFrame: image-view Frame )
@@ -397,7 +404,7 @@
   self) 
 
 
-(defmethod UPDATE-IMAGE ((self badged-image-view))
+(defmethod UPDATE-IMAGE ((self badged-image-view)&key (image-name nil))
   (let ((subviews (gui::list-from-ns-array (#/subviews self))))  
     (dolist (subview subviews)
       (#/removeFromSuperviewWithoutNeedingDisplay subview)))

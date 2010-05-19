@@ -965,6 +965,16 @@
   (display self))
 
 
+(defmethod SELECT-ITEM ((Self string-list-view-control) item-name) 
+  (dolist (item (list-items self))
+    (if (equal (string-capitalize (text item)) (string-capitalize item-name))
+      (progn
+        (setf (is-selected item) t)
+        (setf (selected-string self) (text item))
+        (return-from select-item t))
+      (setf (is-selected item) nil)))
+  nil)
+
 
 (defmethod initialize-event-handling ((Self string-list-view-control))
   ;; no event handling for rows
