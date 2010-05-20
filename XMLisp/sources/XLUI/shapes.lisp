@@ -21,7 +21,7 @@
 
 
 (defclass SHAPE (agent-3d)
-  ((depth :accessor depth :initform 1s0 :initarg :depth)
+  ((depth :accessor depth :initform 1.0 :type float :initarg :depth)
    (turn-height :accessor turn-height :initform 0.0 :initarg :turn-height :type single-float :documentation "height around which shapes will be turned. Default to floor")
    (textures :accessor textures :initform (make-hash-table :test #'equal))
    ;; (shade :accessor shade :initform nil :type string-or-null :documentation "used as floor shadow in unit size")
@@ -320,7 +320,7 @@
 
 
 (defmethod DRAW ((Self Box))
-  ;; (call-next-method)
+  (call-next-method)
   (when (is-visible Self)
     (cond
      ;; either a single texture or all of them 
@@ -429,7 +429,7 @@
 
 
 (defmethod BOUNDING-BOX-DEPTH ((Self cylinder))
-  (float (depth Self) 0.0))
+  (depth Self))
 
 
 (defmethod DRAW-BOUNDING-BOX ((Self cylinder) Red Green Blue &optional Alpha)
@@ -460,7 +460,7 @@
    (t
     (glDisable gl_texture_2d)))
   ;; render cylinder
-  (gluCylinder (quadric Self) (base-radius Self) (top-radius Self) (depth Self) 40 4)
+  (gluCylinder (quadric Self) (base-radius Self) (top-radius Self) (coerce (depth Self) 'double-float) 40 4)
   (gluDeleteQuadric (quadric Self))
   (setf (quadric Self) nil))
 
