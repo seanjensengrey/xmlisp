@@ -70,20 +70,20 @@
         <cube draggable="true" size="4.0"texture="crate.png"/>
         <cube x="4.0" size="4.0" texture="crate.png"/>
         <wheel x="2.0" z="-0.6" heading="180.0">
-          <cylinder z="-0.6" top-radius="1.0" height="0.6" texture="tiretrack.png"/>
+          <cylinder z="-0.6" top-radius="1.0" depth="0.6" texture="tiretrack.png"/>
           <disk texture="wheel.png"/>
         </wheel>
         <wheel x="6.0" z="-0.6" heading="180.0">
-          <cylinder z="-0.6" top-radius="1.0" height="0.6" texture="tiretrack.png"/>
+          <cylinder z="-0.6" top-radius="1.0" depth="0.6" texture="tiretrack.png"/>
           <disk texture="wheel.png"/>
         </wheel>
         <wheel x="2.0" z="4.6">
-          <cylinder draggable="true" z="-0.6" top-radius="1.0" height="0.6" texture="tiretrack.png"/>
+          <cylinder draggable="true" z="-0.6" top-radius="1.0" depth="0.6" texture="tiretrack.png"/>
           <disk draggable="true" z="-0.2" texture="wheel.png"/>
           <disk draggable="true" texture="wheel.png"/>
         </wheel>
         <wheel x="6.0" z="4.6">
-          <cylinder z="-0.6" top-radius="1.0" height="0.6" texture="tiretrack.png"/>
+          <cylinder z="-0.6" top-radius="1.0" depth="0.6" texture="tiretrack.png"/>
           <disk z="-0.2" texture="wheel.png"/>
           <disk texture="wheel.png"/>
         </wheel>

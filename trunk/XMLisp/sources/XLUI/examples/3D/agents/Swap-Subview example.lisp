@@ -51,7 +51,7 @@
   <cube draggable="true" size="3.0" z="-3.5" texture="crate.png"/>
   <cube x="5" draggable="true" roll="45.0"/>
   <sky-dome pitch="-90"/>
-  <cylinder x="3.0" y="3.0" z="-0.6" top-radius="1.0" height="0.6" texture="tiretrack.png"/>
+  <cylinder x="3.0" y="3.0" z="-0.6" top-radius="1.0" depth="0.6" texture="tiretrack.png"/>
   <disk x="3.0" y="3" z="-0.1" texture="wheel.png"/>
   <disk x="3.0" y="3" texture="wheel.png"/>
   <text-3d text="box" draggable="true" x="1.0" y="3.2" z="-1.5" size="5.0"/>

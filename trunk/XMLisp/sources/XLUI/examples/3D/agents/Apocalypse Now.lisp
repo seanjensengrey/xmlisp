@@ -62,7 +62,7 @@
           <rotor rotor-speed="360.0" width="5.0" height="0.2" x-turn="2.5" y-turn="0.1" texture="metal1.jpg"/>
         </group>
         <cube draggable="true" x="1.0" y="-1.3" z="-0.5" texture="metal1.jpg"/>
-        <cylinder x="2.0" y="-0.8" heading="90" base-radius="0.3" top-radius="0.1" height="2.0" texture="metal1.jpg"/>
+        <cylinder x="2.0" y="-0.8" heading="90" base-radius="0.3" top-radius="0.1" depth="2.0" texture="metal1.jpg"/>
         <rotor rotor-speed="720.0" x="3.5" y="-0.8" z="0.2"  width="1.0" height="0.1" x-turn="0.5" y-turn="0.05" texture="metal1.jpg"/>
       </chopper>
       <sky-dome pitch="-90"/>
