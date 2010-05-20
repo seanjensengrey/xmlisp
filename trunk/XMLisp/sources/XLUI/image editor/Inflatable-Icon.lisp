@@ -60,7 +60,7 @@
    (update-texture-from-image-p :accessor update-texture-from-image-p :initform nil :documentation "set this flag to t to trigger texture update"))
   (:documentation "High polygon count 3D object made from inflated icon")
   (:default-initargs 
-      :depth 0.0))
+      :depth 0.0d0))
 
 
 ;********************************************************
