@@ -36,7 +36,8 @@
    (textures :accessor textures :initform (make-hash-table :test #'equal) :allocation #-cocotron :class #+cocotron :instance :documentation "table of loaded texture ids")
    (animation-time :accessor animation-time :initform 0 :documentation "Time when animation was run last")
    (animated-views :allocation :class :accessor animated-views :initform nil :documentation "class list of animated views")
-   (render-mode :accessor render-mode :initform :render :type keyword :documentation "value: :render :select or :feedback"))
+   (render-mode :accessor render-mode :initform :render :type keyword :documentation "value: :render :select or :feedback")
+   )
   (:documentation "OpenGL View"))
 
 
@@ -199,7 +200,7 @@
        Depth))))
 
 
-(defmethod TEXTURE-FILE ((Self opengl-view) Texture-Name)
+(defmethod TEXTURE-FILE ((Self opengl-view) Texture-Name)     
   (native-path "lui:resources;textures;" Texture-Name))
 
 
