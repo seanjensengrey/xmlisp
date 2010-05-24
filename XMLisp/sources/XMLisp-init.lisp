@@ -8,6 +8,12 @@
 
 (in-package :cl-user)
 
+;; temporary fix for CCL's issue with turning warnings into errors
+;; should remove with new release
+(setq ccl::*objc-error-return-condition* 'error)
+(load "ccl:cocoa-ide;cocoa-utils.lisp")
+
+
 ;***************** Settings
 
 ;; edit to point to root folder containing /sources  /resources  etc.
