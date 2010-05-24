@@ -456,6 +456,7 @@
                                               (if (minimizable Self) #$NSMiniaturizableWindowMask 0)))
                         :backing #$NSBackingStoreBuffered
                         :defer t)))
+        (#/disableCursorRects Window) ;; HACK: http://www.mail-archive.com/cocoa-dev@lists.apple.com/msg27510.html
         (setf (native-window Self) Window)  ;; need to have this reference for the delegate to be in place
         (setf (native-view Self) (make-instance 'native-window-view :lui-window Self))
         ;; setup delegate
