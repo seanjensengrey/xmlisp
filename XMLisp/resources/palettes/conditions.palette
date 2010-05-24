@@ -2,13 +2,14 @@
 <palette>
 
   <category title="basic conditions" disclosed="true">
-    <see shape="bla">
-      <direction dcol="1"/>
-    </see>
-    <see shape="bla">
-      <direction dcol="1"/>
-    </see>
-  </category>
+    <see shape="bla"> <direction dcol="1"/>  </see>
+    <see-a> <direction dcol="-1"/> </see-a> 
+    <next-to/>
+    <stacked/>
+    <stacked-a/>
+    <empty/>
+    <once-every/>
+    <%-chance/>
 
   <category title="attributes" disclosed="true">
     <test expression1="age" operator="&lt;" expression2="21"/>
