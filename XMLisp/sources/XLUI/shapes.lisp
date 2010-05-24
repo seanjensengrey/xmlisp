@@ -24,6 +24,7 @@
   ((depth :accessor depth :initform 1.0 :type float :initarg :depth)
    (turn-height :accessor turn-height :initform 0.0 :initarg :turn-height :type single-float :documentation "height around which shapes will be turned. Default to floor")
    (textures :accessor textures :initform (make-hash-table :test #'equal))
+   (texture-path :accessor texture-path :initform nil :documentation "if this value is set the openGLView will look for texture here instead of the default location")
    ;; (shade :accessor shade :initform nil :type string-or-null :documentation "used as floor shadow in unit size")
    ))
 
@@ -69,8 +70,10 @@
 
 (defmethod TEXTURE-FILE ((Self Shape) Texture-Name)
   ;; if part of a shape-manager, get texture-file of that
-  (or (texture-file (part-of Self) Texture-Name)
-      (native-path "lui:resources;textures;" Texture-Name)))
+  (if (texture-path self)
+    (native-path (texture-path self) texture-name)
+    (or (texture-file (part-of Self) Texture-Name)
+        (native-path "lui:resources;textures;" Texture-Name))))
 
 
 ;; Proxy Icon Methods

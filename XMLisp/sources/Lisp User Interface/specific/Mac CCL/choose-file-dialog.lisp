@@ -12,7 +12,7 @@
 
 
 (defun choose-file-dialog (&key 
-                           (directory "cclDirectory") ;
+                           directory  
                            ;mac-file-type
                            ;mac-file-creator
                            (button-string "Open") 
@@ -20,12 +20,12 @@
                            (window-title "Choose a File") 
                            (allow-multiple-files nil)
                            prompt 
-                           (window-position (ns:make-ns-point 100 100))
+                           (window-position (ns:make-ns-point 0 0))
                            file-type-string-list 
                            )
   (let* ((panel (#/openPanel ns:ns-open-panel))
-	 (dc (#/sharedUserDefaultsController ns:ns-user-defaults-controller))
-         (values (#/values dc))
+	 ;(dc (#/sharedUserDefaultsController ns:ns-user-defaults-controller))
+         ;(values (#/values dc))
 	 ;(key #@"cclDirectory")
          (file-types +null-ptr+))
     ;; Kind of nasty code just to change the title of the cancel button, need to go through two layers of subviews to find the button and change its title.  
@@ -36,7 +36,6 @@
             (let ((subviews2 (gui::list-from-ns-array (#/subviews subview))))
               (dolist (subview2 subviews2)
                 (if (equal (type-of subview2) 'NS:NS-BUTTON )
-                  ;(print (#/title subview2))
                   (if (equal (#/title subview2) (native-string "Cancel"))
                     (#/setTitle: subview2 (native-string cancel-button-string))))))))))
     (when file-type-string-list
@@ -58,10 +57,75 @@
     (#/setCanChooseDirectories: panel nil)
     (#/setCanChooseFiles: panel t)
     (#/setFrameOrigin: panel window-position)
-    (#/setAllowedFileTypes:  panel (#/arrayWithObject: ns:ns-array (native-string "lisp")))
-    (#/makeKeyAndOrderFront: panel +null-ptr+)
+    ;#-cocotron (#/setAllowedFileTypes:  panel (#/arrayWithObject: ns:ns-array (native-string "lisp")))
+    #-cocotron (#/makeKeyAndOrderFront: panel +null-ptr+)
     (when (eql (#/runModalForDirectory:file:types: panel
-						   (#/valueForKey: values (native-string directory))
+						   (native-string directory)
+						   +null-ptr+
+						   file-types)
+	       #$NSOKButton)
+      (if allow-multiple-files
+        (let ((filenames (gui::list-from-ns-array (#/filenames Panel))))
+          (dotimes (i (length filenames))
+            (setf (elt filenames i) (pathname (ccl::lisp-string-from-nsstring (elt filenames i)))))
+          filenames)
+        (pathname (ccl::lisp-string-from-nsstring (#/objectAtIndex: (#/filenames Panel) 0)))))))
+
+
+(defun choose-new-file-dialog (&key 
+                           directory  
+                           ;mac-file-type
+                           ;mac-file-creator
+                           (button-string "Save") 
+                           cancel-button-string 
+                           (window-title "Choose a File") 
+                           ;(format-list *save-as-cfarray* format-list-sup)
+                           ;name
+                           ;extended-reply-p
+                           ;(format-query-p nil query-p-sup)
+                           ;dont-confirm-replacement ;; omit the already-exists alert
+                           prompt 
+                           (window-position (ns:make-ns-point 0 0))
+                           file-type-string-list 
+                           )
+  (let* ((panel (#/savePanel ns:ns-save-panel))
+	 ;(dc (#/sharedUserDefaultsController ns:ns-user-defaults-controller))
+         ;(values (#/values dc))
+	 ;(key #@"cclDirectory")
+         (file-types +null-ptr+))
+    ;; Kind of nasty code just to change the title of the cancel button, need to go through two layers of subviews to find the button and change its title.  
+    (if cancel-button-string
+      (let ((subviews (gui::list-from-ns-array (#/subviews (#/contentView panel)))))
+        (dolist (subview subviews)
+          (if (equal (type-of subview) 'NS:NS-VIEW)
+            (let ((subviews2 (gui::list-from-ns-array (#/subviews subview))))
+              (dolist (subview2 subviews2)
+                (if (equal (type-of subview2) 'NS:NS-BUTTON )
+                  (if (equal (#/title subview2) (native-string "Cancel"))
+                    (#/setTitle: subview2 (native-string cancel-button-string))))))))))
+    (when file-type-string-list
+      (dotimes (i (length file-type-string-list))
+        (unless (equal (type-of (elt file-type-string-list i)) (type-of (native-string "string")))
+          (progn
+            (setf (elt file-type-string-list i) (native-string (elt file-type-string-list i))))))
+      (setf file-types (ns-array-from-list file-type-string-list)))
+    (when button-string
+      (setf button-string (ccl::%make-nsstring button-string))
+      (#/setPrompt: panel button-string))
+    (when window-title
+      (setf window-title (ccl::%make-nsstring window-title))
+      (#/setTitle: panel window-title))
+    (when prompt
+      (setf prompt (ccl::%make-nsstring prompt))
+      (#/setMessage: panel  prompt))
+    (#/setCanChooseDirectories: panel nil)
+    (#/setCanChooseFiles: panel nil)
+    ;(#/setNameFieldLabel: panel (native-string "hello:"))
+    (#/setFrameOrigin: panel window-position)
+    ;#-cocotron (#/setAllowedFileTypes:  panel (#/arrayWithObject: ns:ns-array (native-string "lisp")))
+    #-cocotron (#/makeKeyAndOrderFront: panel +null-ptr+)
+    (when (eql (#/runModalForDirectory:file:types: panel
+						   (native-string directory)
 						   +null-ptr+
 						   file-types)
 	       #$NSOKButton)
@@ -69,19 +133,20 @@
 
 
 (defun choose-directory-dialog (&key 
-                           (directory "cclDirectory") ;
+                           directory 
                            ;mac-file-type
                            ;mac-file-creator
-                           (button-string "Open") ;;
+                           (button-string "Open") 
                            cancel-button-string 
-                           (window-title "Choose a File") ;;
-                           prompt ;;
+                           (window-title "Choose a File") 
+                           prompt 
                            (window-position (ns:make-ns-point 100 100)))
   (let* ((panel (#/openPanel ns:ns-open-panel))
-	 (dc (#/sharedUserDefaultsController ns:ns-user-defaults-controller))
-         (values (#/values dc))
+	 ;(dc (#/sharedUserDefaultsController ns:ns-user-defaults-controller))
+         ;(values (#/values dc))
 	 ;(key #@"cclDirectory")
          )
+    ;; Kind of nasty code just to change the title of the cancel button, need to go through two layers of subviews to find the button and change its title.  
     (if cancel-button-string
       (let ((subviews (gui::list-from-ns-array (#/subviews (#/contentView panel)))))
         (dolist (subview subviews)
@@ -104,27 +169,71 @@
     (#/setCanChooseDirectories: panel t)
     (#/setCanChooseFiles: panel nil)
     (#/setFrameOrigin: panel window-position)
-    (#/setAllowedFileTypes:  panel (#/arrayWithObject: ns:ns-array (native-string "lisp")))
-    (#/makeKeyAndOrderFront: panel +null-ptr+)
+   ; #-cocotron (#/setAllowedFileTypes:  panel (#/arrayWithObject: ns:ns-array (native-string "lisp")))
+    #-cocotron (#/makeKeyAndOrderFront: panel +null-ptr+)
     (when (eql (#/runModalForDirectory:file:types: panel
-						   (#/valueForKey: values (native-string directory))
+						   (native-string directory) ;(#/valueForKey: values (native-string directory))
 						   +null-ptr+
 						   +null-ptr+)
 	       #$NSOKButton)
       (pathname (ccl::lisp-string-from-nsstring (#/objectAtIndex: (#/filenames Panel) 0))))))
 
 
-
-
-(defun PARSE-LISP-PATH-FROM-STIRNG (string)
-  (count "/"  string :test #'string=)
-  )
+(defun choose-new-directory-dialog (&key 
+                           directory 
+                           ;mac-file-type
+                           ;mac-file-creator
+                           (button-string "Open") 
+                           cancel-button-string 
+                           (window-title "Choose a File") 
+                           prompt 
+                           (window-position (ns:make-ns-point 100 100)))
+  (let* ((panel (#/savePanel ns:ns-save-panel))
+	 ;(dc (#/sharedUserDefaultsController ns:ns-user-defaults-controller))
+         ;(values (#/values dc))
+	 ;(key #@"cclDirectory")
+         (file-types +null-ptr+))
+    ;; Kind of nasty code just to change the title of the cancel button, need to go through two layers of subviews to find the button and change its title.  
+    (if cancel-button-string
+      (let ((subviews (gui::list-from-ns-array (#/subviews (#/contentView panel)))))
+        (dolist (subview subviews)
+          (if (equal (type-of subview) 'NS:NS-VIEW)
+            (let ((subviews2 (gui::list-from-ns-array (#/subviews subview))))
+              (dolist (subview2 subviews2)
+                (if (equal (type-of subview2) 'NS:NS-BUTTON )
+                  (if (equal (#/title subview2) (native-string "Cancel"))
+                    (#/setTitle: subview2 (native-string cancel-button-string))))))))))
+    
+    (when button-string
+      (setf button-string (ccl::%make-nsstring button-string))
+      (#/setPrompt: panel button-string))
+    (when window-title
+      (setf window-title (ccl::%make-nsstring window-title))
+      (#/setTitle: panel window-title))
+    (when prompt
+      (setf prompt (ccl::%make-nsstring prompt))
+      (#/setMessage: panel  prompt))
+    (#/setCanChooseDirectories: panel nil)
+    (#/setCanChooseFiles: panel nil)
+    ;(#/setNameFieldLabel: panel (native-string "hello:"))
+    (#/setFrameOrigin: panel window-position)
+    ;#-cocotron (#/setAllowedFileTypes:  panel (#/arrayWithObject: ns:ns-array (native-string "lisp")))
+    #-cocotron (#/makeKeyAndOrderFront: panel +null-ptr+)
+    (when (eql (#/runModalForDirectory:file:types: panel
+						   (native-string directory)
+						   +null-ptr+
+						   file-types)
+	       #$NSOKButton)
+      (make-pathname :directory (ccl::lisp-string-from-nsstring (#/objectAtIndex: (#/filenames Panel) 0))))))
 
 
 #| Examples:
 
-(choose-file-dialog  :file-type-string-list (list  "lisp"   "window") )
-(choose-directory-dialog)
+(choose-new-file-dialog  :file-type-string-list (list  "lisp"   "window") )
+
+(choose-new-directory-dialog)
+
+(choose-directory-dialog :directory "/home")
 
 
 |#
