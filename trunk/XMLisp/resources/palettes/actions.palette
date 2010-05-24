@@ -7,6 +7,8 @@
     <move-random-on/>
     <change/>
     <new/>
+    <rotate-by droll="90"/>
+   
   </category>
 
 
