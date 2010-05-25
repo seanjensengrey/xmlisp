@@ -908,9 +908,8 @@
   (call-next-method rect)
   (#/set (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color 1.0 1.0 1.0 1.0))
   (#/fillRect: ns:ns-bezier-path rect)
-  ;(#/set (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color .2 .2 .2 .3))
-  ;(#/strokeRect: ns:ns-bezier-path rect)
-  )
+  (#/set (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color .5 .5 .5 1.0))
+  (#/strokeRect: ns:ns-bezier-path rect))
 
 
 (objc:defmethod (#/isFlipped :<BOOL>) ((self native-string-list-view))
@@ -935,7 +934,7 @@
 (defmethod ADD-STRING-LIST-ITEM ((Self string-list-view-control) string)
   "Adds an item to the string-list that will display the text contained in the variable string"
   (let ((text (#/alloc string-list-text-view))) 
-    (ns:with-ns-rect (Frame2 0 (* (item-height self) (length (list-items self))) (width self)  20 )
+    (ns:with-ns-rect (Frame2 1 (+ 1 (* (item-height self) (length (list-items self)))) (- (width self) 15 )  20 )
       (setf (container text) self)
       (setf (text text) string)
       (#/initWithFrame: text Frame2)

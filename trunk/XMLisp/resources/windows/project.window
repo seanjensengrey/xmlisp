@@ -61,8 +61,8 @@
              <label text="Conditions" width="100" align="center"/>
           </row>
           <row vflex="1" valign="stretch" align="stretch">
-            <visual-agentalk-view name="conditions" flex="1" vflex="1" />
-            <scroller small-scroller-size="true"/>
+            <visual-agentalk-view name="conditions" flex="1" vflex="1"  />
+            <scroller small-scroller-size="true" action="scroll-conditions"/>
           </row>
          </column>
         <column vflex="1" flex="1" valign="stretch" align="stretch">
@@ -81,7 +81,7 @@
           </row>
           <row vflex="1" valign="stretch" align="stretch">
             <visual-agentalk-view name="actions" flex="1" vflex="1"/>
-            <scroller small-scroller-size="true"/>
+            <scroller small-scroller-size="true" action="scroll-actions"/>
           </row>
         </column>
       </row>
