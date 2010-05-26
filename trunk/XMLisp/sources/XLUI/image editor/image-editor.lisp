@@ -1085,7 +1085,7 @@
        (unless (shift-key-p) 
          (clear-selection Self)
          (display Self))
-       (setf (selection-in-progress Self) (list :rect Col Row (+ Col 1) (+ Row 1))))
+       (setf (selection-in-progress Self) (list :rect Col Row col  row)))
       ;; dragging
       (Dragged
        (setf (fourth (selection-in-progress Self)) (1+ Col))
@@ -1099,7 +1099,7 @@
        (unless (shift-key-p) 
          (clear-selection Self)
          (display Self))
-       (setf (selection-in-progress Self) (list :ellipse Col Row (+ Col 1) (+ Row 1))))
+       (setf (selection-in-progress Self) (list :ellipse Col Row Col Row)))
       ;; dragging
       (Dragged
        (setf (fourth (selection-in-progress Self)) (1+ Col))
@@ -1196,7 +1196,6 @@
 
 
 (defmethod VIEW-KEY-EVENT-HANDLER ((Self image-editor-window) Key)
- (print key)
   "Called when a key is typed while the image-editor-window has keyboard focus."
   (cond
    ((command-key-p)
@@ -1307,6 +1306,10 @@
 
 (defmethod SELECT-POLYGON-TOOL-ACTION ((W window) (Button image-button))
   (setf (selected-tool W) 'select-polygon))
+
+
+(defmethod MIRROR-TOOL-ACTION ((W window) (Button image-button))
+  (print "MIRROR"))
 
 
 (defmethod ENABLE-GRID-ACTION ((W window) (Check-Box check-box))

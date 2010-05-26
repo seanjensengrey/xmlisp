@@ -63,6 +63,17 @@
                                                                               (ash Green 8)
                                                                               (ash Blue 8))))))))
     (call-next-method)))
+  <image-button-row  minimize="vertical">
+     <image-button name="mirror none button" action="mirror-none-action" image="mirror-none-button.png"/>
+     <image-button name="mirror horizontally button" action="MIRROR-HORIZONTALLY-ACTION" image="mirror-horizontally-button.png"/>
+     <image-button name="mirror vertically button" action="mirror-vertically-action" image="mirror-vertically-button.png"/>
+     <image-button name="mirror both button" action="mirror-both-action" image="mirror-both-button.png"/>
+    </image-button-row>
+
+(defmethod KEY-EVENT-HANDLER ((Self inflatable-icon-editor-window) Event)
+  (case (key-code Event)
+    (51
+     (erase-selected-pixels (view-named Self 'icon-editor)))))
 
 
 (defmethod DOCUMENT-DEFAULT-DIRECTORY ((Self inflatable-icon-editor-window)) "
