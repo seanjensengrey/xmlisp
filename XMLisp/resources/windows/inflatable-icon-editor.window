@@ -17,7 +17,12 @@
     <spacer width="5"/>
     <icon-editor name="icon-editor" flex="1" action="change-icon-action"/>
     <spacer width="5"/>
-
+    <image-button-cluster>
+     <image-button name="draw button" action="mirror-none-action" image="mirror-none-button.png"/> 
+     <image-button name="draw button" action="mirror-horizontally-action" image="mirror-horizontally-button.png"/> 
+     <image-button name="draw button" action="mirror-vertically-action" image="mirror-vertically-button.png"/> 
+     <image-button name="draw button" action="mirror-both-action" image="mirror-both-button.png"/> 
+    </image-button-cluster>
     <column width="250" valign="top" align="stretch">
       <label width="65" text="Inflation" align="center"/>
       <row align="stretch" minimize="vertical" valign="middle">
