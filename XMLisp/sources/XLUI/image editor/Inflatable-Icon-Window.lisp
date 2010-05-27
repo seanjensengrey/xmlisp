@@ -29,6 +29,7 @@
   ((container :accessor container :initform nil :initarg :container)
    (smoothing-cycles :accessor smoothing-cycles :initform 0 :initarg :smoothing-cycles)
    (selected-tool :accessor selected-tool :initform nil :type symbol :initarg :selected-tool :documentation "the name of the currently selected tool")
+   (selected-camera-tool :accessor selected-camera-tool :initform nil :type symbol :initarg :selected-tool :documentation "the name of the currently selected camera tool")
    (file :accessor file :initform nil :documentation "shape file")
    (destination-inflatable-icon :accessor destination-inflatable-icon :initform nil :initarg :destination-inflatable-icon :documentation "if present save edited icon into this inflatable icon")
    (close-action :accessor close-action :initform nil :initarg :close-action :documentation "called with self when inflatable icon window is being closed"))
@@ -41,6 +42,9 @@
 
 (defmethod TOOL-SELECTION-EVENT ((Self inflatable-icon-editor-window) Tool-Name)
   (setf (selected-tool Self) Tool-Name))
+
+(defmethod CAMERA-TOOL-SELECTION-EVENT ((Self inflatable-icon-editor-window) Tool-Name)
+  (setf (selected-camera-tool Self) Tool-Name))
 
 
 #+:carbon
@@ -63,17 +67,14 @@
                                                                               (ash Green 8)
                                                                               (ash Blue 8))))))))
     (call-next-method)))
-  <image-button-row  minimize="vertical">
-     <image-button name="mirror none button" action="mirror-none-action" image="mirror-none-button.png"/>
-     <image-button name="mirror horizontally button" action="MIRROR-HORIZONTALLY-ACTION" image="mirror-horizontally-button.png"/>
-     <image-button name="mirror vertically button" action="mirror-vertically-action" image="mirror-vertically-button.png"/>
-     <image-button name="mirror both button" action="mirror-both-action" image="mirror-both-button.png"/>
-    </image-button-row>
+
 
 (defmethod KEY-EVENT-HANDLER ((Self inflatable-icon-editor-window) Event)
   (case (key-code Event)
     (51
-     (erase-selected-pixels (view-named Self 'icon-editor)))))
+     (erase-selected-pixels (view-named Self 'icon-editor))
+     (display (view-named self 'model-editor))
+     )))
 
 
 (defmethod DOCUMENT-DEFAULT-DIRECTORY ((Self inflatable-icon-editor-window)) "
@@ -281,6 +282,13 @@
   (invoke-action Self))
 
 
+(defmethod VIEW-LEFT-MOUSE-UP-EVENT-HANDLER ((Self icon-editor) X Y)
+  (call-next-method)
+  (display (view-named (Window self) 'model-editor)))
+ 
+
+
+
 ;________________________________________________
 ;  Lobster Icon Editor                           |
 ;________________________________________________
@@ -409,6 +417,22 @@
   (glpopmatrix))
   
 
+(defmethod VIEW-LEFT-MOUSE-DRAGGED-EVENT-HANDLER ((Self inflated-icon-editor) X Y DX DY)
+  (declare (ignore X Y))
+  (case (selected-camera-tool (window Self))
+    (pan
+     (track-mouse-pan (camera Self) dx dy (if (shift-key-p) 0.01 0.05))
+     ;(unless (is-animated Self) (display Self))
+     )
+    (zoom
+     (track-mouse-zoom (camera Self) dx dy (if (shift-key-p) 0.01 0.05))
+     ;(unless (is-animated Self) (display Self))
+     )
+    (t
+     (track-mouse-3d (camera Self) Self dx dy)))
+  (unless (is-animated Self) (display Self)))
+
+
 ;*************************************************
 ;  Component Actions                             *
 ;*************************************************
@@ -462,24 +486,41 @@
 
 (defmethod MIRROR-NONE-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
-  (toggle-mirror-lines (view-named Window 'icon-editor) nil nil))
+  (toggle-mirror-lines (view-named Window 'icon-editor) nil nil)
+  (display (view-named Window 'model-editor)))
 
 
 (defmethod MIRROR-VERTICALLY-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
-  (toggle-mirror-lines (view-named Window'icon-editor) nil t))
+  (toggle-mirror-lines (view-named Window'icon-editor) nil t)
+  (display (view-named Window 'model-editor)))
 
 
 (defmethod MIRROR-HORIZONTALLY-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
-  (toggle-mirror-lines (view-named Window 'icon-editor) t nil))
+  (toggle-mirror-lines (view-named Window 'icon-editor) t nil)
+  (display (view-named Window 'model-editor)))
 
 
 (defmethod MIRROR-BOTH-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
-  (toggle-mirror-lines (view-named Window 'icon-editor) t t))
+  (toggle-mirror-lines (view-named Window 'icon-editor) t t)
+  (display (view-named Window 'model-editor)))
 
 
+(defmethod CAMERA-PAN-ACTION ((Window inflatable-icon-editor-window) Button)
+  (declare (ignore Button))
+  (camera-tool-selection-event Window 'pan))
+
+
+(defmethod CAMERA-ZOOM-ACTION ((Window inflatable-icon-editor-window) Button)
+  (declare (ignore Button))
+  (camera-tool-selection-event Window 'zoom))
+
+
+(defmethod CAMERA-ROTATE-ACTION ((Window inflatable-icon-editor-window) Button)
+  (declare (ignore Button))
+  (camera-tool-selection-event Window 'rotate))
 
 ;; Content Actions
 
