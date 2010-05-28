@@ -6,10 +6,11 @@
 
 (defclass CIRCLE-VIEW (opengl-dialog)
   ((radius :accessor radius :initform 1.0 :type float)
-   (slices :accessor slices :initform 10 :type integer)))
+   (slices :accessor slices :initform 3 :type integer)))
 
 
 (defmethod PREPARE-OPENGL ((Self circle-view))
+  ;; this code will run once before the first drawing
   (glColor3f 1.0 0.0 0.0))
 
 
@@ -22,19 +23,18 @@
     (glEnd)))
 
 
+(defmethod ADJUST-SLICES-ACTION ((Window application-window) (Slider slider))
+  (setf (slices (view-named Window "crappy circle")) (truncate (value Slider)))
+  (display (view-named Window "crappy circle")))
+
+
 <application-window title="circle, really?" y="50">
-  <circle-view slices="3"/>
+  <column align="stretch" valign="stretch">>
+    <circle-view name="crappy circle" vflex="1"/>
+    <slider action="adjust-slices-action" min-value="3.0" max-value="14.0" tick-marks="12"/>
+  </column>
 </application-window>
 
-
-<application-window title="circle, kinda?" y="300">
-  <circle-view slices="6"/>
-</application-window>
-
-
-<application-window title="circle" y="550">
-  <circle-view slices="40"/>
-</application-window>
 
 
 #| Examples:
