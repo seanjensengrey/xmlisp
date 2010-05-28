@@ -671,8 +671,6 @@
                           :native-event Event))))
 
 
-
-
 (objc:defmethod (#/isFlipped :<BOOL>) ((self native-window-view))
   ;; Flip to coordinate system to 0, 0 = upper left corner
   #$YES)
@@ -688,11 +686,27 @@
   (:documentation "receives action events and forwards them to lui control"))
 
 
+(defun PRINT-CONDITION-UNDERSTANDABLY (Condition &optional (Message "") (Stream t))
+  (format Stream "~%~A~A: " Message (type-of Condition))
+  (ccl::report-condition Condition Stream))
+
+
 (objc:defmethod (#/activateAction :void) ((self native-target))
   ;; dispatch action to window + target
   ;; catch errors to avoid total crash of CCL
-  (handler-case (invoke-action (lui-control Self))
-     (error (condition) (format t "~%invoke control action error ~%  control: ~A ~%  error: ~A" (lui-control Self) Condition))))
+  (catch :activate-action-error
+    (handler-bind
+        ((warning #'(lambda (Condition) 
+                      (print-condition-understandably Condition "activate action warning, ")
+                      (muffle-warning)))
+         (condition #'(lambda (Condition)
+                        ;; no way to continue
+                        (print-condition-understandably Condition "activate action error, ")
+                        ;; produce a basic stack trace
+                        (format t "~% ______________Exception in thread \"~A\"___(backtrace)___" (slot-value *Current-Process* 'ccl::name))
+                        (ccl:print-call-history :start-frame-number 1 :detailed-p nil)
+                        (throw :activate-action-error Condition))))
+      (invoke-action (lui-control Self)))))
 
 
 (defmethod INITIALIZE-EVENT-HANDLING ((Self control))
