@@ -8,10 +8,14 @@
 
 (in-package :cl-user)
 
+
+
 ;; temporary fix for CCL's issue with turning warnings into errors
 ;; should remove with new release
 (setq ccl::*objc-error-return-condition* 'error)
-(load "ccl:cocoa-ide;cocoa-utils.lisp")
+
+(objc:defmethod (#/invokeLispFunction: :void) ((self ns:ns-application) id)
+  (gui::invoke-lisp-function self id))
 
 
 ;***************** Settings
