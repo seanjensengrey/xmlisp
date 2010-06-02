@@ -24,7 +24,9 @@
    (head-image-name :accessor head-image-name :initform "color-wheel-button.png" :initarg :head-image-name :documentation "the image that will be used as the group image")
   ; (update-action :accessor update-action :initarg :update-action :initform 'layout-changed)
    (window :accessor window :initform nil)
-   (left-margin :accessor left-margin :initform 0))
+   (left-margin :accessor left-margin :initform 0)
+   (item-category-label :initarg :item-label :initform "items:")
+   )
    (:documentation "This class will is a view that contains groups of items that are identified by a badge image."))
 
 

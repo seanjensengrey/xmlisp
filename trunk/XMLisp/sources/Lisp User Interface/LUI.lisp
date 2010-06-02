@@ -780,7 +780,7 @@ after any of the window controls calls stop-modal close window and return value.
 
 
 ;__________________________________
-; String List Vie                  |
+; String List View                  |
 ;__________________________________/
 
 
@@ -793,6 +793,8 @@ after any of the window controls calls stop-modal close window and return value.
       :text ""
     :action 'popup-action)
   (:documentation "Popup Image Button Submenu"))
+
+
 
 
 ;__________________________________
@@ -893,6 +895,18 @@ after any of the window controls calls stop-modal close window and return value.
 (defmethod initialize-event-handling ((Self editable-text-control))
   ;; not clickable
   )
+
+;__________________________________
+; Progress Indicator               |
+;__________________________________/
+
+(defclass PROGRESS-INDICATOR-CONTROL (control)
+  ((align :accessor align :initform :center :initarg :align :type keyword :documentation ":left, :center , :right, :justified"))
+  (:documentation "progress indicator")
+  (:default-initargs 
+    :text ""
+    :width 100
+    :height 20))
 
 
 ;__________________________________

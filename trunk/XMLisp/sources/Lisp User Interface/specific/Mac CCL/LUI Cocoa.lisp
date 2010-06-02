@@ -948,7 +948,7 @@
 (defmethod ADD-STRING-LIST-ITEM ((Self string-list-view-control) string)
   "Adds an item to the string-list that will display the text contained in the variable string"
   (let ((text (#/alloc string-list-text-view))) 
-    (ns:with-ns-rect (Frame2 1 (+ 1 (* (item-height self) (length (list-items self)))) (- (width self) 15 )  20 )
+    (ns:with-ns-rect (Frame2 1 (+ 1 (* (item-height self) (length (list-items self)))) (- (width self) 2 )  20 )
       (setf (container text) self)
       (setf (text text) string)
       (#/initWithFrame: text Frame2)
@@ -1565,7 +1565,31 @@
   ;; no Cocoa digging
   )
 
+;__________________________________
+; Progress Indicator               |
+;__________________________________/
 
+(defclass native-progress-indicator-control (ns:ns-progress-indicator)
+  ((lui-view :accessor lui-view :initarg :lui-view))
+  (:metaclass ns:+ns-object))
+
+(defmethod make-native-object ((Self progress-indicator-control))
+  (let ((Native-Control (make-instance 'native-progress-indicator-control :lui-view Self)))
+    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+      (#/initWithFrame: Native-Control Frame)
+      (#/setIndeterminate: Native-Control #$YES))
+  Native-Control))
+
+(defmethod initialize-event-handling ((Self progress-indicator-control))
+  (declare (ignore self)))
+
+(defmethod START-ANIMATION ((self progress-indicator-control))
+  (#/startAnimation: (native-view self) (native-view self)))
+
+
+(defmethod STOP-ANIMATION ((self progress-indicator-control))
+  (#/stopAnimation: (native-view self) (native-view self)))
+           
 ;__________________________________
 ; IMAGE                            |
 ;__________________________________/
@@ -1796,7 +1820,4 @@
     (#/performClick:  (native-view Pop-up) +null-ptr+)
     (#/removeFromSuperview (native-view Pop-up))
     (ccl::lisp-string-from-nsstring  (#/titleOfSelectedItem (native-view Pop-Up)))))
-
-
-
 
