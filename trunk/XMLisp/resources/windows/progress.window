@@ -1,0 +1,7 @@
+<progress-window title="Progress:" height="100">
+  <column align="stretch">
+    <status-bar name="status-bar" width="100" />
+    <spacer/>
+    <progress-indicator width="100" align="center" height="20" name="progress"/>
+  </column>
+</progress-window>
