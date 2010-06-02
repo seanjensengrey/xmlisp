@@ -118,6 +118,7 @@
    "LABEL-CONTROL" "TEXT" "ALIGN"
    "EDITABLE-TEXT-CONTROL"
    "STATUS-BAR-CONTROL"
+   "PROGRESS-INDICATOR-CONTROL" "START-ANIMATION" "STOP-ANIMATION"
    "VALUE"
    "IMAGE-CONTROL" "SRC" "SOURCE" "IN-CLUSTER"  "IMAGE-PATH" "CHANGE-IMAGE" "SCALE-PROPORTIONALLY";; "FILE"->"SOURCE"
    "RADIO-BUTTON-CONTROL" 
@@ -165,7 +166,7 @@
    ;; native support
    "NATIVE-STRING"
    ;; badged image
-   "BADGED-IMAGE-GROUP-LIST-MANAGER-VIEW" "ADD-GROUP"  "ADD-GROUP-ITEM" "DELETE-GROUP" "DELETE-GROUP-ITEM" "SELECTED-GROUP" "SELECTED-GROUP-ITEM" "SELECT-GROUP" "SELECT-GROUP-ITEM"
+   "BADGED-IMAGE-GROUP-LIST-MANAGER-VIEW" "ITEM-CATEGORY-LABEL" "ADD-GROUP"  "ADD-GROUP-ITEM" "DELETE-GROUP" "DELETE-GROUP-ITEM" "SELECTED-GROUP" "SELECTED-GROUP-ITEM" "SELECT-GROUP" "SELECT-GROUP-ITEM"
    "SELECTED-GROUP-CHANGED-ACTION"
    "INCREMENT-ITEM-COUNTER" "CLEAR-ITEM-COUNTERS"
    "PROJECT-MANAGER-REFERENCE" "AGENT-GALLERY-VIEW"
@@ -210,6 +211,7 @@
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;pop-up-image-menu-cocoa")
 (load "lui:sources;Lisp User Interface;pop-up-image-group-menu")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;pop-up-image-group-menu-cocoa")
+
 ;; media
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;play-sound")
 
@@ -272,6 +274,7 @@
 (load "lui:sources;XLUI;dialogs;get-new-agent-info-from-user-window")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;chooser-file-dialogs")
 
+(load "lui:sources;XLUI;progress-window")
 
 
 ;;*************** Build functions

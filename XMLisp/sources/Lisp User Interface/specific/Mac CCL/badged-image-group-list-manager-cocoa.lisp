@@ -51,7 +51,6 @@
 
 
 (defmethod RESIZE-HEIGHT-OF-VIEW ((Self badged-image-group-list-manager-view) &key (call-set-size t))
-  
   (let ((height 0))
     (dolist (group (groups self))
       (if (is-disclosed group)
@@ -60,28 +59,18 @@
     ;(if (> height 200)
     (setf (height self) height)
     ;)
-
     (unless (equal (#/superview (native-view self)) +null-ptr+)
       (progn
-        
         #-cocotron
         (if call-set-size
           (progn
             
             (set-size (lui-view (#/superview (#/superview (native-view self))))   (width (lui-view (#/superview (#/superview (native-view self))))) (height (lui-view (#/superview (#/superview (native-view self))))))
-            (layout (lui-view (#/superview (#/superview (native-view self)))))
-            ))
-        
+            (layout (lui-view (#/superview (#/superview (native-view self)))))))
         (if (lui-view (#/superview (#/superview (native-view self))))
           (progn
             (if (> (height (lui-view (#/superview (#/superview (native-view self))))) (height self))
-              (setf (height self) (height (lui-view (#/superview (#/superview (native-view self))))))
-              )
-            
-            ))
-        
-        ; #-cocotron 
-        ))))
+              (setf (height self) (height (lui-view (#/superview (#/superview (native-view self)))))))))))))
 
 
 ;;*********************************
@@ -131,9 +120,9 @@
 (defmethod LAYOUT ((Self native-badged-image-group-list-manager-view))
   (let ((y 0)) 
     (dolist (group (groups (lui-view self)))
-      (let ((group-height (row-height (lui-view self))))
+      (let ((group-height  (row-height (lui-view self))))
         (if (is-disclosed group)
-          (incf group-height (* (row-height (lui-view self)) (length (group-items group)))))
+          (incf group-height (+ 15 (* (row-height (lui-view self)) (length (group-items group))))))
         (ns:with-ns-size (Size (width (lui-view self)) group-height)
           (#/setFrameSize:  (group-view group ) Size))
         (ns:with-ns-size (Size (width (lui-view self)) (NS:NS-RECT-HEIGHT (#/frame (item-view group))))
@@ -212,10 +201,8 @@
       (#/setNeedsDisplay: subview #$YES)
       (if (equal (type-of subview) 'LUI::mouse-detection-text-field)
         (if (equal (type-of (#/superview self)) 'LUI::ITEM-CONTAINER-VIEW)
-          
           (ns:with-ns-point (Point (NS:NS-RECT-X (#/frame subview))  (* (- (row-height (lui-view (#/superview(#/superview (#/superview self))))) (text-height (lui-view (#/superview(#/superview (#/superview self)))))) .5 ) )
             (#/setFrameOrigin: subview Point ))  
-          
           (ns:with-ns-point (Point (NS:NS-RECT-X (#/frame subview))  (* (- (row-height (lui-view (#/superview self))) (text-height (lui-view (#/superview self)))) .5 ) )
             (#/setFrameOrigin: subview Point )))
         (unless (equal (type-of subview) 'LUI::ITEM-CONTAINER-VIEW )
@@ -237,7 +224,7 @@
 
 (defmethod LAYOUT ((Self item-container-view))
   (let ((subviews (gui::list-from-ns-array (#/subviews self))))
-    (let ((y 0))
+    (let ((y 15))
       (dolist (subview subviews)
         (if (equal (type-of subview) 'LUI::ITEM-DETECTION-VIEW )
           (ns:with-ns-point (Point (NS:NS-RECT-X (#/frame subview)) y)
@@ -376,15 +363,17 @@
   (ns:with-ns-size (Size (head-image-size self) (head-image-size self))
     (#/setFrameSize:  Self Size))
   (let ((head-image (make-instance 'image-control :src (head-image-name self) :x 0 :y 0 :width (head-image-size self) :height (head-image-size self)))
-        (badge-image (make-instance 'image-control :src (badge-image-name self) :x (- (head-image-size self) (badge-image-size self))  :y 0 :width (badge-image-size self) :height (badge-image-size self)))) 
+        ;(badge-image (make-instance 'image-control :src (badge-image-name self) :x (- (head-image-size self) (badge-image-size self))  :y 0 :width (badge-image-size self) :height (badge-image-size self)))
+        (badge-image (make-instance 'image-control :src (badge-image-name self) :x 0  :y 0 :width (head-image-size self) :height (head-image-size self)))
+        ) 
     (let ((head-image-view (#/alloc mouse-detecting-image-view))(badge-image-view (#/alloc mouse-detecting-image-view)))
       (ns:with-ns-rect (Frame 0 0 (head-image-size self) (head-image-size self))
         (ns:with-ns-rect (badge-frame (- (head-image-size self) (badge-image-size self)) 0 (badge-image-size self) (badge-image-size self))
           (#/initWithFrame: head-image-view Frame )
-                      (#/setImage: head-image-view (#/image (native-view head-image)))
+          (#/setImage: head-image-view (#/image (native-view head-image)))
           (#/setImageScaling: head-image-view #$NSScaleToFit)
-          (#/addSubview: self head-image-view)
-          (#/initWithFrame: badge-image-view badge-frame)
+          ;(#/addSubview: self head-image-view)
+          (#/initWithFrame: badge-image-view frame)
           (unless (equal +null-ptr+ (#/superview self))
           (if (and 
                (list-group (#/superview self))
@@ -396,7 +385,8 @@
                 ))
             (#/setImage: badge-image-view (#/image (native-view badge-image)))))
           (#/setImageScaling: badge-image-view #$NSScaleToFit)
-          (#/addSubview: self badge-image-view)))))
+          (#/addSubview: self badge-image-view)
+          ))))
   self) 
 
 
@@ -665,14 +655,14 @@
           (#/insertText: text (native-string (item-name group-item)))
           (#/setBackgroundColor: text (#/whiteColor ns:ns-color))
           (#/setDrawsBackground:  text #$NO)
-        ;  (#/setBezeled: text #$NO)
-       ;   (#/setBordered: text #$NO)
+          ;  (#/setBezeled: text #$NO)
+          ;   (#/setBordered: text #$NO)
           (#/setEditable: text #$NO)
           (setf (text-view group-item) text)
           (setf (group text) group)
           (let ((width (calculate-width-for-text-field text)))
-              (ns:with-ns-size (Size  width (NS:NS-RECT-HEIGHT (#/frame text)))
-                (#/setFrameSize: text Size )))
+            (ns:with-ns-size (Size  width (NS:NS-RECT-HEIGHT (#/frame text)))
+              (#/setFrameSize: text Size )))
           (#/addSubview: #|items-container|# detection-view-item  text)
           (case (item-detection-views group)
             (nil (setf (item-text-views group) (list text)))
@@ -702,9 +692,9 @@
       (let ((group-height (row-height self)))
         (if (is-disclosed group)
           (setf group-height (+ group-height (* (length (group-items group)) (row-height self)))))     
-        (ns:with-ns-rect (detection-frame x 0 (width self) group-height)
+        (ns:with-ns-rect (detection-frame x 0 (width self) (+ 15 group-height))
           (setf (list-group detection-view) group)
-         ; (setf (y group) (+ (row-height self)(- y group-height)))
+          ; (setf (y group) (+ (row-height self)(- y group-height)))
           (setf (group-name detection-view) (group-name group))
           (setf (container detection-view) self)         
           (#/initWithFrame: detection-view detection-frame)
@@ -717,7 +707,7 @@
               (#/setState: (native-view button) #$NSOnState))
             (setf (button-view group) (native-view button))
             (#/addSubview: detection-view (native-view button))))     
-        (let ((image (make-instance badged-image-view :container self :group-name (group-name group) :x x :y 0 :head-image-name (head-image-name self)  :badge-image-name (group-image group)))) 
+        (let ((image (make-instance badged-image-view :container self :group-name (group-name group) :x x :y 0 :head-image-name (group-image group)  :badge-image-name (group-image group)))) 
           (incf x (row-height self))
           (let ((image-view (create-badged-image image)))
             (#/addSubview: detection-view image-view)
@@ -731,8 +721,8 @@
             (#/insertText: text (native-string (string-capitalize (validate-agent-name (group-name group)))))
             (#/setBackgroundColor: text (#/whiteColor ns:ns-color))
             (#/setDrawsBackground:  text #$NO)
-           ; (#/setBezeled: text #$NO)
-          ;  (#/setBordered: text #$NO)
+            ; (#/setBezeled: text #$NO)
+            ;  (#/setBordered: text #$NO)
             (#/setEditable: text #$NO)
             (setf (group text) group)
             (setf (text-view group) text)
@@ -740,11 +730,15 @@
               (ns:with-ns-size (Size  width (NS:NS-RECT-HEIGHT (#/frame text)))
                 (#/setFrameSize: text Size )))
             (#/addSubview: detection-view  text))))    
-   ;   (incf y (- 0(row-height self)))
+      ;   (incf y (- 0(row-height self)))
       (setf X (left-margin self))      
-      (let ((items-container (#/alloc item-container-view)) )
-        (ns:with-ns-rect (item-detection-frame x (row-height self) (width self) (* (length (group-items group)) (row-height self)))  
-          (#/initWithFrame: items-container item-detection-frame))
+      (let ((items-container (#/alloc item-container-view)) 
+            (label (make-instance 'label-control :text "Shapes:" :width (width self) :height 15)))
+        (ns:with-ns-rect (item-detection-frame x (row-height self) (width self) (+ 15 (* (length (group-items group))  (row-height self))))  
+          (#/initWithFrame: items-container item-detection-frame)
+          (#/addSubview: items-container (native-view label))
+          ;(inspect items-container)
+           )
         (setf x (+ (left-margin self)(group-item-offset self)))
         (#/addSubview: detection-view items-container)
         (setf (item-view group) items-container)
@@ -776,6 +770,7 @@
           (setf (width self) (width (lui-view (#/superview (#/superview (native-view self)))))))
         (add-group-to-gui self (get-group-with-name self (group-name list-group)))
         (#/setNeedsDisplay: (native-view self) #$YES)
+        ;(inspect (item-view (get-group-with-name self (group-name list-group))))
         (layout (native-view self))))
     list-group))
 
@@ -933,8 +928,14 @@
   ;do nothing 
   )
 
+(defmethod LAYOUT ((Self lui::native-label))
+  ;do nothing 
+  )
 
 
+(defmethod LAYOUT ((Self ns:ns-progress-indicator))
+  ;do nothing 
+  )
 
 
 
