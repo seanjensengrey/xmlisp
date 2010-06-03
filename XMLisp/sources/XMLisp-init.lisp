@@ -274,7 +274,7 @@
 (load "lui:sources;XLUI;dialogs;get-new-agent-info-from-user-window")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;chooser-file-dialogs")
 
-(load "lui:sources;XLUI;progress-window")
+(load "lui:sources;XLUI;progress-meter")
 
 
 ;;*************** Build functions
