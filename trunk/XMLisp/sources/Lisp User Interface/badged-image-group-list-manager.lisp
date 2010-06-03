@@ -25,7 +25,8 @@
   ; (update-action :accessor update-action :initarg :update-action :initform 'layout-changed)
    (window :accessor window :initform nil)
    (left-margin :accessor left-margin :initform 0)
-   (item-category-label :initarg :item-label :initform "items:")
+   (item-category-label :initarg :item-category-label :initform "items:")
+   (item-category-label-height :accessor item-category-label-height :initarg :item-category-label-height :initform 15)
    )
    (:documentation "This class will is a view that contains groups of items that are identified by a badge image."))
 
