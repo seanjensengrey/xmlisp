@@ -902,12 +902,26 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defclass PROGRESS-INDICATOR-CONTROL (control)
   ((align :accessor align :initform :center :initarg :align :type keyword :documentation ":left, :center , :right, :justified"))
-  (:documentation "progress indicator")
+  (:documentation "This is a basic indeterminate progress indicator that will just show a busy progress bar.  This indicator is much simpler then the determinate progress indicator and must only be turned on and off.  ")
   (:default-initargs 
     :text ""
     :width 100
     :height 20))
 
+;__________________________________
+; Determinate Progress Indicator   |
+;__________________________________/
+
+(defclass DETERMINATE-PROGRESS-INDICATOR-CONTROL (control)
+  ((align :accessor align :initform :center :initarg :align :type keyword :documentation ":left, :center , :right, :justified")
+   (min-value :accessor min-value :initform 0.d0 :initarg :min-value :documentation "The min value of the determinate progress indicator")
+   (max-value :accessor max-value :initform 100.d0 :initarg :max-value :documentation "The max value of the determinate progress indicator")
+   )
+  (:documentation "The determinate progress indicator must by incrimented from min-value to max-value using the increment-by method.  ")
+  (:default-initargs 
+    :text ""
+    :width 100
+    :height 20))
 
 ;__________________________________
 ; Image                             |
