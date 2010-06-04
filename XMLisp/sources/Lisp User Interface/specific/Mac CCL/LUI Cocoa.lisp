@@ -1589,7 +1589,34 @@
 
 (defmethod STOP-ANIMATION ((self progress-indicator-control))
   (#/stopAnimation: (native-view self) (native-view self)))
-           
+    
+;__________________________________
+; Determinate Progress Indicator   |
+;__________________________________/
+
+(defclass native-determinate-progress-indicator-control (ns:ns-progress-indicator)
+  ((lui-view :accessor lui-view :initarg :lui-view))
+  (:metaclass ns:+ns-object))
+
+(defmethod make-native-object ((Self determinate-progress-indicator-control))
+  (let ((Native-Control (make-instance 'native-determinate-progress-indicator-control :lui-view Self)))
+    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+      (#/initWithFrame: Native-Control Frame)
+      (#/setIndeterminate: Native-Control #$NO)
+      (#/setMinValue: Native-Control (min-value self))
+      (#/setMaxValue: Native-Control (max-value self)))
+  Native-Control))
+
+
+(defmethod initialize-event-handling ((Self determinate-progress-indicator-control))
+  (declare (ignore self)))
+
+
+(defmethod INCREMENT-BY ((self determinate-progress-indicator-control) double)
+  "This mthod will increment the determinate progress indicator by the given amount double"
+  (#/incrementBy: (native-view self) double))
+
+       
 ;__________________________________
 ; IMAGE                            |
 ;__________________________________/

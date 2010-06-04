@@ -356,36 +356,28 @@
   (:metaclass ns:+ns-object
               :documentation "A view that will be composed of two images one for the head-image and one for the badge"))
 
-
+;;This method  should be totally retooled/removed when this class is reworked.  
 (defmethod CREATE-BADGED-IMAGE ((self badged-image-view))
   (ns:with-ns-point (Point (x self) (y self))
     (#/setFrameOrigin: Self Point))
   (ns:with-ns-size (Size (head-image-size self) (head-image-size self))
     (#/setFrameSize:  Self Size))
-  (let ((head-image (make-instance 'image-control :src (head-image-name self) :x 0 :y 0 :width (head-image-size self) :height (head-image-size self)))
-        (badge-image (make-instance 'image-control :src (badge-image-name self) :x 0  :y 0 :width (head-image-size self) :height (head-image-size self)))
-        ) 
-    (let ((head-image-view (#/alloc mouse-detecting-image-view))(badge-image-view (#/alloc mouse-detecting-image-view)))
+  (let ((badge-image (make-instance 'image-control :src (badge-image-name self) :x 0  :y 0 :width (head-image-size self) :height (head-image-size self)))) 
+    (let ((badge-image-view (#/alloc mouse-detecting-image-view)))
       (ns:with-ns-rect (Frame 0 0 (head-image-size self) (head-image-size self))
-        (ns:with-ns-rect (badge-frame (- (head-image-size self) (badge-image-size self)) 0 (badge-image-size self) (badge-image-size self))
-          (#/initWithFrame: head-image-view Frame )
-          (#/setImage: head-image-view (#/image (native-view head-image)))
-          (#/setImageScaling: head-image-view #$NSScaleToFit)
-          ;(#/addSubview: self head-image-view)
-          (#/initWithFrame: badge-image-view frame)
-          (unless (equal +null-ptr+ (#/superview self))
+        (#/initWithFrame: badge-image-view frame)
+        (unless (equal +null-ptr+ (#/superview self))
           (if (and 
                (list-group (#/superview self))
                (group-items (list-group (#/superview self)))
                (elt (group-items (list-group (#/superview self))) 0))
             (progn
               (let ((image (make-instance 'image-control :image-path (image-path (elt (group-items (list-group (#/superview self))) 0)) :src (image-name (elt (group-items (list-group (#/superview self))) 0)) :x 0 :y 0 :width (badge-image-size self) :height (badge-image-size self)))) 
-                (#/setImage: badge-image-view (#/image (native-view image)))
-                ))
+                (#/setImage: badge-image-view (#/image (native-view image)))))
             (#/setImage: badge-image-view (#/image (native-view badge-image)))))
-          (#/setImageScaling: badge-image-view #$NSScaleToFit)
-          (#/addSubview: self badge-image-view)
-          ))))
+        (#/setImageScaling: badge-image-view #$NSScaleToFit)
+        (#/addSubview: self badge-image-view)
+        )))
   self) 
 
 

@@ -743,11 +743,26 @@
   ;__________________________________________________________________
 ; Progress-Indicator                                               |
 ;                                                                  |
-;                 |
+; <progress-indicator width="100" align="center" height="20"/>     |
 ;__________________________________________________________________
 
 
 (defclass PROGRESS-INDICATOR (progress-indicator-control xml-layout-interface)
+  ()
+  (:default-initargs
+    :width 10
+    :height 14)
+  (:documentation "Static text"))
+
+
+;__________________________________________________________________
+; Determinate-Progress-Indicator                                   |
+;                                                                  |
+; <progress-indicator width="100" align="center" height="20"/>     |
+;__________________________________________________________________
+
+
+(defclass DETERMINATE-PROGRESS-INDICATOR (determinate-progress-indicator-control xml-layout-interface)
   ()
   (:default-initargs
     :width 10
