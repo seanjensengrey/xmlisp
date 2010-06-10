@@ -354,6 +354,8 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
   </column>                                                                                     
 </application-window>)
 
+(defmethod test3 ((window window) (pop-up pop-up))
+  (print "TEST3"))
 
 ;;****************************************************
 ;; IMAGES  (assumed to be in LUI:resources;images;)  *

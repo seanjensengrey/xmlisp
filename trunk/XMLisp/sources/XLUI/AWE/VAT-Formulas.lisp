@@ -56,7 +56,7 @@
         
 (defun SET-THE-PROPERTY-VALUE (Name Value) "
   in: Name {symbol}, Value {number}.
-  Set the simulation property <Name> to <Value>."
+  Set the simulation property <Name> to <Value>." 
   (setf (gethash Name *Simulation-Properties*) Value))
 
 

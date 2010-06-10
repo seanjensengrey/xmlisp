@@ -131,24 +131,28 @@
   `(x y z roll pitch heading size texture))
 
 
+(defparameter *sphere-draw-lock* (ccl::make-lock))
+
+
 (defmethod DRAW ((Self sphere))
-  (unless (is-visible Self) (return-from draw))
-  (glTranslatef 0.5 0.5 (float (size Self) 0.0))
-  ;; (glEnable GL_LIGHTING)
-  (glTexEnvi GL_TEXTURE_ENV GL_TEXTURE_ENV_MODE GL_MODULATE)
-  (initialize-quadric Self)
-  (cond
-   ((texture Self) 
-    (glEnable GL_TEXTURE_2D)
+  (ccl::with-lock-grabbed (*sphere-draw-lock*)
+    (unless (is-visible Self) (return-from draw))
+    (glTranslatef 0.5 0.5 (float (size Self) 0.0))
+    ;; (glEnable GL_LIGHTING)
+    (glTexEnvi GL_TEXTURE_ENV GL_TEXTURE_ENV_MODE GL_MODULATE)
+    (initialize-quadric Self)
+    (cond
+     ((texture Self) 
+      (glEnable GL_TEXTURE_2D)
     (use-texture Self (texture Self)))
-   (t 
-    (glDisable gl_texture_2d)))
-  (gluSphere (quadric Self) (size Self) 20 20)
-  ;; to make the code sharable for drag and drop we need to do the less efficial way
-  ;; reinitializing the quadric every time we draw. Overhead is <= 10%
-  (gluDeleteQuadric (quadric Self))
-  (setf (quadric Self) nil)
-  (call-next-method))
+     (t 
+      (glDisable gl_texture_2d)))
+    (gluSphere (quadric Self) (size Self) 20 20)
+    ;; to make the code sharable for drag and drop we need to do the less efficial way
+    ;; reinitializing the quadric every time we draw. Overhead is <= 10%
+    (gluDeleteQuadric (quadric Self))
+    (setf (quadric Self) nil)
+    (call-next-method)))
 
 
 (defmethod DRAW-BOUNDING-BOX ((Self sphere) Red Green Blue &optional Alpha)
@@ -554,7 +558,11 @@
   (depth Self)) ;; was 0.2
 
 
+(defparameter *tile-draw-lock* (ccl::make-lock))
+
+
 (defmethod DRAW ((Self tile))
+  ;(ccl::with-lock-grabbed (*tile-draw-lock*)
   (unless (is-visible Self) (return-from draw))
   (call-next-method)
   (cond
@@ -572,6 +580,7 @@
   (glTexCoord2f 1.0 1.0) (glVertex2f (width Self) (height Self))
   (glTexCoord2f 1.0 0.0) (glVertex2f (width Self) 0.0)
   (glEnd))
+;)
 
 
 (defmethod PRINT-SLOTS ((Self tile))

@@ -1173,6 +1173,8 @@
 
 
 (defmethod SET-SELECTED-ITEM-WITH-TITLE ((Self popup-button-control) text)
+  (print "SELECT")
+  (print text)
   (#/selectItemWithTitle: (native-view self) (native-string text)))
 
 
@@ -1180,8 +1182,6 @@
   (if (equal (#/indexOfItemWithTitle: (native-view Self) (native-string Text)) -1)
     (progn 
       (#/addItemWithTitle: (native-view Self) (native-string Text))
-      ;(print (#/selectedItem (native-view Self)))
-      ;(#/setKeyEquivalent: (#/selectedItem (native-view Self)) (native-string "d"))
       (setf (actions Self) (append (actions Self) (list Action))))
     (warn "Cannot add item with the same title (~S)" Text)))
 
@@ -1838,13 +1838,17 @@
 ; Show PopUp                       |
 ;__________________________________/
 
-(defun SHOW-STRING-POPUP (window list)
-  (let ((Pop-up (make-instance 'popup-button-control  :width 1 :height 1 :x   (- (rational (NS:NS-POINT-X (#/mouseLocation ns:ns-event)))(x window))  :y   (-  (- (NS:NS-RECT-HEIGHT (#/frame (#/mainScreen ns:ns-screen)))(NS:NS-POINT-Y (#/mouseLocation ns:ns-event)))(y window))  )))
+(defun SHOW-STRING-POPUP (window list &key container item-addition-action-string-list) 
+  (let ((Pop-up (make-instance 'popup-button-control  :container container :width 1 :height 1 :x   (- (rational (NS:NS-POINT-X (#/mouseLocation ns:ns-event)))(x window))  :y   (-  (- (NS:NS-RECT-HEIGHT (#/frame (#/mainScreen ns:ns-screen)))(NS:NS-POINT-Y (#/mouseLocation ns:ns-event)))(y window))  )))
     (dolist (String list)
       (add-item Pop-Up String nil))
+    (if item-addition-action-string-list
+      (add-item Pop-Up (first item-addition-action-string-list) (second item-addition-action-string-list)))
     (add-subviews window Pop-up)
     (#/setTransparent: (native-view Pop-Up) #$YES)
     (#/performClick:  (native-view Pop-up) +null-ptr+)
     (#/removeFromSuperview (native-view Pop-up))
+    (print "RETURN")
+    (print (ccl::lisp-string-from-nsstring  (#/titleOfSelectedItem (native-view Pop-Up))))
     (ccl::lisp-string-from-nsstring  (#/titleOfSelectedItem (native-view Pop-Up)))))
 
