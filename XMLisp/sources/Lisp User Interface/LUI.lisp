@@ -677,7 +677,9 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defclass POPUP-BUTTON-CONTROL (control)
   ((actions :initarg :actions :accessor actions  :initform ()
-            :documentation "list of actions"))
+            :documentation "list of actions")
+   (container :initarg :container :accessor container  :initform nil
+            :documentation "the container of the control"))
   (:default-initargs
       :text ""
     :action 'popup-action)

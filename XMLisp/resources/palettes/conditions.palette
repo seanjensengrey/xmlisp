@@ -10,6 +10,7 @@
     <empty/>
     <once-every/>
     <%-chance/>
+    <key/>
   </category>
   <category title="attributes" disclosed="true">
     <test expression1="age" operator="&lt;" expression2="21"/>

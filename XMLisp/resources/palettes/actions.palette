@@ -8,8 +8,12 @@
     <change/>
     <new/>
     <erase/>
+    <rotate-to/>
+    <set/>
     <rotate-by droll="90"/>
-   
+    <transport/>
+    <stop-simulation/>
+    <show-message/>
   </category>
 
 
