@@ -161,8 +161,8 @@
 
 (defmethod SNAP-BACK ((Self drag-and-drop-handler))
   (when (drag-proxy-window Self)
-    (window-close (drag-proxy-window Self)))
-  #+(and :ccl :darwin) (hemlock::beep))
+    (window-close (drag-proxy-window Self))
+    #+(and :ccl :darwin) (hemlock::beep)))
 
 
 (defmethod CONCLUDE-DRAG ((Self drag-and-drop-handler))
