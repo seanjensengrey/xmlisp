@@ -9,13 +9,20 @@
     <new/>
     <erase/>
     <rotate-to/>
-    <set/>
     <rotate-by droll="90"/>
     <transport/>
     <stop-simulation/>
     <show-message/>
   </category>
 
+  <category title="sound and speech" disclosed="true">
+    <play-sound/>
+    <say/>
+  </category>
+
+ <category title="attributes" disclosed="true">
+    <set/>
+  </category>
 
 
 </palette>
