@@ -26,6 +26,7 @@
   Self)
 
 
+;; calling this function over and over appears to corrupt memory
 (defun GET-STRING-FROM-USER (Message &key Initial-String)
   (let ((Window (load-object "lui:resources;windows;get-string-from-user.window" :package (find-package :xlui))))
     (when Initial-String
@@ -34,6 +35,22 @@
       (#/setFrameOrigin: (lui::native-window window ) Point ))
     (setf (title Window) Message)
     (show-and-run-modal Window)))
+
+
+;; HACK: alternative implementation based on alerts
+(defun GET-STRING-FROM-USER (msg  &key (Initial-String ""))
+  (let ((alert (make-instance 'ns:ns-alert))
+        (tf (#/initWithFrame: (make-instance 'ns:ns-text-field)
+                              (ns:make-ns-rect 0 0 400 21))))
+    (#/setStringValue: tf (ccl::%make-nsstring Initial-String))
+    (#/setEditable: tf #$YES)
+    (#/setMessageText: alert (ccl::%make-nsstring msg))
+    (#/addButtonWithTitle: alert #@"OK")
+    (#/setAccessoryView: alert tf)
+    (#/layout alert)
+    (#/makeFirstResponder: (#/window alert) tf) 
+    (#/runModal alert) 
+    (ccl::lisp-string-from-nsstring (#/stringValue tf))))
 
 
 
