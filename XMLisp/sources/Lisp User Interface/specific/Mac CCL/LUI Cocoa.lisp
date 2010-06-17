@@ -1744,6 +1744,8 @@
 ; Web Browser                      |
 ;__________________________________/
 
+#| Takes a long time to load: disable for now
+
 #-cocotron
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (objc:load-framework "WebKit" :webkit))
@@ -1831,6 +1833,8 @@
 
 ;; (lui::print-dom (lui::native-view <web-browser url="http://www.agentsheets.com"/>))
 )
+
+|#
 
 ;__________________________________
 ; Show PopUp                       |
