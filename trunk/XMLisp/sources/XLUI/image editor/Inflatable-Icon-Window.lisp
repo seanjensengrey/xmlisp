@@ -283,12 +283,10 @@
 
 
 (defmethod VIEW-LEFT-MOUSE-UP-EVENT-HANDLER ((Self icon-editor) X Y)
+  (declare (ignore X y))
   (call-next-method)
   (display (view-named (Window self) 'model-editor)))
  
-
-
-
 ;________________________________________________
 ;  Lobster Icon Editor                           |
 ;________________________________________________
