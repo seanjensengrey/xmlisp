@@ -1173,8 +1173,6 @@
 
 
 (defmethod SET-SELECTED-ITEM-WITH-TITLE ((Self popup-button-control) text)
-  (print "SELECT")
-  (print text)
   (#/selectItemWithTitle: (native-view self) (native-string text)))
 
 

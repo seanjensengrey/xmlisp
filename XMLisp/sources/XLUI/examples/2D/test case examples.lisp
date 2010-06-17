@@ -348,14 +348,13 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
   <column  align="center" valign="middle" flex="3">                                                  
     <pop-up width="200" name="pop">                                                                            
       <pop-up-item text="on ground" action="test" /> 
-      <pop-up-item text="upright" action="test2"/>                                                    
-      <pop-up-item text="wrap around cube" action="test3"/>                                          
+      <pop-up-item text="upright" action="test"/>                                                    
+      <pop-up-item text="wrap around cube" action="test"/>                                          
     </pop-up>                                                                    
   </column>                                                                                     
 </application-window>)
 
-(defmethod test3 ((window window) (pop-up pop-up))
-  (print "TEST3"))
+
 
 ;;****************************************************
 ;; IMAGES  (assumed to be in LUI:resources;images;)  *

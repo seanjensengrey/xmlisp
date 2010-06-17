@@ -174,9 +174,7 @@
       (unless &Image (return-from create-texture-from-file nil))
       (glPixelStorei GL_UNPACK_ROW_LENGTH Width)  ; Set proper unpacking row length for image
       (glPixelStorei GL_UNPACK_ALIGNMENT 1)       ; Set byte aligned unpacking (needed for 3-byte-per-pixel image)
-
       (glGenTextures 1 &texName)
-      (print (glGetError))
       ; Specify the texture's properties.
       (glBindTexture GL_TEXTURE_2D (%get-long &texName))
       (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_WRAP_S (if Repeat GL_REPEAT GL_CLAMP_TO_EDGE))
