@@ -151,6 +151,7 @@
           load-object save-object finished-reading finished-reading-attributes read-typed-attribute-value
           read-return-value without-xml-reader
           attribute-name->slot-name
+          is-created-by-xml-reader
           ;; instantiation
           duplicate
           ;; do not export "File"
