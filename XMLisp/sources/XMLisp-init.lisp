@@ -303,34 +303,6 @@
   '("home:xmlisp-init" "home:\\.xmlisp-init"))
 
 
-(defun BUILD-XMLISP ()
-  (setq *Package* (find-package :xlui))
-  (require :build-application)
-  ;; load a different init file
-  ;; create LUI host pointing to application bundle
-  (pushnew 'restore-xmlisp *restore-lisp-functions*)
-
-  (format t "~%- create directories and files")
-  (multiple-value-bind (Path Exists)
-                       (create-directory (format nil "~ADesktop/XMLisp/" (user-homedir-pathname)))
-    (declare (ignore Path))
-   (unless Exists
-      (error "XMLisp folder on desktop already exists")))
-
-  (format t "~%- copy examples")
-  (ccl::recursive-copy-directory
-   (truename "lui:sources;XLUI;examples;")
-   (format nil "~ADesktop/XMLisp/examples/" (user-homedir-pathname)))
-
-  (finish-xmlisp)
-
-  (ccl::build-application 
-   :name "XMLisp"
-   :directory (format nil "~ADesktop/XMLisp/" (user-homedir-pathname))
-   :application-class 'xmlisp-application
-   :nibfiles '("lui:resources;English.lproj;MainMenu.nib")))
-
-
 (defun FINISH-XMLISP ()
   (format t "~%- copy image resources")
   (ccl::recursive-copy-directory
@@ -371,6 +343,32 @@
    :if-exists :supersede))
 
 
+(defun BUILD-XMLISP ()
+  (setq *Package* (find-package :xlui))
+  (require :build-application)
+  ;; load a different init file
+  ;; create LUI host pointing to application bundle
+  (pushnew 'restore-xmlisp *restore-lisp-functions*)
+
+  (format t "~%- create directories and files")
+  (multiple-value-bind (Path Exists)
+                       (create-directory (format nil "~ADesktop/XMLisp/" (user-homedir-pathname)))
+    (declare (ignore Path))
+   (unless Exists
+      (error "XMLisp folder on desktop already exists")))
+
+  (format t "~%- copy examples")
+  (ccl::recursive-copy-directory
+   (truename "lui:sources;XLUI;examples;")
+   (format nil "~ADesktop/XMLisp/examples/" (user-homedir-pathname)))
+
+  (finish-xmlisp)
+
+  (ccl::build-application 
+   :name "XMLisp"
+   :directory (format nil "~ADesktop/XMLisp/" (user-homedir-pathname))
+   :application-class 'xmlisp-application
+   :nibfiles '("lui:resources;English.lproj;MainMenu.nib")))
 
 
 
@@ -380,13 +378,3 @@
 
 |#
 
-#|
-(in-package :xlui)
-(setf q
-<application-window>
-<agent-3d-view>
-<cube/>
-</agent-3d-view>
-</application-window>)
-
-|#
