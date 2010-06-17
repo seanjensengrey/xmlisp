@@ -381,7 +381,8 @@
   self) 
 
 
-(defmethod UPDATE-IMAGE ((self badged-image-view)&key (image-name nil))
+(defmethod UPDATE-IMAGE ((self badged-image-view) &key (Image-Name nil))
+  (declare (ignore Image-Name))
   (let ((subviews (gui::list-from-ns-array (#/subviews self))))  
     (dolist (subview subviews)
       (#/removeFromSuperviewWithoutNeedingDisplay subview)))
