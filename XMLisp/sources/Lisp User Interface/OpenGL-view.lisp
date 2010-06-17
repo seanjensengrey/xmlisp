@@ -90,6 +90,7 @@
 ;**************************
 
 (defmethod INITIALIZE-INSTANCE :after ((Self opengl-view) &rest Args)
+  (declare (ignore Args))
   (unless (camera Self)
     (setf (camera Self) (make-instance 'camera :view Self))))
 
