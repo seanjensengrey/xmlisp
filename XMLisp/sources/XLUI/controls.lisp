@@ -485,43 +485,6 @@
 
 (defmethod PRINT-SLOTS ((Self slider))
   '(max-value min-value tick-marks x y width height))
-;__________________________________________________________________
-; Tab-View                                                         |
-;                                                                  |
-;                                                                  |
-;__________________________________________________________________
-
-(defclass TAB-VIEW (tab-view-control xml-layout-interface)
-  (title :accessor )
-  (:default-initargs
-    :width 100 
-    :height 15))
-
-
-(defmethod PRINT-SLOTS ((self tab-view-control))
-  '(x y width height))
-
-(defclass TAB-ITEM (xml-serializer view)
-  ((text :accessor text :initform "option")
-   )
-  (:documentation "a radio button item"))
-
-(defmethod ADD-SUBOBJECT ((tab-view-control tab-view) (Item tab-item))
-  (add-tab-view-item tab-view-control (text Item) ))
-
-(defclass TAB-VIEW-ITEM (tab-view-item-control xml-layout-interface)
-  (title :accessor )
-  (:default-initargs
-    :width 100 
-    :height 15))
-
-(defmethod ADD-SUBOBJECT ((tab-view-control tab-view) (Item tab-view-item))
-  (add-tab-view-item tab-view-control (text Item) ))
-
-
-
-(defmethod ADD-SUBOBJECT ((tab-view-item tab-view-item) (tab-view view))
-  (add-tab-view-item-view tab-view-item  tab-view) )
 
 ;__________________________________________________________________
 ; Check Box                                                        |
@@ -734,13 +697,14 @@
   (:documentation "Static text automatically sized with tight border"))
 
 
+#| Need to reimplement in Cocoa
 (defmethod FINISHED-READING :after ((Self tight-label) Stream)
   (setf (width Self) (string-width (dialog-item-text Self) (view-font Self)))
   (set-view-size Self (width Self) (point-v (view-size Self))))
-    
+|#   
 
 
-  ;__________________________________________________________________
+;__________________________________________________________________
 ; Progress-Indicator                                               |
 ;                                                                  |
 ; <progress-indicator width="100" align="center" height="20"/>     |
