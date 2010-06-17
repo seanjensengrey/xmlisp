@@ -130,7 +130,7 @@
 (defmethod PRINT-SLOTS ((Self sphere))
   `(x y z roll pitch heading size texture))
 
-
+;;Hack: this is a stop gap until we can develop a better locking mechanism.
 (defparameter *sphere-draw-lock* (ccl::make-lock))
 
 
