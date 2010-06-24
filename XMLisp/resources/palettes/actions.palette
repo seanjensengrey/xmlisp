@@ -11,6 +11,7 @@
     <rotate-to/>
     <rotate-by droll="90"/>
     <transport/>
+    <message/>
     <stop-simulation/>
     <show-message/>
     <plot-agents-attribute/>
@@ -25,5 +26,8 @@
     <set/>
   </category>
 
+ <category title="color" disclosed="true">
+    <set-color-to/>
+  </category>
 
 </palette>
