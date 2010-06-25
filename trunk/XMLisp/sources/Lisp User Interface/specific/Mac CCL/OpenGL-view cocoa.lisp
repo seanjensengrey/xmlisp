@@ -205,6 +205,7 @@
 
 
 (defmethod ANIMATE ((Self opengl-view) Time)
+  (declare (ignore Time))
   ;; nada
   )
 
@@ -234,14 +235,16 @@
            '(:name "OpenGL Animations" :priority 0)
            #'(lambda ()
                (loop
+                 (catch-errors-nicely 
+                  "OpenGL Animation"
                   (cond
-                    ;; at least one view to be animated
-                    ((animated-views Self)
-                     (ccl::with-autorelease-pool
-                       (animate-opengl-views-once Self)))
-                    ;; nothing to animate: keep process but use little CPU
-                    (t
-                     (sleep 0.5)))))))))
+                   ;; at least one view to be animated
+                   ((animated-views Self)
+                    (ccl::with-autorelease-pool
+                        (animate-opengl-views-once Self)))
+                   ;; nothing to animate: keep process but use little CPU
+                   (t
+                    (sleep 0.5))))))))))
 
 
 (defmethod STOP-ANIMATION ((Self opengl-view))
