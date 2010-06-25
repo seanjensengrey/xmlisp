@@ -551,18 +551,11 @@
 
 ;; HACK!! move this into LUI Cocoa
 (defmethod DRAW-AS-FLAT-TEXTURE ((Self inflatable-icon))
-
-  (print "drawing as flat texture")
-
-
   (unless (texture-id Self)
     ;; use image as texture
     (unless (image Self) (error "image of inflatable icon is undefined"))
-
-    (print (sizeof (image self)))
-    (print (image Self))
-
-    (unless (= (sizeof (image Self)) (* (rows Self) (columns Self) 4)) (error "image size does not match row/column size"))
+    ;; Hack: test does not work because pointer is likely to claim to be of size 0
+    ;;  (unless (= (sizeof (image Self)) (* (rows Self) (columns Self) 4)) (error "image size does not match row/column size"))
     (ccl::rlet ((&texName :long))
       (glGenTextures 1 &texName)
       (setf (texture-id Self) (ccl::%get-long &texName)))
@@ -574,7 +567,7 @@
     (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_MAG_FILTER GL_NEAREST)
     (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_MIN_FILTER GL_LINEAR_MIPMAP_NEAREST)
     (glTexImage2D GL_TEXTURE_2D 0 4 (columns Self) (rows Self) 0 GL_RGBA GL_UNSIGNED_BYTE (image Self))
-    (unless (zerop (gluBuild2DMipmaps GL_TEXTURE_2D 4 (columns Self) (rows Self) GL_RGBA GL_UNSIGNED_BYTE (image Self)))
+    (unless (zerop (gluBuild2DMipmaps GL_TEXTURE_2D GL_RGBA8 (columns Self) (rows Self) GL_RGBA GL_UNSIGNED_BYTE (image Self)))
             (error "could not create mipmaps")))
   (glEnable GL_TEXTURE_2D)
   (glTexEnvi GL_TEXTURE_ENV GL_TEXTURE_ENV_MODE GL_MODULATE)
