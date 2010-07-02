@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<inflatable-icon-editor-window title="Shape Editor:" width="800" height="300">
+<inflatable-icon-editor-window title="Shape Editor:" width="1020" height="400">
   <column align="stretch" valign="stretch">
   <row align="stretch" valign="stretch" vflex="1">
     <image-button-cluster>
@@ -37,24 +37,38 @@
       </row>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="Noise"/>
-        <slider action="adjust-noise-action" max-value="0.2" flex="1"/>
+        <slider action="adjust-noise-action" max-value="0.2" flex="1" />
         <label name="noise-text" align="right" width="35" text="0.0"/>
       </row>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="Smooth"/>
-        <slider action="adjust-smooth-action" max-value="5" flex="1"/>
+        <slider action="adjust-smooth-action" max-value="5" flex="1"  name="smooth_slider"/>
         <label name="smooth-text" align="right" width="35" text="0.0"/>
       </row>
       <row align="center" minimize="vertical" valign="middle">
         <bevel-button text="Flatten" width="64" height="24" action="edit-icon-flatten-action"/>
       </row>
-
       <spacer height="15"/>
       <label width="65" text="Geometry" align="center"/>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="z offset"/>
         <slider action="adjust-z-offset-action" min-value="-0.1" max-value="0.1" flex="1"/>
         <label name="z-offset-text" align="right" width="35" text="0.0"/>
+      </row>
+      <check-box name="upright" text="upright" action="upright-action"/>
+      <row align="stretch" minimize="vertical" valign="middle">
+        <label width="65" text="distance"/>
+        <slider action="adjust-distance-action" min-value="0.0" max-value="1.0" flex="1" name="distance-slider"/>
+        <label name="distance-text" align="right" width="35" text="0.0"/>
+      </row>
+      <row align="stretch" minimize="vertical" valign="middle">
+        <label width="65" text="surfaces"/>
+        <pop-up width="150" name="surfaces">                                                                   
+          <pop-up-item text="front" action="front-surface-action" />                                                 
+          <pop-up-item text="front and back" action="front-and-back-surface-action"/>                                                    
+          <pop-up-item text="front and back connected" action="front-and-back-connected-surface-action"/>         
+          <pop-up-item text="cube" action="cube-surface-action"/>                              
+        </pop-up>  
       </row>
     </column>
     <spacer width="5"/>

@@ -15,6 +15,7 @@
     <stop-simulation/>
     <show-message/>
     <plot-agents-attribute/>
+    <message/>
   </category>
 
   <category title="sound and speech" disclosed="true">
@@ -26,8 +27,6 @@
     <set/>
   </category>
 
- <category title="color" disclosed="true">
-    <set-color-to/>
-  </category>
+
 
 </palette>

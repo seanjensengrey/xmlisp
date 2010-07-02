@@ -1,4 +1,4 @@
- <progress-window title="Progress:" height="100">
+ <progress-window  height="100">
   <column align="stretch">
     <status-bar name="status-bar" width="100" />
     <spacer/>

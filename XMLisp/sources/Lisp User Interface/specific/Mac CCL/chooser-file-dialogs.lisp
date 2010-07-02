@@ -58,7 +58,8 @@
     (#/setCanChooseFiles: panel t)
     (#/setFrameOrigin: panel window-position)
     ;#-cocotron (#/setAllowedFileTypes:  panel (#/arrayWithObject: ns:ns-array (native-string "lisp")))
-    #-cocotron (#/makeKeyAndOrderFront: panel +null-ptr+)
+    ;#-cocotron (#/makeKeyAndOrderFront: panel +null-ptr+)
+    #-cocotron (#/orderFront: panel +null-ptr+)
     (when (eql (#/runModalForDirectory:file:types: panel
 						   (native-string directory)
 						   +null-ptr+
@@ -103,14 +104,12 @@
                 (if (equal (type-of subview2) 'NS:NS-BUTTON )
                   (if (equal (#/title subview2) (native-string "Cancel"))
                     (#/setTitle: subview2 (native-string cancel-button-string))))))))))
-    (print "1")
     (when file-type-string-list
       (dotimes (i (length file-type-string-list))
         (unless (equal (type-of (elt file-type-string-list i)) (type-of (native-string "string")))
           (progn
             (setf (elt file-type-string-list i) (native-string (elt file-type-string-list i))))))
       (setf file-types (ns-array-from-list file-type-string-list)))
-    (print "2")
     (when button-string
       (setf button-string (ccl::%make-nsstring button-string))
       (#/setPrompt: panel button-string))
@@ -125,7 +124,8 @@
     ;(#/setNameFieldLabel: panel (native-string "hello:"))
     (#/setFrameOrigin: panel window-position)
     #-cocotron (#/setAllowedFileTypes:  panel file-types)
-    #-cocotron (#/makeKeyAndOrderFront: panel +null-ptr+)
+    ;#-cocotron (#/makeKeyAndOrderFront: panel +null-ptr+)
+    #-cocotron (#/orderFront: panel +null-ptr+)
     (when (eql (#/runModalForDirectory:file:types: panel
 						   (native-string directory)
 						   +null-ptr+
@@ -148,6 +148,9 @@
          ;(values (#/values dc))
 	 ;(key #@"cclDirectory")
          )
+    (print "WIDTH/HEIGHT")
+    (print (NS:NS-RECT-WIDTH (#/frame panel)))
+    (print (NS:NS-RECT-HEIGHT (#/frame panel)))
     ;; Kind of nasty code just to change the title of the cancel button, need to go through two layers of subviews to find the button and change its title.  
     (if cancel-button-string
       (let ((subviews (gui::list-from-ns-array (#/subviews (#/contentView panel)))))
@@ -171,8 +174,10 @@
     (#/setCanChooseDirectories: panel t)
     (#/setCanChooseFiles: panel nil)
     (#/setFrameOrigin: panel window-position)
+    (#/setMaxSize: panel (ns:make-ns-size 800.0 619.0))
     ; #-cocotron (#/setAllowedFileTypes:  panel (#/arrayWithObject: ns:ns-array (native-string "lisp")))
-    #-cocotron (#/makeKeyAndOrderFront: panel +null-ptr+)
+    ;#-cocotron (#/makeKeyAndOrderFront: panel +null-ptr+)
+    #-cocotron (#/orderFront: panel +null-ptr+)
     (when (eql (#/runModalForDirectory:file:types: panel
 						   (native-string directory) ;(#/valueForKey: values (native-string directory))
 						   +null-ptr+
@@ -205,7 +210,9 @@
                 (if (equal (type-of subview2) 'NS:NS-BUTTON )
                   (if (equal (#/title subview2) (native-string "Cancel"))
                     (#/setTitle: subview2 (native-string cancel-button-string))))))))))
-    
+    ;    (print "WIDTH/HEIGHT")
+    ;    (print (NS:NS-RECT-WIDTH (#/frame panel)))
+    ;   (print (NS:NS-RECT-HEIGHT (#/frame panel)))
     (when button-string
       (setf button-string (ccl::%make-nsstring button-string))
       (#/setPrompt: panel button-string))
@@ -218,9 +225,12 @@
     (#/setCanChooseDirectories: panel nil)
     (#/setCanChooseFiles: panel nil)
     ;(#/setNameFieldLabel: panel (native-string "hello:"))
+    
     (#/setFrameOrigin: panel window-position)
     ;#-cocotron (#/setAllowedFileTypes:  panel (#/arrayWithObject: ns:ns-array (native-string "lisp")))
-    #-cocotron (#/makeKeyAndOrderFront: panel +null-ptr+)
+    ; #-cocotron (#/makeKeyAndOrderFront: panel +null-ptr+)
+    ;(#/makeKeyWindow panel)
+    #-cocotron (#/orderFront: panel +null-ptr+)
     (when (eql (#/runModalForDirectory:file:types: panel
 						   (native-string directory)
 						   +null-ptr+
