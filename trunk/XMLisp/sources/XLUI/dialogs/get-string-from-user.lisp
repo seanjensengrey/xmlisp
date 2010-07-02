@@ -47,7 +47,8 @@
     (#/setMessageText: alert (ccl::%make-nsstring msg))
     (#/addButtonWithTitle: alert #@"OK")
     (#/setAccessoryView: alert tf)
-    (#/layout alert)
+    ;;Layout only work on OSX 10.5 or higher
+    ;(#/layout alert)
     (#/makeFirstResponder: (#/window alert) tf) 
     (#/runModal alert) 
     (ccl::lisp-string-from-nsstring (#/stringValue tf))))

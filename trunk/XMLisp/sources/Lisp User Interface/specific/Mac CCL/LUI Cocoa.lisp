@@ -750,6 +750,8 @@
 (defmethod (setf text) :after (Text (Self button-control))
   (#/setTitle: (native-view Self) (native-string Text)))
 
+
+
 ;__________________________________
 ; BEVEL BUTTON                      |
 ;__________________________________/
@@ -872,6 +874,9 @@
 (defmethod (setf text) :after (Text (Self checkbox-control))
   (#/setTitle: (native-view Self) (native-string Text)))
 
+
+(defmethod ENABLE ((self checkbox-control))
+  (#/setState: (Native-View self) #$NSOnState))
 
 ;__________________________________
 ; STRING-LIST-TEXT-VIEW            |
@@ -1439,6 +1444,8 @@
       (#/setFloatValue: Native-Control (slot-value Self 'value)))
     Native-Control))
 
+(defmethod (setf VALUE)  (Value (Self slider-control))
+  (#/setFloatValue: (native-view Self) Value))
 
 (defmethod VALUE ((Self slider-control))
   (#/floatValue (native-view Self)))
@@ -1853,4 +1860,5 @@
     (print "RETURN")
     (print (ccl::lisp-string-from-nsstring  (#/titleOfSelectedItem (native-view Pop-Up))))
     (ccl::lisp-string-from-nsstring  (#/titleOfSelectedItem (native-view Pop-Up)))))
+
 

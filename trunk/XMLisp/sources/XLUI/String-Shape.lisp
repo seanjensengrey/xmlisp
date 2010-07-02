@@ -281,7 +281,9 @@
 ;__________________________
 
 (defmethod DISPLAY-VERTEX-ARRAYS ((Self string-shape))
-  
+  ;(print "TEXTURE")
+  ;(print (texture (font Self)))
+  ;(setf (texture (font Self)) 4)
   (glEnable gl_texture_2d)
   (cond
    ;; Color!

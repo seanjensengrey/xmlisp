@@ -52,7 +52,7 @@
 ;; Load
 
 ;; IDE
-
+  
 #-cocotron (load "lui:sources;IDE;specific;Mac CCL;anticipat-symbol-complete")
 #-cocotron (load "lui:sources;IDE;specific;Mac CCL;ns timer")
 #-cocotron (load "lui:sources;IDE;specific;Mac CCL;GLDocs")
@@ -114,7 +114,7 @@
    "ACTION" "SUBVIEWS" "DO-SUBVIEWS" "MAP-SUBVIEWS" "ADD-SUBVIEW" "SUPERVIEW" "ADD-SUBVIEWS" "SWAP-SUBVIEW" "SUBVIEWS-SWAPPED" "SET-FRAME" 
    "BUTTON-CONTROL" "DEFAULT-BUTTON"
    "INVOKE-ACTION"
-   "BEVEL-BUTTON-CONTROL" "DISABLE" "SLIDER-CONTROL" "TICK-MARKS" "MIN-VALUE" "MAX-VALUE"
+   "BEVEL-BUTTON-CONTROL" "DISABLE" "SLIDER-CONTROL" "TICK-MARKS" "MIN-VALUE" "MAX-VALUE" "ENABLE"
    "LABEL-CONTROL" "TEXT" "ALIGN"
    "EDITABLE-TEXT-CONTROL"
    "STATUS-BAR-CONTROL"
@@ -256,7 +256,7 @@
 (load "lui:sources;XLUI;Cursor-Manager")
 (load "lui:sources;XLUI;agent-3D")
 (load "lui:sources;XLUI;shapes")
-
+(load "lui:sources;XLUI;keyboard")
 ;; inflatable icons
 (load "lui:sources;XLUI;image editor;selection-mask")
 (load "lui:sources;XLUI;image editor;image-editor")
@@ -289,6 +289,7 @@
 
 
 (defun RESTORE-XMLISP ()
+  (print "RESTORE XMLISP")
   (let* ((contents-dir (ccl::ccl-contents-directory))
          (toplevel-dir (make-pathname :directory (butlast (pathname-directory contents-dir) 2)
                                       :device (pathname-device contents-dir))))
@@ -296,6 +297,7 @@
           `(("examples;**;*.*" ,(merge-pathnames "examples/**/*.*" toplevel-dir))
             ("**;*.*" ,(merge-pathnames "**/*.*" contents-dir)))))
   #+windows-target (open-shared-library "opengl32.dll"))
+
 
 
 (defclass xmlisp-application (gui::cocoa-application)

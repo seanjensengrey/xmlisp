@@ -33,12 +33,15 @@
 (in-package :xlui)
 
 
+
 (defclass INFLATABLE-ICON (shape) ;; agent-3d
   ((rows :accessor rows :initform 32 :initarg :rows)
    (columns :accessor columns :initform 32 :initarg :columns)
    (steps :accessor steps :initform 10)
    (pressure :accessor pressure :initform 0.0 :type short-float)
+   (ceiling-value :accessor ceiling-value :initarg :ceiling-value :initform 1.0 :type short-float)
    (noise :accessor noise :initform 0s0)
+   (smooth :accessor smooth :initarg :smooth :initform 0s0)
    (max-value :accessor max-value :initform 1.0)
    (dx :accessor dx :initform 1.0 :initarg :dx :type short-float)
    (dy :accessor dy :initform 1.0 :initarg :dy :type short-float)
@@ -46,13 +49,13 @@
    (display-list :accessor display-list :initform nil)
    (is-compiled :accessor is-compiled :initform nil :type boolean)
    (auto-compile :accessor auto-compile :initform t :type boolean :initarg :auto-compile)
-   (is-upright :accessor is-upright :initform nil :type boolean)
-   (surfaces :accessor surfaces :initform 'front :type symbol :documentation "FRONT, FRONT AND BACK, ..")
+   (is-upright :accessor is-upright :initform nil :initarg is-upright :type boolean)
+   (surfaces :accessor surfaces :initform 'front :initarg :surfaces :type symbol :documentation "FRONT, FRONT AND BACK, ..")
    (icon :accessor icon :initform nil :initarg :icon :documentation "name of icon image")
    (image :accessor image :initform nil :initarg image :documentation "RGBA image")
    (noise-map :accessor noise-map :initform nil :documentation "a 2d map with noise values")
    (altitudes :accessor altitudes :type array)
-   (distance :accessor distance :initform 0.0 :documentation "distance between mirrored surfaces")
+   (distance :accessor distance :initform 0.0 :initarg :distance :documentation "distance between mirrored surfaces")
    (connectors :accessor connectors :initform nil :documentation "connectors are polygons connecting inner and outer edges of the symetric sides")
    (visible-alpha-threshold :accessor visible-alpha-threshold :initform 64 :allocation :class :documentation "8 bit alpha value used as visible/invisible threshold")
    (texture-id :accessor texture-id :initform nil :documentation "OpenGL texture name")
@@ -61,7 +64,6 @@
   (:documentation "High polygon count 3D object made from inflated icon")
   (:default-initargs 
       :depth 0.0d0))
-
 
 ;********************************************************
 ;* Specification                                        *
@@ -84,8 +86,8 @@
 ;* Implementation                                       *
 ;********************************************************
 
-(defmethod PRINT-SLOTS ((Self inflatable-icon))
-  `(icon rows columns depth pressure steps noise max-value is-upright surfaces altitudes distance dz is-flat))
+(defmethod PRINT-SLOTS ((Self inflatable-icon))  
+  `(icon rows columns depth pressure ceiling-value steps noise max-value is-upright surfaces altitudes distance dz is-flat is-upright surfaces ))
 
 
 (defmethod FINISHED-READING :after ((Self inflatable-icon) Stream)
@@ -130,7 +132,6 @@
 
 
 (defmethod COPY-CONTENT-INTO ((Source inflatable-icon) (Destination inflatable-icon))
-  ;;; (print "COPY CONTENT INTO")
   ;; check for size compatibility to avoid disaster
   (unless (and (= (rows Source) (rows Destination)) 
                (= (columns Source) (columns Destination)))
@@ -396,7 +397,7 @@
 
 (defmethod (SETF DISTANCE) :after (Value (Self inflatable-icon))
   (declare (ignore Value))
-  ;;(format t "~%distance=~A" Value)
+  ;;(format t "~%distance=~A" Value)  
   (compute-connectors Self)
   ;;(print (length (connectors Self)))
   )
@@ -439,6 +440,7 @@
 
 
 (defmethod DRAW ((Self inflatable-icon))
+  
   ;; the texture update needs to happen in the right opengl context
   ;; just in time while display is not elegant but works
   (when (update-texture-from-image-p Self)
@@ -551,11 +553,12 @@
 
 ;; HACK!! move this into LUI Cocoa
 (defmethod DRAW-AS-FLAT-TEXTURE ((Self inflatable-icon))
-  (unless (texture-id Self)
+  ;; This unless made it so flat texture could not be modified.  
+  ;(unless (texture-id Self) 
     ;; use image as texture
     (unless (image Self) (error "image of inflatable icon is undefined"))
-    ;; Hack: test does not work because pointer is likely to claim to be of size 0
-    ;;  (unless (= (sizeof (image Self)) (* (rows Self) (columns Self) 4)) (error "image size does not match row/column size"))
+    ;; HACK: sizeof always return zero so we need to find some other sort of error checking.
+    ;(unless (= (sizeof (image Self)) (* (rows Self) (columns Self) 4)) (error "image size does not match row/column size"))
     (ccl::rlet ((&texName :long))
       (glGenTextures 1 &texName)
       (setf (texture-id Self) (ccl::%get-long &texName)))
@@ -567,8 +570,8 @@
     (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_MAG_FILTER GL_NEAREST)
     (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_MIN_FILTER GL_LINEAR_MIPMAP_NEAREST)
     (glTexImage2D GL_TEXTURE_2D 0 4 (columns Self) (rows Self) 0 GL_RGBA GL_UNSIGNED_BYTE (image Self))
-    (unless (zerop (gluBuild2DMipmaps GL_TEXTURE_2D GL_RGBA8 (columns Self) (rows Self) GL_RGBA GL_UNSIGNED_BYTE (image Self)))
-            (error "could not create mipmaps")))
+    (unless (zerop (gluBuild2DMipmaps GL_TEXTURE_2D 4 (columns Self) (rows Self) GL_RGBA GL_UNSIGNED_BYTE (image Self)))
+            (error "could not create mipmaps"));)
   (glEnable GL_TEXTURE_2D)
   (glTexEnvi GL_TEXTURE_ENV GL_TEXTURE_ENV_MODE GL_MODULATE)
   (glBindTexture GL_TEXTURE_2D (texture-id Self))
@@ -595,6 +598,218 @@
          (Old-Color-Red nil)
          (Old-Color-Green nil)
          (Old-Color-Blue nil)
+         (Old-Color-Alpha nil))
+    (glDisable gl_texture_2d)
+    ;;(glEnable gl_lighting)
+    (glEnable gl_color_material)
+    (glenable gl_normalize)
+    (let ((state :start)
+          (last-vertex ())
+          (vertex-before-last())
+          (repeat-next-vertex nil))
+    ;; scan vertically 
+    (dotimes (Column (+ 1 (columns Self)))
+      (dotimes (Row   (rows Self))
+        
+        (let ((Z00 (altitude-at Self Row Column))
+                (Z10 (altitude-at Self (1+ Row) Column))
+                (Z01 (altitude-at Self Row (1+ Column)))
+                (Z11 (altitude-at Self (1+ Row) (1+ Column)))
+                (X1 (+ x dx))
+                (Y1 (+ y dy)))
+          (case state
+            (:start
+             (if (>= (rgba-image-alpha Image Column Row (columns Self)) (visible-alpha-threshold Self))
+               (progn
+                 (let ((Color-Red (rgba-image-red Image Column Row (columns Self)))
+                       (Color-Green (rgba-image-green Image Column Row (columns Self)))
+                       (Color-Blue (rgba-image-blue Image Column Row (columns Self)))
+                       (Color-Alpha (rgba-image-alpha Image Column Row (columns Self))))
+                   ;; only set the color if it has changed
+                   (unless (and (equal Color-Red Old-Color-Red)
+                                (equal Color-Green Old-Color-Green)
+                                (equal Color-Blue Old-Color-Blue)
+                                (equal Color-Alpha Old-Color-Alpha))
+                     (with-vector (V 
+                                   (/ Color-Red 256s0)
+                                   (/ Color-Green 256s0)
+                                   (/ Color-Blue 256s0)
+                                   (/ Color-Alpha 256s0))
+                       (glColor4fv V))
+                     (setq Old-Color-Red Color-Red)
+                     (setq Old-Color-Green Color-Green)
+                     (setq Old-Color-Blue Color-Blue)
+                     (setq Old-Color-Alpha Color-Alpha)))
+                 ;; We have found the first pixel in the image, begin the triangle strip and draw the first pixel (4 vertices, 2 triangles)
+                 (glBegin gl_triangle_strip)
+                 (setf state :paint)
+                 (normal-at Self Row (1+ Column) 2m)
+                 (glVertex3f x1 y z01)
+                 (normal-at Self Row Column 2m)
+                 (glVertex3f x y z00)
+                 (normal-at Self (1+ Row) (1+ Column) 2m)
+                 (glVertex3f x1 y1 z11)
+                 (normal-at Self (1+ Row) Column 2m)
+                 (glVertex3f x y1 z10)
+                 (setf last-vertex `(,x ,y1 ,z10))
+                 (setf vertex-before-last `(,x1 ,y1 ,z11)))))
+            (:paint
+             (cond
+              ( (equal column  (columns self))
+               ;; we have reached the end of the image so end the triangle strip
+               (setf state :finish)
+               (glEnd))
+              ((< (rgba-image-alpha Image Column Row (columns Self)) (visible-alpha-threshold Self))
+               ;; We have found a transparent pixel while in the paint state, switch to the skip state and draw a degenerate triangle
+               (setf state :skip)
+               (if last-vertex
+                 (glVertex3f (first last-vertex) (second last-vertex) (third last-vertex))))
+              (t
+               
+               (let ((Color-Red (rgba-image-red Image Column Row (columns Self)))
+                     (Color-Green (rgba-image-green Image Column Row (columns Self)))
+                     (Color-Blue (rgba-image-blue Image Column Row (columns Self)))
+                     (Color-Alpha (rgba-image-alpha Image Column Row (columns Self))))
+                 ;; only set the color if it has changed
+                 (unless (and (equal Color-Red Old-Color-Red)
+                              (equal Color-Green Old-Color-Green)
+                              (equal Color-Blue Old-Color-Blue)
+                              (equal Color-Alpha Old-Color-Alpha))
+                   (with-vector (V 
+                                 (/ Color-Red 256s0)
+                                 (/ Color-Green 256s0)
+                                 (/ Color-Blue 256s0)
+                                 (/ Color-Alpha 256s0))
+                     (glColor4fv V))
+                   (setq Old-Color-Red Color-Red)
+                   (setq Old-Color-Green Color-Green)
+                   (setq Old-Color-Blue Color-Blue)
+                   (setq Old-Color-Alpha Color-Alpha)
+                   ;; we need to draw a degenerate triangle after changing color so that it will not blend between the two colors
+                   ;; I.E. we draw vertices 0 1 2 3 2 3 4 5 6 if we are making a color shift between the pixel 
+                   ;; that contains the triangles: 0 1 2 and 1 2 3 and the pixel that contains the triangles : 3 4 5 and 4 5 6    
+                   
+                   (unless repeat-next-vertex
+                     (glVertex3f (first vertex-before-last) (second vertex-before-last) (third vertex-before-last))
+                     (glVertex3f (first last-vertex) (second last-vertex) (third last-vertex))
+                     )))
+               ;(print "row")
+               ;(print row)
+               
+               
+               (if repeat-next-vertex
+                 (progn
+                   #|
+                   (glVertex3f x1 y1 z11)
+                   |#
+                    (normal-at Self Row (1+ Column) 2m)
+               ;; repeat first pixel to form a degenerate triangle
+               (glVertex3f x1 y z01)
+               (glVertex3f x1 y z01)
+               (normal-at Self Row Column 2m)
+               (glVertex3f x y z00)
+
+                   (setf repeat-next-vertex nil)
+                   ))
+               
+               (normal-at Self (1+ Row) (1+ Column) 2m)
+               (glVertex3f x1 y1 z11)
+               (normal-at Self (1+ Row) Column 2m)
+               (glVertex3f x y1 z10)
+               
+               (if (equal row  (- (rows self) 1) )
+                 (progn 
+                   (setf repeat-next-vertex t)
+                   (glVertex3f x y1 z10)))
+               
+               (setf last-vertex `(,x ,y1 ,z10))
+               (setf vertex-before-last `(,x1 ,y1 ,z11)))))
+            #|
+            (glVertex3f x1 y z01)
+            (glVertex3f x1 y z01)
+            (normal-at Self Row Column 2m)
+            (glVertex3f x y z00)
+            (normal-at Self (1+ Row) (1+ Column) 2m)
+            (glVertex3f x1 y1 z11)
+            (normal-at Self (1+ Row) Column 2m)
+            (glVertex3f x y1 z10)
+            (setf repeat-next-vertex nil)
+            (setf last-vertex `(,x ,y1 ,z10))
+            (setf vertex-before-last `(,x1 ,y1 ,z11))
+            |#
+            (:skip
+             (cond
+              ( (equal column  (columns self) )
+               ;; we have reached the end of the image so end the triangle strip
+               (setf state :finish)
+               (glEnd))
+              ;;is the new pixel opaque?  If so switch paint state, change color if needed and draw the pixel (4 vertices) + degenerate triangle
+              
+              ((>= (rgba-image-alpha Image Column Row (columns Self)) (visible-alpha-threshold Self))
+               (setf state :paint)
+                           
+               (let ((Color-Red (rgba-image-red Image Column Row (columns Self)))
+                     (Color-Green (rgba-image-green Image Column Row (columns Self)))
+                     (Color-Blue (rgba-image-blue Image Column Row (columns Self)))
+                     (Color-Alpha (rgba-image-alpha Image Column Row (columns Self))))
+                 ;; only set the color if it has changed
+                 (unless (and (equal Color-Red Old-Color-Red)
+                              (equal Color-Green Old-Color-Green)
+                              (equal Color-Blue Old-Color-Blue)
+                              (equal Color-Alpha Old-Color-Alpha))
+                   (with-vector (V 
+                                 (/ Color-Red 256s0)
+                                 (/ Color-Green 256s0)
+                                 (/ Color-Blue 256s0)
+                                 (/ Color-Alpha 256s0))
+                     (glColor4fv V))
+                   (setq Old-Color-Red Color-Red)
+                   (setq Old-Color-Green Color-Green)
+                   (setq Old-Color-Blue Color-Blue)
+                   (setq Old-Color-Alpha Color-Alpha)))
+               (normal-at Self Row (1+ Column) 2m)
+               ;; repeat first pixel to form a degenerate triangle
+               (glVertex3f x1 y z01)
+               (glVertex3f x1 y z01)
+               (normal-at Self Row Column 2m)
+               (glVertex3f x y z00)
+               (normal-at Self (1+ Row) (1+ Column) 2m)
+               (glVertex3f x1 y1 z11)
+               (normal-at Self (1+ Row) Column 2m)
+               (glVertex3f x y1 z10)
+               (setf repeat-next-vertex nil)
+               (setf last-vertex `(,x ,y1 ,z10))
+               (setf vertex-before-last `(,x1 ,y1 ,z11)))
+              
+              )
+             )
+            (:finish
+             ;;do nothing, we are done.
+             )))
+        (incf y dy))
+      (setq y 0s0)
+      (incf x dx)
+      ))
+    ;; Terminate strip if needed
+    
+    ;; finish
+    (glcolor4fv {1.0 1.0 1.0 1.0})))
+#|
+(defmethod DRAW-UNCOMPILED ((Self inflatable-icon)) 
+  (print "DRAW UNCOMPILED OLD")
+  (unless (image Self) (return-from draw-uncompiled))
+  (when (is-flat Self)  ;; optimization
+    (draw-as-flat-texture Self)
+    (return-from draw-uncompiled))
+  (let* ((X 0s0)
+         (Dx (/ (dx Self) (columns Self)))
+         (Y 0s0)
+         (Dy (/ (dy Self) (rows Self)))
+         (2M (+ dx dx))
+         (Image (image Self))
+         (Old-Color-Red nil)
+         (Old-Color-Green nil)
+         (Old-Color-Blue nil)
          (Old-Color-Alpha nil)
          (Face-Number 0))
     (glDisable gl_texture_2d)
@@ -604,15 +819,17 @@
     ;; scan vertically 
     (dotimes (Column (columns Self))
       (dotimes (Row (rows Self))
-        (cond
-         ;; visible pixel
-         ((>= (rgba-image-alpha Image Column Row (columns Self)) (visible-alpha-threshold Self))
-          (let ((Z00 (altitude-at Self Row Column))
+        (let ((Z00 (altitude-at Self Row Column))
                 (Z10 (altitude-at Self (1+ Row) Column))
                 (Z01 (altitude-at Self Row (1+ Column)))
                 (Z11 (altitude-at Self (1+ Row) (1+ Column)))
                 (X1 (+ x dx))
                 (Y1 (+ y dy)))
+        (cond
+         ;; visible pixel
+         
+         ((>= (rgba-image-alpha Image Column Row (columns Self)) (visible-alpha-threshold Self))
+          
             (when (= Face-Number 0) (glBegin gl_triangle_strip))
             ;; Set face color + alpha if necessary
             (let ((Color-Red (rgba-image-red Image Column Row (columns Self)))
@@ -626,7 +843,9 @@
                 ;; terminate strip and start new one: WHY? This could be a RADEON bug
                 ;; this wastes a lot of time since strips will be much shorter on average
                 (when (> Face-Number 0)
+                  
                   (glEnd)
+                  
                   (glBegin gl_triangle_strip)
                   (setq Face-Number 0))
                 (with-vector (V 
@@ -656,25 +875,31 @@
             (normal-at Self (1+ Row) (1+ Column) 2m)
             (glVertex3f x1 y1 z11)
             (normal-at Self (1+ Row) Column 2m)
-            (glVertex3f x y1 z10)))
-          (t                      ;; pixel invisible
+            (glVertex3f x y1 z10))
+          (t                           ;; pixel invisible
            ;; Terminate strip if needed
            (when (> Face-Number 0)
              (glEnd)
-             (setq Face-Number 0))))
+             (setq Face-Number 0)
+             ;(glVertex3f x y1 z10)
+             ;(glVertex3f x y1 z10)
+             ))))
         (incf y dy))
       (setq y 0s0)
       (incf x dx)
       (when (> Face-Number 0)
+        
         (glEnd)
         (setq Face-Number 0)))
     ;; Terminate strip if needed
     (when (> Face-Number 0)
+      
       (glEnd)
       (setq Face-Number 0))
     ;; finish
     (glcolor4fv {1.0 1.0 1.0 1.0})))
 
+|#
 ;_________________________________________
 ; Altitude Operations                     |
 ;_________________________________________
@@ -802,14 +1027,20 @@
 (inspect 
  (make-inflatable-icon-from-image-file "lui:resources;templates;shapes;redLobster;redLobster.png")
 
+(defparameter *window*
 <application-window>
-  <agent-3d-view>
-    <lobster-inflatable-icon/>
+  <agent-3d-view name="losbter-view">
+    <lobster-inflatable-icon name="lobster2"/>
   </agent-3d-view>
-</application-window>
+</application-window>)
 
+(format t " ~% ~A klops" 
+         (/ 100000000.0 (hemlock::time-to-run
+          (dotimes (i 100)
+            (draw  (first (agents(view-named *window* "losbter-view")))))))
+               )
 
-
+(inspect (view-named *window* "losbter-view"))
 
 (inspect 
 (make-inflatable-icon-from-image-file "ad3d:resources;images;SEStopScriptImage.tiff"))

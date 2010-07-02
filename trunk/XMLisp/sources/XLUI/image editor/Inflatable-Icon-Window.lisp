@@ -25,6 +25,17 @@
 (in-package :xlui)
 
 
+(defclass INFLATABLE-ICON-WINDOW-DELEGATE (ns:ns-object)
+  ((lui-winodw :accessor lui-window :initform nil :initarg :lui-window))
+  (:metaclass ns:+ns-object
+	      :documentation "window delegate"))
+
+(objc:defmethod (#/windowWillClose: :void) ((self INFLATABLE-ICON-WINDOW-DELEGATE) Notifaction)
+  (declare (ignore Notifaction))
+  (print "WINDOW WILL CLOSE") 
+  (funcall (alert-close-action (lui-window self)) (alert-close-target (lui-window self)) (lui-window self))
+  )
+
 (defclass INFLATABLE-ICON-EDITOR-WINDOW (application-window)
   ((container :accessor container :initform nil :initarg :container)
    (smoothing-cycles :accessor smoothing-cycles :initform 0 :initarg :smoothing-cycles)
@@ -32,9 +43,20 @@
    (selected-camera-tool :accessor selected-camera-tool :initform nil :type symbol :initarg :selected-tool :documentation "the name of the currently selected camera tool")
    (file :accessor file :initform nil :documentation "shape file")
    (destination-inflatable-icon :accessor destination-inflatable-icon :initform nil :initarg :destination-inflatable-icon :documentation "if present save edited icon into this inflatable icon")
-   (close-action :accessor close-action :initform nil :initarg :close-action :documentation "called with self when inflatable icon window is being closed"))
+   (close-action :accessor close-action :initform nil :initarg :close-action :documentation "called with self when inflatable icon window is being closed")
+   (delegate :accessor delegate :initform (make-instance 'INFLATABLE-ICON-WINDOW-DELEGATE))
+   (alert-close-action :accessor alert-close-action :initform nil :initarg :alert-close-action :documentation "The method that should be called when the window has closed, to alert the container of the closing")
+   (alert-close-target :accessor alert-close-target :initform nil :initarg :alert-close-target :documentation "The target of the close-action, most likely the caller of the window.")
+   )
   (:documentation "Editor used to create inflatable icons"))
 
+
+(defmethod INITIALIZE-INSTANCE :after ((Self inflatable-icon-editor-window) &rest Args) 
+  (let ((Model-Editor (view-named self 'model-editor)))
+    (if (is-upright (inflatable-icon Model-Editor))
+      (enable (view-named self "upright"))))
+  (#/setDelegate: (lui::native-window self) (make-instance 'inflatable-icon-window-delegate :lui-window self)))
+  
 
 (defgeneric TOOL-SELECTION-EVENT (inflatable-icon-editor-window Tool-Name)
   (:documentation "called after tool has been selected"))
@@ -403,7 +425,8 @@
   
   (glDisable gl_cull_face))
 
-  
+
+
 (defmethod DRAW ((Self inflated-icon-editor)) 
   (glClearColor 0.9 0.9 0.9 1.0) 
   (glClear (logior GL_COLOR_BUFFER_BIT gl_depth_buffer_bit))
@@ -434,6 +457,9 @@
 ;*************************************************
 ;  Component Actions                             *
 ;*************************************************
+
+
+
 
 
 ;; Tool Bar Actions
@@ -523,12 +549,13 @@
 ;; Content Actions
 
 
-(defmethod ADJUST-PRESSURE-ACTION ((Window inflatable-icon-editor-window) (Slider slider))
+(defmethod ADJUST-PRESSURE-ACTION ((Window inflatable-icon-editor-window) (Slider slider) &optional do-not-display)
   (let ((Pressure (value Slider)))
     (let ((Text-View (view-named Window 'pressuretext)))
       ;; update label
       (setf (text Text-View) (format nil "~4,2F" Pressure))
-      (display Text-View)
+      (unless do-not-display
+        (display Text-View))
       ;; update model editor
       (let ((Model-Editor (view-named Window 'model-editor)))
         (setf (pressure (inflatable-icon Model-Editor)) Pressure)
@@ -584,8 +611,8 @@
         (display Model-Editor)))))
 
 
-(defmethod ADJUST-DISTANCE-ACTION ((Window inflatable-icon-editor-window) (Slider slider))
-  (let ((Distance (* 0.001 (value Slider))))
+(defmethod ADJUST-DISTANCE-ACTION ((Window inflatable-icon-editor-window) (Slider slider) &optional do-not-display)
+  (let ((Distance  (value Slider)))
     (let ((Text-View (view-named Window 'distance-text)))
       ;; update label
       (setf (text Text-View) (format nil "~4,2F" Distance))
@@ -593,44 +620,58 @@
     ;; set distance of inflatable icon
     (let ((Model-Editor (view-named Window 'model-editor)))
       (setf (distance (inflatable-icon Model-Editor)) Distance)
-      (display Model-Editor))))
+      (print "DO NOT")
+      (print do-not-display)
+      (unless do-not-display
+        
+        (display Model-Editor)
+        )
+      )))
+
+
 
 
 (defmethod CHANGE-ICON-ACTION ((Window inflatable-icon-editor-window) (Icon-Editor icon-editor))
   (update-inflation Window))
 
-
+#|
 (defmethod UPRIGHT-ACTION ((Window inflatable-icon-editor-window) (Check-Box check-box))
   (let ((Model-Editor (view-named Window 'model-editor)))
     (setf (is-upright (inflatable-icon Model-Editor))
           (check-box-checked-p Check-Box))
     (display Model-Editor)))
+|#
 
+(defmethod UPRIGHT-ACTION ((Window inflatable-icon-editor-window) (Check-Box check-box))
+  (let ((Model-Editor (view-named Window 'model-editor)))
+    (setf (is-upright (inflatable-icon Model-Editor))
+          (value Check-Box))
+    (display Model-Editor)))
 
 ;; surface actions
 
-(defmethod FRONT-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up-Item pop-up-item))
+(defmethod FRONT-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up pop-up))
   (declare (ignore Pop-Up-item))
   (let ((Model-Editor (view-named Window 'model-editor)))
     (setf (surfaces (inflatable-icon Model-Editor)) 'front)
     (display Model-Editor)))
 
 
-(defmethod FRONT-AND-BACK-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up-Item pop-up-item))
+(defmethod FRONT-AND-BACK-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up pop-up))
   (declare (ignore Pop-Up-item))
   (let ((Model-Editor (view-named Window 'model-editor)))
     (setf (surfaces (inflatable-icon Model-Editor)) 'front-and-back)
     (display Model-Editor)))
 
 
-(defmethod FRONT-AND-BACK-CONNECTED-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up-Item pop-up-item))
+(defmethod FRONT-AND-BACK-CONNECTED-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up-Item pop-up))
   (declare (ignore Pop-Up-item))
   (let ((Model-Editor (view-named Window 'model-editor)))
     (setf (surfaces (inflatable-icon Model-Editor)) 'front-and-back-connected)
     (display Model-Editor)))
 
 
-(defmethod CUBE-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up-Item pop-up-item))
+(defmethod CUBE-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up-Item pop-up))
   (declare (ignore Pop-Up-item))
   (let ((Model-Editor (view-named Window 'model-editor)))
     (setf (surfaces (inflatable-icon Model-Editor)) 'cube)
@@ -653,14 +694,20 @@
 
 
 (defmethod CLOSE-WINDOW-WITH-WARNING ((Self inflatable-icon-editor-window))
-  (when (y-or-n-dialog "Close window without saving changes?" :cancel-text nil)
+  (print "1")
+  (when (easygui::y-or-n-dialog "Close window without saving changes?" )
+    (print "2")
     ;; forget current content
+    (print "CLOSE")
     (when (close-action Self) 
       (funcall (close-action Self) Self))
+    (when (and (alert-close-action self) (alert-close-target self))
+      (funcall (alert-close-action self) (alert-close-target self)))
     (window-close Self)))
 
 
 (defmethod EDIT-ICON-CANCEL-ACTION ((Window inflatable-icon-editor-window) (Button button))
+  (print "EDIT ICON")
   (close-window-with-warning Window))
 
 
@@ -714,6 +761,8 @@
         ;(setf (update-texture-from-image-p (destination-inflatable-icon Window)) t)
         )))
   (if (container window)
+    (display-world (project-window (project-manager-reference (container window)))))
+  (if (container window)
     (lui::save-button-pressed (container window))
     (print "NOT")))
 
@@ -746,12 +795,16 @@
     Window))
 
 
-(defun NEW-INFLATABLE-ICON-EDITOR-WINDOW-FROM-IMAGE (Pathname &key Shape-Filename Destination-Inflatable-Icon Close-Action) "
+(defun NEW-INFLATABLE-ICON-EDITOR-WINDOW-FROM-IMAGE (Pathname &key Shape-Filename Destination-Inflatable-Icon Close-Action Alert-Close-Action Alert-Close-Target) "
   Create and return an new inflatable icon editor by loading an image. 
   If folder contains .shape file matching image file name then load shape file."
   (let* ((Window (load-object "lui:resources;windows;inflatable-icon-editor.window" :package (find-package :xlui)))
          (Icon-Editor (view-named Window "icon-editor"))
          (Inflated-Icon-Editor (view-named Window "model-editor")))
+    (if alert-close-action
+      (setf (alert-close-action window) alert-close-action))
+    (if alert-close-target 
+      (setf (alert-close-target window) alert-close-target))
     ;; 2D
     (load-image Icon-Editor Pathname)
     (center-canvas Icon-Editor)
@@ -781,6 +834,7 @@
               (make-array (list (img-height Icon-Editor) (img-width Icon-Editor))
                           :element-type 'short-float
                           :initial-element 0.0))))
+      (initialize-gui-components Window (inflatable-icon Inflated-Icon-Editor))
       (setf (auto-compile (inflatable-icon Inflated-Icon-Editor)) nil))  ;; keep editable
     ;; use the icon editor image, not the new inflatable icon editor one
     (setf (image (inflatable-icon Inflated-Icon-Editor))
@@ -793,6 +847,21 @@
     Window))
 
 
+(defmethod INITIALIZE-GUI-COMPONENTS ((Self inflatable-icon-editor-window) Inflatable-Icon)
+  (setf (value (view-named self "distance-slider")) (distance inflatable-icon))
+  ;(setf (value (view-named self "pressure_slider")) (pressure inflatable-icon))
+  ;(inspect inflatable-icon)
+  ;(setf (value (view-named self "ceiling_slider")) (ceiling-value inflatable-icon))
+  ;(setf (value (view-named self "smooth_slider")) (smooth inflatable-icon))
+  (adjust-distance-action self (view-named self "distance-slider") t)
+  ;(adjust-pressure-action self (view-named self "pressure_slider") t)
+  ;(adjust-ceiling-action self (view-named self "ceiling_slider"))
+  ;(adjust-smooth-action self (view-named self "smooth_slider"))
+  (set-selected-item-with-title (view-named self "surfaces")  (string-downcase(substitute #\space #\-  (string (surfaces Inflatable-Icon)) :test 'equal)))
+  (if (is-upright Inflatable-Icon)
+      (enable (view-named self "upright"))))
+  
+ 
 #| Examples:
 
 
