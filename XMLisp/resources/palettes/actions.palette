@@ -11,11 +11,10 @@
     <rotate-to/>
     <rotate-by droll="90"/>
     <transport/>
-    <message/>
+    <message selector="animate"><direction/></message>
     <stop-simulation/>
     <show-message/>
     <plot-agents-attribute/>
-    <message/>
   </category>
 
   <category title="sound and speech" disclosed="true">
