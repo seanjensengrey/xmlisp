@@ -66,6 +66,7 @@
       )))
 
 
+
 (defmethod DISPLAY ((Self drag-proxy-window))
   ;; source view and proxy window share agents -> grab source view lock to avoid
   ;; asynchronous access issues
