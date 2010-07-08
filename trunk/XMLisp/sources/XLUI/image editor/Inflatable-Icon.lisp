@@ -570,7 +570,9 @@
     (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_MAG_FILTER GL_NEAREST)
     (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_MIN_FILTER GL_LINEAR_MIPMAP_NEAREST)
     (glTexImage2D GL_TEXTURE_2D 0 4 (columns Self) (rows Self) 0 GL_RGBA GL_UNSIGNED_BYTE (image Self))
-    (unless (zerop (gluBuild2DMipmaps GL_TEXTURE_2D 4 (columns Self) (rows Self) GL_RGBA GL_UNSIGNED_BYTE (image Self)))
+    ;#-cocotron(unless (zerop (gluBuild2DMipmaps GL_TEXTURE_2D 4 (columns Self) (rows Self) GL_RGBA GL_UNSIGNED_BYTE (image Self)))
+  (unless (zerop (gluBuild2DMipmaps GL_TEXTURE_2D 4 (columns Self) (rows Self) GL_RGBA GL_UNSIGNED_BYTE (image Self)))
+
             (error "could not create mipmaps"));)
   (glEnable GL_TEXTURE_2D)
   (glTexEnvi GL_TEXTURE_ENV GL_TEXTURE_ENV_MODE GL_MODULATE)

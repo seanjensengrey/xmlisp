@@ -327,6 +327,10 @@
 ;;************************************
 ;; WINDOW                            *
 ;;************************************
+
+(defmethod WINDOW-CLOSE ((Self Window))
+  (#/close (native-window Self)))
+
 ;__________________________________
 ; NATIVE-WINDOW                     |
 ;__________________________________/
@@ -362,7 +366,14 @@
                         :event-type (native-to-lui-event-type (#/type event))
                         :native-event Event)))
 
-
+#|
+(objc:defmethod (#/flagsChanged: :void) ((self native-window) event)
+  (view-event-handler (lui-window Self)
+                      (make-instance 'key-event 
+                        :key-code (#/keyCode Event)
+                        :event-type (native-to-lui-event-type (#/type event))
+                        :native-event Event)))
+|#
 
 (objc:defmethod (#/becomeMainWindow :void) ((self native-window))
   (call-next-method)
@@ -407,6 +418,9 @@
     (setf (width (lui-window Self)) (truncate (pref (#/frame Content-View) <NSR>ect.size.width)))
     (setf (height (lui-window Self)) (truncate (pref (#/frame Content-View) <NSR>ect.size.height)))
     (size-changed-event-handler (lui-window Self) (width (lui-window Self)) (height (lui-window Self)))))
+
+(objc:defmethod (#/windowWillClose: :void) ((self window-delegate) Notification)
+  (window-will-close (lui-window self) Notification))
 
 #|
 (objc:defmethod (#/windowDidEndLiveResize: :void) ((self window-delegate) Notification)

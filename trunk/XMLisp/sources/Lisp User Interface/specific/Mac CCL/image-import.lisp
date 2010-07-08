@@ -104,6 +104,7 @@
        (#/bitmapData Image-Representation) 
        (* (#/bytesPerRow Image-Representation) (#/pixelsHigh Image-Representation))
        (#/bytesPerRow Image-Representation)))
+    ;(format t "bitmap Data = ~A pixelsWide = ~A pixelsHigh = ~A bitsPerPixel = ~A" (#/bitmapData Image-Representation) (#/pixelsWide Image-Representation) (#/pixelsHigh Image-Representation) (#/bitsPerPixel Image-Representation))
     (values 
      (#/bitmapData Image-Representation)
      (#/pixelsWide Image-Representation)

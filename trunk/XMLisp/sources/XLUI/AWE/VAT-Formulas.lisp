@@ -52,7 +52,6 @@
   Return the simulation property <Name>.
   If <Name> does not exist then return 0."
   (gethash Name *Simulation-Properties* 0))
-
         
 (defun SET-THE-PROPERTY-VALUE (Name Value) "
   in: Name {symbol}, Value {number}.

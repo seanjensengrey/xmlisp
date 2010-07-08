@@ -239,9 +239,13 @@
                                    (setq vx1 vx2)
                                    (setq vy1 vy2))))
                              Inside)))
+
     (multiple-value-bind (Left Top Right Bottom) (polygon-bounds Vertices)
+      
       (dotimes (Row (- Bottom Top))
+        
         (dotimes (Col (- Right Left))
+          
           (when (and (pixel-within-bounds-p (+ Left Col) (+ Top Row) Pixels)
                      (inside-polygon-p (+ Left Col 0.5) (+ Top Row 0.5) Vertices))            
             (setf (aref Pixels (+ Left Col) (+ Top Row)) Value)))))))

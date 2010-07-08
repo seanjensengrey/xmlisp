@@ -9,14 +9,26 @@
     <stacked-a/>
     <empty/>
     <once-every/>
+    <is-selected/>
     <%-chance/>
+  </category>
+  <category title="keyboard" disclosed="true">
     <key/>
+    <shift-key-down/>
   </category>
   <category title="attributes" disclosed="true">
     <test expression1="age" operator="&lt;" expression2="21"/>
+    <has-attribute/>
   </category>
   <category title="camera control" disclosed="true">
     <first-person-view/>
+    <camera-attached/>
   </category>
-
+  <category title="Control Stucture" disclosed="true">
+    <not/>
+  </category>
+  <category title="Testing" disclosed="true">
+    <true/> 
+    <false/>
+  </category>
 </palette>
