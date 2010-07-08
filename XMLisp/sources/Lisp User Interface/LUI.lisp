@@ -193,6 +193,8 @@ Call with most important parameters. Make other paramters accessible through *Cu
 (defgeneric MAKE-NATIVE-OBJECT (view-or-window)
   (:documentation "Make and return a native view object"))
 
+
+
 ;;_______________________________
 ;; Default implementation        |
 ;;_______________________________
@@ -412,6 +414,9 @@ after any of the window controls calls stop-modal close window and return value.
 (defgeneric KEY-EVENT-HANDLER (Window Event)
   (:documentation "Invoked on key event"))
 
+(defgeneric WINDOW-WILL-CLOSE (Window Notification)
+  (:documentation "This method will be called by the window delegate whenever the window is about to be close"))
+
 ;;_______________________________
 ;; default implementations       |
 ;;_______________________________
@@ -496,6 +501,7 @@ after any of the window controls calls stop-modal close window and return value.
 
 
 (defmethod KEY-EVENT-HANDLER ((Self window) Event)
+  (setf *current-event* event)
   (format t "~%window key event ~A" (native-event Event)))
 
 
@@ -512,6 +518,7 @@ after any of the window controls calls stop-modal close window and return value.
 
 
 (defmethod VIEW-EVENT-HANDLER ((Self Window) (Event key-event))
+  ;(setf *current-event* event)
   (let ((*Current-Event* Event))
     (with-simple-restart (abandon-view-event-handler "Stop event handling of event ~S of window ~S" Event Self)
       (key-event-handler Self Event))))
@@ -553,6 +560,11 @@ after any of the window controls calls stop-modal close window and return value.
   ;;(format t "~%new main window: ~A" Self)
   )
 
+
+(defmethod WINDOW-WILL-CLOSE ((Self window) Notification)
+  (declare (ignore Notification))
+  ;;Do nothing, override this method if you need to do any cleanup when the window closes.
+  )
 
 ;****************************************************
 ; CONTROL                                           *

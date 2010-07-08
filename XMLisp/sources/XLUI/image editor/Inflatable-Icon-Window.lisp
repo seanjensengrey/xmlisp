@@ -32,7 +32,6 @@
 
 (objc:defmethod (#/windowWillClose: :void) ((self INFLATABLE-ICON-WINDOW-DELEGATE) Notifaction)
   (declare (ignore Notifaction))
-  (print "WINDOW WILL CLOSE") 
   (funcall (alert-close-action (lui-window self)) (alert-close-target (lui-window self)) (lui-window self))
   )
 
@@ -620,8 +619,6 @@
     ;; set distance of inflatable icon
     (let ((Model-Editor (view-named Window 'model-editor)))
       (setf (distance (inflatable-icon Model-Editor)) Distance)
-      (print "DO NOT")
-      (print do-not-display)
       (unless do-not-display
         
         (display Model-Editor)
@@ -694,16 +691,17 @@
 
 
 (defmethod CLOSE-WINDOW-WITH-WARNING ((Self inflatable-icon-editor-window))
-  (print "1")
+  #-cocotron
   (when (easygui::y-or-n-dialog "Close window without saving changes?" )
-    (print "2")
+    
     ;; forget current content
-    (print "CLOSE")
+    
     (when (close-action Self) 
       (funcall (close-action Self) Self))
     (when (and (alert-close-action self) (alert-close-target self))
       (funcall (alert-close-action self) (alert-close-target self)))
-    (window-close Self)))
+    (window-close Self))
+  )
 
 
 (defmethod EDIT-ICON-CANCEL-ACTION ((Window inflatable-icon-editor-window) (Button button))

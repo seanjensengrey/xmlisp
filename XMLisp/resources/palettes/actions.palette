@@ -1,31 +1,44 @@
 <?xml version="1.0"?>
 <palette>
-
   <category title="basic actions" disclosed="true">
     <move/>
+    <transport/> 
     <move-random/>
     <move-random-on/>
     <change/>
     <new/>
     <erase/>
-    <rotate-to/>
+    <set-color-to/>
     <rotate-by droll="90"/>
-    <transport/>
-    <message selector="animate"><direction/></message>
-    <stop-simulation/>
-    <show-message/>
-    <plot-agents-attribute/>
+    <rotate-to/>
   </category>
-
+  <category title="time" disclosed="true">
+    <wait/>
+    <finish-animations/>
+  </category>
+  <category title="messages" disclosed="true">
+    <message/>
+    <broadcast/> 
+  </category>
   <category title="sound and speech" disclosed="true">
     <play-sound/>
     <say/>
   </category>
-
- <category title="attributes" disclosed="true">
+  <category title="attributes" disclosed="true">
     <set/>
-  </category>
-
-
-
+    <map/>
+    <plot-agents-attribute/> 
+   </category>
+   <category title="dialog" disclosed="true">
+     <show-message/>
+   </category>
+   <category title="simulation control" disclosed="true">
+     <run-simulation/>
+     <step-simulation/>
+     <stop-simulation/>
+   </category>
+   <category title="World Control" disclosed="true">
+     <switch-to-world/>
+     <reload-world/>
+   </category>
 </palette>

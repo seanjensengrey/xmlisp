@@ -224,6 +224,9 @@
   (dolist (View (animated-views Self))
     (animate-opengl-view-once View)))
 
+(defparameter *animation-lock* (ccl::make-lock))
+
+(export '(*animation-lock*))
 
 (defmethod START-ANIMATION ((Self opengl-view))
   ;; add myself to list
@@ -240,8 +243,12 @@
                   (cond
                    ;; at least one view to be animated
                    ((animated-views Self)
+                    (grab-lock *animation-lock*)
+                    (release-lock *animation-lock*)
                     (ccl::with-autorelease-pool
-                        (animate-opengl-views-once Self)))
+                        (animate-opengl-views-once Self))
+                    
+                    )
                    ;; nothing to animate: keep process but use little CPU
                    (t
                     (sleep 0.5))))))))))
