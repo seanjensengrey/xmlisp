@@ -127,6 +127,10 @@
   (:documentation "This method will be called everytime the layout changes.  This method should be overrided to do things like update the status of buttons that are dependent on selections of groups or items.  "))
 
 
+(defgeneric group-deselected (badged-image-group-list-manager-view)
+  (:documentation "This method will be called when an item or group is deselected in the gallery.  "))
+
+
 ;---------------------------------
 ; Implementation                  |
 ;________________________________
@@ -189,6 +193,9 @@
       )))
     (set-selected self group-name))
 
+
+(defmethod GROUP-DESELECTED ((Self badged-image-group-list-manager-view))
+  (set-selected self nil))
 
 #|
 Example:
