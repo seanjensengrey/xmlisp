@@ -109,13 +109,6 @@
   (:metaclass ns:+ns-object
 	      :documentation ""))
 
-#|
-(objc:defmethod (#/drawRect: :void) ((self native-badged-image-group-list-manager-view) (rect :<NSR>ect))
-  (call-next-method rect)
-      (#/set (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color .2 .2 .2 1.0))
-      (#/fillRect: ns:ns-bezier-path rect)
-)
-|#
 
 (defmethod LAYOUT ((Self native-badged-image-group-list-manager-view))
   (let ((y 0)) 
@@ -156,7 +149,7 @@
 
 (objc:defmethod (#/mouseDown: :void) ((self native-badged-image-group-list-manager-view) Event)
   (declare (ignore Event))
-  (set-selected (lui-view self) nil))
+  (group-deselected (lui-view self)))
 
 
 
