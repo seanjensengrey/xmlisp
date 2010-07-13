@@ -133,7 +133,7 @@
 
 (defmethod OBJECT-COORDINATE-VIEW-WIDTH ((Self opengl-view))
   (* (/ (width Self) (height Self))
-     1.14 ;; magic! should be computed from camera view angle
+     1.050 ;; magic! should be computed from camera view angle
      (float (eye-z (camera Self)) 0.0)))
 
 
