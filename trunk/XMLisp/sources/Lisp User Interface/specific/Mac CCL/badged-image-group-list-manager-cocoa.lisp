@@ -793,6 +793,12 @@
 
 (defmethod SET-SELECTED ((Self badged-image-group-list-manager-view) group-name &key (highlight t) (resign "YES"))
   ;(remove-background-from-text-fields (native-view  self))
+  (when (and group-name (not (get-group-with-name self group-name)))
+    (progn 
+      
+      (group-deselected self))
+    )
+  
   (let ((previously-selected-group-name  (selected-group self)))
   (with-simple-restart (cancel-pop "Stop to create view for ~s" Self)    
     (dolist (group (groups self))
