@@ -40,6 +40,6 @@
    </category>
    <category title="World Control" disclosed="true">
      <switch-to-world/>
-     <reload-world/>
+     <reload-world/> 
    </category>
 </palette>
