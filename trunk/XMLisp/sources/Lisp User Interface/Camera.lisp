@@ -70,7 +70,7 @@
   (:documentation "Render camera in selection mode. Need to define a picking matrix with focus on <x,y>"))
 
 
-(defgeneric TRACK-MOUSE-3D (Camera View dx dy)
+(defgeneric TRACK-MOUSE-3D (Camera View dx dy &optional disable-spin)
   (:documentation "Track the mouse to control the aim of the camera"))
 
 
@@ -288,7 +288,7 @@
          :up-z (- z3 z2))))))
     
 
-(defmethod TRACK-MOUSE-3D ((Self camera) View dx dy)
+(defmethod TRACK-MOUSE-3D ((Self camera) View dx dy &optional disable-spin)
   (declare (ignore View))
   ;; use modifier keys to select camera action
   (cond 
@@ -297,7 +297,8 @@
    ((command-key-p) 
     (track-mouse-pan Self dx dy (if (shift-key-p) 0.01 0.05)))
    (t 
-    (track-mouse-spin Self dx dy (if (shift-key-p) 0.01 0.04)))))
+    (unless disable-spin
+      (track-mouse-spin Self dx dy (if (shift-key-p) 0.01 0.04))))))
 
 
 
