@@ -789,7 +789,8 @@
          (draw-ellipse-selection-feedback Self Left Top Right Bottom)
          (mirror-rect-or-ellipse-selection-in-progress Self Left Top Right Bottom #'draw-ellipse-selection-feedback)))
       ;; Do not have the mirroring working for this yet
-      (:polygon (draw-polygon-selection-feedback
+      (:polygon 
+       (draw-polygon-selection-feedback
                  Self (rest (selection-in-progress Self)))))))
 
 
