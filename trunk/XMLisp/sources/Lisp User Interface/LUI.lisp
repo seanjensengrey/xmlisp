@@ -811,6 +811,24 @@ after any of the window controls calls stop-modal close window and return value.
 
 
 
+;__________________________________
+; ATTRIBUTE VALUE LIST VIEW CONTROL     |
+;__________________________________/
+
+
+(defclass ATTRIBUTE-VALUE-LIST-VIEW-CONTROL (control)
+  ((list-items :accessor list-items :initform nil :documentation "The list of strings displayed in this list")
+   (item-height :accessor  item-height :initform 16 :documentation "The height of an item in the list")
+   (selected-string :accessor selected-string :initform nil)
+   (attribute-owner :accessor attribute-owner :initform nil :documentation "An owner can be associated with this object and if so, it will be notifed when this objects value-text-field is editted.  In order for this to work, you will need to an attribute-changed-action.")
+   (attribute-changed-action :accessor attribute-changed-action :initform nil)
+   (color-update-process :accessor color-update-process :initform nil)
+   )
+  (:default-initargs
+      :text ""
+    :action 'popup-action)
+  (:documentation "A list of items with associated value"))
+
 
 ;__________________________________
 ; Scroller                         |

@@ -588,6 +588,9 @@
     (when Frame
       (#/setFrame:display:animate: (native-window Self) Frame #$YES #$NO))))
 
+
+(defmethod MAKE-KEY-WINDOW ((Self window))
+  (#/makeKeyWindow (native-window self)))
 ;__________________________________
 ; Window query functions            |
 ;__________________________________/
@@ -939,6 +942,10 @@
 
 (objc:defmethod (#/drawRect: :void) ((self native-string-list-view) (rect :<NSR>ect))
   (call-next-method rect)
+  (layout (lui-view self))
+  (set-size (lui-view self) (NS:NS-RECT-WIDTH rect) (NS:NS-RECT-HEIGHT rect))
+  (print (NS:NS-RECT-WIDTH rect))
+  (print (width (lui-view self)))
   (#/set (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color 1.0 1.0 1.0 1.0))
   (#/fillRect: ns:ns-bezier-path rect)
   (#/set (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color .5 .5 .5 1.0))
@@ -967,7 +974,7 @@
 (defmethod ADD-STRING-LIST-ITEM ((Self string-list-view-control) string)
   "Adds an item to the string-list that will display the text contained in the variable string"
   (let ((text (#/alloc string-list-text-view))) 
-    (ns:with-ns-rect (Frame2 1 (+ 1 (* (item-height self) (length (list-items self)))) (- (width self) 2 )  20 )
+    (ns:with-ns-rect (Frame2 1 (+ 1 (* (item-height self) (length (list-items self)))) 100  20 )
       (setf (container text) self)
       (setf (text text) string)
       (#/initWithFrame: text Frame2)
@@ -1013,7 +1020,206 @@
   ;; no event handling for rows
   )
 
+(defclass ATTRIBUTE-TEXT-VIEW-DELEGATE (ns:ns-object)
+  ((lui-view :accessor lui-view :initform nil :initarg :lui-view))
+  (:metaclass ns:+ns-object
+	      :documentation " delegate"))
 
+(defclass ATTRIBUTE-VALUE-LIST-TEXT-VIEW (ns:ns-text-field)
+  ((container :accessor container :initform nil :initarg :container)
+   (value-save :accessor value-save :initform nil :documentation "if the user begins editing in case they enter a bad value so we can restore the old value")
+   (attribute-owner :accessor attribute-owner :initform nil :initarg :attribute-owner :documentation "An owner can be associated with this object and if so, it will be notifed when this objects value-text-field is editted.  In order for this to work, you will need to an attribute-changed-action.")
+   (attribute-changed-action :accessor attribute-changed-action :initform nil :initarg :attribute-changed-action )   )
+  (:metaclass ns:+ns-object
+              :documentation "A text field that detects mouse events.  "))
+
+
+(objc:defmethod (#/textDidChange: :void) ((self attribute-value-list-text-view) Notification)
+  (call-next-method Notification)
+  )
+
+
+(objc:defmethod (#/textDidBeginEditing: :void) ((self attribute-value-list-text-view) Notification)
+  (setf (value-save self) (#/stringValue self))
+  (call-next-method Notification))
+
+
+(objc:defmethod (#/textDidEndEditing: :void) ((self attribute-value-list-text-view) Notification)
+  (when (read-from-string (ccl::lisp-string-from-nsstring (#/stringValue self)) nil nil)
+    (unless (numberp  (read-from-string (ccl::lisp-string-from-nsstring (#/stringValue self)) nil nil))
+      (print (value-save self))
+      (if (value-save self)
+        (#/setStringValue: self (value-save self))))
+    (call-next-method Notification)
+    (if (attribute-owner self)
+      (funcall (attribute-changed-action self) (attribute-owner self) (window (container (container self))) (attribute-symbol (container self)) (read-from-string (ccl::lisp-string-from-nsstring (#/stringValue self)) nil nil)) 
+      (print "NOT__"))))
+
+;__________________________________
+; ATTRIBUTE-VALUE-LIST-ITEM-VIEW   |
+;__________________________________/
+
+
+(defclass ATTRIBUTE-VALUE-LIST-ITEM-VIEW (ns:ns-view)
+  ((is-selected :accessor is-selected :initform nil)
+   (container :accessor container :initform nil :initarg :container)
+   (lui-view :accessor lui-view :initform nil)
+   (text :accessor text :initform nil :initarg :text )
+   (height :accessor height :initform nil :initarg :height )
+   (width :accessor width :initform nil :initarg :width )
+   (attribute-symbol :accessor attribute-symbol :initarg :attribute-symbol :initform nil :documentation "The text field will store the name of attribute as a native-string so for conveniance we store the attribute as a symbol here")
+   (attribute-value :accessor attribute-value :initform 0 :initarg :attribute-value)
+   (value-text-field :accessor value-text-field :initform nil :documentation "Editable NSTextField containg the value of the attribute")
+   (name-text-field :accessor name-text-field :initform nil :documentation "NSTextView containg the name of the attribute" )
+   (attribute-owner :accessor attribute-owner :initform nil :initarg :attribute-owner :documentation "An owner can be associated with this object and if so, it will be notifed when this objects value-text-field is editted.  In order for this to work, you will need to an attribute-changed-action.")
+   (attribute-changed-action :accessor attribute-changed-action :initform nil :initarg :attribute-changed-action :documentation "The action that should be called when the attribute's value has been changed" )
+   (timer-triggers :accessor timer-triggers :initform nil :documentation "when to start TIME triggers")
+   )
+  (:metaclass ns:+ns-object
+              :documentation "An item of an attribute-value-list-view-control, this item is made up of a text view displaying the name of the attribute, and an editable field displaying the value.  "))
+
+
+(defmethod INITIALIZE-INSTANCE :after ((Self attribute-value-list-item-view) &rest Args)
+  (declare (ignore Args))
+  (let ((text (#/alloc ns:ns-text-view))) 
+    (ns:with-ns-rect (Frame2 1 (+ 1 0) (* .5 (width self))  20 )
+      (#/initWithFrame: text Frame2)
+      (#/insertText: text (native-string (text self)))
+      (#/setBackgroundColor: text (#/whiteColor ns:ns-color))
+      (#/setDrawsBackground:  text #$YES)
+      (#/setEditable: text #$NO)
+      (#/setSelectable: text #$NO)
+      (setf (name-text-field self) text)
+      (#/addSubview:  self text))
+    (let ((value-text (make-instance 'attribute-value-list-text-view :container self :attribute-owner (attribute-owner self) :attribute-changed-action (attribute-changed-action self)))) 
+      (ns:with-ns-rect (Frame2 (* .5 (width self)) 1 (* .5 (width self))  20 )
+        (#/initWithFrame: value-text Frame2)
+        (#/setStringValue:  value-text (native-string (write-to-string (attribute-value self))))
+        (#/setBackgroundColor: value-text (#/whiteColor ns:ns-color))
+        (#/setDrawsBackground:  value-text #$YES)
+        (#/setSelectable: value-text #$YES)
+        (#/setEditable: value-text #$YES)
+        (setf (value-text-field self) value-text)
+        (#/addSubview:  self value-text)))))
+
+
+(defmethod TIMER-DUE-P ((Self attribute-value-list-item-view) Ticks) 
+  (let ((Time (getf (timer-triggers Self) Ticks 0))
+        (Now (get-internal-real-time)))
+    (when (or (>= Now Time)                          ;; it's time
+              (> Time (+ Now Ticks Ticks)))    ;; timer is out of synch WAY ahead
+      (setf (getf (timer-triggers Self) Ticks) (+ Now Ticks))
+      t)))
+
+
+(objc:defmethod (#/drawRect: :void) ((Self attribute-value-list-item-view) (rect :<NSR>ect))
+  (call-next-method rect)
+  (when (timer-due-p self (truncate (* 1.0 internal-time-units-per-second)))
+    (#/setTextColor: (value-text-field self) (#/blackColor ns:ns-color))))
+
+;___________________________________
+; ATTRIBUTE VALUE LIST VIEW CONTROL |
+;__________________________________/
+
+(defclass NATIVE-ATTRIBUTE-VALUE-LIST-VIEW-CONTROL (ns:ns-view)
+  ((lui-view :accessor lui-view :initarg :lui-view))
+  (:metaclass ns:+ns-object))
+
+
+(objc:defmethod (#/isFlipped :<BOOL>) ((self native-attribute-value-list-view-control))
+  ;; Flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
+
+
+(defmethod MAP-SUBVIEWS ((Self attribute-value-list-view-control) Function &rest Args)
+  (declare (ignore Function Args))
+  ;; no Cocoa digging
+  )
+
+(defmethod MAKE-NATIVE-OBJECT ((Self attribute-value-list-view-control))
+  (let ((Native-Control (make-instance 'native-attribute-value-list-view-control :lui-view Self)))
+    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+      (#/initWithFrame: Native-Control Frame)
+      Native-Control)))
+
+
+(defmethod INITIALIZE-INSTANCE :after ((Self attribute-value-list-view-control) &rest Args)
+  "We need to create a new thread that will set the color of attribute values back to black"
+  ;(call-next-method)
+  (setf (color-update-process self)
+    (process-run-function
+     '(:name "Attribute Window Thread" :priority 1)
+     #'(lambda ()
+         (loop
+           (catch-errors-nicely 
+            "OpenGL Animation"
+            (reset-color-of-items self)
+            (sleep .01)))))))
+
+
+(defmethod RESET-COLOR-OF-ITEMS ((Self attribute-value-list-view-control))
+  (dolist (item (list-items self))
+    (when (timer-due-p item (truncate (* 1.0 internal-time-units-per-second)))
+      (#/setTextColor: (value-text-field item) (#/blackColor ns:ns-color)))))
+
+
+(defmethod ADD-ATTRIBUTE-LIST-ITEM ((Self attribute-value-list-view-control) string value &key (action nil) (owner nil))
+  "Adds an item to the attribute-list that will display the text contained in the variable string"
+  (if (attribute-owner self)
+    (setf owner (attribute-owner self)))
+  (if (attribute-changed-action self)
+    (setf action (attribute-changed-action self)))
+  (let ((item (make-instance 'attribute-value-list-item-view :attribute-symbol string :container self :width (width self) :height (item-height self) :attribute-value value :text string :attribute-changed-action action :attribute-owner owner) ))
+    (ns:with-ns-rect (Frame2 1 (+ 1 (* (item-height self) (length (list-items self)))) (Width self)  20 )
+      (#/initWithFrame: item Frame2))
+    (#/addSubview:  (Native-view self) item)
+    (case (list-items self)
+      (nil 
+       (setf (list-items self) (list item))
+       (setf (is-selected (first (list-items self))) t)
+       (display self))
+      (t (setf (list-items self) (append (list-items self) (list item)))))))
+
+
+(defmethod SET-LIST ((Self attribute-value-list-view-control) list) 
+  "Used to set the string-list to a given list instead setting the list string by string.  Also will select the first item in the list.  "
+  (dolist (subview (gui::list-from-ns-array (#/subviews (native-view self))))
+    (#/removeFromSuperview subview))
+  (setf (list-items self) nil)
+  (dolist (item list)
+    (add-attribute-list-item self (first item) (second item) :action (attribute-changed-action self) :owner (attribute-owner self)))
+  (display self))
+
+
+(defmethod SET-VALUE-OF-ITEM-WITH-NAME ((Self attribute-value-list-view-control) name value)
+  (dolist (item (list-items self))
+    (when (equal (text item) name)
+      (unless (equal (write-to-string value) (ccl::lisp-string-from-nsstring (#/stringValue (value-text-field item))))
+        (setf (attribute-value item) value)
+        (#/setStringValue: (value-text-field item) (native-string (write-to-string Value)))
+        (#/setTextColor: (value-text-field item) (#/redColor ns:ns-color)))
+      (return-from set-value-of-item-with-name t)))
+  (add-attribute-list-item self name value)
+  (layout self)
+  (display self))
+
+
+(defmethod SELECT-ITEM ((Self attribute-value-list-view-control) item-name) 
+  (dolist (item (list-items self))
+    (if (equal (string-capitalize (text item)) (string-capitalize item-name))
+      (progn
+        (setf (is-selected item) t)
+        (setf (selected-string self) (text item))
+        (return-from select-item t))
+      (setf (is-selected item) nil)))
+  nil)
+
+
+(defmethod initialize-event-handling ((Self attribute-value-list-view-control))
+  ;; no event handling for rows
+  )
+
+;(truncate (* Time internal-time-units-per-second))
 ;__________________________________
 ; SCROLLER-CONTROL                 |
 ;__________________________________/
@@ -1861,18 +2067,18 @@
 ; Show PopUp                       |
 ;__________________________________/
 
-(defun SHOW-STRING-POPUP (window list &key container item-addition-action-string-list) 
+(defun SHOW-STRING-POPUP (window list &key selected-item container item-addition-action-string-list) 
   (let ((Pop-up (make-instance 'popup-button-control  :container container :width 1 :height 1 :x   (- (rational (NS:NS-POINT-X (#/mouseLocation ns:ns-event)))(x window))  :y   (-  (- (NS:NS-RECT-HEIGHT (#/frame (#/mainScreen ns:ns-screen)))(NS:NS-POINT-Y (#/mouseLocation ns:ns-event)))(y window))  )))
     (dolist (String list)
       (add-item Pop-Up String nil))
     (if item-addition-action-string-list
       (add-item Pop-Up (first item-addition-action-string-list) (second item-addition-action-string-list)))
     (add-subviews window Pop-up)
+    (when selected-item
+      (#/selectItemWithTitle: (native-view pop-up) (native-string selected-item)))
     (#/setTransparent: (native-view Pop-Up) #$YES)
     (#/performClick:  (native-view Pop-up) +null-ptr+)
     (#/removeFromSuperview (native-view Pop-up))
-    (print "RETURN")
-    (print (ccl::lisp-string-from-nsstring  (#/titleOfSelectedItem (native-view Pop-Up))))
     (ccl::lisp-string-from-nsstring  (#/titleOfSelectedItem (native-view Pop-Up)))))
 
 

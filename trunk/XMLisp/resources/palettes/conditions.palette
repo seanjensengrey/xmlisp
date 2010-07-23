@@ -22,6 +22,7 @@
   </category>
   <category title="camera control" disclosed="true">
     <first-person-view/>
+    <third-person-view/>
     <camera-attached/>
   </category>
   <category title="Control Stucture" disclosed="true">

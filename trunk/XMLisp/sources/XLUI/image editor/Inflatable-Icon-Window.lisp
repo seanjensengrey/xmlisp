@@ -39,7 +39,7 @@
   ((container :accessor container :initform nil :initarg :container)
    (smoothing-cycles :accessor smoothing-cycles :initform 0 :initarg :smoothing-cycles)
    (selected-tool :accessor selected-tool :initform nil :type symbol :initarg :selected-tool :documentation "the name of the currently selected tool")
-   (selected-camera-tool :accessor selected-camera-tool :initform nil :type symbol :initarg :selected-tool :documentation "the name of the currently selected camera tool")
+   (selected-camera-tool :accessor selected-cameshowra-tool :initform nil :type symbol :initarg :selected-tool :documentation "the name of the currently selected camera tool")
    (file :accessor file :initform nil :documentation "shape file")
    (destination-inflatable-icon :accessor destination-inflatable-icon :initform nil :initarg :destination-inflatable-icon :documentation "if present save edited icon into this inflatable icon")
    (close-action :accessor close-action :initform nil :initarg :close-action :documentation "called with self when inflatable icon window is being closed")
@@ -187,9 +187,7 @@
 
 (defmethod SAVE-IMAGE-TO-FILE ((Self inflatable-icon-editor-window) Pathname)
   "Saves the current image in the editor window to the specified file."
-
-  (save-image (image-editor-view Self) Pathname)
-  )
+  (save-image (image-editor-view Self) Pathname))
 
 ;______________________________________________
 ; File menu support                            |
@@ -705,7 +703,6 @@
 
 
 (defmethod EDIT-ICON-CANCEL-ACTION ((Window inflatable-icon-editor-window) (Button button))
-  (print "EDIT ICON")
   (close-window-with-warning Window))
 
 
@@ -758,6 +755,7 @@
       (when (is-flat (destination-inflatable-icon Window))
         ;(setf (update-texture-from-image-p (destination-inflatable-icon Window)) t)
         )))
+  (window-close window)
   (if (container window)
     (display-world (project-window (project-manager-reference (container window)))))
   (if (container window)
@@ -799,6 +797,7 @@
   (let* ((Window (load-object "lui:resources;windows;inflatable-icon-editor.window" :package (find-package :xlui)))
          (Icon-Editor (view-named Window "icon-editor"))
          (Inflated-Icon-Editor (view-named Window "model-editor")))
+    (setf (title window) (format nil "Shape Editor: ~A" (pathname-name Pathname)))
     (if alert-close-action
       (setf (alert-close-action window) alert-close-action))
     (if alert-close-target 
@@ -842,6 +841,7 @@
     ;; wrap up
     (setf (file window) pathname)
     (display Window)
+    (make-key-window Window )
     Window))
 
 

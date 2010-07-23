@@ -538,6 +538,18 @@
   (declare (ignore self))
   (print "DEFUALT ACTION 2"))
 
+(defclass ATTRIBUTE-VALUE-LIST (attribute-value-list-view-control xml-layout-interface)
+  (title :accessor )
+  (:default-initargs
+   :action 'default-action
+   :width 15
+   :height 150))
+
+
+(defmethod ADD-SUBOBJECT ((attribute-value-list attribute-value-list) (string-list-item string-list-item))
+  (lui::add-attribute-list-item attribute-value-list  (text string-list-item) 0) )
+
+
 ;__________________________________________________________________
 ; Scroller                                                         |
 ;                                                                  |
