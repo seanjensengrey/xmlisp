@@ -79,5 +79,6 @@
 
 
 (defmethod UPDATE-STATUS-BAR ((self determinate-progress-meter) text)
-  (setf (value (view-named (progress-window self) "status-bar")) (format nil "Loading: ~A" text)))
+  (setf (value (view-named (progress-window self) "status-bar")) (format nil "Loading: ~A" text))
+  (display (progress-window self)))
 

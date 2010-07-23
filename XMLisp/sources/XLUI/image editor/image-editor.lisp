@@ -623,7 +623,7 @@
         (Horizontal-Mirror (is-horizontal-line-on Self))
         (Vertical-Mirror (is-vertical-line-on   Self)))
     (if Horizontal-Mirror
-        (funcall shape-function Self Left Mirror-Top Right Mirror-Bottom))
+      (funcall shape-function Self Left Mirror-Top Right Mirror-Bottom))
     (if Vertical-Mirror
         (funcall shape-function Self Mirror-Left Top Mirror-Right Bottom))
     (if (and Horizontal-Mirror Vertical-Mirror)
@@ -673,12 +673,14 @@
 ; Selections                    |
 ;_______________________________/
 
-(defmethod SCREEN->PIXEL-COORD ((Self image-editor) x y)
+(defmethod SCREEN->PIXEL-COORD ((Self image-editor) x y &key (return-max-value-for-outside-upward-bound nil))
   "Converts a point in screen coordinate into a pixel coordinate.
    If there is no valid pixel coordinate, i.e., outside of image then return nil nil"
   (let ((Col (floor (/ (* (- x (truncate (- (width Self) (* (/ (height Self) (canvas-height Self)) (canvas-width Self))) 2))
                           (img-width Self)) (* (/ (height Self) (canvas-height Self)) (canvas-width Self)))))
         (Row (floor (* (img-height Self) (/ y (height Self))))))
+    (if (and return-max-value-for-outside-upward-bound (>= Col (1- (img-width Self))))
+      (setf Col (1- (img-width Self))))
     (values
      (when (<= 0 Col (1- (img-width Self))) Col)
      (when (<= 0 Row (1- (img-height Self))) Row))))
@@ -845,14 +847,14 @@
 (defmethod UPDATE-SELECTION ((Self image-editor) New-Selection)
   "Updates the selection mask and recomputes the selection outline."
   (if New-Selection
-      (destructuring-bind (Shape &rest Shape-Specs) New-Selection
-        ;; update selection-mask
-        (if (alt-key-p)
-            (if (shift-key-p)
-                (apply #'intersect-selection (selection-mask Self) Shape Shape-Specs)
-              (apply #'subtract-selection (selection-mask Self) Shape Shape-Specs))
-          (apply #'add-selection (selection-mask Self) Shape Shape-Specs))
-        ;; update selection-outline
+    (destructuring-bind (Shape &rest Shape-Specs) New-Selection
+      ;; update selection-mask
+      (if (alt-key-p)
+        (if (shift-key-p)
+          (apply #'intersect-selection (selection-mask Self) Shape Shape-Specs)
+          (apply #'subtract-selection (selection-mask Self) Shape Shape-Specs))
+        (apply #'add-selection (selection-mask Self) Shape Shape-Specs))
+      ;; update selection-outline
         (setf (selection-outline Self) (recompute-selection-outline Self)))
     (clear-selection Self)))
 
@@ -1157,8 +1159,8 @@
 
 
 (defmethod VIEW-LEFT-MOUSE-UP-EVENT-HANDLER ((Self image-editor) x y)
-  (unless (img-texture Self) (return-from view-left-mouse-up-event-handler))
-  (multiple-value-bind (Col Row) (screen->pixel-coord Self x y)
+    (unless (img-texture Self) (return-from view-left-mouse-up-event-handler))
+  (multiple-value-bind (Col Row) (screen->pixel-coord Self x y :return-max-value-for-outside-upward-bound t)
     (when (and Row Col)
       (case (selected-tool (window Self))
         ;; SELECT RECTANGLE
