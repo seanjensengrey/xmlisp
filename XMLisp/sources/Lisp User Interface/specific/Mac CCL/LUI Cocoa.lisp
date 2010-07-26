@@ -91,6 +91,8 @@
 
 
 (defmethod SHIFT-KEY-P ()
+  (print "SHIFT KEY P")
+  (print *current-event*)
   (when *Current-Event*
     (not (zerop (logand (#/modifierFlags (native-event *Current-Event*)) #$NSShiftKeyMask)))))
 
@@ -899,28 +901,46 @@
 ; STRING-LIST-TEXT-VIEW            |
 ;__________________________________/
 
+(defclass NATIVE-STRING-LIST-TEXT-VIEW (ns:ns-text-view)
+  ((lui-view :accessor lui-view :initarg :lui-view))
+  (:metaclass ns:+ns-object))
 
-(defclass STRING-LIST-TEXT-VIEW (ns:ns-text-view)
+
+(defclass STRING-LIST-TEXT-VIEW (control)
   ((is-selected :accessor is-selected :initform nil)
    (container :accessor container :initform nil)
-   (lui-view :accessor lui-view :initform nil)
-   (text :accessor text :initform nil)
+   ;(lui-view :accessor lui-view :initform nil)
+   ;(text :accessor text :initform nil)
    )
-  (:metaclass ns:+ns-object
-              :documentation "A text field that detects mouse events.  "))
+  (              :documentation "A text field that detects mouse events.  "))
 
+(defmethod MAKE-NATIVE-OBJECT ((Self string-list-text-view))
+  (let ((Native-Control (make-instance 'native-string-list-text-view :lui-view Self)))
+    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+      (#/initWithFrame: Native-Control Frame)
+      ;(#/setBackgroundColor: self (#/whiteColor ns:ns-color))
+      Native-Control)))
 
-(objc:defmethod (#/drawRect: :void) ((self string-list-text-view) (rect :<NSR>ect))
+(objc:defmethod (#/drawRect: :void) ((self native-string-list-text-view) (rect :<NSR>ect))
   (call-next-method rect)
-  (if (is-selected self)
+  (if (is-selected (lui-view self))
     (progn
       ;; Draw the selected item with a blue selection background.  
       (#/set (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color 0.0 0.2 1.0 .6))
       (#/fillRect: ns:ns-bezier-path rect))))
 
+(defmethod MAP-SUBVIEWS ((Self string-list-text-view) Function &rest Args)
+  (declare (ignore Function Args))
+  ;; no Cocoa digging
+  )
 
-(objc:defmethod (#/mouseDown: :void) ((self string-list-text-view) Event)
+(defmethod initialize-event-handling ((Self string-list-text-view))
+  ;; no event handling for rows
+  )
+
+(objc:defmethod (#/mouseDown: :void) ((self native-string-list-text-view) Event)
   (declare (ignore Event))
+  (print "HERE")
   (if (list-items (container self))
     (dolist (item (list-items (container self)))
       (setf (is-selected item) nil)
@@ -973,17 +993,23 @@
 
 (defmethod ADD-STRING-LIST-ITEM ((Self string-list-view-control) string)
   "Adds an item to the string-list that will display the text contained in the variable string"
-  (let ((text (#/alloc string-list-text-view))) 
-    (ns:with-ns-rect (Frame2 1 (+ 1 (* (item-height self) (length (list-items self)))) 100  20 )
+  (print "ADD STRING")
+  (print (width self))
+  (let ((text (make-instance 'string-list-text-view))) 
+    (ns:with-ns-rect (Frame2 1 (+ 1 (* (item-height self) (length (list-items self)))) (width self)  20 )
+      (print "WIDTH")
+      (print (NS:NS-RECT-WIDTH (#/frame (native-view self))))
       (setf (container text) self)
       (setf (text text) string)
-      (#/initWithFrame: text Frame2)
-      (#/insertText: text (native-string string))
-      (#/setBackgroundColor: text (#/whiteColor ns:ns-color))
-      (#/setDrawsBackground:  text #$YES)
-      (#/setEditable: text #$NO)
-      (#/setSelectable: text #$NO)
-      (#/addSubview:  (Native-view self) text))
+      (#/initWithFrame: (native-view text) Frame2)
+      (#/insertText: (native-view text) (native-string string))
+      (#/setBackgroundColor: (native-view text) (#/whiteColor ns:ns-color))
+      (#/setDrawsBackground:  (native-view text) #$YES)
+      (#/setEditable: (native-view text) #$NO)
+      (#/setSelectable: (native-view text) #$NO)
+      (print "1")
+      (#/addSubview:  (Native-view self) (native-view text)))
+    (print "ADDED SUBVIEW")
     (case (list-items self)
       (nil 
        (setf (list-items self) (list text))
@@ -1025,36 +1051,59 @@
   (:metaclass ns:+ns-object
 	      :documentation " delegate"))
 
-(defclass ATTRIBUTE-VALUE-LIST-TEXT-VIEW (ns:ns-text-field)
-  ((container :accessor container :initform nil :initarg :container)
-   (value-save :accessor value-save :initform nil :documentation "if the user begins editing in case they enter a bad value so we can restore the old value")
-   (attribute-owner :accessor attribute-owner :initform nil :initarg :attribute-owner :documentation "An owner can be associated with this object and if so, it will be notifed when this objects value-text-field is editted.  In order for this to work, you will need to an attribute-changed-action.")
-   (attribute-changed-action :accessor attribute-changed-action :initform nil :initarg :attribute-changed-action )   )
-  (:metaclass ns:+ns-object
-              :documentation "A text field that detects mouse events.  "))
+
+(defclass NATIVE-attribute-editor-view (ns:ns-text-field)
+  ((lui-view :accessor lui-view :initarg :lui-view))
+  (:metaclass ns:+ns-object))
 
 
-(objc:defmethod (#/textDidChange: :void) ((self attribute-value-list-text-view) Notification)
+(defmethod MAKE-NATIVE-OBJECT ((self attribute-editor-view))
+  (let ((Native-Control (make-instance 'native-attribute-editor-view :lui-view Self)))
+    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+      (#/initWithFrame: Native-Control Frame)
+      ;(#/setBackgroundColor: self (#/whiteColor ns:ns-color))
+      Native-Control)))
+
+
+(objc:defmethod (#/textDidChange: :void) ((self native-attribute-editor-view) Notification)
   (call-next-method Notification)
   )
 
 
-(objc:defmethod (#/textDidBeginEditing: :void) ((self attribute-value-list-text-view) Notification)
-  (setf (value-save self) (#/stringValue self))
+(objc:defmethod (#/textDidBeginEditing: :void) ((self native-attribute-editor-view) Notification)
+  (setf (value-save (lui-view self)) (#/stringValue self))
   (call-next-method Notification))
 
 
-(objc:defmethod (#/textDidEndEditing: :void) ((self attribute-value-list-text-view) Notification)
+(objc:defmethod (#/textDidEndEditing: :void) ((self native-attribute-editor-view) Notification)
+  (call-next-method Notification)
+  (text-did-end-editing (lui-view self)))
+
+#|
+(objc:defmethod (#/textDidEndEditing: :void) ((self native-attribute-value-list-text-view) Notification)
   (when (read-from-string (ccl::lisp-string-from-nsstring (#/stringValue self)) nil nil)
     (unless (numberp  (read-from-string (ccl::lisp-string-from-nsstring (#/stringValue self)) nil nil))
-      (print (value-save self))
-      (if (value-save self)
-        (#/setStringValue: self (value-save self))))
+      (if (value-save (lui-view self))
+        (#/setStringValue: self (value-save (lui-view self)))))
     (call-next-method Notification)
-    (if (attribute-owner self)
-      (funcall (attribute-changed-action self) (attribute-owner self) (window (container (container self))) (attribute-symbol (container self)) (read-from-string (ccl::lisp-string-from-nsstring (#/stringValue self)) nil nil)) 
+    (unless (attribute-owner (lui-view  self))
+      (setf (attribute-owner (lui-view  self)) (part-of  (lui-view  self))))
+    (if (attribute-owner (lui-view  self))
+      (funcall (attribute-changed-action (lui-view self)) (attribute-owner (lui-view self))  (window (lui-view self))  (attribute-symbol (container (lui-view self))) (read-from-string (ccl::lisp-string-from-nsstring (#/stringValue self)) nil nil)) 
       (print "NOT__"))))
+|#
 
+(defmethod TEXT-DID-END-EDITING ((Self attribute-value-list-text-view))
+  (when (read-from-string (ccl::lisp-string-from-nsstring (#/stringValue (native-view self))) nil nil)
+    (unless (numberp  (read-from-string (ccl::lisp-string-from-nsstring (#/stringValue (native-view self))) nil nil))
+      (if (value-save self)
+        (#/setStringValue: (native-view self) (value-save self))))
+    
+    (unless (attribute-owner self)
+      (setf (attribute-owner self) (part-of  self)))
+    (if (attribute-owner self)
+      (funcall (attribute-changed-action self) (attribute-owner self)  (window self)  (attribute-symbol (container self)) (read-from-string (ccl::lisp-string-from-nsstring (#/stringValue (native-view self))) nil nil)) 
+      (print "NOT__"))))
 ;__________________________________
 ; ATTRIBUTE-VALUE-LIST-ITEM-VIEW   |
 ;__________________________________/
@@ -1093,14 +1142,14 @@
       (#/addSubview:  self text))
     (let ((value-text (make-instance 'attribute-value-list-text-view :container self :attribute-owner (attribute-owner self) :attribute-changed-action (attribute-changed-action self)))) 
       (ns:with-ns-rect (Frame2 (* .5 (width self)) 1 (* .5 (width self))  20 )
-        (#/initWithFrame: value-text Frame2)
-        (#/setStringValue:  value-text (native-string (write-to-string (attribute-value self))))
-        (#/setBackgroundColor: value-text (#/whiteColor ns:ns-color))
-        (#/setDrawsBackground:  value-text #$YES)
-        (#/setSelectable: value-text #$YES)
-        (#/setEditable: value-text #$YES)
-        (setf (value-text-field self) value-text)
-        (#/addSubview:  self value-text)))))
+        (#/initWithFrame: (native-view value-text) Frame2)
+        (#/setStringValue:  (native-view value-text) (native-string (write-to-string (attribute-value self))))
+        (#/setBackgroundColor: (native-view value-text) (#/whiteColor ns:ns-color))
+        (#/setDrawsBackground:  (native-view value-text) #$YES)
+        (#/setSelectable: (native-view value-text) #$YES)
+        (#/setEditable: (native-view value-text) #$YES)
+        (setf (value-text-field self) (native-view value-text))
+        (#/addSubview:  self (native-view value-text))))))
 
 
 (defmethod TIMER-DUE-P ((Self attribute-value-list-item-view) Ticks) 
@@ -1757,8 +1806,9 @@
   (let ((Native-Control (make-instance 'native-status-bar :lui-view Self)))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
       (#/initWithFrame: Native-Control Frame)
-      (#/setDrawsBackground: Native-Control nil)
+      (#/setDrawsBackground: Native-Control #$NO)
       (#/setEditable: Native-Control #$NO)
+      (#/setBezeled: Native-Control #$NO)
       (#/setStringValue: Native-Control (native-string (text Self)))
       #| (ecase (align Self)
         (:left (#/alignLeft: Native-Control Native-Control))

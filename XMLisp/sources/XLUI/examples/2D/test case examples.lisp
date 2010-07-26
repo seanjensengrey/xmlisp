@@ -453,6 +453,17 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
   </row>
 </application-window>
 
+<application-window title="scrolling" margin="0">
+  <attribute-value-list width="300" >
+    <string-list-item text="ITEM1"/>
+    <string-list-item text="ITEM2"/>
+    <string-list-item text="ITEM3"/>
+    <string-list-item text="ITEM5"/>
+    <string-list-item text="ITEM6"/>
+    <string-list-item text="ITEM7"/>
+  </attribute-value-list>
+</application-window> 
+
 
 (defmethod COURSE-CHANGE-ACTION ((window window) (self string-list))
   (cond
@@ -464,6 +475,17 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
     (set-list (view-named window "column2") (list "Riso Superfino Carnaroli" "Russet Potato Gnocchi" "Farm Rabbit Agnolotti")))
    ((equal "Desserts" (selected-string self ))
     (set-list (view-named window "column2") (list "Starwberry-Rhubarb Tart" "Caramel Shake" "Chocolate Torta" "Gelati and Sorbet" "Bombolini")))))
+
+;;********************************************
+;;*  Attribute Editor                         *
+;;********************************************
+
+<application-window title="scrolling" margin="0">
+  <attribute-editor attribute-changed-action="attribute-changed"/>
+</application-window> 
+
+(defmethod attribute-changed ((Self window) (window window) )
+  (print "ATRIBUTE CHANGED!!!!!!"))
 
  ;;********************************************
 ;;*          SCROLLER                        *
