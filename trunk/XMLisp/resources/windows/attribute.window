@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<attribute-window title="scrolling" margin="0">
+  <attribute-value-list name="attribute-value-list" width="300" >
+    <string-list-item text="ITEM1"/>
+    <string-list-item text="ITEM2"/>
+    <string-list-item text="ITEM3"/>
+    <string-list-item text="ITEM5"/>
+    <string-list-item text="ITEM6"/>
+    <string-list-item text="ITEM7"/>
+  </attribute-value-list>
+</attribute-window> 
