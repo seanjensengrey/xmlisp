@@ -856,7 +856,7 @@ after any of the window controls calls stop-modal close window and return value.
    )
   (:default-initargs
       :text "")
-  (:documentation "A text field that detects mouse events.  "))
+  (:documentation "This object is a specialized text field that will call the attribute-changed-action when text editing has ended in its text field.    "))
 
 
 (defmethod MAP-SUBVIEWS ((Self attribute-editor-view) Function &rest Args)
@@ -869,12 +869,10 @@ after any of the window controls calls stop-modal close window and return value.
   )
 
 (defmethod TEXT-DID-END-EDITING ((Self attribute-editor-view))
+  "This method is called when the text of the text field is done being edited, the default behavior is to call the attribute-changed-action with the attribute-owner and the window, this method could be overwritten if you want to do something else instead"
   (unless (attribute-owner self)
       (setf (attribute-owner self) (part-of  self)))
-  (print "TEXT DID END EDITING")
-  (print (attribute-changed-action self))
-  (funcall (attribute-changed-action self) (attribute-owner self)  (window self))
-  )
+  (funcall (attribute-changed-action self) (attribute-owner self)  (window self)))
 
 
 ;__________________________________
