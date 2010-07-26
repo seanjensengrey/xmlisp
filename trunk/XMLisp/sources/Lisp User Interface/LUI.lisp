@@ -200,6 +200,10 @@ Call with most important parameters. Make other paramters accessible through *Cu
 ;;_______________________________
 
 (defmethod SET-SIZE ((Self view) Width Height)
+  (print "SET SIZE")
+  (print width)
+  (print height)
+  (print self)
   (setf (width Self) Width)
   (setf (height Self) Height))
 
@@ -229,8 +233,13 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 (defmethod INITIALIZE-INSTANCE ((Self view) &rest Args)
   (declare (ignore Args))
+  (print "v.1")
+  
+  
   (call-next-method)
-  (setf (native-view Self) (make-native-object Self)))
+  (print "v.2")
+  (setf (native-view Self) (make-native-object Self))
+  (print "v.3"))
 
 
 (defmethod DRAW ((Self view))
@@ -239,6 +248,8 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 
 (defmethod LAYOUT ((Self view))
+  (print "LAYOUT")
+  (print self)
   ;; nothing
   )
 
@@ -601,7 +612,9 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defmethod INITIALIZE-INSTANCE ((Self control) &rest Args)
   (declare (ignore Args))
+  (print "1")
   (call-next-method)
+  (print "2")
   (unless (target Self) (setf (target Self) Self)) ;; make me default target
   (initialize-event-handling Self))
 
@@ -812,7 +825,7 @@ after any of the window controls calls stop-modal close window and return value.
 
 
 ;__________________________________
-; ATTRIBUTE VALUE LIST VIEW CONTROL     |
+; ATTRIBUTE VALUE LIST VIEW CONTROL|
 ;__________________________________/
 
 
@@ -829,6 +842,50 @@ after any of the window controls calls stop-modal close window and return value.
     :action 'popup-action)
   (:documentation "A list of items with associated value"))
 
+
+;__________________________________
+; ATTRIBUTE VALUE LIST TEXT VIEW   |
+;__________________________________/
+
+
+(defclass ATTRIBUTE-EDITOR-VIEW (control)
+  ((container :accessor container :initform nil :initarg :container)
+   (value-save :accessor value-save :initform nil :documentation "if the user begins editing we save the old value in case they enter a bad value so we can restore the old value")
+   (attribute-owner :accessor attribute-owner :initform nil :initarg :attribute-owner :documentation "An owner can be associated with this object and if so, it will be notifed when this objects value-text-field is editted.  In order for this to work, you will need to an attribute-changed-action.")
+   (attribute-changed-action :accessor attribute-changed-action :initform nil :type symbol :initarg :attribute-changed-action )   
+   )
+  (:default-initargs
+      :text "")
+  (:documentation "A text field that detects mouse events.  "))
+
+
+(defmethod MAP-SUBVIEWS ((Self attribute-editor-view) Function &rest Args)
+  (declare (ignore Function Args))
+  ;; no Cocoa digging
+  )
+
+(defmethod initialize-event-handling ((Self attribute-editor-view))
+  ;; no event handling for rows
+  )
+
+(defmethod TEXT-DID-END-EDITING ((Self attribute-editor-view))
+  (unless (attribute-owner self)
+      (setf (attribute-owner self) (part-of  self)))
+  (print "TEXT DID END EDITING")
+  (print (attribute-changed-action self))
+  (funcall (attribute-changed-action self) (attribute-owner self)  (window self))
+  )
+
+
+;__________________________________
+; ATTRIBUTE VALUE LIST TEXT VIEW   |
+;__________________________________/
+
+(defclass ATTRIBUTE-VALUE-LIST-TEXT-VIEW (attribute-editor-view)
+  ()
+  (:default-initargs
+      :text "")
+  (:documentation "A text field that detects mouse events.  "))
 
 ;__________________________________
 ; Scroller                         |
