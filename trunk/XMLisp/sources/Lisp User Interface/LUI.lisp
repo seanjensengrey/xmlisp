@@ -200,10 +200,6 @@ Call with most important parameters. Make other paramters accessible through *Cu
 ;;_______________________________
 
 (defmethod SET-SIZE ((Self view) Width Height)
-  (print "SET SIZE")
-  (print width)
-  (print height)
-  (print self)
   (setf (width Self) Width)
   (setf (height Self) Height))
 
@@ -233,13 +229,8 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 (defmethod INITIALIZE-INSTANCE ((Self view) &rest Args)
   (declare (ignore Args))
-  (print "v.1")
-  
-  
   (call-next-method)
-  (print "v.2")
-  (setf (native-view Self) (make-native-object Self))
-  (print "v.3"))
+  (setf (native-view Self) (make-native-object Self)))
 
 
 (defmethod DRAW ((Self view))
@@ -248,8 +239,6 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 
 (defmethod LAYOUT ((Self view))
-  (print "LAYOUT")
-  (print self)
   ;; nothing
   )
 
@@ -612,9 +601,7 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defmethod INITIALIZE-INSTANCE ((Self control) &rest Args)
   (declare (ignore Args))
-  (print "1")
   (call-next-method)
-  (print "2")
   (unless (target Self) (setf (target Self) Self)) ;; make me default target
   (initialize-event-handling Self))
 
