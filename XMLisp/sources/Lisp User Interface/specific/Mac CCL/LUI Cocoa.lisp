@@ -91,8 +91,6 @@
 
 
 (defmethod SHIFT-KEY-P ()
-  (print "SHIFT KEY P")
-  (print *current-event*)
   (when *Current-Event*
     (not (zerop (logand (#/modifierFlags (native-event *Current-Event*)) #$NSShiftKeyMask)))))
 
@@ -940,7 +938,6 @@
 
 (objc:defmethod (#/mouseDown: :void) ((self native-string-list-text-view) Event)
   (declare (ignore Event))
-  (print "HERE")
   (if (list-items (container self))
     (dolist (item (list-items (container self)))
       (setf (is-selected item) nil)
@@ -964,8 +961,6 @@
   (call-next-method rect)
   (layout (lui-view self))
   (set-size (lui-view self) (NS:NS-RECT-WIDTH rect) (NS:NS-RECT-HEIGHT rect))
-  (print (NS:NS-RECT-WIDTH rect))
-  (print (width (lui-view self)))
   (#/set (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color 1.0 1.0 1.0 1.0))
   (#/fillRect: ns:ns-bezier-path rect)
   (#/set (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color .5 .5 .5 1.0))
@@ -993,12 +988,9 @@
 
 (defmethod ADD-STRING-LIST-ITEM ((Self string-list-view-control) string)
   "Adds an item to the string-list that will display the text contained in the variable string"
-  (print "ADD STRING")
-  (print (width self))
-  (let ((text (make-instance 'string-list-text-view))) 
+  
+    (let ((text (make-instance 'string-list-text-view))) 
     (ns:with-ns-rect (Frame2 1 (+ 1 (* (item-height self) (length (list-items self)))) (width self)  20 )
-      (print "WIDTH")
-      (print (NS:NS-RECT-WIDTH (#/frame (native-view self))))
       (setf (container text) self)
       (setf (text text) string)
       (#/initWithFrame: (native-view text) Frame2)
@@ -1007,10 +999,8 @@
       (#/setDrawsBackground:  (native-view text) #$YES)
       (#/setEditable: (native-view text) #$NO)
       (#/setSelectable: (native-view text) #$NO)
-      (print "1")
       (#/addSubview:  (Native-view self) (native-view text)))
-    (print "ADDED SUBVIEW")
-    (case (list-items self)
+      (case (list-items self)
       (nil 
        (setf (list-items self) (list text))
        (setf (is-selected (first (list-items self))) t)
@@ -1098,7 +1088,6 @@
     (unless (numberp  (read-from-string (ccl::lisp-string-from-nsstring (#/stringValue (native-view self))) nil nil))
       (if (value-save self)
         (#/setStringValue: (native-view self) (value-save self))))
-    
     (unless (attribute-owner self)
       (setf (attribute-owner self) (part-of  self)))
     (if (attribute-owner self)
