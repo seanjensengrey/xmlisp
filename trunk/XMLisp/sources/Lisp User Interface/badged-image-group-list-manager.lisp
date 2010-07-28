@@ -131,6 +131,12 @@
   (:documentation "This method will be called when an item or group is deselected in the gallery.  "))
 
 
+(defgeneric group-name-changed (badged-image-group-list-manager-view group-name new-name)
+  (:documentation "This method will be called when a groups name has been changed.  "))
+
+(defgeneric item-name-changed (badged-image-group-list-manager-view group-name item-name new-name)
+  (:documentation "This method will be called when a item's name has been changed.  "))
+
 ;---------------------------------
 ; Implementation                  |
 ;________________________________
@@ -196,6 +202,14 @@
 
 (defmethod GROUP-DESELECTED ((Self badged-image-group-list-manager-view))
   (set-selected self nil))
+
+
+(defmethod group-name-changed ((Self badged-image-group-list-manager-view) group-name new-name)
+  (print "GROUP NAME CHANGED1"))
+
+
+(defmethod item-name-changed ((Self badged-image-group-list-manager-view) group-name item-name new-name)
+  (print "ITEM NAME CHANGED"))
 
 #|
 Example:
