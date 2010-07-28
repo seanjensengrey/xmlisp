@@ -1051,9 +1051,22 @@
   (let ((Native-Control (make-instance 'native-attribute-editor-view :lui-view Self)))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
       (#/initWithFrame: Native-Control Frame)
+      (print (text self))
+      (print (native-string (Text self)))
+      (print "1")
+      (#/setStringValue: Native-Control (native-string (Text self)))
       ;(#/setBackgroundColor: self (#/whiteColor ns:ns-color))
       Native-Control)))
 
+(defmethod (setf text) :after (Text (self attribute-editor-view))
+  (#/setStringValue: (native-view Self) (native-string Text)))
+
+(defmethod VALUE ((self attribute-editor-view))
+  (ccl::lisp-string-from-nsstring 
+   (#/stringValue (native-view Self))))
+
+(defmethod (setf VALUE)  (Text (self attribute-editor-view))
+  (#/setStringValue: (native-view Self) (native-string Text)))
 
 (objc:defmethod (#/textDidChange: :void) ((self native-attribute-editor-view) Notification)
   (call-next-method Notification)
