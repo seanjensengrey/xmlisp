@@ -938,14 +938,14 @@
 
 (objc:defmethod (#/mouseDown: :void) ((self native-string-list-text-view) Event)
   (declare (ignore Event))
-  (if (list-items (container self))
-    (dolist (item (list-items (container self)))
+  (if (list-items (container (lui-view self)))
+    (dolist (item (list-items (container (lui-view self))))
       (setf (is-selected item) nil)
-      (#/setNeedsDisplay: item #$YES)))
-  (setf (is-selected self) t)
-  (setf (selected-string (container self)) (text self))
+      (#/setNeedsDisplay: (native-view item) #$YES)))
+  (setf (is-selected (lui-view self)) t)
+  (setf (selected-string (container (lui-view self))) (text (lui-view self)))
   (#/setNeedsDisplay: self #$YES)
-  (funcall (action (container Self)) (window (container Self)) (target (container Self))))
+  (funcall (action (container (lui-view Self))) (window (container (lui-view Self))) (target (container (lui-view Self)))))
 
 
 ;__________________________________
