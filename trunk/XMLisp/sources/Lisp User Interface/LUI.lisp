@@ -839,7 +839,7 @@ after any of the window controls calls stop-modal close window and return value.
   ((container :accessor container :initform nil :initarg :container)
    (value-save :accessor value-save :initform nil :documentation "if the user begins editing we save the old value in case they enter a bad value so we can restore the old value")
    (attribute-owner :accessor attribute-owner :initform nil :initarg :attribute-owner :documentation "An owner can be associated with this object and if so, it will be notifed when this objects value-text-field is editted.  In order for this to work, you will need to an attribute-changed-action.")
-   (attribute-changed-action :accessor attribute-changed-action :initform nil :type symbol :initarg :attribute-changed-action )   
+   (attribute-changed-action :accessor attribute-changed-action :initform 'default-attribute-changed-action :type symbol :initarg :attribute-changed-action )   
    )
   (:default-initargs
       :text "")
@@ -858,9 +858,13 @@ after any of the window controls calls stop-modal close window and return value.
 (defmethod TEXT-DID-END-EDITING ((Self attribute-editor-view))
   "This method is called when the text of the text field is done being edited, the default behavior is to call the attribute-changed-action with the attribute-owner and the window, this method could be overwritten if you want to do something else instead"
   (unless (attribute-owner self)
-      (setf (attribute-owner self) (part-of  self)))
+      (setf (attribute-owner self) (window self)))
+  (print (attribute-changed-action self))
   (funcall (attribute-changed-action self) (attribute-owner self)  (window self)))
 
+
+(defmethod DEFAULT-ATTRIBUTE-CHANGED-ACTION ((self window) (window window))
+  (print "Please override me"))
 
 ;__________________________________
 ; ATTRIBUTE VALUE LIST TEXT VIEW   |

@@ -1093,6 +1093,7 @@
     (if (attribute-owner self)
       (funcall (attribute-changed-action self) (attribute-owner self)  (window self)  (attribute-symbol (container self)) (read-from-string (ccl::lisp-string-from-nsstring (#/stringValue (native-view self))) nil nil)) 
       (print "NOT__"))))
+
 ;__________________________________
 ; ATTRIBUTE-VALUE-LIST-ITEM-VIEW   |
 ;__________________________________/
