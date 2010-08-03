@@ -39,7 +39,7 @@
   ((container :accessor container :initform nil :initarg :container)
    (smoothing-cycles :accessor smoothing-cycles :initform 0 :initarg :smoothing-cycles)
    (selected-tool :accessor selected-tool :initform nil :type symbol :initarg :selected-tool :documentation "the name of the currently selected tool")
-   (selected-camera-tool :accessor selected-cameshowra-tool :initform nil :type symbol :initarg :selected-tool :documentation "the name of the currently selected camera tool")
+   (selected-camera-tool :accessor selected-camera-tool :initform nil :type symbol :initarg :selected-tool :documentation "the name of the currently selected camera tool")
    (file :accessor file :initform nil :documentation "shape file")
    (destination-inflatable-icon :accessor destination-inflatable-icon :initform nil :initarg :destination-inflatable-icon :documentation "if present save edited icon into this inflatable icon")
    (close-action :accessor close-action :initform nil :initarg :close-action :documentation "called with self when inflatable icon window is being closed")
@@ -748,6 +748,8 @@
   (let ((Model-Editor (view-named Window 'model-editor)))
     ;; finalize geometry
     (compute-depth (inflatable-icon Model-Editor))
+    (if (container window)
+      (lui::apply-button-pressed (container window) Window))
     ;; save
     (when (destination-inflatable-icon Window)
       ;; (format t "~%copy into icon")     
