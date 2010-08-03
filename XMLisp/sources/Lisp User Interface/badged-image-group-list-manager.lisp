@@ -172,7 +172,7 @@
 
 (defmethod SELECTED-GROUP ((Self badged-image-group-list-manager-view))
   (dolist (group (groups self))
-    (if (is-selected group)
+    (when (is-selected group)
       (return-from selected-group (group-name group)))))
 
 
@@ -195,8 +195,7 @@
                    (setf (selected-item-name group) nil)
                    (if (equal (item-name item) group-item-name)
                      (setf (selected-item-name group) (item-name item)))))))
-           (setf (is-selected group) nil)
-      )))
+           (setf (is-selected group) nil))))
     (set-selected self group-name))
 
 

@@ -275,6 +275,7 @@
 ;; Dialogs
 
 (load "lui:sources;XLUI;dialogs;get-string-from-user")
+(load "lui:sources;XLUI;dialogs;yes-no-dialog")
 (load "lui:sources;XLUI;dialogs;get-new-agent-info-from-user-window")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;chooser-file-dialogs")
 

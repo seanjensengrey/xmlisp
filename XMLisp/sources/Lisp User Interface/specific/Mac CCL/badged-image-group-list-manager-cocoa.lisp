@@ -47,9 +47,17 @@
 
 (defmethod GET-GROUP-WITH-NAME ((self badged-image-group-list-manager-view) group-name)
   (dolist (group (groups self))
-    (if (equal (group-name group) group-name)
-      (progn 
-        (return-from get-group-with-name group))))
+    (when (equal (group-name group) group-name)
+      (return-from get-group-with-name group)))
+  nil)
+
+
+(defmethod GET-GROUP-ITEM-WITH-NAME ((self badged-image-group-list-manager-view) group-name item-name)
+  (dolist (group (groups self))
+    (when (equal (group-name group) group-name)
+      (dolist (item (group-items group))
+        (when (equal (item-name item) item-name)
+          (return-from get-group-item-with-name item)))))
   nil)
 
 
@@ -200,6 +208,8 @@
           (ns:with-ns-point (Point (NS:NS-RECT-X (#/frame subview))  (* (- (row-height (lui-view (#/superview(#/superview (#/superview self))))) (text-height (lui-view (#/superview(#/superview (#/superview self)))))) .5 ) )
             (#/setFrameOrigin: subview Point ))  
           (ns:with-ns-point (Point (NS:NS-RECT-X (#/frame subview))  (* (- (row-height (lui-view (#/superview self))) (text-height (lui-view (#/superview self)))) .5 ) )
+            (setf (group-name self) (ccl::lisp-string-from-nsstring (#/stringValue subview)))
+            (setf (group-name (list-group self)) (ccl::lisp-string-from-nsstring (#/stringValue subview)))
             (#/setFrameOrigin: subview Point )))
         (unless (equal (type-of subview) 'LUI::ITEM-CONTAINER-VIEW )
           (ns:with-ns-point (Point (NS:NS-RECT-X (#/frame subview)) 0)
@@ -246,9 +256,8 @@
  ;(declare (ignore Event))
   (remove-background-and-end-editting-for-all-text-fields (native-view (container self)))
   (call-next-method Event)
-  (if (container self)
-    (progn
-      (set-selected-item (container self) (group-name (#/superview (#/superview self)))(item-name self) ))))
+  (when (container self)
+    (set-selected-item (container self) (group-name (#/superview (#/superview self)))(item-name self) )))
 
 
 ;;*********************************
@@ -279,7 +288,7 @@
 
 
 (defmethod SELECT ((self group-item-image-view))
-  (set-selected-item (container self)  (group-name  (#/superview(#/superview (#/superview self))))(item-name self) ))
+  (set-selected-item (container self)  (group-name  (#/superview(#/superview (#/superview self))))(item-name (#/superview self)) ))
 
 
 (defmethod DOUBLE-CLICKED ((self group-item-image-view))
@@ -410,6 +419,7 @@
    (group :accessor group :initform nil :initarg :group)
    (item :accessor item :initform nil :initarg :item)
    (item-name :accessor item-name :initform nil :initarg :item-name)
+   (name-storage :accessor name-storage :initform nil)
    )
   (:metaclass ns:+ns-object
               :documentation "A text field that detects mouse events.  "))
@@ -460,23 +470,21 @@
   (if (item-name self)
     (progn 
       (if (and
-           (equal (string-capitalize (selected-item-name (group self))) (string-capitalize (item-name self)))
-           (and (selected-item-name (group self)) (item-name self)))
+           (equal (string-capitalize (selected-item-name (group self))) (string-capitalize (ccl::lisp-string-from-nsstring (#/stringValue self))))
+           (and (selected-item-name (group self)) (ccl::lisp-string-from-nsstring (#/stringValue self))))
         (progn
           (#/setDrawsBackground: self #$YES)
           (#/setEditable: self #$YES)
           (call-next-method event)))
-      (set-selected-item (container self) (group-name (#/superview (#/superview (#/superview self)))) (item-name self) ))))
+      (set-selected-item (container self) (group-name (#/superview (#/superview (#/superview self)))) (ccl::lisp-string-from-nsstring (#/stringValue self)) ))))
 
 (objc:defmethod (#/didChangeText :void) ((self mouse-detection-text-field))
-  
   (let ((width (calculate-width-for-text-field self)))
     (ns:with-ns-size (Size  width (NS:NS-RECT-HEIGHT (#/frame self)))
       (#/setFrameSize: self Size )))
   ;(setf (group-name (group self))(ccl::lisp-string-from-nsstring (#/string self)))
   ;(setf (group-name (group-view (group self)))(ccl::lisp-string-from-nsstring (#/stringValue self)))
   (call-next-method)  
-  
   )
    
 #|             
@@ -488,19 +496,46 @@
                                       
 (objc:defmethod (#/textDidBeginEditing: :void) ((Self mouse-detection-text-field-delegate) Notification)
    (print "DID BEGIN EDITING___"))
-
-(objc:defmethod (#/textDidBeginEditing: :void) ((Self mouse-detection-text-field) Notification)
-   (print "DID BEGIN EDITING___textfield"))
 |#
+
+
+
+(objc:defmethod (#/textShouldBeginEditing: :void) ((Self mouse-detection-text-field) Notification)
+  (print "TEXT DID BEGIN")
+  (setf (name-storage self) (ccl::lisp-string-from-nsstring (#/stringValue self)))
+  (call-next-method Notification))
+
+(objc:defmethod (#/becomeFirstResponder  :void) ((self mouse-detection-text-field))
+  (print "BECOME FIRST RESPONDER")
+  (setf (name-storage self) (ccl::lisp-string-from-nsstring (#/stringValue self)))
+  (call-next-method))
+
+
+
 (objc:defmethod (#/textDidEndEditing: :void) ((Self mouse-detection-text-field) Notification)
-  
   (when (group self)
     (if (item self)
-      (item-name-changed (container self) (group-name (group self)) (item-name (item self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
-      (xlui::group-name-changed (container self) (group-name (group self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))))
-    (setf (group-name (group self))(ccl::lisp-string-from-nsstring (#/stringValue self)))
-  (setf (group-name (group-view (group self)))(ccl::lisp-string-from-nsstring (#/stringValue self)))
+      (progn
+        (setf (item-name (#/superview self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
+        (if (xlui::item-name-changed (container self) (group-name (group self)) (item-name (item self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
+          ;(remove-background-and-end-editting-for-all-text-fields (native-view (container self)))
+          (progn
+            (#/setEditable: self #$NO)
+            (#/setDrawsBackground:  self #$NO))
+          (#/setStringValue: self (native-string (name-storage self))))
+        (setf (item-name (item self))(ccl::lisp-string-from-nsstring (#/stringValue self))))
+      (progn
+        (if (xlui::group-name-changed (container self) (group-name (group self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
+          (progn
+            (#/setEditable: self #$NO)
+            (#/setDrawsBackground:  self #$NO)
+            )
+          (#/setStringValue: self (native-string (name-storage self))))
+
+        (setf (group-name (group self))(ccl::lisp-string-from-nsstring (#/stringValue self))))))
+  ;(setf (group-name (group-view (group self)))(ccl::lisp-string-from-nsstring (#/stringValue self)))
   (call-next-method Notification))
+
 
 (objc:defmethod (#/textDidChange: :void) ((self mouse-detection-text-field) Notification)
   
@@ -650,12 +685,6 @@
           (#/setHidden: (native-view selection-image) #$YES))
         (setf (item-selection-view group) (native-view selection-image))
         (#/addSubview: (item-view group) (native-view selection-image))))
-    #|
-    (let ((item-counter (make-instance 'status-bar-control :text "0" :x x :y item-y :width 40 :height (- (row-height self) 2 ))))
-      (#/addSubview: (item-view group) (native-view item-counter))
-      (setf (item-counter group-item) item-counter)
-      (incf x 45))
-    |#
     (let ((detection-view-item (#/alloc item-detection-view)))
       (ns:with-ns-rect (detection-frame 0 item-y (width self) (row-height self))
         (setf (group-name detection-view-item) (group-name group))
@@ -666,8 +695,6 @@
           (nil (setf (item-detection-views group) (list detection-view-item)))
           (t (setf (item-detection-views group) (append (item-detection-views group) (list detection-view-item)))))    
         (#/addSubview: (item-view group) detection-view-item))  
-      
-      
       (let ((image (make-instance 'group-item-image-view   :image-path (image-path group-item)   :group-name (group-name group) :container self :item-name (item-name group-item)  :x x :y item-y :image-name (image-name group-item)  ))) ;'image-control :src (group-image group) :x x :y y :width (row-height self) :height (row-height self)))) 
         (incf x (row-height self))
         
@@ -684,8 +711,6 @@
           ;(inspect text)
           (incf x text-length)     
           ;(#/setStringValue: text (native-string (item-name group-item)))
-          (print "SETTING STRING VALUE")
-          (print (item-name group-item))
           (#/setStringValue: text (native-string (item-name group-item)))
           (#/setBackgroundColor: text (#/whiteColor ns:ns-color))
           (#/setDrawsBackground:  text #$NO)
@@ -789,7 +814,6 @@
 (defmethod ADD-GROUP ((Self badged-image-group-list-manager-view) group)
   (if (< (width self) (width (lui-view (#/superview (#/superview (native-view self))))))
     (setf (width self) (width (lui-view (#/superview (#/superview (native-view self)))))))
-  
   (dolist (old-group (groups self))
     (if (or
          (equal (first group) (group-name old-group))
@@ -815,28 +839,21 @@
 
 (defmethod ADD-GROUP-ITEM ((Self badged-image-group-list-manager-view) group-name item &key (image-path "lui:resources;images;"))
   (setf (first item) (string-capitalize (first item)))
-  
-  
   ;(setf group-name (string-capitalize group-name))
   (let ((list-item (make-instance 'list-group-item :item-name (first item) :image-path image-path :image-name (second item))))
-
-  (let ((group (get-group-with-name self group-name)))
-    (if (group-items group)
-    (dolist (group-item (group-items group))
-      (if (equal (first item) (item-name group-item))
-        (progn
-          ;(warn "Cannot add group item, a group item with this name already exists")
-          (print "Cannot add group item, a group item with this name already exists")
-          (return-from add-group-item nil)))))
-
-    (setf (group-items group) (append (group-items group) (list list-item)  ))
-
-    (add-item-to-gui self group list-item)
-
-    (#/setHidden: (item-view group) #$NO))
+    (let ((group (get-group-with-name self (String-capitalize group-name))))
+      (if (group-items group)
+        (dolist (group-item (group-items group))
+          (if (equal (first item) (item-name group-item))
+            (progn
+              ;(warn "Cannot add group item, a group item with this name already exists")
+              (print "Cannot add group item, a group item with this name already exists")
+              (return-from add-group-item nil)))))
+      (setf (group-items group) (append (group-items group) (list list-item)  ))
+      (add-item-to-gui self group list-item)
+      (#/setHidden: (item-view group) #$NO))
     (layout (native-view self))
-    
-  "SUCCESS"))
+    "SUCCESS"))
 
 
 (defmethod MAKE-NATIVE-OBJECT ((Self badged-image-group-list-manager-view))
