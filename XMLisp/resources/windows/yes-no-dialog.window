@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<yes-no-dialog-window title="get string" height="100">
+  <column align="stretch" valign="distribute">
+    <label  name="text"/>
+    <row align="right" minimize="vertical">
+      <button text="No" action="no-action"/>
+      <button text="Yes" action="yes-action" default-button="true"/>
+    </row>
+  </column>
+</yes-no-dialog-window>
