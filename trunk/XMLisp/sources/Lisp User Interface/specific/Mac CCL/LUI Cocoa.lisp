@@ -910,7 +910,7 @@
    ;(lui-view :accessor lui-view :initform nil)
    ;(text :accessor text :initform nil)
    )
-  (              :documentation "A text field that detects mouse events.  "))
+  (:documentation "A text field that detects mouse events.  "))
 
 (defmethod MAKE-NATIVE-OBJECT ((Self string-list-text-view))
   (let ((Native-Control (make-instance 'native-string-list-text-view :lui-view Self)))
