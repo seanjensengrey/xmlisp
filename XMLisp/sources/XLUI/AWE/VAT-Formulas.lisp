@@ -53,10 +53,26 @@
   If <Name> does not exist then return 0."
   (gethash Name *Simulation-Properties* 0))
         
+
 (defun SET-THE-PROPERTY-VALUE (Name Value) "
   in: Name {symbol}, Value {number}.
   Set the simulation property <Name> to <Value>." 
-  (setf (gethash Name *Simulation-Properties*) Value))
+  (let ((Name-String (format nil "~A" (string-capitalize Name))))
+    (unless (property-exists-p Name)
+      (print Name)
+      (if (standard-alert-dialog (format nil "The simulation property '~A' does not exist. Do you want to add it to the Simulation Properties?" Name)
+                                 :yes-text "Yes"
+                                 :no-text "No"
+                                 :cancel-text nil)
+        (add-property (simulation-properties *Project-Manager*)
+                      :name Name-String
+                      :input t
+                      :output t
+                      :type "number" 
+                      :interface "editable-number")
+        (stop-simulation (project-window *Project-Manager*))))
+    (set-property-value (simulation-properties *Project-Manager*) Name-String Value)
+    ))
 
 
 (defun PROPERTY-EXISTS-P (Name) "
