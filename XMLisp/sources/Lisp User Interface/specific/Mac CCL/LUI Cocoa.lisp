@@ -1051,9 +1051,6 @@
   (let ((Native-Control (make-instance 'native-attribute-editor-view :lui-view Self)))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
       (#/initWithFrame: Native-Control Frame)
-      (print (text self))
-      (print (native-string (Text self)))
-      (print "1")
       (#/setStringValue: Native-Control (native-string (Text self)))
       ;(#/setBackgroundColor: self (#/whiteColor ns:ns-color))
       Native-Control)))
@@ -1105,7 +1102,7 @@
       (setf (attribute-owner self) (part-of  self)))
     (if (attribute-owner self)
       (funcall (attribute-changed-action self) (attribute-owner self)  (window self)  (attribute-symbol (container self)) (read-from-string (ccl::lisp-string-from-nsstring (#/stringValue (native-view self))) nil nil)) 
-      (print "NOT__"))))
+      )))
 
 ;__________________________________
 ; ATTRIBUTE-VALUE-LIST-ITEM-VIEW   |
