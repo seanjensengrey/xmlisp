@@ -22,7 +22,7 @@
 (in-package :LUI)
 
 
-(defclass native-opengl-view (ns:ns-opengl-view)
+(defclass NATIVE-OPENGL-VIEW (ns:ns-opengl-view)
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
 
@@ -256,4 +256,29 @@
 
 (defmethod STOP-ANIMATION ((Self opengl-view))
   (setf (animated-views Self) (remove Self (animated-views Self))))
+
+;------------------------------
+; Query functions              |
+;______________________________
+
+
+(defun GET-CURRENT-OPENGL-VIEW ()
+  "return the view of the currently active OpenGL context"
+  (let ((Context (#/currentContext ns:ns-opengl-context)))
+    (unless (%null-ptr-p Context)
+      (let ((View (#/view Context)))
+        (unless (%null-ptr-p View)
+          (lui-view View))))))
+
+
+#| Examples:
+
+(get-current-opengl-view)  ;; returns nil if not called within the confines of a legit context
+
+(with-glcontext (shared-opengl-view)
+  (get-current-opengl-view))
+
+
+|#
+
 
