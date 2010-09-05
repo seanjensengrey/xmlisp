@@ -440,7 +440,6 @@
 
 
 (defmethod DRAW ((Self inflatable-icon))
-  
   ;; the texture update needs to happen in the right opengl context
   ;; just in time while display is not elegant but works
   (when (update-texture-from-image-p Self)
@@ -552,13 +551,13 @@
 
 
 ;; HACK!! move this into LUI Cocoa
-(defmethod DRAW-AS-FLAT-TEXTURE ((Self inflatable-icon))
-  ;; This unless made it so flat texture could not be modified.  
-  ;(unless (texture-id Self) 
+(defmethod DRAW-AS-FLAT-TEXTURE ((Self inflatable-icon)) 
+  ;; JIT make texture and mipmaps
+  (unless (texture-id Self) 
     ;; use image as texture
     (unless (image Self) (error "image of inflatable icon is undefined"))
     ;; HACK: sizeof always return zero so we need to find some other sort of error checking.
-    ;(unless (= (sizeof (image Self)) (* (rows Self) (columns Self) 4)) (error "image size does not match row/column size"))
+    ;; (unless (= (sizeof (image Self)) (* (rows Self) (columns Self) 4)) (error "image size does not match row/column size"))
     (ccl::rlet ((&texName :long))
       (glGenTextures 1 &texName)
       (setf (texture-id Self) (ccl::%get-long &texName)))
@@ -570,10 +569,10 @@
     (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_MAG_FILTER GL_NEAREST)
     (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_MIN_FILTER GL_LINEAR_MIPMAP_NEAREST)
     (glTexImage2D GL_TEXTURE_2D 0 4 (columns Self) (rows Self) 0 GL_RGBA GL_UNSIGNED_BYTE (image Self))
-    ;#-cocotron(unless (zerop (gluBuild2DMipmaps GL_TEXTURE_2D 4 (columns Self) (rows Self) GL_RGBA GL_UNSIGNED_BYTE (image Self)))
-  (unless (zerop (gluBuild2DMipmaps GL_TEXTURE_2D 4 (columns Self) (rows Self) GL_RGBA GL_UNSIGNED_BYTE (image Self)))
-
-            (error "could not create mipmaps"));)
+    ;#-cocotron (unless (zerop (gluBuild2DMipmaps GL_TEXTURE_2D 4 (columns Self) (rows Self) GL_RGBA GL_UNSIGNED_BYTE (image Self)))
+    (unless (zerop (gluBuild2DMipmaps GL_TEXTURE_2D GL_RGBA8 (columns Self) (rows Self) GL_RGBA GL_UNSIGNED_BYTE (image Self)))
+      (error "could not create mipmaps")))
+  ;; render as textured quad
   (glEnable GL_TEXTURE_2D)
   (glTexEnvi GL_TEXTURE_ENV GL_TEXTURE_ENV_MODE GL_MODULATE)
   (glBindTexture GL_TEXTURE_2D (texture-id Self))
@@ -796,112 +795,7 @@
     
     ;; finish
     (glcolor4fv {1.0 1.0 1.0 1.0})))
-#|
-(defmethod DRAW-UNCOMPILED ((Self inflatable-icon)) 
-  (print "DRAW UNCOMPILED OLD")
-  (unless (image Self) (return-from draw-uncompiled))
-  (when (is-flat Self)  ;; optimization
-    (draw-as-flat-texture Self)
-    (return-from draw-uncompiled))
-  (let* ((X 0s0)
-         (Dx (/ (dx Self) (columns Self)))
-         (Y 0s0)
-         (Dy (/ (dy Self) (rows Self)))
-         (2M (+ dx dx))
-         (Image (image Self))
-         (Old-Color-Red nil)
-         (Old-Color-Green nil)
-         (Old-Color-Blue nil)
-         (Old-Color-Alpha nil)
-         (Face-Number 0))
-    (glDisable gl_texture_2d)
-    ;;(glEnable gl_lighting)
-    (glEnable gl_color_material)
-    (glenable gl_normalize)
-    ;; scan vertically 
-    (dotimes (Column (columns Self))
-      (dotimes (Row (rows Self))
-        (let ((Z00 (altitude-at Self Row Column))
-                (Z10 (altitude-at Self (1+ Row) Column))
-                (Z01 (altitude-at Self Row (1+ Column)))
-                (Z11 (altitude-at Self (1+ Row) (1+ Column)))
-                (X1 (+ x dx))
-                (Y1 (+ y dy)))
-        (cond
-         ;; visible pixel
-         
-         ((>= (rgba-image-alpha Image Column Row (columns Self)) (visible-alpha-threshold Self))
-          
-            (when (= Face-Number 0) (glBegin gl_triangle_strip))
-            ;; Set face color + alpha if necessary
-            (let ((Color-Red (rgba-image-red Image Column Row (columns Self)))
-                  (Color-Green (rgba-image-green Image Column Row (columns Self)))
-                  (Color-Blue (rgba-image-blue Image Column Row (columns Self)))
-                  (Color-Alpha (rgba-image-alpha Image Column Row (columns Self))))
-              (unless (and (equal Color-Red Old-Color-Red)
-                           (equal Color-Green Old-Color-Green)
-                           (equal Color-Blue Old-Color-Blue)
-                           (equal Color-Alpha Old-Color-Alpha))
-                ;; terminate strip and start new one: WHY? This could be a RADEON bug
-                ;; this wastes a lot of time since strips will be much shorter on average
-                (when (> Face-Number 0)
-                  
-                  (glEnd)
-                  
-                  (glBegin gl_triangle_strip)
-                  (setq Face-Number 0))
-                (with-vector (V 
-                              (/ Color-Red 256s0)
-                              (/ Color-Green 256s0)
-                              (/ Color-Blue 256s0)
-                              (/ Color-Alpha 256s0))
-                  (glColor4fv V)
-                  ;; (glColor4f 0.5s0 0.5s0 0.5s0 0.5s0)
-                  )
-                (setq Old-Color-Red Color-Red)
-                (setq Old-Color-Green Color-Green)
-                (setq Old-Color-Blue Color-Blue)
-                (setq Old-Color-Alpha Color-Alpha)))
-            ;; Draw Face
-            ;; vertex 0 and 1
-            (cond
-             ((= Face-Number 0)        ;; first face of new strip
-              (normal-at Self Row (1+ Column) 2m)
-              (glVertex3f x1 y z01)
-              (normal-at Self Row Column 2m)
-              (glVertex3f x y z00)
-              (setq Face-Number 1))
-             (t                        ;; contiguous face
-              (incf Face-Number)))
-            ;; vertex 2 and 3
-            (normal-at Self (1+ Row) (1+ Column) 2m)
-            (glVertex3f x1 y1 z11)
-            (normal-at Self (1+ Row) Column 2m)
-            (glVertex3f x y1 z10))
-          (t                           ;; pixel invisible
-           ;; Terminate strip if needed
-           (when (> Face-Number 0)
-             (glEnd)
-             (setq Face-Number 0)
-             ;(glVertex3f x y1 z10)
-             ;(glVertex3f x y1 z10)
-             ))))
-        (incf y dy))
-      (setq y 0s0)
-      (incf x dx)
-      (when (> Face-Number 0)
-        
-        (glEnd)
-        (setq Face-Number 0)))
-    ;; Terminate strip if needed
-    (when (> Face-Number 0)
-      
-      (glEnd)
-      (setq Face-Number 0))
-    ;; finish
-    (glcolor4fv {1.0 1.0 1.0 1.0})))
 
-|#
 ;_________________________________________
 ; Altitude Operations                     |
 ;_________________________________________
@@ -961,7 +855,9 @@
   ;; a flat inflatable icon could be displayed much faster as single quad poly
   (dotimes (Row (rows Self))
     (dotimes (Column (columns Self))
-      (setf (aref (altitudes Self) Row Column) 0.0))))
+      (setf (aref (altitudes Self) Row Column) 0.0)))
+  ;; need to make a new flat textture
+  (setf (texture-id Self) nil))
   
 ;_________________________________________
 ; File I/O                                |
