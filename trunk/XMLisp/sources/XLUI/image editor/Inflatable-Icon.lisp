@@ -856,8 +856,11 @@
   (dotimes (Row (rows Self))
     (dotimes (Column (columns Self))
       (setf (aref (altitudes Self) Row Column) 0.0)))
-  ;; need to make a new flat textture
-  (setf (texture-id Self) nil))
+  ;; need to make a new flat texture
+  (when (texture-id Self)
+    (ccl::rlet ((&Tex-Id :long (texture-id Self)))
+      (glDeleteTextures 1 &Tex-Id))
+    (setf (texture-id Self) nil)))
   
 ;_________________________________________
 ; File I/O                                |
