@@ -65,8 +65,8 @@
   (let ((height 0))
     (dolist (group (groups self))
       (if (is-disclosed group)
-        (incf height (+  (row-height self)  (* (row-height self) (length (group-items group)))))
-        (incf height  (row-height self))))  
+        (incf height (+ (item-category-label-height self) (row-height self)  (* (row-height self) (length (group-items group)))))
+        (incf height    (row-height self))))
     ;(if (> height 200)
     (setf (height self) height)
     ;)
@@ -172,6 +172,7 @@
 (defclass GROUP-DETECTION-VIEW (layout-view)
   ((container :accessor container :initform nil :initarg :container)
    (group-name :accessor group-name :initform nil :initarg :group-name)
+   (text-view :accessor text-view :initform nil)
    (list-group :accessor list-group :initform nil :initarg :list-group))
   (:metaclass ns:+ns-object
               :documentation "This is a view that will detect mouse input fo the group and will also containt all the other views for the group"))
@@ -191,7 +192,7 @@
   (remove-background-and-end-editting-for-all-text-fields (native-view (container self)))
   (call-next-method Event)
   (if (container self)
-    (set-selected (container self) (group-name self))))
+    (set-selected (container self) (ccl::lisp-string-from-nsstring (#/stringValue (text-view self))))))
 
 
 (defmethod LAYOUT ((Self group-detection-view))
@@ -257,7 +258,7 @@
   (remove-background-and-end-editting-for-all-text-fields (native-view (container self)))
   (call-next-method Event)
   (when (container self)
-    (set-selected-item (container self) (group-name (#/superview (#/superview self)))(item-name self) )))
+    (set-selected-item (container self) (group-name (#/superview (#/superview self))) (item-name self) )))
 
 
 ;;*********************************
@@ -337,6 +338,7 @@
   (remove-background-and-end-editting-for-all-text-fields (native-view (container (#/superview (#/superview  self)))))
   (call-next-method Event)
   (select (#/superview self)) 
+  
   (if (> ( #/clickCount Event) 1)
     (double-clicked (#/superview self))))
 
@@ -396,7 +398,7 @@
 
 
 (defmethod SELECT ((self badged-image-view))
-  (make-selection (container self) (group-name (#/superview self)) ))
+  (make-selection (container self) (ccl::lisp-string-from-nsstring (#/stringValue (text-view self))) ))
 
 
 (defmethod DOUBLE-CLICKED ((self badged-image-view))
@@ -451,6 +453,17 @@
   ;; Flip to coordinate system to 0, 0 = upper left corner
   #$YES)
 
+(objc:defmethod (#/acceptsFirstMouse :<BOOL>) ((self mouse-detection-text-field))
+  ;; Flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
+
+(objc:defmethod (#/selectText: :void) ((self mouse-detection-text-field) sender)
+  ;; Flip to coordinate system to 0, 0 = upper left corner
+  (call-next-method sender)
+  #+cocotron
+  (#/currentEvent (#/sharedApplication ns:ns-application))
+  ;(#/mouseDown: self (#/currentEvent (#/sharedApplication ns:ns-application)))
+  )
 
 (defmethod LAYOUT ((Self mouse-detection-text-field))
   ;do nothing 
@@ -466,7 +479,10 @@
           (#/setDrawsBackground: self #$YES)
           (#/setEditable: self #$YES)
           (call-next-method event)))
-      (set-selected (container self) (group-name (#/superview self)) :resign nil )))
+      
+      ;(print 
+      
+      (set-selected (container self) (ccl::lisp-string-from-nsstring (#/stringValue self)) :resign nil )))
   (if (item-name self)
     (progn 
       (if (and
@@ -501,12 +517,10 @@
 
 
 (objc:defmethod (#/textShouldBeginEditing: :void) ((Self mouse-detection-text-field) Notification)
-  (print "TEXT DID BEGIN")
   (setf (name-storage self) (ccl::lisp-string-from-nsstring (#/stringValue self)))
   (call-next-method Notification))
 
 (objc:defmethod (#/becomeFirstResponder  :void) ((self mouse-detection-text-field))
-  (print "BECOME FIRST RESPONDER")
   (setf (name-storage self) (ccl::lisp-string-from-nsstring (#/stringValue self)))
   (call-next-method))
 
@@ -517,12 +531,18 @@
     (if (item self)
       (progn
         (setf (item-name (#/superview self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
+        #|
+        (let ((agent-manager (xlui::find-agent-manager xlui::*Project-Manager* (agentcubes:agentcubes-class-symbol (selected-group (container self))))))
+          (xlui::load-behavior agent-manager))
+        |#
+        
         (if (xlui::item-name-changed (container self) (group-name (group self)) (item-name (item self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
           ;(remove-background-and-end-editting-for-all-text-fields (native-view (container self)))
           (progn
             (#/setEditable: self #$NO)
             (#/setDrawsBackground:  self #$NO))
           (#/setStringValue: self (native-string (name-storage self))))
+        
         (setf (item-name (item self))(ccl::lisp-string-from-nsstring (#/stringValue self))))
       (progn
         (if (xlui::group-name-changed (container self) (group-name (group self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
@@ -697,28 +717,22 @@
         (#/addSubview: (item-view group) detection-view-item))  
       (let ((image (make-instance 'group-item-image-view   :image-path (image-path group-item)   :group-name (group-name group) :container self :item-name (item-name group-item)  :x x :y item-y :image-name (image-name group-item)  ))) ;'image-control :src (group-image group) :x x :y y :width (row-height self) :height (row-height self)))) 
         (incf x (row-height self))
-        
-        (#/addSubview: #|items-container|# detection-view-item (create-image image group-item)))
+        (#/addSubview: #|items-container|# detection-view-item (create-image image group-item))
       (let ((text (#/alloc mouse-detection-text-field))) 
-        (ns:with-ns-rect (Frame x  item-y  text-length (text-height self))
-          
+        (ns:with-ns-rect (Frame x  item-y  text-length (text-height self))  
           (setf (container text) self)
-          ; (setf (group-name text) (group-name group))
           (setf (item-name text) (item-name group-item))
           (#/initWithFrame: text Frame)
-
           (#/setDelegate: text (make-instance 'mouse-detection-text-field-delegate))
-          ;(inspect text)
           (incf x text-length)     
-          ;(#/setStringValue: text (native-string (item-name group-item)))
           (#/setStringValue: text (native-string (item-name group-item)))
           (#/setBackgroundColor: text (#/whiteColor ns:ns-color))
           (#/setDrawsBackground:  text #$NO)
-          
           (#/setBezeled: text #$NO)
-          ;   (#/setBordered: text #$NO)
           (#/setEditable: text #$NO)
           (setf (text-view group-item) text)
+          (setf (text-view image) text)
+          (setf (text-view detection-view-item) text)
           (setf (group text) group)
           (setf (item text) group-item)
           (let ((width (calculate-width-for-text-field text)))
@@ -727,15 +741,13 @@
           (#/addSubview: #|items-container|# detection-view-item  text)
           (case (item-detection-views group)
             (nil (setf (item-text-views group) (list text)))
-            (t (setf (item-text-views group) (append (item-text-views group) (list text)))))))
+            (t (setf (item-text-views group) (append (item-text-views group) (list text))))))))
       (incf item-y (row-height self))
       (setf x (+ (left-margin self)(group-item-offset self)))
       (setf (list-item detection-view-item) group-item)
       (setf (item-detection-view group-item) detection-view-item)))
-  
   (update-image (group-view group))
-  (remove-background-from-text-fields (native-view self))
-  )
+  (remove-background-from-text-fields (native-view self)))
 
 
 (defmethod ADD-GROUP-TO-GUI ((Self badged-image-group-list-manager-view) group)
@@ -772,7 +784,7 @@
           (incf x (row-height self))
           (let ((image-view (create-badged-image image)))
             (#/addSubview: detection-view image-view)
-            (setf (image-view group) image-view)))
+            (setf (image-view group) image-view))
         (let ((text (#/alloc mouse-detection-text-field)))
           (ns:with-ns-rect (Frame x  (+ (* (- (row-height self) (text-height self)) .5 ) (- group-height (row-height self)))   text-length (text-height self))
             (setf (container text) self)
@@ -792,7 +804,9 @@
             (let ((width (calculate-width-for-text-field text)))
               (ns:with-ns-size (Size  width (NS:NS-RECT-HEIGHT (#/frame text)))
                 (#/setFrameSize: text Size )))
-            (#/addSubview: detection-view  text))))    
+            (#/addSubview: detection-view  text)
+            (setf (text-view detection-view) text)
+            (setf (text-view image) text)))))    
       ;   (incf y (- 0(row-height self)))
       (setf X (left-margin self))      
       (let ((items-container (#/alloc item-container-view)) 
@@ -853,7 +867,7 @@
       (add-item-to-gui self group list-item)
       (#/setHidden: (item-view group) #$NO))
     (layout (native-view self))
-    "SUCCESS"))
+    t))
 
 
 (defmethod MAKE-NATIVE-OBJECT ((Self badged-image-group-list-manager-view))
@@ -862,13 +876,9 @@
 
 
 (defmethod SET-SELECTED ((Self badged-image-group-list-manager-view) group-name &key (highlight t) (resign "YES"))
-  ;(remove-background-from-text-fields (native-view  self))
   (when (and group-name (not (get-group-with-name self group-name)))
-    (progn 
-      
-      (group-deselected self))
-    )
-  
+    (progn       
+      (group-deselected self)))
   (let ((previously-selected-group-name  (selected-group self)))
   (with-simple-restart (cancel-pop "Stop to create view for ~s" Self)    
     (dolist (group (groups self))
@@ -918,7 +928,7 @@
   (let ((i 1)
         (previously-selected-group-name  (selected-group self)))
     (unless (equal (selected-group self) group-name)
-            (selected-group-changed self ))
+      (selected-group-changed self ))
     (dolist (group (groups self))    
       (setf (is-selected group) nil)
       (setf (is-highlighted group) nil)
