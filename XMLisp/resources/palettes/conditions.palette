@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <palette>
-
   <category title="basic conditions" disclosed="true">
     <see shape="bla"> <direction dcol="1"/>  </see>
     <see-a> <direction dcol="-1"/> </see-a> 
@@ -11,6 +10,7 @@
     <once-every/>
     <is-selected/>
     <%-chance/>
+    <current-world/>
   </category>
   <category title="keyboard" disclosed="true">
     <key/>
