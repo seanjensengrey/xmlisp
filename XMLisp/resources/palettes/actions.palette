@@ -24,6 +24,10 @@
   </category>
   <category title="attributes" disclosed="true">
     <set/>
+  </category>
+  <category title="visualization" disclosed="true">
+    <set-color-to/>
+    <set-rgba-color/>
     <map/>
     <plot-agents-attribute/> 
    </category>
