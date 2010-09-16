@@ -58,21 +58,23 @@
   in: Name {symbol}, Value {number}.
   Set the simulation property <Name> to <Value>." 
   (let ((Name-String (format nil "~A" (string-capitalize Name))))
-    (unless (property-exists-p Name)
-      (print Name)
-      (if (standard-alert-dialog (format nil "The simulation property '~A' does not exist. Do you want to add it to the Simulation Properties?" Name)
-                                 :yes-text "Yes"
-                                 :no-text "No"
-                                 :cancel-text nil)
-        (add-property (simulation-properties *Project-Manager*)
-                      :name Name-String
-                      :input t
-                      :output t
-                      :type "number" 
-                      :interface "editable-number")
-        (stop-simulation (project-window *Project-Manager*))))
-    (set-property-value (simulation-properties *Project-Manager*) Name-String Value)
-    ))
+    (if (property-exists-p Name)
+      (set-property-value (simulation-properties *Project-Manager*) Name-String Value)
+      (cond ((standard-alert-dialog (format nil "The simulation property '~A' does not exist. Do you want to add it to the Simulation Properties?" Name)
+                                    :yes-text "Yes"
+                                    :no-text "No"
+                                    :cancel-text nil)
+             ;; first time ever a simulation property gets created and no simulation property editor exists yet => create one
+             (unless (simulation-properties *Project-Manager*)
+               (setf (simulation-properties *Project-Manager*) (make-instance 'simulation-properties)))
+             (add-property (simulation-properties *Project-Manager*)
+                           :name Name-String
+                           :input t
+                           :output t
+                           :type "number" 
+                           :interface "editable-number")
+             (set-property-value (simulation-properties *Project-Manager*) Name-String Value))
+            (t (stop-simulation (project-window *Project-Manager*)))))))
 
 
 (defun PROPERTY-EXISTS-P (Name) "
