@@ -39,19 +39,20 @@
 
 ;; HACK: alternative implementation based on alerts
 (defun GET-STRING-FROM-USER (msg  &key (Initial-String ""))
-  (let ((alert (make-instance 'ns:ns-alert))
-        (tf (#/initWithFrame: (make-instance 'ns:ns-text-field)
-                              (ns:make-ns-rect 0 0 400 21))))
-    (#/setStringValue: tf (ccl::%make-nsstring Initial-String))
-    (#/setEditable: tf #$YES)
-    (#/setMessageText: alert (ccl::%make-nsstring msg))
-    (#/addButtonWithTitle: alert #@"OK")
-    (#/setAccessoryView: alert tf)
-    ;;Layout only work on OSX 10.5 or higher
-    ;(#/layout alert)
-    (#/makeFirstResponder: (#/window alert) tf) 
-    (#/runModal alert) 
-    (ccl::lisp-string-from-nsstring (#/stringValue tf))))
+  (ccl::with-autorelease-pool
+      (let ((alert (make-instance 'ns:ns-alert))
+            (tf (#/initWithFrame: (make-instance 'ns:ns-text-field)
+                                  (ns:make-ns-rect 0 0 400 21))))
+        (#/setStringValue: tf (ccl::%make-nsstring Initial-String))
+        (#/setEditable: tf #$YES)
+        (#/setMessageText: alert (ccl::%make-nsstring msg))
+        (#/addButtonWithTitle: alert #@"OK")
+        (#/setAccessoryView: alert tf)
+        ;;Layout only work on OSX 10.5 or higher
+        (#/layout alert)
+        (#/makeFirstResponder: (#/window alert) tf) 
+        (#/runModal alert) 
+        (ccl::lisp-string-from-nsstring (#/stringValue tf)))))
 
 
 
