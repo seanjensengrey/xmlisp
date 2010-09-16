@@ -320,6 +320,16 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 
 ;**********************************
+;* SCROLL-VIEW-ADJUSTING-CONTENTS *
+;**********************************
+
+(defclass SCROLL-VIEW-ADJUSTING-CONTENTS (scroll-view)
+  ()
+  (:documentation "A scrollable view containing a view"))
+
+
+
+;**********************************
 ;* RECTANGLE-VIEW                 *
 ;**********************************
 
