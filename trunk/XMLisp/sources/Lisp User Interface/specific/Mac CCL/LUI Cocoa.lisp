@@ -307,6 +307,21 @@
   (map-subviews Self #'(lambda (View) (set-size View (width View) (height View)))))
       
 
+
+;**********************************
+;* SCROLL-VIEW-ADJUSTING-CONTENTS *
+;**********************************
+
+(defmethod SET-SIZE ((Self scroll-view-adjusting-contents) W H)
+  (declare (ignore W H))
+  (call-next-method)
+  ;; set width of subviews to be the width of the scroll-view minus the vertical scroller width, if present
+  (map-subviews Self #'(lambda (View) (set-size View 
+                                                (ns::ns-size-width (#/contentSize (native-view Self)))
+                                                (height View)))))
+
+
+
 ;**********************************
 ;* RECTANGLE-VIEW                 *
 ;**********************************
