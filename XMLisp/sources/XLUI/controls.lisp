@@ -73,10 +73,28 @@
 (defmethod PRINT-SLOTS ((Self scroll-box))
   '(x y width height))
 
+
 ;________________________________________________
-; Scroll-Box                                     |
-;   scrollable view                              |
+; Scroll-Box-Adjusting-Contents                  |
+;   scrollable view that adjusts the size of its |
+;   contents                                     |
 ;   Examples: color picker                       |
+;                                                |
+;________________________________________________
+
+(defclass SCROLL-BOX-ADJUSTING-CONTENTS (scroll-view-adjusting-contents xml-layout-interface)
+  ()
+  (:documentation "box with scrollable content whose size is adjusted based on the size of the scroll box container"))
+
+
+(defmethod PRINT-SLOTS ((Self scroll-box-adjusting-contents))
+  '(x y width height))
+
+
+;________________________________________________
+; BADGED-IMAGE-GROUP-LIST-MANAGER                |
+;                                                |
+;   Examples:                                    |
 ;                                                |
 ;                                                |
 ;________________________________________________
