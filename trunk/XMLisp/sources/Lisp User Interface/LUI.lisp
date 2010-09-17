@@ -427,6 +427,9 @@ after any of the window controls calls stop-modal close window and return value.
 (defgeneric WINDOW-WILL-CLOSE (Window Notification)
   (:documentation "This method will be called by the window delegate whenever the window is about to be close"))
 
+(defgeneric WINDOW-SHOULD-CLOSE (Window)
+  (:documentation "This method will be called by the window delegate when the user clicks the close button or a perfomClose action is issued. Return non-nil value to have window closed"))
+
 ;;_______________________________
 ;; default implementations       |
 ;;_______________________________
@@ -575,6 +578,12 @@ after any of the window controls calls stop-modal close window and return value.
   (declare (ignore Notification))
   ;;Do nothing, override this method if you need to do any cleanup when the window closes.
   )
+
+
+(defmethod WINDOW-SHOULD-CLOSE ((Self window))
+  t ;; should be closed by default
+  )
+
 
 ;****************************************************
 ; CONTROL                                           *
