@@ -434,8 +434,16 @@
     (setf (height (lui-window Self)) (truncate (pref (#/frame Content-View) <NSR>ect.size.height)))
     (size-changed-event-handler (lui-window Self) (width (lui-window Self)) (height (lui-window Self)))))
 
+
 (objc:defmethod (#/windowWillClose: :void) ((self window-delegate) Notification)
   (window-will-close (lui-window self) Notification))
+
+
+(objc:defmethod (#/windowShouldClose: :<BOOL>) ((self window-delegate) Sender)
+  (declare (ignore Sender))
+  (if (window-should-close (lui-window self))
+    #$YES
+    #$NO))
 
 #|
 (objc:defmethod (#/windowDidEndLiveResize: :void) ((self window-delegate) Notification)
