@@ -40,12 +40,7 @@
           <image-button name="zoom button" action="zoom-tool-action" image="zoom-button.png"/>    
         </image-button-row>
         <spacer width="8"/>
-        <label text="Camera:" width="57" />
-        <pop-up name="camera-mode" width="120" >
-          <pop-up-item text="world" action="world-camera-action" />
-          <pop-up-item text="first-person" action="first-person-camera-action"/>
-          <pop-up-item text="third-person" action="third-person-camera-action"/>
-        </pop-up>
+        <bevel-button text="Switch to first-person camera" name="camera-button" action="switch-camera-action" width="200" height="28" />
         <spacer width="8"/>
         <image-button name="reload button"  action="reload-tool-action"  image="reload-button.png"/> 
         <bevel-button text="Clear" name="clear-button" action="clear-tool-action" width="65" height="28" />
