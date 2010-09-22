@@ -137,6 +137,8 @@
 (defgeneric item-name-changed (badged-image-group-list-manager-view group-name item-name new-name)
   (:documentation "This method will be called when a item's name has been changed.  "))
 
+(defgeneric take-focus (badged-image-group-list-manager-view)
+  (:documentation "A method to be called when another view takes focus from this view."))
 ;---------------------------------
 ; Implementation                  |
 ;________________________________
@@ -209,6 +211,10 @@
 
 (defmethod item-name-changed ((Self badged-image-group-list-manager-view) group-name item-name new-name)
   (print "ITEM NAME CHANGED"))
+
+
+(defmethod TAKE-FOCUS ((Self badged-image-group-list-manager-view))
+  (remove-background-and-end-editting-for-all-text-fields (native-view self)))
 
 #|
 Example:
