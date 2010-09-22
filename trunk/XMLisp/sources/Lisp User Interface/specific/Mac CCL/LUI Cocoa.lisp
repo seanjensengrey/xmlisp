@@ -273,7 +273,8 @@
   (call-next-method)
   ;; it only really makes sense to have one subview
   (#/setDocumentView: (native-view View) (native-view (first Subviews)))
-  (warn "You are adding multiple views to a scroll-view. Only the first one will be visible."))
+  ;(warn "You are adding multiple views to a scroll-view. Only the first one will be visible.")
+  )
 
 
 (defmethod ADD-SUBVIEW ((view scroll-view)  Subview)
@@ -346,6 +347,7 @@
 (defmethod WINDOW-CLOSE ((Self Window))
   (#/close (native-window Self)))
 
+
 ;__________________________________
 ; NATIVE-WINDOW                     |
 ;__________________________________/
@@ -375,6 +377,7 @@
 
 
 (objc:defmethod (#/keyDown: :void) ((self native-window) event)
+  (call-next-method event)
   (view-event-handler (lui-window Self)
                       (make-instance 'key-event 
                         :key-code (#/keyCode Event)
@@ -614,6 +617,11 @@
 
 (defmethod MAKE-KEY-WINDOW ((Self window))
   (#/makeKeyWindow (native-window self)))
+
+(defmethod BRING-TO-FRONT ((Self Window))
+  (#/makeKeyWindow (native-window Window))
+  (#/orderFront: (native-window Window) nil))
+
 ;__________________________________
 ; Window query functions            |
 ;__________________________________/
@@ -938,17 +946,20 @@
 (defmethod MAKE-NATIVE-OBJECT ((Self string-list-text-view))
   (let ((Native-Control (make-instance 'native-string-list-text-view :lui-view Self)))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+     
       (#/initWithFrame: Native-Control Frame)
       ;(#/setBackgroundColor: self (#/whiteColor ns:ns-color))
       Native-Control)))
 
 (objc:defmethod (#/drawRect: :void) ((self native-string-list-text-view) (rect :<NSR>ect))
-  (call-next-method rect)
+  (ns:with-ns-rect (Frame (NS:NS-RECT-X rect) (NS:NS-RECT-Y rect) (- (NS:NS-RECT-WIDTH rect) 1)(NS:NS-RECT-HEIGHT rect))
+  (call-next-method Frame) 
   (if (is-selected (lui-view self))
     (progn
       ;; Draw the selected item with a blue selection background.  
       (#/set (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color 0.0 0.2 1.0 .6))
-      (#/fillRect: ns:ns-bezier-path rect))))
+      
+        (#/fillRect: ns:ns-bezier-path Frame)))))
 
 (defmethod MAP-SUBVIEWS ((Self string-list-text-view) Function &rest Args)
   (declare (ignore Function Args))
@@ -1013,6 +1024,8 @@
   "Adds an item to the string-list that will display the text contained in the variable string"
   
     (let ((text (make-instance 'string-list-text-view))) 
+      
+      
     (ns:with-ns-rect (Frame2 1 (+ 1 (* (item-height self) (length (list-items self)))) (width self)  20 )
       (setf (container text) self)
       (setf (text text) string)
@@ -1033,6 +1046,7 @@
 
 (defmethod SET-LIST ((Self string-list-view-control) list) 
   "Used to set the string-list to a given list instead setting the list string by string.  Also will select the first item in the list.  "
+
   (dolist (subview (gui::list-from-ns-array (#/subviews (native-view self))))
     (#/removeFromSuperview subview))
   (setf (list-items self) nil)
