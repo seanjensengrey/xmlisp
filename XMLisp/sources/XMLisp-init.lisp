@@ -8,7 +8,7 @@
 
 (in-package :cl-user)
 
-
+;<application-window><agent-3d-view><text-3d/></agent-3d-view></application-window>
 
 ;; temporary fix for CCL's issue with turning warnings into errors
 ;; should remove with new release
@@ -169,7 +169,7 @@
    ;; native support
    "NATIVE-STRING"
    ;; badged image
-   "BADGED-IMAGE-GROUP-LIST-MANAGER-VIEW" "ITEM-CATEGORY-LABEL" "ADD-GROUP"  "ADD-GROUP-ITEM" "DELETE-GROUP" "DELETE-GROUP-ITEM" "SELECTED-GROUP" "SELECTED-GROUP-ITEM" "SELECT-GROUP" "SELECT-GROUP-ITEM" "GROUP-NAME" "GROUPS"
+   "BADGED-IMAGE-GROUP-LIST-MANAGER-VIEW" "ITEM-CATEGORY-LABEL" "ADD-GROUP"  "ADD-GROUP-ITEM" "DELETE-GROUP" "DELETE-GROUP-ITEM" "SELECTED-GROUP" "SELECTED-GROUP-ITEM" "SELECT-GROUP" "SELECT-GROUP-ITEM" "GROUP-NAME" "GROUPS" "TAKE-FOCUS"
    "SELECTED-GROUP-CHANGED-ACTION" "GROUP-ITEMS"
    "INCREMENT-ITEM-COUNTER" "CLEAR-ITEM-COUNTERS"
    "PROJECT-MANAGER-REFERENCE" "AGENT-GALLERY-VIEW"
@@ -299,7 +299,8 @@
     (setf (logical-pathname-translations "lui")
           `(("examples;**;*.*" ,(merge-pathnames "examples/**/*.*" toplevel-dir))
             ("**;*.*" ,(merge-pathnames "**/*.*" contents-dir)))))
-  #+windows-target (open-shared-library "opengl32.dll"))
+  #+windows-target (open-shared-library "opengl32.dll")
+  (xlui::restore-font-manager))
 
 
 
