@@ -578,7 +578,7 @@
     ;; ignore Code for now
     (in-main-thread () (#/close (native-window Self)))
     (case *Run-Modal-Return-Value*
-      (:cancel (throw :cancel nil))
+      (:cancel  (throw :cancel nil))
       (t *Run-Modal-Return-Value*))))
 
 
@@ -619,8 +619,8 @@
   (#/makeKeyWindow (native-window self)))
 
 (defmethod BRING-TO-FRONT ((Self Window))
-  (#/makeKeyWindow (native-window Window))
-  (#/orderFront: (native-window Window) nil))
+  (#/makeKeyWindow (native-window self))
+  (#/orderFront: (native-window self) nil))
 
 ;__________________________________
 ; Window query functions            |
