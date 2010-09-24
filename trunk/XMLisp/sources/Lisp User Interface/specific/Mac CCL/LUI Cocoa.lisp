@@ -532,7 +532,8 @@
     ;; (let ((y (truncate (- (pref (#/frame (#/mainScreen ns:ns-screen)) <NSR>ect.size.height) (y Self) (height Self)))))
     ;;   (ns:with-ns-rect (Frame (x Self) y (width Self) (height Self))
     ;;   (#/setFrame:display: (native-window Self) Frame t)))
-    (#/orderFront: (native-window Self) nil)))
+    (#/orderFront: (native-window Self) nil)
+    (#/makeKeyWindow (native-window self))))
 
 
 (defmethod HIDE ((Self window))
