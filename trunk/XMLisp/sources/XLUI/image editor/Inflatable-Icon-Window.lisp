@@ -32,8 +32,7 @@
 
 (objc:defmethod (#/windowWillClose: :void) ((self INFLATABLE-ICON-WINDOW-DELEGATE) Notifaction)
   (declare (ignore Notifaction))
-  (funcall (alert-close-action (lui-window self)) (alert-close-target (lui-window self)) (lui-window self))
-  )
+  (funcall (alert-close-action (lui-window self)) (alert-close-target (lui-window self)) (lui-window self)))
 
 (defclass INFLATABLE-ICON-EDITOR-WINDOW (application-window)
   ((container :accessor container :initform nil :initarg :container)
@@ -568,6 +567,7 @@
       (display Text-View)
       ;; update model editor
       (let ((Model-Editor (view-named Window 'model-editor)))
+        (setf (ceiling-value (inflatable-icon Model-Editor)) Ceiling)
         (setf (max-value (inflatable-icon Model-Editor)) Ceiling)
         (update-inflation Window)))))
 
@@ -593,6 +593,7 @@
       (display Text-View)
       ;; update model editor
       (setf (smoothing-cycles Window) Smooth)
+      ;(setf (smooth (inflatable-icon (view-named Window 'model-editor))) smooth)
       (update-inflation Window))))
 
 
@@ -833,7 +834,7 @@
               (make-array (list (img-height Icon-Editor) (img-width Icon-Editor))
                           :element-type 'short-float
                           :initial-element 0.0))))
-      (initialize-gui-components Window (inflatable-icon Inflated-Icon-Editor))
+     ; (initialize-gui-components Window (inflatable-icon Inflated-Icon-Editor))
       (setf (auto-compile (inflatable-icon Inflated-Icon-Editor)) nil))  ;; keep editable
     ;; use the icon editor image, not the new inflatable icon editor one
     (setf (image (inflatable-icon Inflated-Icon-Editor))
@@ -844,19 +845,26 @@
     (setf (file window) pathname)
     (display Window)
     (make-key-window Window )
+    (initialize-gui-components Window (inflatable-icon Inflated-Icon-Editor))
     Window))
 
 
 (defmethod INITIALIZE-GUI-COMPONENTS ((Self inflatable-icon-editor-window) Inflatable-Icon)
   (setf (value (view-named self "distance-slider")) (distance inflatable-icon))
-  ;(setf (value (view-named self "pressure_slider")) (pressure inflatable-icon))
+
+  
+  (setf (value (view-named self "pressure_slider")) (pressure inflatable-icon))
   ;(inspect inflatable-icon)
-  ;(setf (value (view-named self "ceiling_slider")) (ceiling-value inflatable-icon))
-  ;(setf (value (view-named self "smooth_slider")) (smooth inflatable-icon))
+  (setf (value (view-named self "ceiling_slider")) (ceiling-value inflatable-icon))
+  (setf (value (view-named self "smooth_slider")) (float (smooth inflatable-icon)))
+  (setf (value (view-named self "noise_slider")) (noise inflatable-icon))
+  (setf (value (view-named self "z_slider")) (dz inflatable-icon))
   (adjust-distance-action self (view-named self "distance-slider") t)
-  ;(adjust-pressure-action self (view-named self "pressure_slider") t)
-  ;(adjust-ceiling-action self (view-named self "ceiling_slider"))
-  ;(adjust-smooth-action self (view-named self "smooth_slider"))
+  (adjust-noise-action self (view-named self "noise_slider") )
+  (adjust-pressure-action self (view-named self "pressure_slider") t)
+  (adjust-ceiling-action self (view-named self "ceiling_slider"))
+  (adjust-smooth-action self (view-named self "smooth_slider"))
+  (adjust-z-offset-action self (view-named self "z_slider"))
   (set-selected-item-with-title (view-named self "surfaces")  (string-downcase(substitute #\space #\-  (string (surfaces Inflatable-Icon)) :test 'equal)))
   (if (is-upright Inflatable-Icon)
       (enable (view-named self "upright"))))
