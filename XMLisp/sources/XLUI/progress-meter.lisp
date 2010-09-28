@@ -34,6 +34,7 @@
 
 
 (defmethod INITIALIZE-INSTANCE :after ((Self progress-meter) &rest Args)
+  (declare (ignore args))
   (#/setDrawsBackground: (lui::native-view (view-named (progress-window self) "status-bar")) #$NO)
   (#/setBordered:(lui::native-view (view-named (progress-window self) "status-bar")) #$NO)
   (#/setBezeled: (lui::native-view (view-named (progress-window self) "status-bar")) #$NO)
@@ -68,6 +69,7 @@
 
 
 (defmethod INITIALIZE-INSTANCE :after ((Self determinate-progress-meter) &rest Args)
+  (declare (ignore args))
   (#/setTitle: (lui::native-window (progress-window self)) (native-string (title self)))
   (display (progress-window self)))
 
