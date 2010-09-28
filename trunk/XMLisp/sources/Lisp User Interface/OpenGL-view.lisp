@@ -33,10 +33,11 @@
    (current-font :accessor current-font :initform nil)
    (full-scene-anti-aliasing :accessor full-scene-anti-aliasing :initform t :type boolean :documentation "if true anti alias")
    (camera :accessor camera :initform nil :documentation "camera used")
-   (textures :accessor textures :initform (make-hash-table :test #'equal) :allocation #-cocotron :class #+cocotron :instance :documentation "table of loaded texture ids")
+   (textures :accessor textures :initform (make-hash-table :test #'equal) :allocation #| #-cocotron |# :class #| #+cocotron :instance |# :documentation "table of loaded texture ids")
    (animation-time :accessor animation-time :initform 0 :documentation "Time when animation was run last")
    (animated-views :allocation :class :accessor animated-views :initform nil :documentation "class list of animated views")
    (render-mode :accessor render-mode :initform :render :type keyword :documentation "value: :render :select or :feedback")
+   (need-to-wgl-share :accessor need-to-wgl-share :initform #-cocotron nil #+cocotron t)
    )
   (:documentation "OpenGL View"))
 
@@ -118,6 +119,9 @@
 
 
 (defmethod PREPARE-OPENGL ((Self opengl-view))
+  (when (need-to-wgl-share self)
+    (share-texture-for-windows self)
+    (setf (need-to-wgl-share self) nil))
   ;; nothing
   )
 
@@ -136,12 +140,13 @@
      1.050 ;; magic! should be computed from camera view angle
      (float (eye-z (camera Self)) 0.0)))
 
-
+;;object-coordinate-window-width not implemented
+#| 
 (defmethod OBJECT-COORDINATE-VIEW-HEIGHT ((Self opengl-view))
   (* (/ (object-coordinate-window-width Self) 
         (width Self))
      (height Self)))
-
+|#
 ;_______________________________
 ; Events                        |
 ;_______________________________
@@ -152,10 +157,26 @@
   )
 
 
+(defmethod VIEW-RIGHT-MOUSE-DOWN-EVENT-HANDLER ((Self opengl-view) X Y)
+  (declare (ignore X Y))
+  ;;(format t "~%down: ~A, ~A" x y)
+  )
+
 (defmethod VIEW-LEFT-MOUSE-DRAGGED-EVENT-HANDLER ((Self opengl-view) X Y DX DY)
   (declare (ignore X Y))
   (track-mouse-3d (camera Self) Self dx dy)
   (unless (is-animated Self) (display Self)))
+
+(defmethod ADJUST-X-Y-FOR-WINDOW-OFFSET ((Self opengl-view) X Y)
+  #-cocotron
+  (values
+   X
+   Y)
+  #+cocotron
+   (values
+    (- x 18)
+    (- y 24)
+  ))
 
 ;_______________________________
 ; Textures                      |
@@ -190,9 +211,11 @@
         (glTexImage2D GL_TEXTURE_2D 0 GL_RGB width height 0 PixelFormat GL_UNSIGNED_BYTE &Image)
         (when Build-Mipmaps
           (when Verbose (format t "~%Building Mipmaps~%"))
+          
           (unless 
               (zerop (gluBuild2DMipmaps GL_TEXTURE_2D InternalFormat width height PixelFormat GL_UNSIGNED_BYTE &Image))
             (error "could not create mipmaps"))
+          
           (when Verbose (format t "Completed Mipmaps~%"))))
       (values
        (%get-long &texName)
