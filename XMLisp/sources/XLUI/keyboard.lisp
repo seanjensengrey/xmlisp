@@ -141,7 +141,8 @@
 |#
 ;; (key-chord-code 0 nil nil t nil)
    
-
+#|
+OLD MCL Codes do we need this?
 (defun USER-DEFINE-KEY-CHORD (&key Idle-Function) "
   in:  &key Idle-Function lambda ().
   out: Key-Chord-Code.
@@ -170,7 +171,7 @@
          #+:MCL (#_FlushEvents (logior #$keyDownMask #$keyUpMask) 0)
          (return (key-chord-code Non-Modifier-Code Controlp Optionp Shiftp Commandp)))
        (when Idle-Function (funcall Idle-Function))))))
-        
+|#        
 
 
 (defgeneric KEY-CHORDS-MATCH (Chord1 Chord2)
@@ -243,7 +244,7 @@
              (setq Token (concatenate 'string Token (string Char))))))))))
 
 ;; (split-chord-name-string "command+control+page up")
-      
+#|      
 (defun KEY-CHORD-NAME->CODE (Name) "
   in:  Name string.
   out: Code integer.
@@ -264,7 +265,7 @@
    (let ((Key-Code (key-name->code Key-Name)))
      (unless Key-Code (error "\"~A\" is not a valid key name" Key-Name))
      (key-chord-code Key-Code Controlp Optionp Shiftp Commandp))))
-   
+  |# 
 ;_________________________________
 ; Internal functions              |
 ;_________________________________
@@ -318,10 +319,10 @@
 ;_________________________________
 ; External functions              |
 ;_________________________________
-
+#|
 (defun OPTION/ALT-KEY-DOWN-P ()
   (key-down-p 58))
-
+|#
 
 #| Examples:
 
