@@ -206,10 +206,12 @@
 
 
 (defmethod group-name-changed ((Self badged-image-group-list-manager-view) group-name new-name)
-  (print "GROUP NAME CHANGED1"))
+  (declare (ignore group-name new-name))
+  (print "GROUP NAME CHANGED"))
 
 
 (defmethod item-name-changed ((Self badged-image-group-list-manager-view) group-name item-name new-name)
+  (declare (ignore group-name item-name new-name))
   (print "ITEM NAME CHANGED"))
 
 
