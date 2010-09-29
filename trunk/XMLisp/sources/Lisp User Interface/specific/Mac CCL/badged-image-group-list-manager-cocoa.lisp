@@ -536,7 +536,7 @@
           (xlui::load-behavior agent-manager))
         |#
         
-        (if (xlui::item-name-changed (container self) (group-name (group self)) (item-name (item self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
+        (if (item-name-changed (container self) (group-name (group self)) (item-name (item self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
           ;(remove-background-and-end-editting-for-all-text-fields (native-view (container self)))
           (progn
             (#/setEditable: self #$NO)
@@ -545,7 +545,7 @@
         
         (setf (item-name (item self))(ccl::lisp-string-from-nsstring (#/stringValue self))))
       (progn
-        (if (xlui::group-name-changed (container self) (group-name (group self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
+        (if (group-name-changed (container self) (group-name (group self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
           (progn
             (#/setEditable: self #$NO)
             (#/setDrawsBackground:  self #$NO)
@@ -883,7 +883,7 @@
   (with-simple-restart (cancel-pop "Stop to create view for ~s" Self)    
     (dolist (group (groups self))
       (setf (selected-item-name group) nil) 
-      (if (equal group-name (group-name group))
+      (if (equal (String-capitalize group-name) (String-capitalize (group-name group)))
         (progn   
           (setf (selected-item-name group) nil )
           (if (item-selection-view group)
@@ -915,7 +915,7 @@
           (setf (is-highlighted group) nil)
           (#/setHidden: (selection-view group) #$YES)
           (#/setNeedsDisplay: (selection-view group) #$YES)))))
-    (unless (equal previously-selected-group-name  (selected-group self))
+    (unless (equal (string-capitalize previously-selected-group-name)  (string-capitalize (selected-group self)))
       (selected-group-changed self )))
   (layout-changed self))
 
