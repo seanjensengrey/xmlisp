@@ -37,12 +37,12 @@
       </row>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="Noise"/>
-        <slider action="adjust-noise-action" max-value="0.2" flex="1" />
+        <slider action="adjust-noise-action" name="noise_slider" max-value="0.2" flex="1" />
         <label name="noise-text" align="right" width="35" text="0.0"/>
       </row>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="Smooth"/>
-        <slider action="adjust-smooth-action" max-value="5" flex="1"  name="smooth_slider"/>
+        <slider action="adjust-smooth-action"  max-value="5" flex="1"  name="smooth_slider"/>
         <label name="smooth-text" align="right" width="35" text="0.0"/>
       </row>
       <row align="center" minimize="vertical" valign="middle">
@@ -52,7 +52,7 @@
       <label width="65" text="Geometry" align="center"/>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="z offset"/>
-        <slider action="adjust-z-offset-action" min-value="-0.1" max-value="0.1" flex="1"/>
+        <slider action="adjust-z-offset-action" min-value="-0.1" max-value="0.1" flex="1" name="z_slider"/>
         <label name="z-offset-text" align="right" width="35" text="0.0"/>
       </row>
       <check-box name="upright" text="upright" action="upright-action"/>
@@ -74,17 +74,18 @@
     <spacer width="5"/>
    <inflated-icon-editor name="model-editor" flex="1"/>
     <spacer width="5"/>
-
     <image-button-cluster>
-     <image-button name="pan button" action="camera-pan-action" image="pan-button.png"/> 
-     <image-button name="zoom button" action="camera-zoom-action" image="zoom-button.png"/> 
-     <image-button name="rotate button" action="camera-rotate-action" image="rotate-button.png"/> 
+      <image-button name="pan button" action="camera-pan-action" image="pan-button.png"/> 
+      <image-button name="zoom button" action="camera-zoom-action" image="zoom-button.png"/> 
+      <image-button name="rotate button" action="camera-rotate-action" image="rotate-button.png"/> 
     </image-button-cluster>
   </row>
   <spacer height="15"/>
+  
   <row minimize="vertical" align="right">
+    <button text="Clear" width="70" action="CLEAR-ACTION" />
     <button text="Save" width="70" action="EDIT-ICON-SAVE-ACTION" default-button="true"/>
-     <button text="Apply" width="70" action="EDIT-ICON-APPLY-ACTION" />
+    <button text="Apply" width="70" action="EDIT-ICON-APPLY-ACTION" />
   </row>
   </column>
 </inflatable-icon-editor-window>
