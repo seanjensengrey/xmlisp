@@ -53,7 +53,8 @@
   (let ((Model-Editor (view-named self 'model-editor)))
     (if (is-upright (inflatable-icon Model-Editor))
       (enable (view-named self "upright"))))
-  (#/setDelegate: (lui::native-window self) (make-instance 'inflatable-icon-window-delegate :lui-window self)))
+  (#/setDelegate: (lui::native-window self) (make-instance 'inflatable-icon-window-delegate :lui-window self))
+  (START-ACCEPTING-MOUSE-MOUVED-EVENTS self))
   
 
 (defgeneric TOOL-SELECTION-EVENT (inflatable-icon-editor-window Tool-Name)
@@ -737,6 +738,12 @@
   (window-save Window))
 
 |#
+
+
+(defmethod CLEAR-ACTION ((Window inflatable-icon-editor-window) (Button button))
+  (erase-all (view-named window 'icon-editor))
+  (display (view-named window 'model-editor)))
+
 
 (defmethod EDIT-ICON-SAVE-ACTION ((Window inflatable-icon-editor-window) (Button button))
   ;; finalize geometry

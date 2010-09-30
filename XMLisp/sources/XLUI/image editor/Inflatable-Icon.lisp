@@ -1,4 +1,4 @@
-;;-*- Mode: Lisp; Package: AD3D -*-
+ ;;-*- Mode: Lisp; Package: AD3D -*-
 ;*********************************************************************
 ;*                                                                   *
 ;*            I N F L A T A B L E   I C O N                          *
@@ -41,7 +41,7 @@
    (pressure :accessor pressure :initform 0.0 :type short-float)
    (ceiling-value :accessor ceiling-value :initarg :ceiling-value :initform 1.0 :type short-float)
    (noise :accessor noise :initform 0s0)
-   (smooth :accessor smooth :initarg :smooth :initform 0s0)
+   (smooth :accessor smooth :initarg :smooth :initform 0 :type integer)
    (max-value :accessor max-value :initform 1.0)
    (dx :accessor dx :initform 1.0 :initarg :dx :type short-float)
    (dy :accessor dy :initform 1.0 :initarg :dy :type short-float)
@@ -87,7 +87,20 @@
 ;********************************************************
 
 (defmethod PRINT-SLOTS ((Self inflatable-icon))  
-  `(icon rows columns depth pressure ceiling-value steps noise max-value is-upright surfaces altitudes distance dz is-flat is-upright surfaces ))
+  #|
+  (print "PRINT SLOTS II1")
+  (print (noise self))
+  (print (pressure self))
+  (print 1.0)
+  (print 1.s0)
+  (print (type-of (noise self)))
+  (print (Type-of (pressure self)))
+  (print (type-of  (smooth self)))
+  (print (Type-of 1.s0))
+  (print (type-of 1.0))
+  |#
+  (setf (smooth self) 2)
+  `(icon rows columns depth pressure ceiling-value smooth steps noise max-value is-upright surfaces altitudes distance dz is-flat ))
 
 
 (defmethod FINISHED-READING :after ((Self inflatable-icon) Stream)
@@ -115,11 +128,12 @@
         (setf (altitudes Self) (make-array (list Rows Columns) 
                                            :element-type 'short-float
                                            :initial-element 0.0)))))
+   
   Self))
 
 
 (defmethod OPEN-RESOURCE ((Self inflatable-icon))
-  (call-next-method)
+  (call-next-method) 
   (make-image-from-icon Self)
   #| use only altitudes without additional inflation
   (when (image Self)
@@ -220,12 +234,13 @@
 
 (defmethod COMPUTE-DEPTH ((Self inflatable-icon))
   ;; this can just be a heuristic: maybe ability for user to change
+  
   (setf (depth Self)
         (max *Minimal-Inflatable-Icon-depth*
              (cond
               ((is-upright Self)
                (float (/ (max-visible-pixel-row Self) (rows Self)) 0.0))
-              (t (maximum-altitude Self))))))
+              (t  (maximum-altitude Self))))))
 #| need to take these into account
 
   (case (surfaces Self)
@@ -382,7 +397,8 @@
 
 
 (defmethod COMPUTE-CONNECTORS ((Self inflatable-icon))
-  (unless (image Self) (return-from compute-connectors))
+  (when (equal  (image Self) nil) 
+    (return-from compute-connectors))
   (setf (connectors Self) nil)
   ;; scan vertically 
   (dotimes (Column (columns Self))
@@ -426,6 +442,8 @@
   ;; current: random small quads -> super infefficient way to draw the connectors
   ;; better: sort and make quad strips
   ;; best: run-lenght join quads: same color, connected, planar quads into big quads
+  ;(print "draw connectors")
+  ;(print (/ (hemlock::time-to-run 
   (dolist (Connector (connectors Self))
     (glBegin gl_quads)
     (glcolor4ub (red Connector) (green Connector) (blue Connector) (alpha Connector))
@@ -437,11 +455,13 @@
     (glEnd))
   (glColor3f 1.0 1.0 1.0))
     
-
+          ;  1000000.0)))
 
 (defmethod DRAW ((Self inflatable-icon))
   ;; the texture update needs to happen in the right opengl context
   ;; just in time while display is not elegant but works
+  ;(print "DRAW II")
+  ;(print (/ (hemlock::time-to-run
   (when (update-texture-from-image-p Self)
     (update-texture-from-image Self)
     (setf (update-texture-from-image-p Self) nil))
@@ -519,7 +539,7 @@
      (if (is-compiled Self) (draw-compiled Self) (draw-uncompiled Self))
      (glpopmatrix)))
  (glpopmatrix))
-
+;1000000.0)))
 
 (defmethod ALTITUDE-AT ((Self inflatable-icon) Row Column)
   (if (array-in-bounds-p (altitudes Self) Row Column)
@@ -696,8 +716,6 @@
                      )))
                ;(print "row")
                ;(print row)
-               
-               
                (if repeat-next-vertex
                  (progn
                    #|
@@ -929,16 +947,31 @@
  (make-inflatable-icon-from-image-file "lui:resources;templates;shapes;redLobster;redLobster.png")
 
 (defparameter *window*
-<application-window>
+<application-window title="window">
   <agent-3d-view name="losbter-view">
-    <lobster-inflatable-icon name="lobster2"/>
+    <lobster-inflatable-icon  name="lobster2"/>
+  </agent-3d-view>
+</application-window>)
+
+
+(defparameter *window2*
+<application-window title="window2">
+  <agent-3d-view name="losbter-view">
+    <lobster-inflatable-icon distance=".5" surfaces="front-and-back" name="lobster2"/>
+  </agent-3d-view>
+</application-window>)
+
+(defparameter *window3*
+<application-window title="window3">
+  <agent-3d-view name="losbter-view">
+    <lobster-inflatable-icon distance=".5" surfaces="front-and-back-connected" name="lobster2"/>
   </agent-3d-view>
 </application-window>)
 
 (format t " ~% ~A klops" 
          (/ 100000000.0 (hemlock::time-to-run
           (dotimes (i 100)
-            (draw  (first (agents(view-named *window* "losbter-view")))))))
+            (draw  (first (agents(view-named *window2* "losbter-view")))))))
                )
 
 (inspect (view-named *window* "losbter-view"))
