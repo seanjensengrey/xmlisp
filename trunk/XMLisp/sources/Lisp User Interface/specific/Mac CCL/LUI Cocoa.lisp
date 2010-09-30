@@ -81,23 +81,25 @@
 ;**********************************
 
 (defmethod COMMAND-KEY-P ()
-  (when *Current-Event*
-    (not (zerop (logand (#/modifierFlags (native-event *Current-Event*)) #$NSCommandKeyMask)))))
+  (let ((current-event (#/currentEvent (#/sharedApplication ns:ns-application))))
+    (not (zerop (logand (#/modifierFlags current-event) #$NSCommandKeyMask)))))
+
 
 
 (defmethod ALT-KEY-P ()
-  (when *Current-Event*
-    (not (zerop (logand (#/modifierFlags (native-event *Current-Event*)) #$NSAlternateKeyMask)))))
+  (let ((current-event (#/currentEvent (#/sharedApplication ns:ns-application))))
+    (not (zerop (logand (#/modifierFlags current-event) #$NSAlternateKeyMask)))))
 
 
 (defmethod SHIFT-KEY-P ()
-  (when *Current-Event*
-    (not (zerop (logand (#/modifierFlags (native-event *Current-Event*)) #$NSShiftKeyMask)))))
-
+  (let ((current-event (#/currentEvent (#/sharedApplication ns:ns-application))))
+    (not (zerop (logand (#/modifierFlags current-event) #$NSShiftKeyMask)))))
+    
 
 (defmethod CONTROL-KEY-P ()
-  (when *Current-Event*
-    (not (zerop (logand (#/modifierFlags (native-event *Current-Event*)) #$NSControlKeyMask)))))
+  (let ((current-event (#/currentEvent (#/sharedApplication ns:ns-application))))
+    (not (zerop (logand (#/modifierFlags current-event) #$NSControlKeyMask)))))
+
 
 
 (defmethod DOUBLE-CLICK-P ()
