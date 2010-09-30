@@ -169,6 +169,15 @@
          (slot-exists-p Superview 'lui-view)
          (lui-view Superview))))
 
+;**********************************
+;* Control                        *
+;**********************************
+
+(defmethod DISABLE ((Self control))
+  (#/setEnabled: (native-view self) #$NO))
+
+(defmethod ENABLE ((Self control))
+  (#/setEnabled: (native-view self) #$YES))
 
 ;**********************************
 ;* VIEW                           *
@@ -224,6 +233,19 @@
   ;; will not work without flushing window
   (#/display (native-view Self)))
 
+
+(defmethod ADD-TRACKING-RECT ((Self view))
+  (print "ADD TRACKING RECT")
+  (print (#/frame (native-view self)))
+  (print (NS:NS-RECT-HEIGHT (#/frame (native-view self))))
+  (#/addTrackingRect:owner:userData:assumeInside: 
+   (native-view self)
+   (#/frame (native-view self))
+   (native-view self)
+   +null-ptr+
+   #$NO))
+
+
 ;__________________________________
 ; NATIVE-VIEW                      |
 ;__________________________________/
@@ -248,6 +270,10 @@
 (objc:defmethod (#/isFlipped :<BOOL>) ((self native-view))
   ;; Flip to coordinate system to 0, 0 = upper left corner
   #$YES)
+
+
+
+
 
 ;**********************************
 ;* SCROLL-VIEW                    *
