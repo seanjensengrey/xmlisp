@@ -24,7 +24,7 @@
   (case NS-Type
     (#.#$NSLeftMouseDown :left-mouse-down)
     (#.#$NSLeftMouseUp :left-mouse-up)
-    (#.#$NSRightMouseDown :rignt-mouse-down)
+    (#.#$NSRightMouseDown :right-mouse-down)
     (#.#$NSRightMouseUp :right-mouse-up)
     #-cocotron (#.#$NSOtherMouseDown :other-mouse-down)
     #-cocotron (#.#$NSOtherMouseUp :other-mouse-up)
@@ -623,6 +623,9 @@
   (#/makeKeyWindow (native-window self))
   (#/orderFront: (native-window self) nil))
 
+(defmethod START-ACCEPTING-MOUSE-MOUVED-EVENTS ((Self Window))
+  (#/setAcceptsMouseMovedEvents: (native-window Self) #$YES))
+  
 ;__________________________________
 ; Window query functions            |
 ;__________________________________/
@@ -696,6 +699,19 @@
                           :event-type (native-to-lui-event-type (#/type event))
                           :native-event Event))))
 
+(objc:defmethod (#/rightMouseDown: :void) ((self native-window-view) event)
+  (declare (ignore event))
+  (print "++RIGHT MOUSE DOWN"))
+
+#|
+  (let ((mouse-loc (#/locationInWindow event)))
+    (view-event-handler (lui-window Self) 
+                        (make-instance 'mouse-event
+                          :x (truncate (pref mouse-loc :<NSP>oint.x))
+                          :y (truncate (- (height (lui-window Self)) (pref mouse-loc :<NSP>oint.y)))
+                          :event-type (native-to-lui-event-type (#/type event))
+                          :native-event Event))))
+|#
 
 (objc:defmethod (#/mouseUp: :void) ((self native-window-view) event)
   (let ((mouse-loc (#/locationInWindow event)))
@@ -1232,6 +1248,7 @@
 
 (defmethod INITIALIZE-INSTANCE :after ((Self attribute-value-list-view-control) &rest Args)
   "We need to create a new thread that will set the color of attribute values back to black"
+  (declare (ignore args))
   ;(call-next-method)
   (setf (color-update-process self)
     (process-run-function
