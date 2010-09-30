@@ -737,7 +737,7 @@
       (glEnable GL_COLOR_LOGIC_OP)
       (glLogicOp GL_XOR)
       (glLineStipple 1 (stipple Self))
-      ;; draw a polygon with many segments to approximate an ellipse
+      ;; draw a select with many segments to approximate an ellipse
       (let* ((Segments 50)
              (X0 (/ (+ xw1 xw2) 2.0))
              (Y0 (/ (+ yw1 yw2) 2.0))
@@ -856,7 +856,8 @@
         (apply #'add-selection (selection-mask Self) Shape Shape-Specs))
       ;; update selection-outline
         (setf (selection-outline Self) (recompute-selection-outline Self)))
-    (clear-selection Self)))
+    (clear-selection Self)
+    ))
 
 
 (defmethod SELECT-ALL ((Self image-editor))
@@ -1111,6 +1112,7 @@
     ;; Select Polygon
     (select-polygon
      (cond
+      
       ;; starting
       ((or (not (selection-in-progress Self)) (member (first (selection-in-progress Self)) '(:rect :ellipse)))
        (unless (shift-key-p) 
@@ -1126,7 +1128,8 @@
          (setf (selection-in-progress Self) nil)
          (display Self))
         (t
-         (setf (selection-in-progress Self) (append (selection-in-progress Self) (list (list Col Row)))))))))))
+         (setf (selection-in-progress Self) (append (selection-in-progress Self) (list (list Col Row))))
+         (display self))))))))
 
 
 
@@ -1159,12 +1162,13 @@
 
 
 (defmethod VIEW-LEFT-MOUSE-UP-EVENT-HANDLER ((Self image-editor) x y)
+  (declare (ignore x y))
     (unless (img-texture Self) (return-from view-left-mouse-up-event-handler))
-  (multiple-value-bind (Col Row) (screen->pixel-coord Self x y :return-max-value-for-outside-upward-bound t)
-    (when (and Row Col)
+  ;(multiple-value-bind (Col Row) (screen->pixel-coord Self x y :return-max-value-for-outside-upward-bound t)
+    ;(when (and Row Col)    
       (case (selected-tool (window Self))
         ;; SELECT RECTANGLE
-        (select-rect
+        (select-rect      
          (update-selection Self (selection-in-progress Self))
          (setf (selection-in-progress Self) nil)
          (display Self))
@@ -1172,7 +1176,9 @@
         (select-ellipse 
          (update-selection Self (selection-in-progress Self))
          (setf (selection-in-progress Self) nil)
-         (display Self))))))
+         (display Self))))
+;)
+;)
 
 
 ;**************************************
