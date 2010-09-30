@@ -102,7 +102,7 @@
    "KEY-EVENT-HANDLER" "KEY-EVENT" "KEY-CODE"
    "VIEW-LEFT-MOUSE-UP-EVENT-HANDLER" "VIEW-LEFT-MOUSE-DRAGGED-EVENT-HANDLER"
    "COMMAND-KEY-P" "SHIFT-KEY-P" "ALT-KEY-P" "CONTROL-KEY-P" "DOUBLE-CLICK-P"
-   "WINDOW" "VIEW" "X" "Y" "WIDTH" "HEIGHT" "SHOW" "DO-SHOW-IMMEDIATELY" "SHOW-AND-RUN-MODAL" "STOP-MODAL" "CANCEL-MODAL" "HIDE"  "HAS-BECOME-MAIN-WINDOW" "WINDOW-WILL-CLOSE" "WINDOW-SHOULD-CLOSE" "MAKE-KEY-WINDOW"
+   "WINDOW" "VIEW" "X" "Y" "WIDTH" "HEIGHT" "SHOW" "DO-SHOW-IMMEDIATELY" "SHOW-AND-RUN-MODAL" "STOP-MODAL" "CANCEL-MODAL" "HIDE"  "HAS-BECOME-MAIN-WINDOW" "WINDOW-WILL-CLOSE" "WINDOW-SHOULD-CLOSE" "MAKE-KEY-WINDOW" "START-ACCEPTING-MOUSE-MOUVED-EVENTS"
    "SWITCH-TO-FULL-SCREEN-MODE" "SWITCH-TO-WINDOW-MODE" "FULL-SCREEN" "WINDOW-CLOSE"
    "FIND-WINDOW-AT-SCREEN-POSITION" "FIND-VIEW-CONTAINING-POINT" "FIND-VIEW-AT-SCREEN-POSITION"
    "SCROLL-VIEW" "HAS-HORIZONTAL-SCROLLER" "HAS-VERTICAL-SCROLLER"
@@ -202,6 +202,7 @@
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;memory")
 (load "lui:sources;Lisp User Interface;error-handling")
 (load "lui:sources;Lisp User Interface;LUI")
+(load "lui:sources;Lisp User Interface;Camera")
 (load "lui:sources;Lisp User Interface;OpenGL-view")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;LUI Cocoa")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;standard-alert-dialog")
@@ -209,7 +210,7 @@
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;image-import")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;image-export")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;OpenGL-view Cocoa")
-(load "lui:sources;Lisp User Interface;Camera")
+
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;Transparent-OpenGL-Window")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;speech")
 (load "lui:sources;Lisp User Interface;pop-up-image-menu")
