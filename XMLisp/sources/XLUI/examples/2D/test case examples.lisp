@@ -1,4 +1,4 @@
-;; XLUI examples
+;; XLUI examples 
 ;; 2/4/09 Alexander Repenning
 ;; updated: 4/26/09 native-path
 
@@ -481,12 +481,7 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
 ;;********************************************
 
 <application-window title="scrolling" margin="0">
-  <column>
-     <row> 
-        <label text="testing:" width="75"/>
-        <attribute-editor attribute-changed-action="attribute-changed" width="100" height="30"/>
-     </row>
-  </column>
+  <attribute-editor text="1" attribute-changed-action="attribute-changed"/>
 </application-window> 
 
 (defmethod attribute-changed ((Self window) (window window) )
