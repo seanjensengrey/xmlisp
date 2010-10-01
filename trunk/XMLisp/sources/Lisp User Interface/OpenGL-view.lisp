@@ -85,6 +85,11 @@
 (defgeneric OBJECT-COORDINATE-VIEW-HEIGHT (opengl-view)
   (:documentation "How high does a flat object at z=0 need to be to fill the view vertically based on current camera setting."))
 
+(defgeneric MOUSE-ENTERED (opengl-view)
+  (:documentation "Method that is called when the mouse enters this view."))
+
+(defgeneric MOUSE-EXITED (opengl-view)
+  (:documentation "Method that is called when the mouse exits this view."))
 
 ;**************************
 ;* default implementation *
@@ -117,11 +122,17 @@
   (glVertex3f 0.2 -0.3 0.0)
   (glEnd))
 
+(defmethod PREPARE-OPENGL :before ((Self opengl-view))
+  (when (need-to-wgl-share self)
+    (share-texture-for-windows self)
+    (setf (need-to-wgl-share self) nil)))
 
 (defmethod PREPARE-OPENGL ((Self opengl-view))
+  #|
   (when (need-to-wgl-share self)
     (share-texture-for-windows self)
     (setf (need-to-wgl-share self) nil))
+  |#
   ;; nothing
   )
 
@@ -147,6 +158,14 @@
         (width Self))
      (height Self)))
 |#
+
+(defmethod MOUSE-ENTERED ((Self opengl-view))
+  ;do nothing
+  )
+
+(defmethod MOUSE-EXITED((Self opengl-view))
+  ;do nothing
+  )
 ;_______________________________
 ; Events                        |
 ;_______________________________
