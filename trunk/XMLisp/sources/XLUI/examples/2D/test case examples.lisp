@@ -481,10 +481,15 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
 ;;********************************************
 
 <application-window title="scrolling" margin="0">
-  <attribute-editor text="1" attribute-changed-action="attribute-changed"/>
+  <column>
+     <row> 
+        <label text="testing:" width="75"/>
+        <attribute-editor attribute-changed-action="attribute-changed" width="100" height="30"/>
+     </row>
+  </column>
 </application-window> 
 
-(defmethod attribute-changed ( (window window) (Self attribute-editor))
+(defmethod attribute-changed ((Self window) (window window) )
   (print "ATRIBUTE CHANGED!!!!!!"))
 
  ;;********************************************

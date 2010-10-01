@@ -23,7 +23,7 @@
 ;; edit to point to root folder containing /sources  /resources  etc.
 #-cocotron
 (setf (logical-pathname-translations "lui")
-      '(("**;*.*" "home:working copies;Xmlisp svn;trunk;XMLisp;**;")))
+      '(("**;*.*" "home:Work Documents;working copies;XMLisp;**;")))
 
 #+cocotron
 (setf (logical-pathname-translations "mac-home")
