@@ -9,7 +9,7 @@
     <empty/>
     <once-every/>
     <is-selected/>
-    <%-chance/>
+    <percent-chance/>
     <current-world/>
   </category>
   <category title="keyboard" disclosed="true">
@@ -24,7 +24,6 @@
   </category>
   <category title="camera control" disclosed="true">
     <first-person-view/>
-    <third-person-view/>
     <camera-attached/>
   </category>
   <category title="Control Stucture" disclosed="true">
