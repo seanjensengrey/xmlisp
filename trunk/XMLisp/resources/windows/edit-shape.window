@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<edit-shape-window title="get string" width="500" height="300">
+<edit-shape-window title="get string" width="700" height="300">
   <column align="stretch" valign="distribute">
 
     <row align="stretch" valign="stretch" height="230" > 
@@ -19,8 +19,8 @@
         <string-list height="230" name="column2" action="image-changed-action" width="100"/>
       </column>
       <spacer/>
-      <column flex="3" height="230">
-        <label align="center" width="100" name="Shape Preview" text="Shape Preview"/>
+      <column flex="4" align="stretch" height="230">
+        <label align="center" width="100" name="Shape Preview" text="Preview"/>
         <3d-agent-preview-view height="230"  name="shape-preview">
           <cube texture="crate.png"/>
         </3d-agent-preview-view>
