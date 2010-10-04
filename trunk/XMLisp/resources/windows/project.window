@@ -29,12 +29,12 @@
           <image-button name="stop button" action="stop-action" image="stop-button.png"/> 
           <image-button name="step button" action="step-action" image="step-button.png"/>
         </image-button-row>
-        <spacer width="10"/>
         <image-button-row>
           <image-button name="arrow button" action="arrow-tool-action" image="arrow-button.png"/>
           <image-button name="draw button" action="draw-tool-action" image="draw-button.png"/>
           <image-button name="volume insert button" action="volume-insert-tool-action" image="select-rect-button.png"/>
           <image-button name="erase button" action="erase-tool-action" image="erase-button.png"/> 
+          <spacer width="10"/>
           <image-button name="rotate button" action="rotate-tool-action" image="rotate-button.png"/>
           <image-button name="pan button" action="pan-tool-action" image="pan-button.png"/>
           <image-button name="zoom button" action="zoom-tool-action" image="zoom-button.png"/>    
