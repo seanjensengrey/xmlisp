@@ -10,42 +10,42 @@
         <agent-gallery name="agent-gallery" selected-group-changed-action="SWITCH-TO-BEHAVIOR" height="10" width="100"/>
       </scroll-box>
       <row align="center" valign="stretch" height="24" src="gradient-transparent.png">
-        <agent-shape-plus-button width="38" image="plus-button.png" >
+        <agent-shape-plus-button  width="38" image="plus-button.png" >
           <pop-up-image-item action="add-agent-action" text="New Agent" />
           <pop-up-image-item enable-predicate="shape-enable-predicate" action="add-shape-action" text="New Shape" />
         </agent-shape-plus-button>
-        <image-button name="delete agent button" image="minus-button.png" action="delete-selected-agent" />
+        <image-button start-disabled="true" name="delete agent button" image="minus-button.png" action="delete-selected-agent" />
       </row>
     </column>
     <column align="stretch" valign="stretch" flex="4" vflex="1">
       <row valign="middle" align="center" height="32" src="gradient-transparent.png">
         <label text="World:" width="45" />
         <image-button name="add world button"  action="add-new-world-action"  image="plus-button.png"/>
-        <pop-up name="world-name" width="150" /> 
-        <bevel-button text="Save" name="save-button" action="save-the-world-action" width="65" height="28" />
+        <pop-up start-disabled="true" name="world-name" width="150" /> 
+        <bevel-button start-disabled="true" text="Save" name="save-button" action="save-the-world-action" width="65" height="28" />
         <spacer width="10"/>
         <image-button-row>
-          <image-button name="run button"  action="run-action"  image="run-button.png"/> 
-          <image-button name="stop button" action="stop-action" image="stop-button.png"/> 
-          <image-button name="step button" action="step-action" image="step-button.png"/>
+          <image-button name="run button" start-disabled="true" action="run-action"  image="run-button.png"/> 
+          <image-button name="stop button" start-disabled="true" action="stop-action" image="stop-button.png"/> 
+          <image-button name="step button" start-disabled="true" action="step-action" image="step-button.png"/>
         </image-button-row>
         <image-button-row>
-          <image-button name="arrow button" action="arrow-tool-action" image="arrow-button.png"/>
-          <image-button name="draw button" action="draw-tool-action" image="draw-button.png"/>
-          <image-button name="volume insert button" action="volume-insert-tool-action" image="select-rect-button.png"/>
-          <image-button name="erase button" action="erase-tool-action" image="erase-button.png"/> 
+          <image-button name="arrow button" start-disabled="true" action="arrow-tool-action" image="arrow-button.png"/>
+          <image-button name="draw button" start-disabled="true" action="draw-tool-action" image="draw-button.png"/>
+          <image-button name="volume insert button" start-disabled="true" action="volume-insert-tool-action" image="select-rect-button.png"/>
+          <image-button name="erase button" start-disabled="true" action="erase-tool-action" image="erase-button.png"/> 
           <spacer width="10"/>
-          <image-button name="rotate button" action="rotate-tool-action" image="rotate-button.png"/>
-          <image-button name="pan button" action="pan-tool-action" image="pan-button.png"/>
-          <image-button name="zoom button" action="zoom-tool-action" image="zoom-button.png"/>    
+          <image-button name="rotate button" start-disabled="true" action="rotate-tool-action" image="rotate-button.png"/>
+          <image-button name="pan button" start-disabled="true" action="pan-tool-action" image="pan-button.png"/>
+          <image-button name="zoom button" start-disabled="true" action="zoom-tool-action" image="zoom-button.png"/>    
         </image-button-row>
         <spacer width="8"/>
-        <bevel-button text="Switch to first-person camera" name="camera-button" action="switch-camera-action" width="200" height="28" />
+        <bevel-button text="Switch to first-person camera" start-disabled="true" name="camera-button" action="switch-camera-action" width="200" height="28" />
         <spacer width="8"/>
-        <image-button name="reload button"  action="reload-tool-action"  image="reload-button.png"/> 
-        <bevel-button text="Clear" name="clear-button" action="clear-tool-action" width="65" height="28" />
+        <image-button name="reload button" start-disabled="true" action="reload-tool-action"  image="reload-button.png"/> 
+        <bevel-button text="Clear" start-disabled="true" name="clear-button" action="clear-tool-action" width="65" height="28" />
         <label width="35" text="slow"/>
-        <slider value="2.0" max-value="4.0" min-value="0.0" action="speed-slider-action"/>
+        <slider value="2.0" start-disabled="true" name="speed-slider" max-value="4.0" min-value="0.0" action="speed-slider-action"/>
         <label width="35" text="fast"/>
       </row>
       <row align="stretch" valign="stretch" flex="1" vflex="1">
@@ -89,18 +89,18 @@
         </column>
       </row>
       <row align="center" valign="stretch" height="24" src="gradient-transparent.png">
-        <agent-shape-plus-button width="38"  image="plus-button.png" >
+        <agent-shape-plus-button start-disabled="true" name="new-rule-button" width="38"  image="plus-button.png" >
           <pop-up-image-item action="add-rule-action" enable-predicate="add-rule-enable-predicate" text="New Rule" />
           <pop-up-image-item action="add-method-action" enable-predicate="add-method-enable-predicate" text="New Method" />
         </agent-shape-plus-button>
-        <image-button name="delete vat button" image="minus-button.png" action="delete-selected-command" />
-        <popup-image-button image="actionButton.png" width="38" draw-disclosure="false">
+        <image-button start-disabled="true" name="delete vat button" image="minus-button.png" action="delete-selected-command" />
+        <popup-image-button name="rule-method-command-button" start-disabled="true" image="actionButton.png" width="38" draw-disclosure="false">
           <pop-up-image-item action="test-action" enable-predicate="test-enable-predicate" text="Test" />
           <pop-up-image-item action="duplicate-action" enable-predicate="duplicate-enable-predicate" key-equivalent="d" text="Duplicate"/>
           <pop-up-image-item action="explain-action" enable-predicate="explain-enable-predicate" text="Explain"/>
         </popup-image-button> 
         <label align="right" width="35" text="Off"/>
-        <slider  value="5.0" max-value="10.0" min-value="0.0" action="conversational-slider-action"/>
+        <slider start-disabled="true" name="conversational-slider" value="5.0" max-value="10.0" min-value="0.0" action="conversational-slider-action"/>
         <label align="right" width="45" text="Chatty"/>  
       </row>
    </column>
