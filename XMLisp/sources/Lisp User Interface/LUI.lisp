@@ -665,7 +665,7 @@ after any of the window controls calls stop-modal close window and return value.
   (declare (ignore Args))
   (call-next-method)
   (when (start-disabled self)
-    (Disabled self))
+    (Disable self))
   (unless (target Self) (setf (target Self) Self)) ;; make me default target
   (initialize-event-handling Self))
 
