@@ -47,7 +47,9 @@
                                      (Yes-Text "Yes")
                                      (No-Text "No")
                                      (Cancel-Text "Cancel"))
-
+  ;Do we need these?
+  (declare (ignore yes-text no-text cancel-text))
+ 
   (let ((Window (load-object "lui:resources;windows;yes-no-dialog.window" :package (find-package :xlui))))
     ; (when Yes-Text (#/addButtonWithTitle: (lui::native-window Window) (native-string Yes-Text)))
     ;(when No-Text (#/addButtonWithTitle: (lui::native-window Window) (native-string No-Text)))
