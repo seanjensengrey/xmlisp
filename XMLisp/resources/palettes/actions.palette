@@ -17,9 +17,11 @@
   </category>
   <category title="messages" disclosed="true">
     <message/>
+
   </category>
   <category title="sound and speech" disclosed="true">
     <play-sound/>
+    <stop-all-sounds/>
     <say/>
   </category>
   <category title="attributes" disclosed="true">
