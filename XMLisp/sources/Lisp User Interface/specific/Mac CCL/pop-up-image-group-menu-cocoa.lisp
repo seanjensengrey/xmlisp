@@ -30,23 +30,15 @@
     (:metaclass ns:+ns-object
 	      :documentation "Native window"))
 
-
+#|
 (objc:defmethod (#/canBecomeKeyWindow :boolean) ((self group-menu-popup-window))
   #$YES)
-
+|#
 
 (objc:defmethod (#/mouseMoved: :void) ((self group-menu-popup-window) Event)
   (let ((mouse-x (NS:NS-POINT-X (#/locationInWindow event)))
-        (mouse-y (NS:NS-POINT-Y (#/locationInWindow event)))
-        ;(window-x (NS:NS-RECT-X (#/frame self)))
-        ;(window-y (NS:NS-RECT-Y (#/frame self)))
-        )
-#|
-    #+cocotron
-    (setf mouse-x (NS:NS-POINT-X (#/mouseLocation ns:ns-event)))
-    #+cocotron
-    (setf mouse-y (NS:NS-POINT-Y (#/mouseLocation ns:ns-event)))  
-|#  
+        (mouse-y (NS:NS-POINT-Y (#/locationInWindow event))))
+
     (let ((subviews (gui::list-from-ns-array (#/subviews (#/contentView self)))))  
       (dolist (subview subviews)
         (if (equal (type-of subview) 'LUI::INDEXED-IMAGE-VIEW )
@@ -106,6 +98,7 @@
 
 (objc:defmethod (#/mouseDown: :void) ((self indexed-image-view) Event)
   (call-next-method Event)
+  (print "MOUSE DOWN")
   (setf (index-of-selection (lui-superview Self)) (index self))
   (close-window (lui-superview self)))
 
