@@ -140,6 +140,8 @@ Call with most important parameters. Make other paramters accessible through *Cu
 (defgeneric VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER (event-listener-interface X Y)
   (:documentation "Mouse Click Event handler"))
 
+(defgeneric VIEW-RIGHT-MOUSE-DOWN-EVENT-HANDLER (event-listener-interface X Y)
+  (:documentation "Mouse Click Event handler"))
 
 (defgeneric VIEW-LEFT-MOUSE-DRAGGED-EVENT-HANDLER (event-listener-interface X Y DX DY)
   (:documentation "Mouse dragged event handler"))
@@ -181,6 +183,9 @@ Call with most important parameters. Make other paramters accessible through *Cu
 (defgeneric WINDOW-Y (view)
   (:documentation "y offset in window containing view"))
 
+(defgeneric VIEW-DID-MOVE-TO-WINDOW (view)
+  (:documentation "Called when this view is moved into a window"))
+
 (defgeneric DISPLAY (view-or-window)
   (:documentation "Make the view draw: prepare view (e.g., locking, focusing), draw, finish up (e.g., unlocking)"))
 
@@ -190,8 +195,13 @@ Call with most important parameters. Make other paramters accessible through *Cu
 (defgeneric LAYOUT (view-or-window)
   (:documentation "Adjust size and potentially position to container, adjust size and position of content if necesary"))
 
+(defgeneric ADJUST-X-Y-FOR-WINDOW-OFFSET (view x y)
+  (:documentation ""))
+
 (defgeneric MAKE-NATIVE-OBJECT (view-or-window)
   (:documentation "Make and return a native view object"))
+
+
 
 
 
@@ -226,6 +236,10 @@ Call with most important parameters. Make other paramters accessible through *Cu
         (incf y (y v))
         (setq v Container)))))
 
+(defmethod VIEW-DID-MOVE-TO-WINDOW ((Self View))
+  ;
+  (print "VIEW DID MOVE")
+  )
 
 (defmethod INITIALIZE-INSTANCE ((Self view) &rest Args)
   (declare (ignore Args))
@@ -251,6 +265,10 @@ Call with most important parameters. Make other paramters accessible through *Cu
 ;; Events
 
 (defmethod MOUSE-EVENT-HANDLER ((Self view) X Y DX DY Event)
+  (multiple-value-bind (new-x new-y)
+                      (adjust-x-y-for-window-offset self x y)
+                      (setq x new-x)
+                      (setq y new-y))
   (do-subviews (Subview Self)
     ;; a left mouse down may be the start of a drag, remember the view starting this
     (when (and (member (event-type Event) '(:left-mouse-down))
@@ -264,7 +282,12 @@ Call with most important parameters. Make other paramters accessible through *Cu
     (:left-mouse-down 
      (when (and (<= 0 x (width Self))
                 (<= 0 y (height Self)))
+       
        (view-left-mouse-down-event-handler Self x y)))
+    (:right-mouse-down 
+     (when (and (<= 0 x (width Self))
+                (<= 0 y (height Self)))
+       (view-right-mouse-down-event-handler Self x y)))
     (:left-mouse-up (view-left-mouse-up-event-handler Self x y))
     (:left-mouse-dragged
      (when (equal Self *View-Last-Clicked*)
@@ -278,9 +301,16 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 (defmethod VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER ((Self view) X Y)
   (declare (ignore X Y))
+  
   ;; nada
   )
 
+
+(defmethod VIEW-RIGHT-MOUSE-DOWN-EVENT-HANDLER ((Self view) X Y)
+  (declare (ignore X Y))
+  
+  ;; nada
+  )
 
 (defmethod VIEW-LEFT-MOUSE-UP-EVENT-HANDLER ((Self view) X Y)
   (declare (ignore X Y))
@@ -304,7 +334,10 @@ Call with most important parameters. Make other paramters accessible through *Cu
   ;; nothing
   )
 
-
+(defmethod ADJUST-X-Y-FOR-WINDOW-OFFSET ((Self view) X Y)
+  (values
+   X
+   Y))
 ;**********************************
 ;* SCROLL-VIEW                    *
 ;**********************************
@@ -470,6 +503,7 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defmethod FIND-VIEW-CONTAINING-POINT ((Self window) x y)
   (labels ((find-view (View Superview x y)
+             (declare (ignore superview))
              (do-subviews (Subview View)
                (when (and (<= (x Subview) x (+ (x Subview) (width Subview)))
                           (<= (y Subview) y (+ (y Subview) (height Subview))))
@@ -494,6 +528,7 @@ after any of the window controls calls stop-modal close window and return value.
 ;; Events
 
 (defmethod MOUSE-EVENT-HANDLER ((Self window) X Y DX DY Event)
+
   (do-subviews (Subview Self)
     ;; a left mouse down may be the start of a drag, remember the view starting this
     (when (and (member (event-type Event) '(:left-mouse-down))
@@ -504,7 +539,8 @@ after any of the window controls calls stop-modal close window and return value.
     (mouse-event-handler Subview (- x (x Subview)) (- y (y Subview)) DX DY Event))
   ;; and dispatch event to window
   (case (event-type Event)
-    (:left-mouse-down (view-left-mouse-down-event-handler Self x y))
+    (:left-mouse-down   (view-left-mouse-down-event-handler Self x y))
+    (:right-mouse-down  (view-right-mouse-down-event-handler Self x y))
     (:left-mouse-up (view-left-mouse-up-event-handler Self x y))
     (:left-mouse-dragged
      (when (equal Self *View-Last-Clicked*)
@@ -542,6 +578,10 @@ after any of the window controls calls stop-modal close window and return value.
   ;; nada
   )
 
+(defmethod VIEW-RIGHT-MOUSE-DOWN-EVENT-HANDLER ((Self window) X Y)
+  (declare (ignore X Y))
+  ;; nada
+  )
 
 (defmethod VIEW-LEFT-MOUSE-UP-EVENT-HANDLER ((Self window) X Y)
   (declare (ignore X Y))
@@ -576,6 +616,7 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defmethod WINDOW-WILL-CLOSE ((Self window) Notification)
   (declare (ignore Notification))
+  (print "WWC DEFAULT")
   ;;Do nothing, override this method if you need to do any cleanup when the window closes.
   )
 
@@ -592,7 +633,9 @@ after any of the window controls calls stop-modal close window and return value.
 (defclass CONTROL (view)
   ((target :accessor target :initform nil :initarg :target :documentation "the receiver of a action message when control is clicked. Default to self.")
    (action :accessor action :initform 'control-default-action :initarg :action :type symbol :documentation "method by this name will be called on the window containing control and the target of the control")
-   (text :accessor text :initform "untitled" :initarg :text :type string :documentation "text associated with control"))
+   (text :accessor text :initform "untitled" :initarg :text :type string :documentation "text associated with control")
+   (start-disabled :accessor start-disabled :initform nil :type boolean :initarg :start-disabled :documentation "if true button is selectable with return key")
+   )
   (:documentation "LUI Control: when clicked will call the action method of its target, maintains a value"))
 
 
@@ -621,6 +664,8 @@ after any of the window controls calls stop-modal close window and return value.
 (defmethod INITIALIZE-INSTANCE ((Self control) &rest Args)
   (declare (ignore Args))
   (call-next-method)
+  (when (start-disabled self)
+    (Disabled self))
   (unless (target Self) (setf (target Self) Self)) ;; make me default target
   (initialize-event-handling Self))
 
@@ -646,6 +691,7 @@ after any of the window controls calls stop-modal close window and return value.
 (defmethod INVOKE-ACTION ((Self control))  
   ;;(format t "~%action=~A window=~A target=~A" (action Self) (window Self) (target Self))
   (funcall (action Self) (window Self) (target Self)))
+
 
 
 ;****************************************************
