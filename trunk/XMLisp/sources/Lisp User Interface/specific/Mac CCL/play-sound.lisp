@@ -17,6 +17,10 @@
   (:documentation "Play sound in resources/sounds/ folder"))
 
 
+(defgeneric SHUT-UP-SOUNDS ()
+  (:documentation "Stop all sounds from playing"))
+
+
 (defmethod PLAY-SOUND ((Name string))
   (let ((Sound (gethash Name *Sounds*)))
     (cond
@@ -30,6 +34,12 @@
              #$YES))
       (#/play (gethash Name *Sounds*))))))
 
+(defmethod SHUT-UP-SOUNDS ()
+  (maphash #'stop-sound *Sounds*)
+  )
+
+(defun STOP-SOUND (key value)
+  (#/stop value))
 
 (defun SOUND-FILES-IN-SOUND-FILE-DIRECTORY () "
   out: Sound-Files lisp of pathname"
@@ -52,7 +62,13 @@
 #| Examples:
 
 (play-sound "Radar-beep.mp3")
+
 (play-sound "Inhale.mp3")
+
 (play-sound "Explode.mp3")
+
+(play-sound "RuinsMystique.mp3")
+
+(shut-up-sounds)
 
 |#
