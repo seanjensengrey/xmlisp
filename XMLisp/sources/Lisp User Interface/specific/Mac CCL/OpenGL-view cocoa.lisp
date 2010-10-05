@@ -34,12 +34,15 @@
     `(let* ((,GLContext (#/openGLContext (native-view ,View)))
             (,CGLContext (#/CGLContextObj ,GLContext)))
        (unwind-protect
-            (progn
-              (#_CGLLockContext ,CGLContext)
-              (#/makeCurrentContext ,GLContext)
-              (progn ,@Forms))
+           (progn
+             (#_CGLLockContext ,CGLContext)
+             (#/makeCurrentContext ,GLContext)
+             (progn ,@Forms))
          (#/flushBuffer ,GLContext)
          (#/clearCurrentContext ns:ns-opengl-context)
+         ;;New Code....
+         ;(#/makeCurrentContext ,GLContext)
+         ;;Ask Alex....
          (#_CGLUnlockContext  ,CGLContext))))))
 
 
@@ -82,6 +85,18 @@
                           :event-type (native-to-lui-event-type (#/type event))
                           :native-event Event))))
 
+(objc:defmethod (#/rightMouseDown: :void) ((self native-opengl-view) event)
+  (let ((mouse-loc (#/locationInWindow event)))
+    (view-event-handler (window (lui-view Self)) 
+                        (make-instance 'mouse-event
+                          :x (truncate (pref mouse-loc :<NSP>oint.x))
+                          :y (truncate (- (height (window (lui-view Self))) (pref mouse-loc :<NSP>oint.y)))
+                          :event-type (native-to-lui-event-type (#/type event))
+                          :native-event Event))))
+
+(objc:defmethod (#/viewDidMoveToWindow :void) ((self native-opengl-view))
+  (call-next-method)
+  (view-did-move-to-window (lui-view self)))
 
 (defmethod make-native-object ((Self opengl-view))
   (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
@@ -119,16 +134,27 @@
         (let ((View-to-Share (or (and (use-global-glcontext Self) (shared-opengl-view))
                                  (share-glcontext-of Self))))
           (when View-to-Share
+            #-cocotron
             (let ((glContext 
                    (#/initWithFormat:shareContext: 
                     (#/openGLContext Native-Control)
                     Pixel-Format ;; redundant but should be OK
                     (#/openGLContext (native-view View-to-Share)))))
+              
               ;; (format t "~%before ~A ~%after ~A" (#/openGLContext Native-Control) glContext)))
-              (unless glContext (error "cannot share OpenGLContext of view ~A" View-to-Share)))))
+              (unless glContext (error "cannot share OpenGLContext of view ~A" View-to-Share)))
+            ;(print "WGL SHARE LISTS")
+            ;(print (#_wglShareLists (%get-ptr (#/CGLContextObj (#/openGLContext (native-view view-to-share)))36) (%get-ptr (#/CGLContextObj glContext) 36)))
+            )
+          
+          )
         (#/release Pixel-Format)
         Native-Control))))
 
+(defmethod SHARE-TEXTURE-FOR-WINDOWS ((Self opengl-view))
+  (print "WGL SHARE LISTS")
+  #+cocotron
+  (print (#_wglShareLists (%get-ptr (#/CGLContextObj (#/openGLContext (native-view (shared-opengl-view))))36) (%get-ptr (#/CGLContextObj (#/openGLContext (native-view self))) 36))))
 
 (defmethod DISPLAY ((Self opengl-view))  
   (with-glcontext Self
@@ -270,6 +296,19 @@
         (unless (%null-ptr-p View)
           (lui-view View))))))
 
+
+(objc:defmethod (#/mouseEntered: :void) ((self native-opengl-view) Event)
+  (call-next-method event)
+  (mouse-entered (lui-view self)))
+
+(objc:defmethod (#/mouseExited: :void) ((self native-opengl-view) Event)
+  (call-next-method event)
+  (mouse-exited (lui-view self)))
+
+(objc:defmethod (#/mouseMoved: :void) ((self native-opengl-view) Event)
+  (call-next-method event)
+  ;(mouse-exited (lui-view self))
+  )
 
 #| Examples:
 
