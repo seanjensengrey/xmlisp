@@ -235,9 +235,6 @@
 
 
 (defmethod ADD-TRACKING-RECT ((Self view))
-  (print "ADD TRACKING RECT")
-  (print (#/frame (native-view self)))
-  (print (NS:NS-RECT-HEIGHT (#/frame (native-view self))))
   (#/addTrackingRect:owner:userData:assumeInside: 
    (native-view self)
    (#/frame (native-view self))
