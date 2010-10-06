@@ -29,6 +29,7 @@
           <image-button name="stop button" start-disabled="true" action="stop-action" image="stop-button.png"/> 
           <image-button name="step button" start-disabled="true" action="step-action" image="step-button.png"/>
         </image-button-row>
+        <spacer width="10"/>
         <image-button-row>
           <image-button name="arrow button" start-disabled="true" action="arrow-tool-action" image="arrow-button.png"/>
           <image-button name="draw button" start-disabled="true" action="draw-tool-action" image="draw-button.png"/>
