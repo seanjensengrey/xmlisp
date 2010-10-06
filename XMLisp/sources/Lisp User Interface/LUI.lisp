@@ -184,7 +184,7 @@ Call with most important parameters. Make other paramters accessible through *Cu
   (:documentation "y offset in window containing view"))
 
 (defgeneric VIEW-DID-MOVE-TO-WINDOW (view)
-  (:documentation "Called when this view is moved into a window"))
+  (:documentation "Called when this view is moved into a window, sometimes a view may want to do some special setup once they are placed into a view hierarchy, if so override this method. "))
 
 (defgeneric DISPLAY (view-or-window)
   (:documentation "Make the view draw: prepare view (e.g., locking, focusing), draw, finish up (e.g., unlocking)"))
@@ -196,7 +196,7 @@ Call with most important parameters. Make other paramters accessible through *Cu
   (:documentation "Adjust size and potentially position to container, adjust size and position of content if necesary"))
 
 (defgeneric ADJUST-X-Y-FOR-WINDOW-OFFSET (view x y)
-  (:documentation ""))
+  (:documentation "On windows, it may be necessaryto adjust the x y coordinates in order to make up for cocotrons strange offsets"))
 
 (defgeneric MAKE-NATIVE-OBJECT (view-or-window)
   (:documentation "Make and return a native view object"))
@@ -236,9 +236,9 @@ Call with most important parameters. Make other paramters accessible through *Cu
         (incf y (y v))
         (setq v Container)))))
 
+
 (defmethod VIEW-DID-MOVE-TO-WINDOW ((Self View))
-  ;
-  (print "VIEW DID MOVE")
+  ;do nothing
   )
 
 (defmethod INITIALIZE-INSTANCE ((Self view) &rest Args)
@@ -616,7 +616,6 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defmethod WINDOW-WILL-CLOSE ((Self window) Notification)
   (declare (ignore Notification))
-  (print "WWC DEFAULT")
   ;;Do nothing, override this method if you need to do any cleanup when the window closes.
   )
 
@@ -634,7 +633,7 @@ after any of the window controls calls stop-modal close window and return value.
   ((target :accessor target :initform nil :initarg :target :documentation "the receiver of a action message when control is clicked. Default to self.")
    (action :accessor action :initform 'control-default-action :initarg :action :type symbol :documentation "method by this name will be called on the window containing control and the target of the control")
    (text :accessor text :initform "untitled" :initarg :text :type string :documentation "text associated with control")
-   (start-disabled :accessor start-disabled :initform nil :type boolean :initarg :start-disabled :documentation "if true button is selectable with return key")
+   (start-disabled :accessor start-disabled :initform nil :type boolean :initarg :start-disabled :documentation "If true, the control will be disabled when it is initialized.")
    )
   (:documentation "LUI Control: when clicked will call the action method of its target, maintains a value"))
 
