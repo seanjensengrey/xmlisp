@@ -45,7 +45,7 @@
    (ceiling-transparency :accessor ceiling-transparency :initform 0.0)
    (transparent-ceiling-starting-alpha :accessor transparent-ceiling-starting-alpha :initform .35 :documentation "The starting alpha value of the transparent ceiling.")
    (transparent-ceiling-decrement-value :accessor transparent-ceiling-decrement-value :initform .02 :documentation "The amount the transparent ceiling's alpha will be decremented by each time the timer is due. ")
-   (transparent-ceiling-update-frequency :accessor transparent-ceiling-update-frequency :initform .04 :documentation "How often in seconds the transparency value will be udpate")
+   (transparent-ceiling-update-frequency :accessor transparent-ceiling-update-frequency :initform .02 :documentation "How often in seconds the transparency value will be udpated")
    (transparent-ceiling-should-fade :accessor transparent-ceiling-should-fade :initform nil :documentation "Fade will not begin until this is set.")
    (transparent-ceiling-update-process :accessor transparent-ceiling-update-process :initform nil :documentation "This process will update the transparency of the ceiling to cause a fade out when it is not used"))
   (:documentation "Editor used to create inflatable icons"))
@@ -441,7 +441,6 @@
 
 
 (defmethod DRAW ((Self inflated-icon-editor)) 
-  
   (glClearColor 0.9 0.9 0.9 1.0) 
   (glClear (logior GL_COLOR_BUFFER_BIT gl_depth_buffer_bit))
   (draw-sky-box Self)
@@ -453,21 +452,15 @@
   (glpopmatrix)
   (use-texture self "whiteBox.png")
   (if (<=  (ceiling-transparency (window self)) 0.0)
+    ;; if it is fully transparent kill the process if it is still runnning
     (when (transparent-ceiling-update-process (window self))
       (setf *ceiling-update-thread-should-stop* t)
       (Setf (transparent-ceiling-update-process (window self)) nil))
     (progn
+       ;; draw the transparent ceiling
       (let ((ceiling-height (+ .02 (ceiling-value (inflatable-icon (view-named (Window self) 'model-editor))))))
+       
         (glpushmatrix)
-        (glColor4f 1.0 1.0 0.0 (ceiling-transparency (window self)))
-        (glBegin GL_LINES)
-        (loop for i from -1.0 to 1.0 by .2 do
-          (glVertex3f i ceiling-height -1.0)
-          (glVertex3f i ceiling-height 1.0))
-        (loop for j from -1.0 to 1.0 by .2 do
-          (glVertex3f -1.0 ceiling-height j)
-          (glVertex3f 1.0 ceiling-height j))
-        (glEnd)
         (glColor4f .5 .7 1.0 (ceiling-transparency (window self)))
         (glbegin gl_quads)
         (glnormal3f 0.0 1.0 0.0)
@@ -476,7 +469,19 @@
         (gltexcoord2f 10s0 10s0) (glvertex3f  1s0 ceiling-height 1s0)
         (gltexcoord2f 10s0 0s0) (glvertex3f  1s0 ceiling-height -1s0)
         (glend)
+        ;; grid
+        (glColor4f 1.0 1.0 0.0 (ceiling-transparency (window self)))
+        (glBegin GL_LINES)
+        (loop for i from -1.0 to 1.0 by .2 do
+          (glVertex3f i (+ .01 ceiling-height) -1.0)
+          (glVertex3f i (+ .01 ceiling-height) 1.0))
+        (loop for j from -1.0 to 1.0 by .2 do
+          (glVertex3f -1.0 (+ .01 ceiling-height) j)
+          (glVertex3f 1.0 (+ .01 ceiling-height) j))
+        (glEnd)
+
         (glpopmatrix)
+        (glEnable GL_DEPTH_TEST) 
         (glColor4f 1.0 1.0 1.0 1.0)))))
   
 
