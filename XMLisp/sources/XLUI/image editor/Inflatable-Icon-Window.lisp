@@ -24,16 +24,13 @@
 
 (in-package :xlui)
 
-
-(defclass INFLATABLE-ICON-WINDOW-DELEGATE (ns:ns-object)
-  ((lui-winodw :accessor lui-window :initform nil :initarg :lui-window))
-  (:metaclass ns:+ns-object
-	      :documentation "window delegate"))
-
-(objc:defmethod (#/windowWillClose: :void) ((self INFLATABLE-ICON-WINDOW-DELEGATE) Notifaction)
-  (declare (ignore Notifaction))
-  (funcall (alert-close-action (lui-window self)) (alert-close-target (lui-window self)) (lui-window self)))
-
+(export '( *ceiling-update-thread-should-stop* project-manager find-shape load-world))
+   
+(defvar *ceiling-update-thread-should-stop* nil "Global variable that should be set if we want the ceiling update thread to stop, this can be used as a safe guard in case process-kill fails.")
+ 
+;;Hack: this is a stop gap until we can develop a better locking mechanism.
+(defvar *transparent-ceiling-update-lock* nil) ; (ccl::make-lock))
+                         
 (defclass INFLATABLE-ICON-EDITOR-WINDOW (application-window)
   ((container :accessor container :initform nil :initarg :container)
    (smoothing-cycles :accessor smoothing-cycles :initform 0 :initarg :smoothing-cycles)
@@ -42,10 +39,15 @@
    (file :accessor file :initform nil :documentation "shape file")
    (destination-inflatable-icon :accessor destination-inflatable-icon :initform nil :initarg :destination-inflatable-icon :documentation "if present save edited icon into this inflatable icon")
    (close-action :accessor close-action :initform nil :initarg :close-action :documentation "called with self when inflatable icon window is being closed")
-   (delegate :accessor delegate :initform (make-instance 'INFLATABLE-ICON-WINDOW-DELEGATE))
    (alert-close-action :accessor alert-close-action :initform nil :initarg :alert-close-action :documentation "The method that should be called when the window has closed, to alert the container of the closing")
    (alert-close-target :accessor alert-close-target :initform nil :initarg :alert-close-target :documentation "The target of the close-action, most likely the caller of the window.")
-   )
+   (timer-triggers :accessor timer-triggers :initform nil :documentation "when to start TIME triggers")
+   (ceiling-transparency :accessor ceiling-transparency :initform 0.0)
+   (transparent-ceiling-starting-alpha :accessor transparent-ceiling-starting-alpha :initform .35 :documentation "The starting alpha value of the transparent ceiling.")
+   (transparent-ceiling-decrement-value :accessor transparent-ceiling-decrement-value :initform .02 :documentation "The amount the transparent ceiling's alpha will be decremented by each time the timer is due. ")
+   (transparent-ceiling-update-frequency :accessor transparent-ceiling-update-frequency :initform .04 :documentation "How often in seconds the transparency value will be udpate")
+   (transparent-ceiling-should-fade :accessor transparent-ceiling-should-fade :initform nil :documentation "Fade will not begin until this is set.")
+   (transparent-ceiling-update-process :accessor transparent-ceiling-update-process :initform nil :documentation "This process will update the transparency of the ceiling to cause a fade out when it is not used"))
   (:documentation "Editor used to create inflatable icons"))
 
 
@@ -53,9 +55,12 @@
   (let ((Model-Editor (view-named self 'model-editor)))
     (if (is-upright (inflatable-icon Model-Editor))
       (enable (view-named self "upright"))))
-  (#/setDelegate: (lui::native-window self) (make-instance 'inflatable-icon-window-delegate :lui-window self))
-  (START-ACCEPTING-MOUSE-MOUVED-EVENTS self))
+  (make-transparent-ceiling-update-lock)
+  (start-accepting-mouse-mouved-events self))
   
+(defun MAKE-TRANSPARENT-CEILING-UPDATE-LOCK()
+  (unless *transparent-ceiling-update-lock*
+    (setf *transparent-ceiling-update-lock* (ccl::make-lock))))
 
 (defgeneric TOOL-SELECTION-EVENT (inflatable-icon-editor-window Tool-Name)
   (:documentation "called after tool has been selected"))
@@ -63,6 +68,7 @@
 
 (defmethod TOOL-SELECTION-EVENT ((Self inflatable-icon-editor-window) Tool-Name)
   (setf (selected-tool Self) Tool-Name))
+
 
 (defmethod CAMERA-TOOL-SELECTION-EVENT ((Self inflatable-icon-editor-window) Tool-Name)
   (setf (selected-camera-tool Self) Tool-Name))
@@ -90,12 +96,23 @@
     (call-next-method)))
 
 
+(defmethod WINDOW-WILL-CLOSE ((Self inflatable-icon-editor-window) Notification)
+  (declare (ignore Notification))
+  (when (transparent-ceiling-update-process self)
+    (setf *ceiling-update-thread-should-stop* t)
+    (setf (transparent-ceiling-update-process self) nil))
+  (ccl::with-lock-grabbed (*transparent-ceiling-update-lock*)
+    (funcall (alert-close-action self) (alert-close-target self) self)))
+
+
+
 (defmethod KEY-EVENT-HANDLER ((Self inflatable-icon-editor-window) Event)
   (case (key-code Event)
     (51
-     (erase-selected-pixels (view-named Self 'icon-editor))
-     (display (view-named self 'model-editor))
-     )))
+     (if (lui::alt-key-p)
+       (fill-selected-pixels (view-named Self 'icon-editor))
+       (erase-selected-pixels (view-named Self 'icon-editor)))
+     (display (view-named self 'model-editor)))))
 
 
 (defmethod DOCUMENT-DEFAULT-DIRECTORY ((Self inflatable-icon-editor-window)) "
@@ -115,11 +132,12 @@
 
 (defmethod VIEW-KEY-EVENT-HANDLER ((Self inflatable-icon-editor-window) Key)
   "Called when a key is typed while the image-editor-window has keyboard focus."
+  (print "VIEW KEY EVENT HANDLER")
   (let ((Icon-Editor (view-named Self 'icon-editor)))
     (cond
      ((command-key-p)
       (case Key
-        (#\l (load-image-from-file Self (choose-file-dialog :directory "ad3d:resources;textures;")))
+    ;    (#\l (load-image-from-file Self (choose-file-dialog :directory "ad3d:resources;textures;")))
         (#\a (select-all Icon-Editor))
         (#\d (clear-selection Icon-Editor))
         (#\I (invert-selection Icon-Editor))))
@@ -128,7 +146,7 @@
         (#\ESC (close-window-with-warning Self))
         (#\Delete 
          (cond
-          ((option-key-p)
+          ((lui::alt-key-p)
            (fill-selected-pixels Icon-Editor)
            (image-changed-event Icon-Editor))
           (t
@@ -234,12 +252,12 @@
                                  :directory (document-default-directory Self))
                #+windows-target "image999.png"))
     (setf (file Self) File)
- ;;   (setf (icon (document-root Self)) (image-file-name Self))     ;; set icon attribute
- ;;   (store-window-state-in-document-root Self)
- ;;   (save-object (document-root Self) File :if-exists :error)
- ;;   (add-window-proxy-icon Self File)
+    ;;   (setf (icon (document-root Self)) (image-file-name Self))     ;; set icon attribute
+    ;;   (store-window-state-in-document-root Self)
+    ;;   (save-object (document-root Self) File :if-exists :error)
+    ;;   (add-window-proxy-icon Self File)
     ;; set file to this new file
- ;;   (setf (window-needs-saving-p Self) nil)
+    ;;   (setf (window-needs-saving-p Self) nil)
     (save-image (view-named Self 'icon-editor) (image-file Self))))
 
 
@@ -247,10 +265,10 @@
   (cond
    ;; saved before
    ((file Self) 
-;;    (call-next-method)
+    ;;    (call-next-method)
     (save-image (view-named Self 'icon-editor) (image-file Self))  ;; save image
-;;    (store-window-state-in-document-root Self)
-;;    (save-object (document-root Self) (file Self) :if-exists :supersede)
+    ;;    (store-window-state-in-document-root Self)
+    ;;    (save-object (document-root Self) (file Self) :if-exists :supersede)
     )
    ;; never saved
    (t 
@@ -370,7 +388,6 @@
 
 (defmethod INITIALIZE-LAYOUT :after ((Self inflated-icon-editor))
   ;; initialize based on values of icon-editor
-  ;; (print "initializing inflated icon editor")
   (let ((Icon-Editor (view-named (window Self) 'icon-editor)))
     (unless Icon-Editor (error "cannot find Icon Editor"))
     ;; (setf (image (inflatable-icon Self)) (pixel-buffer Icon-Editor))
@@ -419,20 +436,48 @@
   (gltexcoord2f 0s0 10s0) (glvertex3f -1s0 0s0  1s0)
   (gltexcoord2f 0s0 0s0) (glvertex3f -1s0 0s0 -1s0)
   (glend)
-  
   (glDisable gl_cull_face))
 
 
 
 (defmethod DRAW ((Self inflated-icon-editor)) 
+  
   (glClearColor 0.9 0.9 0.9 1.0) 
   (glClear (logior GL_COLOR_BUFFER_BIT gl_depth_buffer_bit))
   (draw-sky-box Self)
+  ;; floor
   (glpushmatrix)
   (glTranslatef -0.5s0 +0.01s0 0.5s0)
   (glRotatef -90s0 1.0s0 0.0s0 0.0s0)
   (draw (inflatable-icon Self))
-  (glpopmatrix))
+  (glpopmatrix)
+  (use-texture self "whiteBox.png")
+  (if (<=  (ceiling-transparency (window self)) 0.0)
+    (when (transparent-ceiling-update-process (window self))
+      (setf *ceiling-update-thread-should-stop* t)
+      (Setf (transparent-ceiling-update-process (window self)) nil))
+    (progn
+      (let ((ceiling-height (+ .02 (ceiling-value (inflatable-icon (view-named (Window self) 'model-editor))))))
+        (glpushmatrix)
+        (glColor4f 1.0 1.0 0.0 (ceiling-transparency (window self)))
+        (glBegin GL_LINES)
+        (loop for i from -1.0 to 1.0 by .2 do
+          (glVertex3f i ceiling-height -1.0)
+          (glVertex3f i ceiling-height 1.0))
+        (loop for j from -1.0 to 1.0 by .2 do
+          (glVertex3f -1.0 ceiling-height j)
+          (glVertex3f 1.0 ceiling-height j))
+        (glEnd)
+        (glColor4f .5 .7 1.0 (ceiling-transparency (window self)))
+        (glbegin gl_quads)
+        (glnormal3f 0.0 1.0 0.0)
+        (gltexcoord2f 0s0 0s0) (glvertex3f -1s0 ceiling-height -1s0)
+        (gltexcoord2f 0s0 10s0) (glvertex3f -1s0 ceiling-height 1s0)
+        (gltexcoord2f 10s0 10s0) (glvertex3f  1s0 ceiling-height 1s0)
+        (gltexcoord2f 10s0 0s0) (glvertex3f  1s0 ceiling-height -1s0)
+        (glend)
+        (glpopmatrix)
+        (glColor4f 1.0 1.0 1.0 1.0)))))
   
 
 (defmethod VIEW-LEFT-MOUSE-DRAGGED-EVENT-HANDLER ((Self inflated-icon-editor) X Y DX DY)
@@ -454,9 +499,6 @@
 ;*************************************************
 ;  Component Actions                             *
 ;*************************************************
-
-
-
 
 
 ;; Tool Bar Actions
@@ -560,7 +602,27 @@
         (setf (is-flat (inflatable-icon Model-Editor)) nil)))))
 
 
-(defmethod ADJUST-CEILING-ACTION ((Window inflatable-icon-editor-window) (Slider slider))
+(defmethod ADJUST-CEILING-ACTION ((Window inflatable-icon-editor-window) (Slider slider) &key (draw-transparent-ceiling t))
+  (when draw-transparent-ceiling
+    (setf (ceiling-transparency window) (transparent-ceiling-starting-alpha window))
+    (setf (transparent-ceiling-should-fade window) nil)
+    (unless (transparent-ceiling-update-process window)
+      (setf *ceiling-update-thread-should-stop* nil)
+      (setf (transparent-ceiling-update-process window)
+            (lui::process-run-function
+             '(:name "transparent ceiling update process")
+             #'(lambda ()
+                 (loop
+                   (catch-errors-nicely 
+                    "OpenGL Animation"
+                    (when *Ceiling-Update-Thread-Should-Stop*  (return))
+                    (unless (or (transparent-ceiling-should-fade window)
+                                (not (timer-due-p window (truncate (* 2.0 internal-time-units-per-second)))))
+                      (setf (transparent-ceiling-should-fade window) t))
+                    (when (transparent-ceiling-should-fade window)
+                      (ccl::with-lock-grabbed (*transparent-ceiling-update-lock*)
+                        (update-ceiling-transparency window)))
+                    (sleep .04))))))))
   (let ((Ceiling (value Slider)))
     (let ((Text-View (view-named Window 'ceilingtext)))
       ;; update label
@@ -573,8 +635,17 @@
         (update-inflation Window)))))
 
 
+(defmethod UPDATE-CEILING-TRANSPARENCY ((Self inflatable-icon-editor-window))
+  (when (timer-due-p self (truncate (* (transparent-ceiling-update-frequency self) internal-time-units-per-second)))
+    (setf (ceiling-transparency self)  (- (ceiling-transparency self) (transparent-ceiling-decrement-value self)))
+    (display self)))
+
+  
 (defmethod ADJUST-NOISE-ACTION ((Window inflatable-icon-editor-window) (Slider slider))
   (let ((Noise (value Slider)))
+    (if (equal Noise 0.0)
+      (disable (view-named window "smooth_slider"))
+      (enable (view-named window "smooth_slider")))
     (let ((Text-View (view-named Window 'noise-text)))
       ;; update label
       (setf (text Text-View) (format nil "~4,2F" Noise))
@@ -620,10 +691,7 @@
     (let ((Model-Editor (view-named Window 'model-editor)))
       (setf (distance (inflatable-icon Model-Editor)) Distance)
       (unless do-not-display
-        
-        (display Model-Editor)
-        )
-      )))
+        (display Model-Editor)))))
 
 
 
@@ -774,6 +842,18 @@
 
 
 ;___________________________________________
+; Update Thread                             |
+;___________________________________________
+
+
+(defmethod TIMER-DUE-P ((Self inflatable-icon-editor-window) Ticks) 
+  (let ((Time (getf (timer-triggers Self) Ticks 0))
+        (Now (get-internal-real-time)))
+    (when (or (>= Now Time)                          ;; it's time
+              (> Time (+ Now Ticks Ticks)))    ;; timer is out of synch WAY ahead
+      (setf (getf (timer-triggers Self) Ticks) (+ Now Ticks))
+      t)))
+;___________________________________________
 ; Open & New                                |
 ;___________________________________________
 
@@ -854,9 +934,12 @@
     (make-key-window Window )
     (initialize-gui-components Window (inflatable-icon Inflated-Icon-Editor))
     Window))
-
-
+#|
+(defmethod WINDOW-WILL-CLOSE ((Self inflatable-icon-editor-window) Notification)
+  (print "WINDOW WILL CLOSE II"))
+|#
 (defmethod INITIALIZE-GUI-COMPONENTS ((Self inflatable-icon-editor-window) Inflatable-Icon)
+  (lui::disable (view-named self "smooth_slider"))
   (setf (value (view-named self "distance-slider")) (distance inflatable-icon))
 
   
@@ -869,7 +952,7 @@
   (adjust-distance-action self (view-named self "distance-slider") t)
   (adjust-noise-action self (view-named self "noise_slider") )
   (adjust-pressure-action self (view-named self "pressure_slider") t)
-  (adjust-ceiling-action self (view-named self "ceiling_slider"))
+  (adjust-ceiling-action self (view-named self "ceiling_slider") :draw-transparent-ceiling nil)
   (adjust-smooth-action self (view-named self "smooth_slider"))
   (adjust-z-offset-action self (view-named self "z_slider"))
   (set-selected-item-with-title (view-named self "surfaces")  (string-downcase(substitute #\space #\-  (string (surfaces Inflatable-Icon)) :test 'equal)))
