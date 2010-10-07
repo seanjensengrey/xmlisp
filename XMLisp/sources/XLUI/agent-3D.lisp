@@ -53,7 +53,18 @@
 
 
 (defmethod PREPARE-OPENGL ((Self drag-proxy-window))
-  (prepare-opengl (source-view (drag-and-drop-handler Self))))
+  ;; no lighting 
+  (glClearColor 1.0 1.0 1.0 0.0)
+  ;; enablers
+  (glDisable GL_LIGHTING)
+  (glEnable GL_DEPTH_TEST)
+  ;; Textures
+  (glEnable GL_TEXTURE_2D)
+  ;; Alpha
+  (glEnable GL_BLEND)
+  (glBlendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA)
+  ;; notice we are NOT messing with the camera
+  )
 
 
 (defmethod LUI::DRAW-RECT ((Self drag-proxy-window))
@@ -67,14 +78,14 @@
 
 
 
-(defmethod DISPLAY ((Self drag-proxy-window))
+(defmethod DISPLAY ((Self drag-proxy-window)) 
   ;; source view and proxy window share agents -> grab source view lock to avoid
   ;; asynchronous access issues
   (with-glcontext (source-view (drag-and-drop-handler Self))
     (call-next-method)))
 
 
-(defmethod DRAW ((Self drag-proxy-window))
+(defmethod DRAW ((Self drag-proxy-window)) 
   (let ((View (source-view (drag-and-drop-handler Self))))
     ;; mask: draw agent dragged only
     (broadcast-to-agents View #'(lambda (Agent) (setf (is-visible Agent) nil)))
