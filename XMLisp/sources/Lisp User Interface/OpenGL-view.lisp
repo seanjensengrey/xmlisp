@@ -37,8 +37,7 @@
    (animation-time :accessor animation-time :initform 0 :documentation "Time when animation was run last")
    (animated-views :allocation :class :accessor animated-views :initform nil :documentation "class list of animated views")
    (render-mode :accessor render-mode :initform :render :type keyword :documentation "value: :render :select or :feedback")
-   (need-to-wgl-share :accessor need-to-wgl-share :initform #-cocotron nil #+cocotron t)
-   )
+   (need-to-wgl-share :accessor need-to-wgl-share :initform #-cocotron nil #+cocotron t))
   (:documentation "OpenGL View"))
 
 
@@ -90,6 +89,9 @@
 
 (defgeneric MOUSE-EXITED (opengl-view)
   (:documentation "Method that is called when the mouse exits this view."))
+
+(defgeneric INITIALIZE-CAMERA (opengl-view)
+  (:documentation "Initialize camera. Typically called as part of prepare-opengl"))
 
 ;**************************
 ;* default implementation *
@@ -160,12 +162,18 @@
 |#
 
 (defmethod MOUSE-ENTERED ((Self opengl-view))
-  ;do nothing
+  ; do nothing
   )
 
-(defmethod MOUSE-EXITED((Self opengl-view))
-  ;do nothing
+(defmethod MOUSE-EXITED ((Self opengl-view))
+  ; do nothing
   )
+
+
+(defmethod INITIALIZE-CAMERA ((Self opengl-view))
+  ; do nothing
+  )
+
 ;_______________________________
 ; Events                        |
 ;_______________________________
