@@ -37,12 +37,11 @@
 (objc:defmethod (#/prepareOpenGL :void) ((Self native-transparent-opengl-view))
   ;; NSOpenGLView appears to default to some opaque background: need to clear that
   (#/set (#/clearColor ns:ns-color))
-  ;; (#/set (#/redColor ns:ns-color))
   (#_NSRectFill (#/bounds Self))
   (prepare-opengl (lui-window Self)))
 
 
-(objc:defmethod (#/drawRect: :void) ((Self native-transparent-opengl-view) (rect :<NSR>ect))
+(objc:defmethod (#/drawRect: :void) ((Self native-transparent-opengl-view) (rect :<NSR>ect)) 
   (draw-rect (lui-window Self)))
 
 ;____________________________________________
@@ -129,7 +128,6 @@
 
 (defmethod DRAW-RECT ((Self transparent-opengl-window))
   ;; may need to specialized
-  
   (with-glcontext Self
     (clear-background Self)
     (draw Self)))
