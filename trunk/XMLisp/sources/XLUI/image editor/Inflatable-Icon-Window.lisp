@@ -107,7 +107,6 @@
 
 
 (defmethod KEY-EVENT-HANDLER ((Self inflatable-icon-editor-window) Event)
-  (print (key-code Event))
   (let ((Icon-Editor (view-named Self 'icon-editor)))
   (cond
    ((command-key-p)
