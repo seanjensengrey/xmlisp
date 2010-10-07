@@ -107,12 +107,33 @@
 
 
 (defmethod KEY-EVENT-HANDLER ((Self inflatable-icon-editor-window) Event)
-  (case (key-code Event)
-    (51
-     (if (lui::alt-key-p)
-       (fill-selected-pixels (view-named Self 'icon-editor))
-       (erase-selected-pixels (view-named Self 'icon-editor)))
-     (display (view-named self 'model-editor)))))
+  (print (key-code Event))
+  (let ((Icon-Editor (view-named Self 'icon-editor)))
+  (cond
+   ((command-key-p)
+    (case (key-code Event)
+      (0
+       (select-all Icon-Editor))
+      (2
+       (clear-selection Icon-Editor))
+      (34
+       (invert-selection Icon-Editor))
+      ))
+   ((lui::alt-key-p)
+    
+    (case (key-code Event)
+      #|
+      (37
+       (load-image-from-file Self (lui::choose-file-dialog :directory "lui:resources;textures;")))
+      |#
+      (51
+       (fill-selected-pixels icon-editor)
+       (display (view-named self 'model-editor)))))
+    (t
+    (case (key-code Event)
+      (51
+        (erase-selected-pixels icon-editor)
+        (display (view-named self 'model-editor))))))))
 
 
 (defmethod DOCUMENT-DEFAULT-DIRECTORY ((Self inflatable-icon-editor-window)) "
@@ -137,7 +158,7 @@
     (cond
      ((command-key-p)
       (case Key
-    ;    (#\l (load-image-from-file Self (choose-file-dialog :directory "ad3d:resources;textures;")))
+        (#\l (load-image-from-file Self (choose-file-dialog :directory "ad3d:resources;textures;")))
         (#\a (select-all Icon-Editor))
         (#\d (clear-selection Icon-Editor))
         (#\I (invert-selection Icon-Editor))))
@@ -199,7 +220,7 @@
 
 (defmethod LOAD-IMAGE-FROM-FILE ((Self inflatable-icon-editor-window) Pathname)
   "Loads the specified image file into the editor window."
-  (load-image (image-editor-view Self) Pathname)
+  (load-image (view-named Self 'icon-editor) Pathname)
   (setf (file Self) Pathname))
 
 
@@ -457,9 +478,8 @@
       (setf *ceiling-update-thread-should-stop* t)
       (Setf (transparent-ceiling-update-process (window self)) nil))
     (progn
-       ;; draw the transparent ceiling
+      ;; draw the transparent ceiling
       (let ((ceiling-height (+ .02 (ceiling-value (inflatable-icon (view-named (Window self) 'model-editor))))))
-       
         (glpushmatrix)
         (glColor4f .5 .7 1.0 (ceiling-transparency (window self)))
         (glbegin gl_quads)
@@ -815,6 +835,25 @@
 
 (defmethod CLEAR-ACTION ((Window inflatable-icon-editor-window) (Button button))
   (erase-all (view-named window 'icon-editor))
+  (let* ((Model-Editor (or (view-named window 'model-editor) (error "model editor missing")))
+         (Inflatable-Icon (inflatable-icon Model-Editor)))
+    (dotimes (Row (rows Inflatable-Icon ))
+      (dotimes (Column (columns Inflatable-Icon ))
+        (setf (aref (altitudes Inflatable-Icon ) Row Column) 0.0))))
+  
+  (setf (value (view-named Window "pressure_slider")) 0.0)
+  (setf (value (view-named window "distance-slider")) 0.0)
+  (setf (value (view-named window "ceiling_slider")) 1.0)
+  (setf (value (view-named window "smooth_slider")) 0.0)
+  (setf (value (view-named window "noise_slider")) 0.0)
+  (setf (value (view-named window "z_slider")) 0.0)
+  (adjust-distance-action window (view-named window "distance-slider") t)
+  (adjust-noise-action window (view-named window "noise_slider") )
+  (adjust-pressure-action window (view-named window "pressure_slider") t)
+  (adjust-ceiling-action window (view-named window "ceiling_slider") :draw-transparent-ceiling nil)
+  (adjust-smooth-action window (view-named window "smooth_slider"))
+  (adjust-z-offset-action window (view-named window "z_slider"))
+  
   (display (view-named window 'model-editor)))
 
 
