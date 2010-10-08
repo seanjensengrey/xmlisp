@@ -986,18 +986,31 @@
   (setf (value (view-named self "distance-slider")) (distance inflatable-icon))
 
   
-  (setf (value (view-named self "pressure_slider")) (pressure inflatable-icon))
+  ;(setf (value (view-named self "pressure_slider")) (pressure inflatable-icon))
   ;(inspect inflatable-icon)
-  (setf (value (view-named self "ceiling_slider")) (ceiling-value inflatable-icon))
-  (setf (value (view-named self "smooth_slider")) (float (smooth inflatable-icon)))
-  (setf (value (view-named self "noise_slider")) (noise inflatable-icon))
-  (setf (value (view-named self "z_slider")) (dz inflatable-icon))
-  (adjust-distance-action self (view-named self "distance-slider") t)
-  (adjust-noise-action self (view-named self "noise_slider") )
-  (adjust-pressure-action self (view-named self "pressure_slider") t)
+  
+  ;(setf (value (view-named self "ceiling_slider")) (ceiling-value inflatable-icon))
+  
+  ;(setf (value (view-named self "smooth_slider")) (float (smooth inflatable-icon)))
+  ;(setf (value (view-named self "noise_slider")) (noise inflatable-icon))
+  ;(setf (value (view-named self "z_slider")) (dz inflatable-icon))
+  ;(adjust-distance-action self (view-named self "distance-slider") t)
+  ;(adjust-noise-action self (view-named self "noise_slider") )
+  
+  ;(adjust-pressure-action self (view-named self "pressure_slider") t)
+
+  
+  #|
   (adjust-ceiling-action self (view-named self "ceiling_slider") :draw-transparent-ceiling nil)
   (adjust-smooth-action self (view-named self "smooth_slider"))
   (adjust-z-offset-action self (view-named self "z_slider"))
+  |#
+
+  (let ((Text-View (view-named self 'distance-text)))
+    ;; update label
+    (setf (text Text-View) (format nil "~4,2F"(distance inflatable-icon)))
+    (display Text-View))
+
   (set-selected-item-with-title (view-named self "surfaces")  (string-downcase(substitute #\space #\-  (string (surfaces Inflatable-Icon)) :test 'equal)))
   (if (is-upright Inflatable-Icon)
       (enable (view-named self "upright"))))
