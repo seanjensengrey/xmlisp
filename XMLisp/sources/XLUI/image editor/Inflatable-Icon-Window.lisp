@@ -723,13 +723,6 @@
 (defmethod CHANGE-ICON-ACTION ((Window inflatable-icon-editor-window) (Icon-Editor icon-editor))
   (update-inflation Window))
 
-#|
-(defmethod UPRIGHT-ACTION ((Window inflatable-icon-editor-window) (Check-Box check-box))
-  (let ((Model-Editor (view-named Window 'model-editor)))
-    (setf (is-upright (inflatable-icon Model-Editor))
-          (check-box-checked-p Check-Box))
-    (display Model-Editor)))
-|#
 
 (defmethod UPRIGHT-ACTION ((Window inflatable-icon-editor-window) (Check-Box check-box))
   (let ((Model-Editor (view-named Window 'model-editor)))
@@ -785,15 +778,12 @@
 (defmethod CLOSE-WINDOW-WITH-WARNING ((Self inflatable-icon-editor-window))
   #-cocotron
   (when (easygui::y-or-n-dialog "Close window without saving changes?" )
-    
     ;; forget current content
-    
     (when (close-action Self) 
       (funcall (close-action Self) Self))
     (when (and (alert-close-action self) (alert-close-target self))
       (funcall (alert-close-action self) (alert-close-target self)))
-    (window-close Self))
-  )
+    (window-close Self)))
 
 
 (defmethod EDIT-ICON-CANCEL-ACTION ((Window inflatable-icon-editor-window) (Button button))

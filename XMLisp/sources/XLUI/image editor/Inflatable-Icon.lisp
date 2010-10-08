@@ -473,6 +473,7 @@
   ;; autocompile
   (when (and (auto-compile Self) (not (is-compiled Self)))
     (compile-shape Self))
+  
   ;; display surfaces
   (ecase (surfaces Self)
     ;; front
