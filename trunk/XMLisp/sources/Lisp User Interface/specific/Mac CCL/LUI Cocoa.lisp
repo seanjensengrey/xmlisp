@@ -242,7 +242,9 @@
    +null-ptr+
    #$NO))
 
-
+(defmethod REMOVE-TRACKING-RECT ((Self view) Tracking-Rect)
+  (#/removeTrackingRect: (native-view self) Tracking-Rect))
+  
 ;__________________________________
 ; NATIVE-VIEW                      |
 ;__________________________________/
@@ -1277,7 +1279,7 @@
   ;(call-next-method)
   (setf (color-update-process self)
     (process-run-function
-     '(:name "Attribute Window Thread" :priority 1)
+     '(:name "Attribute Window Thread" )
      #'(lambda ()
          (loop
            (catch-errors-nicely 

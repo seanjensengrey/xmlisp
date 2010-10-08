@@ -551,6 +551,7 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defmethod KEY-EVENT-HANDLER ((Self window) Event)
   (setf *current-event* event)
+  (print "LUI KEy HANDLER")
   (format t "~%window key event ~A" (native-event Event)))
 
 
