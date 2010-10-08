@@ -914,13 +914,15 @@
     Window))
 
 
-(defun NEW-INFLATABLE-ICON-EDITOR-WINDOW-FROM-IMAGE (Pathname &key Shape-Filename Destination-Inflatable-Icon Close-Action Alert-Close-Action Alert-Close-Target) "
+(defun NEW-INFLATABLE-ICON-EDITOR-WINDOW-FROM-IMAGE (Pathname &key Shape-Name Shape-Filename Destination-Inflatable-Icon Close-Action Alert-Close-Action Alert-Close-Target) "
   Create and return an new inflatable icon editor by loading an image. 
   If folder contains .shape file matching image file name then load shape file."
   (let* ((Window (load-object "lui:resources;windows;inflatable-icon-editor.window" :package (find-package :xlui)))
          (Icon-Editor (view-named Window "icon-editor"))
          (Inflated-Icon-Editor (view-named Window "model-editor")))
-    (setf (title window) (format nil "Shape Editor: ~A" (pathname-name Pathname)))
+    (if shape-name
+      (setf (title window) (format nil "Shape Editor: ~A" shape-name))
+      (setf (title window) (format nil "Shape Editor: ~A" (pathname-name Pathname))))
     (if alert-close-action
       (setf (alert-close-action window) alert-close-action))
     (if alert-close-target 
@@ -967,10 +969,8 @@
     (make-key-window Window )
     (initialize-gui-components Window (inflatable-icon Inflated-Icon-Editor))
     Window))
-#|
-(defmethod WINDOW-WILL-CLOSE ((Self inflatable-icon-editor-window) Notification)
-  (print "WINDOW WILL CLOSE II"))
-|#
+
+
 (defmethod INITIALIZE-GUI-COMPONENTS ((Self inflatable-icon-editor-window) Inflatable-Icon)
   (lui::disable (view-named self "smooth_slider"))
   (setf (value (view-named self "distance-slider")) (distance inflatable-icon))
