@@ -804,8 +804,7 @@
   (glDisable GL_TEXTURE_2D)
   (draw-guide-lines Self)
   (draw-selection Self)
-  (draw-selection-in-progress-feedback Self)
-  )
+  (draw-selection-in-progress-feedback Self))
 
 
 (defmethod RECOMPUTE-SELECTION-OUTLINE ((Self image-editor))
@@ -844,7 +843,7 @@
   (display Self))
 
 
-(defmethod UPDATE-SELECTION ((Self image-editor) New-Selection)
+(defmethod UPDATE-SELECTION ((Self image-editor) New-Selection &key (clear-selection t))
   "Updates the selection mask and recomputes the selection outline."
   (if New-Selection
     (destructuring-bind (Shape &rest Shape-Specs) New-Selection
@@ -856,8 +855,8 @@
         (apply #'add-selection (selection-mask Self) Shape Shape-Specs))
       ;; update selection-outline
         (setf (selection-outline Self) (recompute-selection-outline Self)))
-    (clear-selection Self)
-    ))
+    (when clear-selection
+      (clear-selection Self))))
 
 
 (defmethod SELECT-ALL ((Self image-editor))
@@ -1162,23 +1161,25 @@
 
 
 (defmethod VIEW-LEFT-MOUSE-UP-EVENT-HANDLER ((Self image-editor) x y)
-  (declare (ignore x y))
+
     (unless (img-texture Self) (return-from view-left-mouse-up-event-handler))
-  ;(multiple-value-bind (Col Row) (screen->pixel-coord Self x y :return-max-value-for-outside-upward-bound t)
-    ;(when (and Row Col)    
+  (multiple-value-bind (Col Row) (screen->pixel-coord Self x y :return-max-value-for-outside-upward-bound nil)
+   ; (when (and Row Col)    
       (case (selected-tool (window Self))
         ;; SELECT RECTANGLE
         (select-rect      
-         (update-selection Self (selection-in-progress Self))
+         (if (and Row Col)   
+           (update-selection Self (selection-in-progress Self))
+           (update-selection Self (selection-in-progress Self) :clear-selection nil))
          (setf (selection-in-progress Self) nil)
          (display Self))
         ;; SELECT ELLIPSE
         (select-ellipse 
-         (update-selection Self (selection-in-progress Self))
+         (if (and Row Col)   
+           (update-selection Self (selection-in-progress Self))
+           (update-selection Self (selection-in-progress Self) :clear-selection nil))
          (setf (selection-in-progress Self) nil)
-         (display Self))))
-;)
-;)
+         (display Self)))))
 
 
 ;**************************************
