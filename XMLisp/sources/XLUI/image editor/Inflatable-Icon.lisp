@@ -237,10 +237,13 @@
   
   (setf (depth Self)
         (max *Minimal-Inflatable-Icon-depth*
+             ;; this cond may not be needed, we need to take distance into account for both upright and non upright inflatable icons.
              (cond
               ((is-upright Self)
                (float (/ (max-visible-pixel-row Self) (rows Self)) 0.0))
-              (t  (maximum-altitude Self))))))
+              (t  (float (/ (max-visible-pixel-row Self) (rows Self)) 0.0);(maximum-altitude Self)
+                  )
+              ))))
 #| need to take these into account
 
   (case (surfaces Self)
@@ -499,7 +502,7 @@
      (glTranslatef 0s0 0s0 (distance Self))
      (if (is-compiled Self) (draw-compiled Self) (draw-uncompiled Self))
      ;; connectors
-     (if (connectors Self) (draw-connectors Self))
+     (if (connectors Self) (progn (print "DRAW CONNECTORS")(draw-connectors Self)))
      (glpopmatrix)
      ;; back
      (glpushmatrix)
@@ -608,6 +611,7 @@
 
 (defmethod DRAW-UNCOMPILED ((Self inflatable-icon)) 
   (unless (image Self) (return-from draw-uncompiled))
+  
   (when (is-flat Self)  ;; optimization
     (draw-as-flat-texture Self)
     (return-from draw-uncompiled))
