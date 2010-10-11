@@ -196,7 +196,7 @@
          Inflatable-Icon
          :steps 20
          :pressure (pressure Inflatable-Icon)
-         :max (max-value Inflatable-Icon)
+         :max (- (max-value Inflatable-Icon) (distance Inflatable-Icon))
          :inflate-pixel-p-fn #'pixel-selected-p-fn)
         ;; introduce noise
         (inflate
@@ -456,7 +456,8 @@
   (gltexcoord2f 0s0 10s0) (glvertex3f -1s0 0s0  1s0)
   (gltexcoord2f 0s0 0s0) (glvertex3f -1s0 0s0 -1s0)
   (glend)
-  (glDisable gl_cull_face))
+  (glDisable gl_cull_face)
+)
 
 
 
@@ -480,6 +481,10 @@
       ;; draw the transparent ceiling
       (let ((ceiling-height (+ .02 (ceiling-value (inflatable-icon (view-named (Window self) 'model-editor))))))
         (glpushmatrix)
+        (when (is-upright (inflatable-icon (view-named (Window self) 'model-editor)))
+          (print "Rotate")
+          (glTranslatef 0.0s0 1.0s0 0.0s0)
+          (glRotatef 90s0 1.0s0 0.0s0  0.0s0 ))
         (glColor4f .5 .7 1.0 (ceiling-transparency (window self)))
         (glbegin gl_quads)
         (glnormal3f 0.0 1.0 0.0)
