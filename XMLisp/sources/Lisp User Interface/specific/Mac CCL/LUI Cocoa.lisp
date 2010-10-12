@@ -646,13 +646,11 @@
 (defmethod MAKE-KEY-WINDOW ((Self window))
   (#/makeKeyWindow (native-window self)))
 
+
 (defmethod BRING-TO-FRONT ((Self Window))
   (#/makeKeyWindow (native-window self))
   (#/orderFront: (native-window self) nil))
-
-(defmethod START-ACCEPTING-MOUSE-MOUVED-EVENTS ((Self Window))
-  (#/setAcceptsMouseMovedEvents: (native-window Self) #$YES))
-  
+ 
 ;__________________________________
 ; Window query functions            |
 ;__________________________________/
