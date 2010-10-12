@@ -33,6 +33,9 @@
 (defvar *Cursor-Resources-Path* "lui:resources;cursors" "location of cursor resources and images")
 
 
+(defvar *Global-Cursor-Name* nil "The name of the global set cursor")
+
+
 (defun FIND-CURSOR (Name) "
   in: Name 
   Find a cursor matching name in resources/cursors/ folder"
@@ -74,8 +77,14 @@
   in: Name
   Set the cursor to new cursor."
   (let ((Cursor (find-cursor Name)))
-    (when Cursor (#/set Cursor))))
+    (when Cursor 
+      (setf *global-Cursor-Name* Name)
+      (#/set Cursor))))
 
+
+(defun GET-CURSOR () "
+  Returns the name of the currently set cursor"
+  *global-cursor-name*)
 
 #| Examples
 

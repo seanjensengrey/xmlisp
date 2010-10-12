@@ -650,7 +650,8 @@
 (defmethod BRING-TO-FRONT ((Self Window))
   (#/makeKeyWindow (native-window self))
   (#/orderFront: (native-window self) nil))
- 
+
+  
 ;__________________________________
 ; Window query functions            |
 ;__________________________________/
