@@ -23,13 +23,11 @@
    ;******************************************************************
 
 (in-package :xlui)
-
-(export '( *ceiling-update-thread-should-stop* project-manager find-shape load-world))
    
 (defvar *ceiling-update-thread-should-stop* nil "Global variable that should be set if we want the ceiling update thread to stop, this can be used as a safe guard in case process-kill fails.")
  
-;;Hack: this is a stop gap until we can develop a better locking mechanism.
-(defvar *transparent-ceiling-update-lock* nil) ; (ccl::make-lock))
+;; Hack: this is a stop gap until we can develop a better locking mechanism.
+(defvar *transparent-ceiling-update-lock* nil "Lock used to prevent annimation of ceilling fading to interfere with closing window")
                          
 (defclass INFLATABLE-ICON-EDITOR-WINDOW (application-window)
   ((container :accessor container :initform nil :initarg :container)
@@ -48,19 +46,22 @@
    (transparent-ceiling-update-frequency :accessor transparent-ceiling-update-frequency :initform .02 :documentation "How often in seconds the transparency value will be udpated")
    (transparent-ceiling-should-fade :accessor transparent-ceiling-should-fade :initform nil :documentation "Fade will not begin until this is set.")
    (transparent-ceiling-update-process :accessor transparent-ceiling-update-process :initform nil :documentation "This process will update the transparency of the ceiling to cause a fade out when it is not used"))
+  (:default-initargs
+      :track-mouse t)
   (:documentation "Editor used to create inflatable icons"))
 
 
 (defmethod INITIALIZE-INSTANCE :after ((Self inflatable-icon-editor-window) &rest Args) 
   (let ((Model-Editor (view-named self 'model-editor)))
     (if (is-upright (inflatable-icon Model-Editor))
-      (enable (view-named self "upright"))))
-  (make-transparent-ceiling-update-lock)
-  (start-accepting-mouse-mouved-events self))
+      (enable (view-named self "upright")))))
   
-(defun MAKE-TRANSPARENT-CEILING-UPDATE-LOCK()
-  (unless *transparent-ceiling-update-lock*
+
+(defun TRANSPARENT-CEILING-UPDATE-LOCK()
+  ;; make lock if necessary
+  (or *transparent-ceiling-update-lock*
     (setf *transparent-ceiling-update-lock* (ccl::make-lock))))
+
 
 (defgeneric TOOL-SELECTION-EVENT (inflatable-icon-editor-window Tool-Name)
   (:documentation "called after tool has been selected"))
@@ -101,7 +102,7 @@
   (when (transparent-ceiling-update-process self)
     (setf *ceiling-update-thread-should-stop* t)
     (setf (transparent-ceiling-update-process self) nil))
-  (ccl::with-lock-grabbed (*transparent-ceiling-update-lock*)
+  (ccl::with-lock-grabbed ((transparent-ceiling-update-lock))
     (funcall (alert-close-action self) (alert-close-target self) self)))
 
 
@@ -671,7 +672,7 @@
                                 (not (timer-due-p window (truncate (* 2.0 internal-time-units-per-second)))))
                       (setf (transparent-ceiling-should-fade window) t))
                     (when (transparent-ceiling-should-fade window)
-                      (ccl::with-lock-grabbed (*transparent-ceiling-update-lock*)
+                      (ccl::with-lock-grabbed ((transparent-ceiling-update-lock))
                         (update-ceiling-transparency window)))
                     (sleep .04))))))))
   (let ((Ceiling (value Slider)))
