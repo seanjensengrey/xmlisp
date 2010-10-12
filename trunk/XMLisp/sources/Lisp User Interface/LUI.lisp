@@ -386,7 +386,7 @@ Call with most important parameters. Make other paramters accessible through *Cu
    (y :accessor y :initform 0 :initarg :y :documentation "screen position, pixels")
    (width :accessor width :initform 170 :initarg :width :documentation "width in pixels")
    (height :accessor height :initform 90 :initarg :height :documentation "height in pixels")
-   (track-mouse :accessor track-mouse :initform nil :type boolean :documentation "If true then window will receive mouse moved events")
+   (track-mouse :accessor track-mouse :initform nil :type boolean :initarg :track-mouse :documentation "If true then window will receive mouse moved events")
    (zoomable :accessor zoomable :initform t :initarg :zoomable :type boolean :documentation "has a control to zoom to largest size needed")
    (minimizable :accessor minimizable :initform t :initarg :minimizable :type boolean :documentation "has control to minimize into dock/taskbar")
    (resizable :accessor resizable :initform t :initarg :resizable :type boolean :documentation "has resize control")
