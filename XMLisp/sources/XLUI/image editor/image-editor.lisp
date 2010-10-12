@@ -158,7 +158,9 @@
    (is-grid-on :accessor is-grid-on :initform nil :documentation "True if grid is visible, false otherwise")
    (is-horizontal-line-on :accessor is-horizontal-line-on :initform nil :documentation "True if horizonal line is on, false oterhwise")
    (is-vertical-line-on :accessor is-vertical-line-on :initform nil :documentation "True if vertical line is on, false oterhwise")
-   (tolerance :accessor tolerance :initform 0 :documentation "This is the maximum allowed tolerance with the magic wand"))
+   (tolerance :accessor tolerance :initform 0 :documentation "This is the maximum allowed tolerance with the magic wand")
+   (tracking-rect :accessor tracking-rect :initform nil)
+   (current-cursor :accessor current-cursor :initform nil :documentation "we need to keep reference to the current cursor so that we can change the cursor back to that when it enters the view"))
   (:documentation "Simple image editor."))
 
 
@@ -203,6 +205,9 @@
 ;_______________________________/
 
 
+(defmethod INITIALIZE-INSTANCE :after ((Self image-editor) &rest Args)  
+  (print "INIT INSTANCE"))
+
 (defmethod CENTER-CANVAS ((Self image-editor))
   (aim-camera 
    (camera Self) 
@@ -240,6 +245,13 @@
     (delete-texture (img-texture Self))))
 
 
+(defmethod SET-SIZE  ((Self image-editor) Width Height)
+  (call-next-method self width height)      
+  (when (Tracking-rect self)
+    (remove-tracking-rect self (Tracking-rect self)))
+  (setf (Tracking-rect self) (add-tracking-rect self)))
+
+
 (defmethod NEW-IMAGE ((Self image-editor) Width Height &optional (Depth 32))
   "Creates an empty image."
   (with-glcontext Self
@@ -260,6 +272,13 @@
 (defmethod LOAD-IMAGE ((Self image-editor) From-Pathname)
   "Loads an image from a file into the editor."
   ;; (format t "loading image: ~A~%" From-Pathname)
+  (print "LOAD IMAGE")
+    (print (x self))
+  (print (y self))
+  (print (#/frame (lui::native-view self)))
+  (when (Tracking-rect self)
+    (remove-tracking-rect self (Tracking-rect self)))
+  (setf (Tracking-rect self) (add-tracking-rect self))
   (with-glcontext Self
     (when (img-texture Self) (dispose-texture-image Self))
     (when (pixel-buffer Self) (setf (pixel-buffer Self) nil))
@@ -1161,8 +1180,7 @@
 
 
 (defmethod VIEW-LEFT-MOUSE-UP-EVENT-HANDLER ((Self image-editor) x y)
-
-    (unless (img-texture Self) (return-from view-left-mouse-up-event-handler))
+  (unless (img-texture Self) (return-from view-left-mouse-up-event-handler))
   (multiple-value-bind (Col Row) (screen->pixel-coord Self x y :return-max-value-for-outside-upward-bound nil)
    ; (when (and Row Col)    
       (case (selected-tool (window Self))
@@ -1180,6 +1198,20 @@
            (update-selection Self (selection-in-progress Self) :clear-selection nil))
          (setf (selection-in-progress Self) nil)
          (display Self)))))
+
+
+(defmethod VIEW-DID-MOVE-TO-WINDOW ((Self image-editor))
+  (setf (Tracking-rect self) (add-tracking-rect self)))
+
+
+(defmethod MOUSE-ENTERED ((Self image-editor))
+  (when (current-cursor self)
+    (set-cursor (current-cursor self))))
+  
+
+(defmethod MOUSE-EXITED ((Self image-editor))
+  (print "EXIT")
+  (set-cursor "arrowCursor"))
 
 
 ;**************************************
