@@ -158,7 +158,8 @@ Call with most important parameters. Make other paramters accessible through *Cu
    (width :accessor width :initform 170 :initarg :width :documentation "width in pixels")
    (height :accessor height :initform 90 :initarg :height :documentation "height in pixels")
    (part-of :accessor part-of :initform nil :initarg :part-of :documentation "link to container view or window")
-   (native-view :accessor native-view :initform nil :documentation "native OS view object"))
+   (native-view :accessor native-view :initform nil :documentation "native OS view object")
+   (current-cursor :accessor current-cursor :initform nil :initarg :current-cursor :documentation "the name of the current cursor of this view"))
   (:documentation "a view, control or window with position and size"))
 
 ;;_______________________________
@@ -183,6 +184,9 @@ Call with most important parameters. Make other paramters accessible through *Cu
 (defgeneric WINDOW-Y (view)
   (:documentation "y offset in window containing view"))
 
+(defgeneric VIEW-CURSOR (view)
+  (:documentation "Returns the name of the cursor this view should use."))
+
 (defgeneric VIEW-DID-MOVE-TO-WINDOW (view)
   (:documentation "Called when this view is moved into a window, sometimes a view may want to do some special setup once they are placed into a view hierarchy, if so override this method. "))
 
@@ -200,9 +204,6 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 (defgeneric MAKE-NATIVE-OBJECT (view-or-window)
   (:documentation "Make and return a native view object"))
-
-
-
 
 
 ;;_______________________________
@@ -240,6 +241,11 @@ Call with most important parameters. Make other paramters accessible through *Cu
 (defmethod VIEW-DID-MOVE-TO-WINDOW ((Self View))
   ;do nothing
   )
+
+
+(defmethod VIEW-CURSOR ((Self View))
+  nil)
+
 
 (defmethod INITIALIZE-INSTANCE ((Self view) &rest Args)
   (declare (ignore Args))
@@ -293,9 +299,10 @@ Call with most important parameters. Make other paramters accessible through *Cu
      (when (equal Self *View-Last-Clicked*)
        (view-left-mouse-dragged-event-handler Self x y dx dy)))
     (:mouse-moved 
-     (when (and (<= 0 x (width Self))
+     (if (and (<= 0 x (width Self))
                 (<= 0 y (height Self)))
-       (view-mouse-moved-event-handler Self x y dx dy)))
+       (view-mouse-moved-event-handler Self x y dx dy)
+       (view-mouse-moved-outside-event-handler Self x y dx dy)))
     (t (format t "not handling ~A event yet~%" (event-type Event)))))
 
 
@@ -326,8 +333,18 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 (defmethod VIEW-MOUSE-MOVED-EVENT-HANDLER ((Self view) x y dx dy)
   (declare (ignore X Y DX DY))
-  ;; nothing
-  )
+  (unless (equal (view-cursor self) (get-cursor))
+    (set-cursor (view-cursor self))
+    (Setf (current-cursor self) (view-cursor self))))
+
+
+(defmethod VIEW-MOUSE-MOVED-OUTSIDE-EVENT-HANDLER ((Self view) x y dx dy)
+  (declare (ignore X Y DX DY))
+  (when (and (current-cursor self)
+             (equal (current-cursor self) (get-cursor)))
+    (set-cursor "arrowCursor")
+    (setf (current-cursor self) nil)))
+
 
 (defmethod SIZE-CHANGED-EVENT-HANDLER ((Self view) Width Height)
   (declare (ignore Width Height))
