@@ -497,7 +497,6 @@
       (let ((ceiling-height (+ .02 (ceiling-value (inflatable-icon (view-named (Window self) 'model-editor))))))
         (glpushmatrix)
         (when (is-upright (inflatable-icon (view-named (Window self) 'model-editor)))
-          (print "Rotate")
           (glTranslatef 0.0s0 1.0s0 0.0s0)
           (glRotatef 90s0 1.0s0 0.0s0  0.0s0 ))
         (glColor4f .5 .7 1.0 (ceiling-transparency (window self)))

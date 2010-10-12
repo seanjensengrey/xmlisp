@@ -272,10 +272,6 @@
 (defmethod LOAD-IMAGE ((Self image-editor) From-Pathname)
   "Loads an image from a file into the editor."
   ;; (format t "loading image: ~A~%" From-Pathname)
-  (print "LOAD IMAGE")
-    (print (x self))
-  (print (y self))
-  (print (#/frame (lui::native-view self)))
   (when (Tracking-rect self)
     (remove-tracking-rect self (Tracking-rect self)))
   (setf (Tracking-rect self) (add-tracking-rect self))
@@ -1210,7 +1206,6 @@
   
 
 (defmethod MOUSE-EXITED ((Self image-editor))
-  (print "EXIT")
   (set-cursor "arrowCursor"))
 
 
