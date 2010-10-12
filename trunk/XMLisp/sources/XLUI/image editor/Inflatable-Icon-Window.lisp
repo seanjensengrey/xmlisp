@@ -35,7 +35,7 @@
   ((container :accessor container :initform nil :initarg :container)
    (smoothing-cycles :accessor smoothing-cycles :initform 0 :initarg :smoothing-cycles)
    (selected-tool :accessor selected-tool :initform nil :type symbol :initarg :selected-tool :documentation "the name of the currently selected tool")
-   (selected-camera-tool :accessor selected-camera-tool :initform nil :type symbol :initarg :selected-tool :documentation "the name of the currently selected camera tool")
+   (selected-camera-tool :accessor selected-camera-tool :initform nil :type symbol :initarg :selected-camera-tool :documentation "the name of the currently selected camera tool")
    (file :accessor file :initform nil :documentation "shape file")
    (destination-inflatable-icon :accessor destination-inflatable-icon :initform nil :initarg :destination-inflatable-icon :documentation "if present save edited icon into this inflatable icon")
    (close-action :accessor close-action :initform nil :initarg :close-action :documentation "called with self when inflatable icon window is being closed")
@@ -103,7 +103,6 @@
     (setf (transparent-ceiling-update-process self) nil))
   (ccl::with-lock-grabbed (*transparent-ceiling-update-lock*)
     (funcall (alert-close-action self) (alert-close-target self) self)))
-
 
 
 (defmethod KEY-EVENT-HANDLER ((Self inflatable-icon-editor-window) Event)
@@ -325,6 +324,7 @@
                    near="0.005" far="2000.0" azimuth="0.0" zenith="0.0"/>
                    (find-package :xlui)))
   (setf (view (camera Self)) Self)
+  ;(setf (Tracking-rect self) (add-tracking-rect self))
   (prepare-opengl Self)
   ;; create the texture
   (new-image Self (img-width Self) (img-height Self)))
@@ -343,7 +343,22 @@
   (declare (ignore X y))
   (call-next-method)
   (display (view-named (Window self) 'model-editor)))
- 
+
+
+(defmethod VIEW-MOUSE-MOVED-EVENT-HANDLER ((Self icon-editor) X Y DX DY)
+  (call-next-method)
+  (when (and (selection-active-p self)
+             (or 
+              (equal (selected-tool (window self)) 'draw)
+              (equal (selected-tool (window self)) 'erase)
+              (equal (selected-tool (window self)) 'paint-bucket)))
+  (multiple-value-bind (Col Row) (screen->pixel-coord Self x y)
+    (if (and Row Col)
+      (if (pixel-selected-p (selection-mask self) col row)
+        (set-cursor (current-cursor self))
+        (set-cursor "notAllowed"))
+      (set-cursor "arrowCursor")))))
+
 ;________________________________________________
 ;  Lobster Icon Editor                           |
 ;________________________________________________
@@ -534,42 +549,50 @@
 
 (defmethod DRAW-TOOL-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
-  (tool-selection-event Window 'draw))
+  (tool-selection-event Window 'draw)
+  (setf (current-cursor (view-named Window 'icon-editor)) "drawCursor"))
 
 
 (defmethod ERASE-TOOL-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
-  (tool-selection-event Window 'erase))
+  (tool-selection-event Window 'erase)
+  (setf (current-cursor (view-named Window 'icon-editor)) "eraseCursor"))
 
 
 (defmethod EYE-DROPPER-TOOL-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
-  (tool-selection-event Window 'eye-dropper))
+  (tool-selection-event Window 'eye-dropper)
+  (setf (current-cursor (view-named Window 'icon-editor)) "eyeDropper"))
 
 
 (defmethod PAINT-BUCKET-TOOL-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
-  (tool-selection-event Window 'paint-bucket))
+  (tool-selection-event Window 'paint-bucket)
+  (setf (current-cursor (view-named Window 'icon-editor)) "paintBucket"))
 
 
 (defmethod MAGIC-WAND-TOOL-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
-  (tool-selection-event Window 'magic-wand))
+  (tool-selection-event Window 'magic-wand)
+  (setf (current-cursor (view-named Window 'icon-editor)) "magicWand"))
 
 
 (defmethod POLYGON-TOOL-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
-  (tool-selection-event Window 'select-polygon))
+  (tool-selection-event Window 'select-polygon)
+  (setf (current-cursor (view-named Window 'icon-editor)) "polygon"))
 
 
 (defmethod RECT-TOOL-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
-  (tool-selection-event Window 'select-rect))
+  (tool-selection-event Window 'select-rect)
+  (setf (current-cursor (view-named Window 'icon-editor)) "rectTool"))
 
 
 (defmethod ELLIPSE-TOOL-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
-  (tool-selection-event Window 'select-ellipse))
+  (tool-selection-event Window 'select-ellipse)
+  (setf (current-cursor (view-named Window 'icon-editor)) "ellipse"))
 
 
 (defmethod PICK-COLOR-ACTION ((w inflatable-icon-editor-window) (Color-Well color-well))
