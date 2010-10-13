@@ -7,56 +7,66 @@
 (in-package :lui)
 
 
-
 (defparameter *Sounds* (make-hash-table :test #'equal) "Sound handles")
+
 
 (defvar *Secondary-Sound-File-Directory-Hook* nil "lambda () ->  directory-pathname")
 
 
-(defgeneric PLAY-SOUND (Name)
+(defgeneric PLAY-SOUND (Name &key Loops)
   (:documentation "Play sound in resources/sounds/ folder"))
+
+
+(defgeneric STOP-SOUND (Name)
+  (:documentation "Stop playing sound"))
+
+
+(defgeneric SET-VOLUME (Name Volume)
+  (:documentation "Set volume of sound <Name> playing to <volume>. <volume> in range 0.0 ..1.0"))
 
 
 (defgeneric SHUT-UP-SOUNDS ()
   (:documentation "Stop all sounds from playing"))
 
 
-(defmethod PLAY-SOUND ((Name string))
+(defmethod PLAY-SOUND ((Name string) &key Loops)
+  (let ((Sound (or (gethash Name *Sounds*)
+                   (let ((New-Sound
+                          (#/initWithContentsOfFile:byReference: 
+                           (#/alloc ns:ns-sound) 
+                           (native-string (native-path "lui:resources;sounds;" Name))
+                           #$YES)))
+                     ;; (print "loading sound")
+                     (unless (%null-ptr-p New-Sound)
+                       (setf (gethash Name *Sounds*) New-Sound))))))
+    (unless Sound (return-from play-sound (warn "sound \"~A\" is missing" Name)))
+    (#/setLoops: Sound (if Loops #$YES #$NO))
+    (#/play Sound)))
+
+
+(defmethod SET-VOLUME ((Name string) Volume)
   (let ((Sound (gethash Name *Sounds*)))
-    (cond
-     (Sound 
-      (#/play Sound))
-     (t 
-      (setf (gethash Name *Sounds*) 
-            (#/initWithContentsOfFile:byReference: 
-             (#/alloc ns:ns-sound) 
-             (native-string (native-path "lui:resources;sounds;" Name))
-             #$YES))
-      (#/play (gethash Name *Sounds*))))))
+    (when Sound (#/setVolume: Sound Volume))))
+
 
 (defmethod SHUT-UP-SOUNDS ()
-  (maphash #'stop-sound *Sounds*)
-  )
+  (maphash 
+   #'(lambda (Name Sound) 
+       (declare (ignore Sound))
+       (stop-sound Name))
+   *Sounds*))
 
-(defun STOP-SOUND (key value)
-  (#/stop value))
+
+(defmethod STOP-SOUND (Name)
+  (let ((Sound (gethash Name *Sounds*)))
+    (when Sound (#/stop Sound))))
+
 
 (defun SOUND-FILES-IN-SOUND-FILE-DIRECTORY () "
   out: Sound-Files lisp of pathname"
   (directory "lui:resources;sounds;*.*"))
 
-#|
-  (append
-   ;; secondary sounds first because they have higher priority
-   (and *Secondary-Sound-File-Directory-Hook* 
-        (directory 
-         (format nil "~A*"  (mac-directory-namestring (funcall *Secondary-Sound-File-Directory-Hook*)))
-         :test #'valid-sound-file-p))
-   (directory 
-    (format nil "~A*"  (mac-directory-namestring *Sound-File-Directory*))
-    :test #'valid-sound-file-p)))
 
-|#
 
 
 #| Examples:
@@ -69,6 +79,24 @@
 
 (play-sound "RuinsMystique.mp3")
 
+(play-sound "missing-sound.mp3")
+
+(play-sound "Inhale.mp3" :loops t)
+
+(play-sound "whiteNoise.mp3" :loops t)
+
 (shut-up-sounds)
+
+
+(progn
+  (play-sound "whiteNoise.mp3" :loops t)
+  (sleep 1.0)
+  (set-volume "whiteNoise.mp3" 0.5)
+  (sleep 1.0)
+  (set-volume "whiteNoise.mp3" 0.1)  
+  (sleep 1.0)
+  (stop-sound "whiteNoise.mp3"))
+
+
 
 |#
