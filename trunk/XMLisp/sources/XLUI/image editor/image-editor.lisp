@@ -159,8 +159,7 @@
    (is-horizontal-line-on :accessor is-horizontal-line-on :initform nil :documentation "True if horizonal line is on, false oterhwise")
    (is-vertical-line-on :accessor is-vertical-line-on :initform nil :documentation "True if vertical line is on, false oterhwise")
    (tolerance :accessor tolerance :initform 0 :documentation "This is the maximum allowed tolerance with the magic wand")
-   (tracking-rect :accessor tracking-rect :initform nil)
-   (current-cursor :accessor current-cursor :initform nil :documentation "we need to keep reference to the current cursor so that we can change the cursor back to that when it enters the view"))
+   )
   (:documentation "Simple image editor."))
 
 
@@ -204,10 +203,10 @@
 ; Implementation                |
 ;_______________________________/
 
-
+#|
 (defmethod INITIALIZE-INSTANCE :after ((Self image-editor) &rest Args)  
   (print "INIT INSTANCE"))
-
+|#
 (defmethod CENTER-CANVAS ((Self image-editor))
   (aim-camera 
    (camera Self) 
@@ -245,13 +244,6 @@
     (delete-texture (img-texture Self))))
 
 
-(defmethod SET-SIZE  ((Self image-editor) Width Height)
-  (call-next-method self width height)      
-  (when (Tracking-rect self)
-    (remove-tracking-rect self (Tracking-rect self)))
-  (setf (Tracking-rect self) (add-tracking-rect self)))
-
-
 (defmethod NEW-IMAGE ((Self image-editor) Width Height &optional (Depth 32))
   "Creates an empty image."
   (with-glcontext Self
@@ -272,9 +264,6 @@
 (defmethod LOAD-IMAGE ((Self image-editor) From-Pathname)
   "Loads an image from a file into the editor."
   ;; (format t "loading image: ~A~%" From-Pathname)
-  (when (Tracking-rect self)
-    (remove-tracking-rect self (Tracking-rect self)))
-  (setf (Tracking-rect self) (add-tracking-rect self))
   (with-glcontext Self
     (when (img-texture Self) (dispose-texture-image Self))
     (when (pixel-buffer Self) (setf (pixel-buffer Self) nil))
@@ -1166,6 +1155,7 @@
 
 (defmethod VIEW-MOUSE-MOVED-EVENT-HANDLER ((Self image-editor) x y dx dy)
   (declare (ignore DX DY))
+  (call-next-method)
   (unless (img-texture Self) (return-from view-mouse-moved-event-handler))
   (multiple-value-bind (Col Row) (screen->pixel-coord Self x y)
     (when (and Row Col)
@@ -1196,17 +1186,31 @@
          (display Self)))))
 
 
-(defmethod VIEW-DID-MOVE-TO-WINDOW ((Self image-editor))
-  (setf (Tracking-rect self) (add-tracking-rect self)))
+(defmethod VIEW-CURSOR ((Self image-editor) x y)
+  (if (and (selection-active-p self)
+             (or 
+              (equal (selected-tool (window self)) 'draw)
+              (equal (selected-tool (window self)) 'erase)
+              (equal (selected-tool (window self)) 'paint-bucket)))
+    (multiple-value-bind (Col Row) (screen->pixel-coord Self x y)
+      (if (and Row Col)
+        (if (pixel-selected-p (selection-mask self) col row)
+          (get-cursor-from-tool-selection self)
+          "notAllowed")))
+    (get-cursor-from-tool-selection self)))
 
 
-(defmethod MOUSE-ENTERED ((Self image-editor))
-  (when (current-cursor self)
-    (set-cursor (current-cursor self))))
-  
-
-(defmethod MOUSE-EXITED ((Self image-editor))
-  (set-cursor "arrowCursor"))
+(defmethod GET-CURSOR-FROM-TOOL-SELECTION ((Self image-editor))
+  (case (selected-tool (window self))
+    (erase "eraseCursor")
+    (draw "drawCursor")
+    (eye-dropper "eyeDropper")
+    (paint-bucket"paintBucket")
+    (magic-wand "magicWand")
+    (select-rect "rectTool")
+    (select-ellipse "ellipse")
+    (select-polygon "polygon")
+    (t nil)))
 
 
 ;**************************************
@@ -1312,12 +1316,10 @@
 
 
 (defmethod DRAW-TOOL-ACTION ((W window) (Button image-button))
-  (set-cursor "CopyArrow")
   (setf (selected-tool W) 'draw))
 
 
 (defmethod ERASE-TOOL-ACTION ((W window) (Button image-button))
-  (set-cursor "NotAllowed")
   (setf (selected-tool W) 'erase))
 
 
@@ -1367,6 +1369,7 @@
 
 (defmethod MIRROR-BOTH-ACTION ((W window) (Choice choice-image-button))
   (toggle-mirror-lines (view-named w "image editor") t t))
+
 
 #|
 

@@ -345,7 +345,7 @@
   (call-next-method)
   (display (view-named (Window self) 'model-editor)))
 
-
+#|
 (defmethod VIEW-MOUSE-MOVED-EVENT-HANDLER ((Self icon-editor) X Y DX DY)
   (call-next-method)
   (when (and (selection-active-p self)
@@ -359,7 +359,7 @@
         (set-cursor (current-cursor self))
         (set-cursor "notAllowed"))
       (set-cursor "arrowCursor")))))
-
+|#
 ;________________________________________________
 ;  Lobster Icon Editor                           |
 ;________________________________________________
@@ -549,50 +549,42 @@
 
 (defmethod DRAW-TOOL-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
-  (tool-selection-event Window 'draw)
-  (setf (current-cursor (view-named Window 'icon-editor)) "drawCursor"))
+  (tool-selection-event Window 'draw))
 
 
 (defmethod ERASE-TOOL-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
-  (tool-selection-event Window 'erase)
-  (setf (current-cursor (view-named Window 'icon-editor)) "eraseCursor"))
+  (tool-selection-event Window 'erase))
 
 
 (defmethod EYE-DROPPER-TOOL-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
-  (tool-selection-event Window 'eye-dropper)
-  (setf (current-cursor (view-named Window 'icon-editor)) "eyeDropper"))
+  (tool-selection-event Window 'eye-dropper))
 
 
 (defmethod PAINT-BUCKET-TOOL-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
-  (tool-selection-event Window 'paint-bucket)
-  (setf (current-cursor (view-named Window 'icon-editor)) "paintBucket"))
+  (tool-selection-event Window 'paint-bucket))
 
 
 (defmethod MAGIC-WAND-TOOL-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
-  (tool-selection-event Window 'magic-wand)
-  (setf (current-cursor (view-named Window 'icon-editor)) "magicWand"))
+  (tool-selection-event Window 'magic-wand))
 
 
 (defmethod POLYGON-TOOL-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
-  (tool-selection-event Window 'select-polygon)
-  (setf (current-cursor (view-named Window 'icon-editor)) "polygon"))
+  (tool-selection-event Window 'select-polygon))
 
 
 (defmethod RECT-TOOL-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
-  (tool-selection-event Window 'select-rect)
-  (setf (current-cursor (view-named Window 'icon-editor)) "rectTool"))
+  (tool-selection-event Window 'select-rect))
 
 
 (defmethod ELLIPSE-TOOL-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
-  (tool-selection-event Window 'select-ellipse)
-  (setf (current-cursor (view-named Window 'icon-editor)) "ellipse"))
+  (tool-selection-event Window 'select-ellipse))
 
 
 (defmethod PICK-COLOR-ACTION ((w inflatable-icon-editor-window) (Color-Well color-well))
