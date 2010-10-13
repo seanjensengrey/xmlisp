@@ -1020,7 +1020,8 @@
     ;; update label
     (setf (text Text-View) (format nil "~4,2F"(distance inflatable-icon)))
     (display Text-View))
-
+  (when (equal (surfaces Inflatable-Icon) 'front)
+    (disable (view-named self "distance-slider")))
   (set-selected-item-with-title (view-named self "surfaces")  (string-downcase(substitute #\space #\-  (string (surfaces Inflatable-Icon)) :test 'equal)))
   (if (is-upright Inflatable-Icon)
       (enable (view-named self "upright"))))
