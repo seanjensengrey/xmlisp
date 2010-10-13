@@ -153,7 +153,8 @@
 
 
 (defmethod layout-changed ((self badged-image-group-list-manager-view))
-  (print "Layout has changed, please override me."))
+  ;nothing
+  )
 
 
 (defmethod EDIT-GROUP ((self badged-image-group-list-manager-view) group-name)
