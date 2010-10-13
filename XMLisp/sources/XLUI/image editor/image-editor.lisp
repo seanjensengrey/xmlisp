@@ -1196,7 +1196,8 @@
       (if (and Row Col)
         (if (pixel-selected-p (selection-mask self) col row)
           (get-cursor-from-tool-selection self)
-          "notAllowed")))
+          "notAllowed")
+        (get-cursor-from-tool-selection self)))
     (get-cursor-from-tool-selection self)))
 
 
