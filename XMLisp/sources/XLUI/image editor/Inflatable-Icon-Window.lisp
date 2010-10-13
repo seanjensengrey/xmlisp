@@ -528,7 +528,7 @@
   (case (selected-camera-tool (window Self))
     (zoom "zoomCursor")
     (pan "panCursor")
-    (rotate "rotatecCursor")))
+    (rotate "rotateCursor")))
 
 ;*************************************************
 ;  Component Actions                             *
@@ -745,6 +745,9 @@
 (defmethod FRONT-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up pop-up))
   (declare (ignore Pop-Up-item))
   (let ((Model-Editor (view-named Window 'model-editor)))
+    (setf (value (view-named window "distance-slider")) 0.0)
+    (adjust-distance-action window (view-named window "distance-slider") t)
+    (disable (view-named window "distance-slider"))
     (setf (surfaces (inflatable-icon Model-Editor)) 'front)
     (display Model-Editor)))
 
@@ -752,6 +755,7 @@
 (defmethod FRONT-AND-BACK-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up pop-up))
   (declare (ignore Pop-Up-item))
   (let ((Model-Editor (view-named Window 'model-editor)))
+    (enable (view-named window "distance-slider"))
     (setf (surfaces (inflatable-icon Model-Editor)) 'front-and-back)
     (display Model-Editor)))
 
@@ -759,6 +763,7 @@
 (defmethod FRONT-AND-BACK-CONNECTED-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up-Item pop-up))
   (declare (ignore Pop-Up-item))
   (let ((Model-Editor (view-named Window 'model-editor)))
+    (enable (view-named window "distance-slider"))
     (setf (surfaces (inflatable-icon Model-Editor)) 'front-and-back-connected)
     (display Model-Editor)))
 
@@ -766,6 +771,11 @@
 (defmethod CUBE-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up-Item pop-up))
   (declare (ignore Pop-Up-item))
   (let ((Model-Editor (view-named Window 'model-editor)))
+    (enable (view-named window "distance-slider"))
+    (setf (value (view-named window "z_slider")) .5)
+    (setf (value (view-named window "distance-slider")) .5)
+    (adjust-distance-action window (view-named window "distance-slider") t)
+    (adjust-z-offset-action window (view-named window "z_slider") )
     (setf (surfaces (inflatable-icon Model-Editor)) 'cube)
     (display Model-Editor)))
 
