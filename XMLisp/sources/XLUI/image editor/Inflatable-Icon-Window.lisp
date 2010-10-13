@@ -345,21 +345,6 @@
   (call-next-method)
   (display (view-named (Window self) 'model-editor)))
 
-#|
-(defmethod VIEW-MOUSE-MOVED-EVENT-HANDLER ((Self icon-editor) X Y DX DY)
-  (call-next-method)
-  (when (and (selection-active-p self)
-             (or 
-              (equal (selected-tool (window self)) 'draw)
-              (equal (selected-tool (window self)) 'erase)
-              (equal (selected-tool (window self)) 'paint-bucket)))
-  (multiple-value-bind (Col Row) (screen->pixel-coord Self x y)
-    (if (and Row Col)
-      (if (pixel-selected-p (selection-mask self) col row)
-        (set-cursor (current-cursor self))
-        (set-cursor "notAllowed"))
-      (set-cursor "arrowCursor")))))
-|#
 ;________________________________________________
 ;  Lobster Icon Editor                           |
 ;________________________________________________
@@ -539,6 +524,11 @@
      (track-mouse-3d (camera Self) Self dx dy)))
   (unless (is-animated Self) (display Self)))
 
+(defmethod VIEW-CURSOR ((Self inflated-icon-editor) x y)
+  (case (selected-camera-tool (window Self))
+    (zoom "zoomCursor")
+    (pan "panCursor")
+    (rotate "rotatecCursor")))
 
 ;*************************************************
 ;  Component Actions                             *
