@@ -184,8 +184,8 @@ Call with most important parameters. Make other paramters accessible through *Cu
 (defgeneric WINDOW-Y (view)
   (:documentation "y offset in window containing view"))
 
-(defgeneric VIEW-CURSOR (view)
-  (:documentation "Returns the name of the cursor this view should use."))
+(defgeneric VIEW-CURSOR (view x y)
+  (:documentation "Returns the name of the cursor this view should use.  This cursor returned may sometimes be dependent upon the x y position of the mouse in the view."))
 
 (defgeneric VIEW-DID-MOVE-TO-WINDOW (view)
   (:documentation "Called when this view is moved into a window, sometimes a view may want to do some special setup once they are placed into a view hierarchy, if so override this method. "))
@@ -243,7 +243,8 @@ Call with most important parameters. Make other paramters accessible through *Cu
   )
 
 
-(defmethod VIEW-CURSOR ((Self View))
+(defmethod VIEW-CURSOR ((Self View) x y)
+  (declare (ignore x y))
   nil)
 
 
@@ -332,14 +333,15 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 
 (defmethod VIEW-MOUSE-MOVED-EVENT-HANDLER ((Self view) x y dx dy)
-  (declare (ignore X Y DX DY))
-  (unless (equal (view-cursor self) (get-cursor))
-    (set-cursor (view-cursor self))
-    (Setf (current-cursor self) (view-cursor self))))
+  (declare (ignore DX DY))
+  (unless (equal (view-cursor self x y) (get-cursor))
+    (set-cursor (view-cursor self x y))
+    (Setf (current-cursor self) (view-cursor self x y))))
 
 
 (defmethod VIEW-MOUSE-MOVED-OUTSIDE-EVENT-HANDLER ((Self view) x y dx dy)
   (declare (ignore X Y DX DY))
+ 
   (when (and (current-cursor self)
              (equal (current-cursor self) (get-cursor)))
     (set-cursor "arrowCursor")
