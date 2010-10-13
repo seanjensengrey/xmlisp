@@ -65,6 +65,7 @@
   (:default-initargs 
       :depth 0.0d0))
 
+
 ;********************************************************
 ;* Specification                                        *
 ;********************************************************
@@ -502,7 +503,7 @@
      (glTranslatef 0s0 0s0 (distance Self))
      (if (is-compiled Self) (draw-compiled Self) (draw-uncompiled Self))
      ;; connectors
-     (if (connectors Self) (progn (print "DRAW CONNECTORS")(draw-connectors Self)))
+     (if (connectors Self)  (draw-connectors Self))
      (glpopmatrix)
      ;; back
      (glpushmatrix)
@@ -636,7 +637,6 @@
     ;; scan vertically 
     (dotimes (Column (+ 1 (columns Self)))
       (dotimes (Row   (rows Self))
-        
         (let ((Z00 (altitude-at Self Row Column))
                 (Z10 (altitude-at Self (1+ Row) Column))
                 (Z01 (altitude-at Self Row (1+ Column)))
@@ -645,8 +645,7 @@
                 (Y1 (+ y dy)))
           (case state
             (:start
-             (if (>= (rgba-image-alpha Image Column Row (columns Self)) (visible-alpha-threshold Self))
-               (progn
+             (when (>= (rgba-image-alpha Image Column Row (columns Self)) (visible-alpha-threshold Self))
                  (let ((Color-Red (rgba-image-red Image Column Row (columns Self)))
                        (Color-Green (rgba-image-green Image Column Row (columns Self)))
                        (Color-Blue (rgba-image-blue Image Column Row (columns Self)))
@@ -677,8 +676,11 @@
                  (glVertex3f x1 y1 z11)
                  (normal-at Self (1+ Row) Column 2m)
                  (glVertex3f x y1 z10)
+                 (when (equal row  (- (rows self) 1) ) 
+                     (setf repeat-next-vertex t)
+                     (glVertex3f x y1 z10))
                  (setf last-vertex `(,x ,y1 ,z10))
-                 (setf vertex-before-last `(,x1 ,y1 ,z11)))))
+                 (setf vertex-before-last `(,x1 ,y1 ,z11))))
             (:paint
              (cond
               ( (equal column  (columns self))
@@ -691,7 +693,6 @@
                (if last-vertex
                  (glVertex3f (first last-vertex) (second last-vertex) (third last-vertex))))
               (t
-               
                (let ((Color-Red (rgba-image-red Image Column Row (columns Self)))
                      (Color-Green (rgba-image-green Image Column Row (columns Self)))
                      (Color-Blue (rgba-image-blue Image Column Row (columns Self)))
@@ -714,53 +715,31 @@
                    ;; we need to draw a degenerate triangle after changing color so that it will not blend between the two colors
                    ;; I.E. we draw vertices 0 1 2 3 2 3 4 5 6 if we are making a color shift between the pixel 
                    ;; that contains the triangles: 0 1 2 and 1 2 3 and the pixel that contains the triangles : 3 4 5 and 4 5 6    
-                   
                    (unless repeat-next-vertex
                      (glVertex3f (first vertex-before-last) (second vertex-before-last) (third vertex-before-last))
                      (glVertex3f (first last-vertex) (second last-vertex) (third last-vertex))
                      )))
-               ;(print "row")
-               ;(print row)
-               (if repeat-next-vertex
-                 (progn
+               (when repeat-next-vertex
+
                    #|
                    (glVertex3f x1 y1 z11)
                    |#
-                    (normal-at Self Row (1+ Column) 2m)
-               ;; repeat first pixel to form a degenerate triangle
-               (glVertex3f x1 y z01)
-               (glVertex3f x1 y z01)
-               (normal-at Self Row Column 2m)
-               (glVertex3f x y z00)
-
-                   (setf repeat-next-vertex nil)
-                   ))
-               
+                   (normal-at Self Row (1+ Column) 2m)
+                   ;; repeat first pixel to form a degenerate triangle
+                   (glVertex3f x1 y z01)
+                   (glVertex3f x1 y z01)
+                   (normal-at Self Row Column 2m)
+                   (glVertex3f x y z00)
+                   (setf repeat-next-vertex nil))
                (normal-at Self (1+ Row) (1+ Column) 2m)
                (glVertex3f x1 y1 z11)
                (normal-at Self (1+ Row) Column 2m)
                (glVertex3f x y1 z10)
-               
-               (if (equal row  (- (rows self) 1) )
-                 (progn 
+               (when (equal row  (- (rows self) 1) )
                    (setf repeat-next-vertex t)
-                   (glVertex3f x y1 z10)))
-               
+                   (glVertex3f x y1 z10))
                (setf last-vertex `(,x ,y1 ,z10))
                (setf vertex-before-last `(,x1 ,y1 ,z11)))))
-            #|
-            (glVertex3f x1 y z01)
-            (glVertex3f x1 y z01)
-            (normal-at Self Row Column 2m)
-            (glVertex3f x y z00)
-            (normal-at Self (1+ Row) (1+ Column) 2m)
-            (glVertex3f x1 y1 z11)
-            (normal-at Self (1+ Row) Column 2m)
-            (glVertex3f x y1 z10)
-            (setf repeat-next-vertex nil)
-            (setf last-vertex `(,x ,y1 ,z10))
-            (setf vertex-before-last `(,x1 ,y1 ,z11))
-            |#
             (:skip
              (cond
               ( (equal column  (columns self) )
@@ -802,11 +781,11 @@
                (normal-at Self (1+ Row) Column 2m)
                (glVertex3f x y1 z10)
                (setf repeat-next-vertex nil)
+               (when (equal row  (- (rows self) 1) )
+                   (setf repeat-next-vertex t)
+                   (glVertex3f x y1 z10))
                (setf last-vertex `(,x ,y1 ,z10))
-               (setf vertex-before-last `(,x1 ,y1 ,z11)))
-              
-              )
-             )
+               (setf vertex-before-last `(,x1 ,y1 ,z11)))))
             (:finish
              ;;do nothing, we are done.
              )))
