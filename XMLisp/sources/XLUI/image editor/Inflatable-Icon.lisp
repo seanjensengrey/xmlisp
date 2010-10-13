@@ -537,6 +537,14 @@
      (glRotatef -90.0 1.0 0.0 0.0)
      (if (is-compiled Self) (draw-compiled Self) (draw-uncompiled Self))
      (glpopmatrix)
+
+     ;; bottom
+     (glpushmatrix)
+     (glTranslatef 0.0 (- 0.5 (distance Self)) 0.5)
+     (glscalef 1.0 -1.0 1.0)
+     (glRotatef -90.0 1.0 0.0 0.0)
+     (if (is-compiled Self) (draw-compiled Self) (draw-uncompiled Self))
+     (glpopmatrix)
      
      (glpushmatrix)
      (glscalef 1.0 1.0 -1.0)
