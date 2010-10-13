@@ -88,18 +88,6 @@
 ;********************************************************
 
 (defmethod PRINT-SLOTS ((Self inflatable-icon))  
-  #|
-  (print "PRINT SLOTS II1")
-  (print (noise self))
-  (print (pressure self))
-  (print 1.0)
-  (print 1.s0)
-  (print (type-of (noise self)))
-  (print (Type-of (pressure self)))
-  (print (type-of  (smooth self)))
-  (print (Type-of 1.s0))
-  (print (type-of 1.0))
-  |#
   (setf (smooth self) 2)
   `(icon rows columns depth pressure ceiling-value smooth steps noise max-value is-upright surfaces altitudes distance dz is-flat ))
 
@@ -216,12 +204,7 @@
 |#
 
 
-(defmethod MAXIMUM-ALTITUDE ((Self inflatable-icon))
-  (let ((Max 0.0))
-    (dotimes (Row (rows Self) Max)
-      (dotimes (Column (columns Self))
-        (when (pixel-visible-p Self Row Column)
-          (setq Max (max Max (aref (altitudes Self) Row Column))))))))
+
 
 
 (defmethod MAX-VISIBLE-PIXEL-ROW ((Self inflatable-icon))
@@ -458,14 +441,11 @@
     (glVertex3f (x4 Connector) (y4 Connector) (z4 Connector))
     (glEnd))
   (glColor3f 1.0 1.0 1.0))
-    
-          ;  1000000.0)))
+
 
 (defmethod DRAW ((Self inflatable-icon))
   ;; the texture update needs to happen in the right opengl context
   ;; just in time while display is not elegant but works
-  ;(print "DRAW II")
-  ;(print (/ (hemlock::time-to-run
   (when (update-texture-from-image-p Self)
     (update-texture-from-image Self)
     (setf (update-texture-from-image-p Self) nil))
@@ -477,7 +457,6 @@
   ;; autocompile
   (when (and (auto-compile Self) (not (is-compiled Self)))
     (compile-shape Self))
-  
   ;; display surfaces
   (ecase (surfaces Self)
     ;; front
@@ -552,7 +531,7 @@
      (if (is-compiled Self) (draw-compiled Self) (draw-uncompiled Self))
      (glpopmatrix)))
  (glpopmatrix))
-;1000000.0)))
+
 
 (defmethod ALTITUDE-AT ((Self inflatable-icon) Row Column)
   (if (array-in-bounds-p (altitudes Self) Row Column)
@@ -830,6 +809,33 @@
           (diffuse Self Row Column Pressure (if (= i 0) Noise 0.0s0) Max))))))
 
 
+(defmethod AVERAGE-ALTITUDE ((Self inflatable-icon) &key Inflate-Pixel-P-Fn)
+  ;; return the average only of all the legitimate pixels
+  (let ((Sum 0.0) 
+        (Count 0))
+  (dotimes (Column (1- (columns Self)))
+    (dotimes (Row (1- (rows Self)))
+      (when (and 
+             (or (not Inflate-Pixel-P-Fn) (funcall Inflate-Pixel-P-Fn Row Column))
+             (needs-to-be-diffused-p Self Row Column))
+        (incf Sum (altitude-at Self Row Column))
+        (incf Count))))
+    (if (> Count 0)
+      (/ Sum Count)
+      0.0)))
+
+
+(defmethod MAXIMUM-ALTITUDE ((Self inflatable-icon) &key Inflate-Pixel-P-Fn)
+  (let ((Max 0.0))
+    (dotimes (Row (rows Self) Max)
+      (dotimes (Column (columns Self))
+        (when (and 
+               (or (not Inflate-Pixel-P-Fn) (funcall Inflate-Pixel-P-Fn Row Column))
+               (needs-to-be-diffused-p Self Row Column))
+          (setq Max (max Max (aref (altitudes Self) Row Column))))))))
+
+
+
 (defmethod INFLATE-COLOR ((Self inflatable-icon) &key (Steps 100) (Pressure 0.01s0) Noise (Max 1.0s0))
   (dotimes (I Steps)
     (dotimes (Column (1- (columns Self)))
@@ -848,8 +854,8 @@
               (* Noise (aref (noise-map Self) R C))
               0.0)
             (min Max
-                 (* 0.25s0 
-                    (+ Pressure  
+                 (* 0.25
+                    (+ Pressure
                        (altitude-at Self (+ R 1) C)
                        (altitude-at Self (- R 1) C)
                        (altitude-at Self R (+ C 1))
