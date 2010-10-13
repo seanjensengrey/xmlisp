@@ -37,7 +37,7 @@
     <rotate-first-person-camera/>
    </category>
    <category title="dialog" disclosed="true">
-     <show-message/>
+     <show-message text="Make it so!" subtext="The spaceship is ready to go"/>
    </category>
    <category title="simulation control" disclosed="true">
      <run-simulation/>
