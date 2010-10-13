@@ -8,9 +8,9 @@
      <image-button name="eye dropper button" action="eye-dropper-tool-action" image="eye-dropper-button.png"/> 
      <image-button name="paint bucket button" action="paint-bucket-tool-action" image="paint-bucket-button.png"/>
      <image-button name="magic wand button" action="magic-wand-tool-action" image="magic-wand-button.png"/>
-     <image-button name="select rectangle button" action="select-rect-tool-action" image="select-rect-button.png"/>
-     <image-button name="select ellipse button" action="select-ellipse-tool-action" image="select-ellipse-button.png"/>
-     <image-button name="select polygon button" action="select-polygon-tool-action" image="select-polygon-button.png"/>
+     <image-button name="select rectangle button" action="rect-tool-action" image="select-rect-button.png"/>
+     <image-button name="select ellipse button" action="ellipse-tool-action" image="select-ellipse-button.png"/>
+     <image-button name="select polygon button" action="polygon-tool-action" image="select-polygon-button.png"/>
      <spacer height="10"/>
      <color-well name="color well" action="pick-color-action" color="000000"/>
     </image-button-cluster>
@@ -52,15 +52,11 @@
       <label width="65" text="Geometry" align="center"/>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="z offset"/>
-        <slider action="adjust-z-offset-action" min-value="-0.1" max-value="0.1" flex="1" name="z_slider"/>
+        <slider action="adjust-z-offset-action" min-value="-1.0" max-value="1.0" flex="1" name="z_slider"/>
         <label name="z-offset-text" align="right" width="35" text="0.0"/>
       </row>
       <check-box name="upright" text="upright" action="upright-action"/>
-      <row align="stretch" minimize="vertical" valign="middle">
-        <label width="65" text="distance"/>
-        <slider action="adjust-distance-action" min-value="0.0" max-value="1.0" flex="1" name="distance-slider"/>
-        <label name="distance-text" align="right" width="35" text="0.0"/>
-      </row>
+
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="surfaces"/>
         <pop-up width="150" name="surfaces">                                                                   
@@ -69,6 +65,11 @@
           <pop-up-item text="front and back connected" action="front-and-back-connected-surface-action"/>         
           <pop-up-item text="cube" action="cube-surface-action"/>                              
         </pop-up>  
+      </row>
+      <row align="stretch" minimize="vertical" valign="middle">
+        <label width="65" text="distance"/>
+        <slider action="adjust-distance-action" min-value="0.0" max-value="1.0" flex="1" name="distance-slider"/>
+        <label name="distance-text" align="right" width="35" text="0.0"/>
       </row>
     </column>
     <spacer width="5"/>
