@@ -1801,6 +1801,54 @@
   (#/floatValue (native-view Self)))
 
 ;__________________________________
+; JOG SLIDER                        |
+;__________________________________/
+
+(defclass NATIVE-JOG-SLIDER (native-slider)
+  ((lui-view :accessor lui-view :initarg :lui-view))
+  (:metaclass ns:+ns-object))
+
+
+(defmethod MAKE-NATIVE-OBJECT ((Self jog-slider-control))
+  ;; similar to native slider
+  (let ((Native-Control (make-instance 'native-jog-slider :lui-view Self)))
+    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+      (#/initWithFrame: Native-Control Frame)
+      (#/setMinValue: Native-Control (float (min-value Self) 0d0))
+      (#/setMaxValue: Native-Control (float (max-value Self) 0d0))
+      (#/setNumberOfTickMarks: Native-Control (truncate (tick-marks Self)))
+      ;; Make sure the slider's indicator/thumb is positioned properly based on
+      ;; control's initial value
+      (#/setFloatValue: Native-Control (slot-value Self 'value)))
+    Native-Control))
+
+
+(objc:defmethod (#/mouseDown: :void) ((self native-jog-slider) event)
+  ;; NSslider runs its own event loop on mouse down -> no mouseUp or mouseDragged events
+  ;; http://www.cocoabuilder.com/archive/cocoa/157955-nsslider-mouseup.html
+  ;; setup slide action to call lui action but also a thread that lives as long as the mouse is down
+  (setf (is-jog-active (lui-view Self)) t)
+  (process-run-function
+     '(:name "Jog Dial Thread" )
+     #'(lambda ()
+         ;; start jog in separate thread to avoid delay of slider knob move
+         (start-jog (lui-view Self))
+         ;; as long as mouse is down keep running control action at interval frequency
+         (loop
+           (unless (is-jog-active (lui-view Self)) (return))
+           (catch-errors-nicely
+            "Jog Dial Thread"
+            ;; better to activate the action in the main thread!!
+            (in-main-thread ()
+              (#/activateAction (#/target Self)))
+            (sleep (action-interval (lui-view Self)))))))
+  ;; this actually does the mouse tracking until mouse up
+  (call-next-method Event)
+  ;; mouse is up
+  (stop-jog (lui-view Self)))
+
+
+;__________________________________
 ; LABEL                            |
 ;__________________________________/
 

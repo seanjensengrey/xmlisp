@@ -1014,6 +1014,41 @@ after any of the window controls calls stop-modal close window and return value.
     :height 30))
 
 ;__________________________________
+; JOG-SLIDER                       |
+;__________________________________/
+
+(defclass JOG-SLIDER-CONTROL (slider-control)
+  ((stop-value :accessor stop-value :initform 0.0 :type float :initarg :stop-value :documentation "The value of jog dial when not operated by user")
+   (action-interval :accessor action-interval :initform 0.1 :type float :documentation "time in seconds between two calls to action when jog is active")
+   (is-jog-active :accessor is-jog-active :initform nil))
+  (:default-initargs
+      :tick-marks 3)
+  (:documentation "Unlike a regular slider a JOG slider keeps calling its control action as long as the mouse is down even if the knob is no longer moved. After mouse up the value of slide returns to stop value"))
+
+
+(defgeneric START-JOG (jog-slider-control)
+  (:documentation "Called when user is starting Jog."))
+
+
+(defgeneric STOP-JOG (jog-slider-control)
+  (:documentation "Called when user is done with Jog. Default action sets slides value to stop-value"))
+
+
+;__________________________________
+; default implementation           |
+;__________________________________/
+
+(defmethod START-JOG ((Self jog-slider-control))
+  ;; nothing
+  )
+
+
+(defmethod STOP-JOG ((Self jog-slider-control))
+  ;; reset slider to stop value
+  (setf (is-jog-active Self) nil)
+  (setf (value Self) (stop-value Self)))
+
+;__________________________________
 ; Text                             |
 ;__________________________________/
 
