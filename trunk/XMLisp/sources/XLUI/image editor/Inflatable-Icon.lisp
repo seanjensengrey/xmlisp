@@ -88,7 +88,6 @@
 ;********************************************************
 
 (defmethod PRINT-SLOTS ((Self inflatable-icon))  
-  (setf (smooth self) 2)
   `(icon rows columns depth pressure ceiling-value smooth steps noise max-value is-upright surfaces altitudes distance dz is-flat ))
 
 
