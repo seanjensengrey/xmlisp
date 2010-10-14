@@ -432,6 +432,8 @@
       (broadcast-to-agents Self #'(lambda (Agent) (setf (is-selected Agent) nil)))
       (setf (agents-selected Self) nil)))))
 
+(defmethod VIEW-RIGHT-MOUSE-DOWN-EVENT-HANDLER ((Self agent-3d-view) X Y)
+  (declare (ignore x y)))
 
 ;; Drag and Drop
 
@@ -479,6 +481,7 @@
   ;; add some delay here to avoid taxing CPU with high frequency picking
   ;; for instance: picking every 50ms would be plenty fast
   (declare (ignore dx dy))
+  (call-next-method)
   ;;(format t "~%hover: x=~A y=~A dx=~A dy=~A" x y dx dy)
   (let ((Agent (find-agent-at Self x y *Selection-Tolerance* *Selection-Tolerance*)))
     (when (or (not (eq Agent (agent-hovered Self))) 
@@ -689,8 +692,6 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 
   ;; BEGIN display with transformations
   (glPushmatrix)
-
-  
   (cond
      ;; simple: no rotation
      ((and (not (has-shade Self)) (= (roll Self) 0.0) (= (heading Self) 0.0) (= (pitch Self) 0.0))
@@ -869,6 +870,9 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
    (y-turn Self)
    (z-turn Self)))
 
+(defmethod VIEW-RIGHT-MOUSE-DOWN-EVENT-HANDLER ((Self agent-3d) X Y)
+  (call-next-method)
+  (print "MOUSE RIGHT AGENT 3D"))
 
 (defmethod PROJECTED-WINDOW-POSITION ((Self agent-3d))
   ;; this implementation is not very elegant as it includes all agents to be drawn as side effect.
