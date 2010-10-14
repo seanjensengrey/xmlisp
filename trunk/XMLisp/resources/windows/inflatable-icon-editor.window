@@ -32,7 +32,7 @@
      </row>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="Ceiling"/>
-        <slider action="adjust-ceiling-action" name="ceiling_slider" value="1.0" max-value="1.0" flex="1"/>
+        <slider action="adjust-ceiling-action" name="ceiling_slider" value="1.0" max-value="2.0" flex="1"/>
         <label name="ceilingtext" align="right" width="35" text="1.0"/>
       </row>
       <row align="stretch" minimize="vertical" valign="middle">
