@@ -196,7 +196,7 @@
          Inflatable-Icon
          :steps 20
          :pressure (pressure Inflatable-Icon)
-         :max (- (max-value Inflatable-Icon) (distance Inflatable-Icon))
+         :max (- (max-value Inflatable-Icon) (distance Inflatable-Icon) (value (view-named self "z_slider")))
          :inflate-pixel-p-fn #'pixel-selected-p-fn)
         ;; introduce noise
         (inflate
@@ -480,34 +480,82 @@
       (Setf (transparent-ceiling-update-process (window self)) nil))
     (progn
       ;; draw the transparent ceiling
-      (let ((ceiling-height (+ .02 (ceiling-value (inflatable-icon (view-named (Window self) 'model-editor))))))
+      (let ((ceiling-height (+ .02  (ceiling-value (inflatable-icon (view-named (Window self) 'model-editor))))))
         (glpushmatrix)
-        (when (is-upright (inflatable-icon (view-named (Window self) 'model-editor)))
-          (glTranslatef 0.0s0 1.0s0 0.0s0)
-          (glRotatef 90s0 1.0s0 0.0s0  0.0s0 ))
-        (glColor4f .5 .7 1.0 (ceiling-transparency (window self)))
-        (glbegin gl_quads)
-        (glnormal3f 0.0 1.0 0.0)
-        (gltexcoord2f 0s0 0s0) (glvertex3f -1s0 ceiling-height -1s0)
-        (gltexcoord2f 0s0 10s0) (glvertex3f -1s0 ceiling-height 1s0)
-        (gltexcoord2f 10s0 10s0) (glvertex3f  1s0 ceiling-height 1s0)
-        (gltexcoord2f 10s0 0s0) (glvertex3f  1s0 ceiling-height -1s0)
-        (glend)
-        ;; grid
-        (glColor4f 1.0 1.0 0.0 (ceiling-transparency (window self)))
-        (glBegin GL_LINES)
-        (loop for i from -1.0 to 1.0 by .2 do
-          (glVertex3f i (+ .01 ceiling-height) -1.0)
-          (glVertex3f i (+ .01 ceiling-height) 1.0))
-        (loop for j from -1.0 to 1.0 by .2 do
-          (glVertex3f -1.0 (+ .01 ceiling-height) j)
-          (glVertex3f 1.0 (+ .01 ceiling-height) j))
-        (glEnd)
+        
+        
+        ;(value (view-named (Window self) "z_slider"))
+        (case (surfaces (inflatable-icon (view-named (window self) 'model-editor)))
+          ((or front-and-back front-and-back-connected)
+           (when (is-upright (inflatable-icon (view-named (Window self) 'model-editor)))
+             (glTranslatef 0.0s0 1.0s0 0.0s0)
+             (glRotatef 90s0 1.0s0 0.0s0  0.0s0 ))
+           (draw-ceiling-quad (ceiling-transparency (window self)) (+ (value (view-named (Window self) "z_slider")) ceiling-height))
+           (glscalef 1s0 -1s0 1s0)
+           (draw-ceiling-quad (ceiling-transparency (window self)) (- ceiling-height (value (view-named (Window self) "z_slider")) ))
+           )
+          (cube 
+           (when (is-upright (inflatable-icon (view-named (Window self) 'model-editor)))
+             (glTranslatef 0.0s0 0.5s0 0.0s0))
+           (glTranslatef 0.0s0  (Value (view-named (Window self) "z_slider")) 0.0s0)
+           (draw-ceiling-quad (ceiling-transparency (window self)) ceiling-height)
+           (glpushmatrix)
+           (glscalef 1s0 -1s0 1s0)
+           (draw-ceiling-quad (ceiling-transparency (window self)) ceiling-height)
+           (glpopmatrix)
+           (glpushmatrix)
+           (glRotatef -90s0 0.0s0 0.0s0  1.0s0 )
+           (draw-ceiling-quad (ceiling-transparency (window self)) ceiling-height)
+           (glpopmatrix)
+           
+           (glpushmatrix)
+           (glRotatef 90s0 0.0s0 0.0s0  1.0s0 )
+           (draw-ceiling-quad (ceiling-transparency (window self)) ceiling-height)
+           (glpopmatrix)
+           (glpushmatrix)
+           (glRotatef 90s0 1.0s0 0.0s0  0.0s0 )
+           ;(glScalef 1.0 1.0 -1.0)
+           (draw-ceiling-quad (ceiling-transparency (window self)) ceiling-height)
+           (glpopmatrix)
+           (glpushmatrix)
+           (glRotatef 90s0 -1.0s0 0.0s0  0.0s0 )
+           ;(glScalef 1.0 1.0 -1.0)
+           (draw-ceiling-quad (ceiling-transparency (window self)) ceiling-height)
+           (glpopmatrix)
+           ;  (glscalef 1s0 1s0 -1s0)
+           ; (draw-ceiling-quad (ceiling-transparency (window self)) ceiling-height)
+           )
+          (t 
+           (when (is-upright (inflatable-icon (view-named (Window self) 'model-editor)))
+             (glTranslatef 0.0s0 1.0s0 0.0s0)
+             (glRotatef 90s0 1.0s0 0.0s0  0.0s0 ))
+           (draw-ceiling-quad (ceiling-transparency (window self)) (+ 0.0  ceiling-height))))
+
 
         (glpopmatrix)
         (glEnable GL_DEPTH_TEST) 
         (glColor4f 1.0 1.0 1.0 1.0)))))
   
+(defun DRAW-CEILING-QUAD (ceiling-transparency ceiling-height)
+  (glColor4f .5 .7 1.0 ceiling-transparency )
+  (glbegin gl_quads)
+  (glnormal3f 0.0 1.0 0.0)
+  (gltexcoord2f 0s0 0s0) (glvertex3f -1s0 ceiling-height -1s0)
+  (gltexcoord2f 0s0 10s0) (glvertex3f -1s0 ceiling-height 1s0)
+  (gltexcoord2f 10s0 10s0) (glvertex3f  1s0 ceiling-height 1s0)
+  (gltexcoord2f 10s0 0s0) (glvertex3f  1s0 ceiling-height -1s0)
+  (glend)
+  ;; grid
+  (glColor4f 1.0 1.0 0.0 ceiling-transparency )
+  (glBegin GL_LINES)
+  (loop for i from -1.0 to 1.0 by .2 do
+    (glVertex3f i (+ .01 ceiling-height) -1.0)
+    (glVertex3f i (+ .01 ceiling-height) 1.0))
+  (loop for j from -1.0 to 1.0 by .2 do
+    (glVertex3f -1.0 (+ .01 ceiling-height) j)
+    (glVertex3f 1.0 (+ .01 ceiling-height) j))
+  (glEnd))
+
 
 (defmethod VIEW-LEFT-MOUSE-DRAGGED-EVENT-HANDLER ((Self inflated-icon-editor) X Y DX DY)
   (declare (ignore X Y))
@@ -712,6 +760,7 @@
       ;; update model editor
       (let ((Model-Editor (view-named Window 'model-editor)))
         (setf (dz (inflatable-icon Model-Editor)) Offset)
+        (update-inflation Window)
         (display Model-Editor)))))
 
 
@@ -1003,7 +1052,7 @@
   
   ;(setf (value (view-named self "smooth_slider")) (float (smooth inflatable-icon)))
   ;(setf (value (view-named self "noise_slider")) (noise inflatable-icon))
-  ;(setf (value (view-named self "z_slider")) (dz inflatable-icon))
+;  (setf (value (view-named self "z_slider")) (dz inflatable-icon))
   ;(adjust-distance-action self (view-named self "distance-slider") t)
   ;(adjust-noise-action self (view-named self "noise_slider") )
   
