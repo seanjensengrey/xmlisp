@@ -176,14 +176,14 @@
          Inflatable-Icon
          :steps 10
          :pressure (pressure Inflatable-Icon)
-         :max (- (max-value Inflatable-Icon) (distance Inflatable-Icon)  (if (>  (value (view-named self "z_slider"))0.0) (value (view-named self "z_slider")) 0.0))
+         :max (- (max-value Inflatable-Icon) (distance Inflatable-Icon)  (value (view-named self "z_slider"))#|(if (>  (value (view-named self "z_slider"))0.0) (value (view-named self "z_slider")) 0.0) |#)
          :inflate-pixel-p-fn #'pixel-selected-p-fn)
         ;; introduce noise
         (inflate
          Inflatable-Icon
          :steps 1
          :pressure (pressure Inflatable-Icon)
-         :max (max-value Inflatable-Icon)
+         :max (- (max-value Inflatable-Icon) (distance Inflatable-Icon)  (value (view-named self "z_slider"))#|(if (>  (value (view-named self "z_slider"))0.0) (value (view-named self "z_slider")) 0.0) |#);(max-value Inflatable-Icon)
          :noise (noise Inflatable-Icon)
          :inflate-pixel-p-fn #'pixel-selected-p-fn)
         (dotimes (I (smoothing-cycles Self))
@@ -191,14 +191,14 @@
            Inflatable-Icon
            :steps 1
            :pressure (pressure Inflatable-Icon)
-           :max (max-value Inflatable-Icon)
+           :max (- (max-value Inflatable-Icon) (distance Inflatable-Icon)  (value (view-named self "z_slider"))#|(if (>  (value (view-named self "z_slider"))0.0) (value (view-named self "z_slider")) 0.0) |#);(max-value Inflatable-Icon)
            :inflate-pixel-p-fn #'pixel-selected-p-fn))
-    #|
+        #|
         (format t "~%Pressure ~A, altitutes, average  ~A, max ~A" 
-                (pressure Inflatable-Icon)
-                (average-altitude Inflatable-Icon :inflate-pixel-p-fn #'pixel-selected-p-fn)
+        (pressure Inflatable-Icon)
+        (average-altitude Inflatable-Icon :inflate-pixel-p-fn #'pixel-selected-p-fn)
                 (maximum-altitude Inflatable-Icon :inflate-pixel-p-fn #'pixel-selected-p-fn))
-|#
+        |#
         ;; update 
         (display Model-Editor)))))
 
@@ -464,7 +464,7 @@
       (Setf (transparent-ceiling-update-process (window self)) nil))
     (progn
       ;; draw the transparent ceiling
-      (let ((ceiling-height (+ .02  (ceiling-value (inflatable-icon (view-named (Window self) 'model-editor)))))
+      (let ((ceiling-height (+ .02  (max-value (inflatable-icon (view-named (Window self) 'model-editor)))))
             (z-offset (value (view-named (Window self) "z_slider"))))
         (glpushmatrix)
         
@@ -472,13 +472,18 @@
         ;(value (view-named (Window self) "z_slider"))
         (case (surfaces (inflatable-icon (view-named (window self) 'model-editor)))
           ((or front-and-back front-and-back-connected)
-           (when (is-upright (inflatable-icon (view-named (Window self) 'model-editor)))
-             (glTranslatef 0.0s0 1.0s0 0.0s0)
-             (glRotatef 90s0 1.0s0 0.0s0  0.0s0 ))
-           (draw-ceiling-quad (ceiling-transparency (window self)) ceiling-height);(+ (value (view-named (Window self) "z_slider")) ceiling-height))
-           (glscalef 1s0 -1s0 1s0)
-           (draw-ceiling-quad (ceiling-transparency (window self)) (- ceiling-height (* 2 (value (view-named (Window self) "z_slider")) )))
-           )
+           (if (is-upright (inflatable-icon (view-named (Window self) 'model-editor)))
+             (progn
+               (glTranslatef 0.0s0 1.0s0 0.0s0)
+               (glRotatef 90s0 1.0s0 0.0s0  0.0s0 )
+               (draw-ceiling-quad (ceiling-transparency (window self)) (-  ceiling-height z-offset))
+               (glscalef 1s0 -1s0 1s0)
+               (draw-ceiling-quad (ceiling-transparency (window self)) (-  ceiling-height z-offset))
+               )
+             (progn
+               (draw-ceiling-quad (ceiling-transparency (window self)) ceiling-height)
+               (glscalef 1s0 -1s0 1s0)
+               (draw-ceiling-quad (ceiling-transparency (window self)) (- ceiling-height (* 2 (value (view-named (Window self) "z_slider")) ))))))
           (cube 
            (when (is-upright (inflatable-icon (view-named (Window self) 'model-editor)))
              (glTranslatef 0.0s0 0.5s0 0.0s0))
@@ -491,7 +496,6 @@
            (glTranslatef 0.0s0 (* -2.0 z-offset) 0.0s0)
            (draw-ceiling-quad (ceiling-transparency (window self)) ceiling-height)
            (glpopmatrix)
-           
            ;;Right side (when window opens)
            (glpushmatrix)
            (glTranslatef 0.0s0  (Value (view-named (Window self) "z_slider")) 0.0s0)
@@ -511,22 +515,19 @@
            (glRotatef 90s0 1.0s0 0.0s0  0.0s0 )
            (draw-ceiling-quad (ceiling-transparency (window self)) (-  ceiling-height z-offset))
            (glpopmatrix)
-           
            ;; back (when window opens)
            (glpushmatrix)
            (glTranslatef 0.0s0  (Value (view-named (Window self) "z_slider")) 0.0s0)
            (glRotatef 90s0 -1.0s0 0.0s0  0.0s0 )
            (draw-ceiling-quad (ceiling-transparency (window self)) (-  ceiling-height z-offset))
-           (glpopmatrix)
-           
-           )
+           (glpopmatrix))
           (t 
-           (when (is-upright (inflatable-icon (view-named (Window self) 'model-editor)))
-             (glTranslatef 0.0s0 1.0s0 0.0s0)
-             (glRotatef 90s0 1.0s0 0.0s0  0.0s0 ))
-           (draw-ceiling-quad (ceiling-transparency (window self)) (+ 0.0  ceiling-height))))
-
-
+           (if (is-upright (inflatable-icon (view-named (Window self) 'model-editor)))
+             (progn
+               (glTranslatef 0.0s0 1.0s0 0.0s0)
+               (glRotatef 90s0 1.0s0 0.0s0  0.0s0 )
+               (draw-ceiling-quad (ceiling-transparency (window self)) (+ 0.0  (-  ceiling-height z-offset))))
+             (draw-ceiling-quad (ceiling-transparency (window self)) (+ 0.0  ceiling-height)))))
         (glpopmatrix)
         (glEnable GL_DEPTH_TEST) 
         (glColor4f 1.0 1.0 1.0 1.0)))))
@@ -685,7 +686,6 @@
 
 
 (defmethod ADJUST-PRESSURE-ACTION ((Window inflatable-icon-editor-window) (Slider inflation-jog-slider) &optional do-not-display)
- (print "adjust pressure")
   (let ((Pressure (value Slider)))
     ;; audio feedback
     (set-volume "whiteNoise.mp3" (abs Pressure))
@@ -731,7 +731,7 @@
       ;; update model editor
       (let ((Model-Editor (view-named Window 'model-editor)))
         (setf (ceiling-value (inflatable-icon Model-Editor)) Ceiling)
-        (setf (max-value (inflatable-icon Model-Editor)) Ceiling)
+        (setf (max-value (inflatable-icon Model-Editor)) (+ Ceiling (value (view-named window "z_slider")) ))
         (update-inflation Window)))))
 
 
@@ -765,7 +765,7 @@
       (display Text-View)
       ;; update model editor
       (setf (smoothing-cycles Window) Smooth)
-      ;(setf (smooth (inflatable-icon (view-named Window 'model-editor))) smooth)
+      (setf (smooth (inflatable-icon (view-named Window 'model-editor))) smooth)
       (update-inflation Window))))
 
 
@@ -776,26 +776,9 @@
       (setf (text Text-View) (format nil "~4,2F" Offset))
       (display Text-View)
       ;; update model editor
-      (let* ((Model-Editor (view-named Window 'model-editor))
-            (change-in-offset (- offset (dz (inflatable-icon Model-Editor)) )))
-        #|
-        (if (>= (value (view-named window "ceiling_slider")) 2.0)
-          (let ((Model-Editor (view-named Window 'model-editor)))
-            (setf (ceiling-value (inflatable-icon Model-Editor)) (+ change-in-offset (value (view-named window "ceiling_slider"))))
-            (setf (max-value (inflatable-icon Model-Editor)) (+ change-in-offset (value (view-named window "ceiling_slider"))))
-            (print (max-value (inflatable-icon Model-Editor)))
-            (update-inflation Window))
-          (progn
-            (setf (value (view-named window "ceiling_slider"))  (+ change-in-offset (value (view-named window "ceiling_slider"))))
-            (adjust-ceiling-action window (view-named window "ceiling_slider"))))
-        
-        |#
-
-        (setf (value (view-named window "ceiling_slider"))  (+ change-in-offset (value (view-named window "ceiling_slider"))))
-        (adjust-ceiling-action window (view-named window "ceiling_slider"))
+      (let* ((Model-Editor (view-named Window 'model-editor)))
         (setf (dz (inflatable-icon Model-Editor)) Offset)
-        
-        ;(update-inflation Window)
+        (adjust-ceiling-action window (view-named window "ceiling_slider"))
         (display Model-Editor)))))
 
 
@@ -831,15 +814,15 @@
   (let ((Model-Editor (view-named Window 'model-editor)))
     (setf (value (view-named window "distance-slider")) 0.0)
     (adjust-distance-action window (view-named window "distance-slider") t)
-    (disable (view-named window "distance-slider"))
+    ;(disable (view-named window "distance-slider"))
     (setf (surfaces (inflatable-icon Model-Editor)) 'front)
     (display Model-Editor)))
 
 
 (defmethod FRONT-AND-BACK-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up pop-up))
-  (declare (ignore Pop-Up-item))
+  (declare (ignore Pop-Up))
   (let ((Model-Editor (view-named Window 'model-editor)))
-    (enable (view-named window "distance-slider"))
+    ;(enable (view-named window "distance-slider"))
     (setf (surfaces (inflatable-icon Model-Editor)) 'front-and-back)
     (display Model-Editor)))
 
@@ -847,7 +830,7 @@
 (defmethod FRONT-AND-BACK-CONNECTED-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up-Item pop-up))
   (declare (ignore Pop-Up-item))
   (let ((Model-Editor (view-named Window 'model-editor)))
-    (enable (view-named window "distance-slider"))
+    ;(enable (view-named window "distance-slider"))
     (setf (surfaces (inflatable-icon Model-Editor)) 'front-and-back-connected)
     (display Model-Editor)))
 
@@ -855,7 +838,7 @@
 (defmethod CUBE-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up-Item pop-up))
   (declare (ignore Pop-Up-item))
   (let ((Model-Editor (view-named Window 'model-editor)))
-    (enable (view-named window "distance-slider"))
+   ; (enable (view-named window "distance-slider"))
     (setf (value (view-named window "z_slider")) .5)
     (setf (value (view-named window "distance-slider")) .5)
     (adjust-distance-action window (view-named window "distance-slider") t)
@@ -932,9 +915,10 @@
          (Inflatable-Icon (inflatable-icon Model-Editor)))
     (dotimes (Row (rows Inflatable-Icon ))
       (dotimes (Column (columns Inflatable-Icon ))
-        (setf (aref (altitudes Inflatable-Icon ) Row Column) 0.0))))
+        (setf (aref (altitudes Inflatable-Icon ) Row Column) 0.0)))
+    (Setf (pressure Inflatable-Icon) 0.0))
   
-  (setf (value (view-named Window "pressure_slider")) 0.0)
+  ;(setf (value (view-named Window "pressure_slider")) 0.0)
   (setf (value (view-named window "distance-slider")) 0.0)
   (setf (value (view-named window "ceiling_slider")) 1.0)
   (setf (value (view-named window "smooth_slider")) 0.0)
@@ -942,7 +926,7 @@
   (setf (value (view-named window "z_slider")) 0.0)
   (adjust-distance-action window (view-named window "distance-slider") t)
   (adjust-noise-action window (view-named window "noise_slider") )
-  (adjust-pressure-action window (view-named window "pressure_slider") t)
+  ;(adjust-pressure-action window (view-named window "pressure_slider") t)
   (adjust-ceiling-action window (view-named window "ceiling_slider") :draw-transparent-ceiling nil)
   (adjust-smooth-action window (view-named window "smooth_slider"))
   (adjust-z-offset-action window (view-named window "z_slider"))
@@ -1076,36 +1060,37 @@
 
 
 (defmethod INITIALIZE-GUI-COMPONENTS ((Self inflatable-icon-editor-window) Inflatable-Icon)
-  (lui::disable (view-named self "smooth_slider"))
   (setf (value (view-named self "distance-slider")) (distance inflatable-icon))
-
-  
-  ;(setf (value (view-named self "pressure_slider")) (pressure inflatable-icon))
-  ;(inspect inflatable-icon)
-  
-  ;(setf (value (view-named self "ceiling_slider")) (ceiling-value inflatable-icon))
-  
-  ;(setf (value (view-named self "smooth_slider")) (float (smooth inflatable-icon)))
-  ;(setf (value (view-named self "noise_slider")) (noise inflatable-icon))
-;  (setf (value (view-named self "z_slider")) (dz inflatable-icon))
-  ;(adjust-distance-action self (view-named self "distance-slider") t)
-  ;(adjust-noise-action self (view-named self "noise_slider") )
-  
-  ;(adjust-pressure-action self (view-named self "pressure_slider") t)
-
-  
-  #|
-  (adjust-ceiling-action self (view-named self "ceiling_slider") :draw-transparent-ceiling nil)
-  (adjust-smooth-action self (view-named self "smooth_slider"))
-  (adjust-z-offset-action self (view-named self "z_slider"))
-  |#
-
+  (setf (value (view-named self "ceiling_slider")) (ceiling-value inflatable-icon))
+  (setf (value (view-named self "smooth_slider")) (float (smooth inflatable-icon)))
+  (setf (value (view-named self "noise_slider")) (noise inflatable-icon))
+  (setf (value (view-named self "z_slider")) (dz inflatable-icon))
+  (unless (> (value (view-named self "noise_slider")) 0.0)
+    (disable (view-named self "smooth_slider")))
   (let ((Text-View (view-named self 'distance-text)))
     ;; update label
     (setf (text Text-View) (format nil "~4,2F"(distance inflatable-icon)))
     (display Text-View))
+  (let ((Text-View (view-named self 'ceilingtext)))
+    ;; update label
+    (setf (text Text-View) (format nil "~4,2F" (Ceiling-value inflatable-icon)))
+    (display Text-View))
+  (let ((Text-View (view-named self 'z-offset-text)))
+    ;; update label
+    (setf (text Text-View) (format nil "~4,2F" (dz inflatable-icon)))
+    (display Text-View))
+  (let ((Text-View (view-named self 'noise-text)))
+      ;; update label
+      (setf (text Text-View) (format nil "~4,2F" (Noise inflatable-icon)))
+      (display Text-View))
+  (let ((Text-View (view-named self 'smooth-text)))
+      ;; update label
+      (setf (text Text-View) (format nil "~A" (Smooth inflatable-icon)))
+      (display Text-View))
+  #|
   (when (equal (surfaces Inflatable-Icon) 'front)
     (disable (view-named self "distance-slider")))
+  |#
   (set-selected-item-with-title (view-named self "surfaces")  (string-downcase(substitute #\space #\-  (string (surfaces Inflatable-Icon)) :test 'equal)))
   (if (is-upright Inflatable-Icon)
       (enable (view-named self "upright"))))
