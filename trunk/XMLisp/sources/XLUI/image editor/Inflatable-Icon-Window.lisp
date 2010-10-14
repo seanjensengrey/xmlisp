@@ -814,7 +814,7 @@
   (let ((Model-Editor (view-named Window 'model-editor)))
     (setf (value (view-named window "distance-slider")) 0.0)
     (adjust-distance-action window (view-named window "distance-slider") t)
-    ;(disable (view-named window "distance-slider"))
+    (disable (view-named window "distance-slider"))
     (setf (surfaces (inflatable-icon Model-Editor)) 'front)
     (display Model-Editor)))
 
@@ -822,7 +822,7 @@
 (defmethod FRONT-AND-BACK-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up pop-up))
   (declare (ignore Pop-Up))
   (let ((Model-Editor (view-named Window 'model-editor)))
-    ;(enable (view-named window "distance-slider"))
+    (enable (view-named window "distance-slider"))
     (setf (surfaces (inflatable-icon Model-Editor)) 'front-and-back)
     (display Model-Editor)))
 
@@ -830,7 +830,7 @@
 (defmethod FRONT-AND-BACK-CONNECTED-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up-Item pop-up))
   (declare (ignore Pop-Up-item))
   (let ((Model-Editor (view-named Window 'model-editor)))
-    ;(enable (view-named window "distance-slider"))
+    (enable (view-named window "distance-slider"))
     (setf (surfaces (inflatable-icon Model-Editor)) 'front-and-back-connected)
     (display Model-Editor)))
 
@@ -838,7 +838,7 @@
 (defmethod CUBE-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up-Item pop-up))
   (declare (ignore Pop-Up-item))
   (let ((Model-Editor (view-named Window 'model-editor)))
-   ; (enable (view-named window "distance-slider"))
+    (enable (view-named window "distance-slider"))
     (setf (value (view-named window "z_slider")) .5)
     (setf (value (view-named window "distance-slider")) .5)
     (adjust-distance-action window (view-named window "distance-slider") t)
@@ -916,22 +916,33 @@
     (dotimes (Row (rows Inflatable-Icon ))
       (dotimes (Column (columns Inflatable-Icon ))
         (setf (aref (altitudes Inflatable-Icon ) Row Column) 0.0)))
-    (Setf (pressure Inflatable-Icon) 0.0))
-  
-  ;(setf (value (view-named Window "pressure_slider")) 0.0)
-  (setf (value (view-named window "distance-slider")) 0.0)
-  (setf (value (view-named window "ceiling_slider")) 1.0)
-  (setf (value (view-named window "smooth_slider")) 0.0)
-  (setf (value (view-named window "noise_slider")) 0.0)
-  (setf (value (view-named window "z_slider")) 0.0)
-  (adjust-distance-action window (view-named window "distance-slider") t)
-  (adjust-noise-action window (view-named window "noise_slider") )
-  ;(adjust-pressure-action window (view-named window "pressure_slider") t)
-  (adjust-ceiling-action window (view-named window "ceiling_slider") :draw-transparent-ceiling nil)
-  (adjust-smooth-action window (view-named window "smooth_slider"))
-  (adjust-z-offset-action window (view-named window "z_slider"))
-  
-  (display (view-named window 'model-editor)))
+    (Setf (pressure Inflatable-Icon) 0.0)
+    (setf (value (view-named window "distance-slider")) 0.0)
+    (setf (value (view-named window "ceiling_slider")) 1.0)
+    (setf (value (view-named window "smooth_slider")) 0.0)
+    (setf (value (view-named window "noise_slider")) 0.0)
+    (setf (value (view-named window "z_slider")) 0.0)
+    (let ((Text-View (view-named window 'distance-text)))
+      ;; update label
+      (setf (text Text-View) (format nil "~4,2F" 0.0))
+      (display Text-View))
+    (let ((Text-View (view-named window 'ceilingtext)))
+      ;; update label
+      (setf (text Text-View) (format nil "~4,2F" 1.0))
+      (display Text-View))
+    (let ((Text-View (view-named window 'z-offset-text)))
+      ;; update label
+      (setf (text Text-View) (format nil "~4,2F" 0.0))
+      (display Text-View))
+    (let ((Text-View (view-named window 'noise-text)))
+      ;; update label
+      (setf (text Text-View) (format nil "~4,2F" 0.0))
+      (display Text-View))
+    (let ((Text-View (view-named window 'smooth-text)))
+      ;; update label
+      (setf (text Text-View) (format nil "~A" 0.0))
+      (display Text-View))
+    (display (view-named window 'model-editor))))
 
 
 (defmethod EDIT-ICON-SAVE-ACTION ((Window inflatable-icon-editor-window) (Button button))
@@ -1087,10 +1098,10 @@
       ;; update label
       (setf (text Text-View) (format nil "~A" (Smooth inflatable-icon)))
       (display Text-View))
-  #|
+  
   (when (equal (surfaces Inflatable-Icon) 'front)
     (disable (view-named self "distance-slider")))
-  |#
+  
   (set-selected-item-with-title (view-named self "surfaces")  (string-downcase(substitute #\space #\-  (string (surfaces Inflatable-Icon)) :test 'equal)))
   (if (is-upright Inflatable-Icon)
       (enable (view-named self "upright"))))
