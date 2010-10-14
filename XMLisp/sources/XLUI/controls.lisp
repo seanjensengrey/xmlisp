@@ -504,6 +504,21 @@
 (defmethod PRINT-SLOTS ((Self slider))
   '(max-value min-value tick-marks x y width height))
 
+;__________________________________________________
+; JOG-Slider                                       |
+;                                                  |
+; <jog-slider action="adjust-pressure-action"/>    |
+;__________________________________________________
+
+(defclass JOG-SLIDER (jog-slider-control xml-layout-interface)
+  ()
+  (:documentation "JOG Slider: adjust continuous value"))
+
+
+(defmethod PRINT-SLOTS ((Self jog-slider))
+  '(max-value min-value stop-value action-interval tick-marks x y width height))
+
+
 ;__________________________________________________________________
 ; Check Box                                                        |
 ;                                                                  |
