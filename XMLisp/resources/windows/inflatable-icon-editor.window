@@ -27,7 +27,7 @@
       <label width="65" text="Inflation" align="center"/>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="Pressure"/>
-        <slider action="adjust-pressure-action" name="pressure_slider" value="0.0" min-value="-0.1" max-value="0.1" flex="1"/>
+        <inflation-jog-slider action="adjust-pressure-action" name="pressure_slider" value="0.0" min-value="-0.1" max-value="0.1" flex="1"/>
         <label name="pressuretext" align="right" width="35" text="0.0"/>
      </row>
       <row align="stretch" minimize="vertical" valign="middle">
