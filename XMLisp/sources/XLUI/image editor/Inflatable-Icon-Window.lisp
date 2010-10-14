@@ -24,11 +24,13 @@
 
 (in-package :xlui)
    
+
 (defvar *ceiling-update-thread-should-stop* nil "Global variable that should be set if we want the ceiling update thread to stop, this can be used as a safe guard in case process-kill fails.")
  
 ;; Hack: this is a stop gap until we can develop a better locking mechanism.
 (defvar *transparent-ceiling-update-lock* nil "Lock used to prevent annimation of ceilling fading to interfere with closing window")
                          
+
 (defclass INFLATABLE-ICON-EDITOR-WINDOW (application-window)
   ((container :accessor container :initform nil :initarg :container)
    (smoothing-cycles :accessor smoothing-cycles :initform 0 :initarg :smoothing-cycles)
@@ -73,28 +75,6 @@
 
 (defmethod CAMERA-TOOL-SELECTION-EVENT ((Self inflatable-icon-editor-window) Tool-Name)
   (setf (selected-camera-tool Self) Tool-Name))
-
-
-#+:carbon
-(defmethod WINDOW-NULL-EVENT-HANDLER ((Self inflatable-icon-editor-window))
-  "Called periodically when the window has the focus."
-  (let ((Icon-Editor (or (view-named Self 'icon-editor))))
-    (when Icon-Editor
-      ;; do animation only when there is selection
-      (when (or (selection-in-progress Icon-Editor)
-                (selection-outline Icon-Editor))
-        (animate Icon-Editor 0.06)
-        (display Icon-Editor))
-      ;; update preview color when eyedropper tool is selected
-      (when (eql (selected-tool Self) 'eye-dropper)
-        (multiple-value-bind (Col Row) 
-                             (screen->pixel-coord Icon-Editor (view-mouse-position Icon-Editor))
-          (when (col-row-within-bounds-p Icon-Editor Col Row)
-            (multiple-value-bind (Red Green Blue) (get-rgba-color-at Icon-Editor Col Row)
-              (draw-preview-color (view-named Self 'color-swatch) (make-color (ash Red 8)
-                                                                              (ash Green 8)
-                                                                              (ash Blue 8))))))))
-    (call-next-method)))
 
 
 (defmethod WINDOW-WILL-CLOSE ((Self inflatable-icon-editor-window) Notification)
@@ -194,7 +174,7 @@
         ;; inflate
         (inflate
          Inflatable-Icon
-         :steps 20
+         :steps 10
          :pressure (pressure Inflatable-Icon)
          :max (- (max-value Inflatable-Icon) (distance Inflatable-Icon) (value (view-named self "z_slider")))
          :inflate-pixel-p-fn #'pixel-selected-p-fn)
@@ -213,6 +193,12 @@
            :pressure (pressure Inflatable-Icon)
            :max (max-value Inflatable-Icon)
            :inflate-pixel-p-fn #'pixel-selected-p-fn))
+    #|
+        (format t "~%Pressure ~A, altitutes, average  ~A, max ~A" 
+                (pressure Inflatable-Icon)
+                (average-altitude Inflatable-Icon :inflate-pixel-p-fn #'pixel-selected-p-fn)
+                (maximum-altitude Inflatable-Icon :inflate-pixel-p-fn #'pixel-selected-p-fn))
+|#
         ;; update 
         (display Model-Editor)))))
 
@@ -457,9 +443,7 @@
   (gltexcoord2f 0s0 10s0) (glvertex3f -1s0 0s0  1s0)
   (gltexcoord2f 0s0 0s0) (glvertex3f -1s0 0s0 -1s0)
   (glend)
-  (glDisable gl_cull_face)
-)
-
+  (glDisable gl_cull_face))
 
 
 (defmethod DRAW ((Self inflated-icon-editor)) 
@@ -579,9 +563,27 @@
     (rotate "rotateCursor")))
 
 ;*************************************************
-;  Component Actions                             *
+;  Specialized Controls                          *
 ;*************************************************
 
+(defclass INFLATION-JOG-SLIDER (jog-slider)
+  ()
+  (:documentation "Used to adjust inflation. During adjustment play inflation sound"))
+
+
+(defmethod START-JOG ((Self inflation-jog-slider))
+  (call-next-method)
+  (play-sound "whiteNoise.mp3" :loops t))
+
+
+(defmethod STOP-JOG ((Self inflation-jog-slider))
+  (call-next-method)
+  (stop-sound "whiteNoise.mp3"))
+
+
+;*************************************************
+;  Component Actions                             *
+;*************************************************
 
 ;; Tool Bar Actions
 
@@ -670,17 +672,21 @@
 ;; Content Actions
 
 
-(defmethod ADJUST-PRESSURE-ACTION ((Window inflatable-icon-editor-window) (Slider slider) &optional do-not-display)
+(defmethod ADJUST-PRESSURE-ACTION ((Window inflatable-icon-editor-window) (Slider inflation-jog-slider) &optional do-not-display)
+ (print "adjust pressure")
   (let ((Pressure (value Slider)))
+    ;; audio feedback
+    (set-volume "whiteNoise.mp3" (abs Pressure))
+    ;; model update
     (let ((Text-View (view-named Window 'pressuretext)))
       ;; update label
-      (setf (text Text-View) (format nil "~4,2F" Pressure))
+      (setf (text Text-View) (format nil "~4,2F" Pressure))  
       (unless do-not-display
-        (display Text-View))
+        (display Text-View))   
       ;; update model editor
       (let ((Model-Editor (view-named Window 'model-editor)))
-        (setf (pressure (inflatable-icon Model-Editor)) Pressure)
-        (update-inflation Window)
+        (incf (pressure (inflatable-icon Model-Editor)) (* 0.02 Pressure))
+        (time (update-inflation Window))
         (setf (is-flat (inflatable-icon Model-Editor)) nil)))))
 
 
