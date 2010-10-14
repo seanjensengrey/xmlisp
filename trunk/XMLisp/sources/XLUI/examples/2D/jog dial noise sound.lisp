@@ -8,16 +8,16 @@
 (in-package :lui)
 
 
-(defclass INFLATION-JOG-SLIDER (jog-slider-control)
+(defclass NOISE-JOG-SLIDER (jog-slider-control)
   ())
 
 
-(defmethod START-JOG ((Self inflation-jog-slider))
+(defmethod START-JOG ((Self noise-jog-slider))
   (call-next-method)
   (play-sound "whiteNoise.mp3" :loops t))
 
 
-(defmethod STOP-JOG ((Self inflation-jog-slider))
+(defmethod STOP-JOG ((Self noise-jog-slider))
   (call-next-method)
   (stop-sound "whiteNoise.mp3"))
 
@@ -31,10 +31,10 @@
 
 (defmethod INITIALIZE-INSTANCE :after ((Self jog-noise-window) &rest Args)
   (declare (ignore Args))
-  (add-subviews Self (make-instance 'inflation-jog-slider :width 300 :x 50 :action 'JOG :min-value -1.0 :max-value 1.0 :stop-value 0.0)))
+  (add-subviews Self (make-instance 'noise-jog-slider :width 300 :x 50 :action 'JOG :min-value -1.0 :max-value 1.0 :stop-value 0.0)))
 
 
-(defmethod JOG ((Self jog-noise-window) (Slider inflation-jog-slider))
+(defmethod JOG ((Self jog-noise-window) (Slider noise-jog-slider))
   (set-volume "whiteNoise.mp3" (* 0.1 (abs (value Slider))))
   (format t "~%action: jog value is ~A" (value Slider)))
 
