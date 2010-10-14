@@ -686,7 +686,7 @@
       ;; update model editor
       (let ((Model-Editor (view-named Window 'model-editor)))
         (incf (pressure (inflatable-icon Model-Editor)) (* 0.02 Pressure))
-        (time (update-inflation Window))
+        (update-inflation Window)
         (setf (is-flat (inflatable-icon Model-Editor)) nil)))))
 
 
