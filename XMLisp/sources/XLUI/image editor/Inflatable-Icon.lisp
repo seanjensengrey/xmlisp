@@ -466,28 +466,38 @@
      (glpopmatrix))
     ;; front and back
     (front-and-back
+     ;; back/bottom
      (glpushmatrix)
+     (glscalef 1s0 1s0 -1s0)
+     (when (< (distance self) 0.0)
+       (glClipPlane GL_CLIP_PLANE0 {0.0d0 0.0d0 1.0d0 0.0d0})
+       (glEnable GL_CLIP_PLANE0))
+     (glTranslatef 0s0 0s0 (distance Self))     
+     (if (is-compiled Self) (draw-compiled Self) (draw-uncompiled Self))
+     (when (< (distance self) 0.0)
+       (glDisable GL_CLIP_PLANE0))
+     (glpopmatrix)
+     (glpushmatrix)
+     (when (< (distance self) 0.0)
+       (glClipPlane GL_CLIP_PLANE1 {0.0d0 0.0d0 1.0d0 0.0d0})
+       (glEnable GL_CLIP_PLANE1))
      (glTranslatef 0s0 0s0 (distance Self))
      (if (is-compiled Self) (draw-compiled Self) (draw-uncompiled Self))
-     (glpopmatrix)
-     ;; back
+     (when (< (distance self) 0.0)
+       (glDisable GL_CLIP_PLANE1))
+     (glpopmatrix))
+    (front-and-back-connected
+     (glpushmatrix)
+     ;; back/bottom
      (glpushmatrix)
      (glscalef 1s0 1s0 -1s0)
      (glTranslatef 0s0 0s0 (distance Self))
      (if (is-compiled Self) (draw-compiled Self) (draw-uncompiled Self))
-     (glpopmatrix))
-    (front-and-back-connected
-     (glpushmatrix)
+     (glpopmatrix)
      (glTranslatef 0s0 0s0 (distance Self))
      (if (is-compiled Self) (draw-compiled Self) (draw-uncompiled Self))
      ;; connectors
      (if (connectors Self)  (draw-connectors Self))
-     (glpopmatrix)
-     ;; back
-     (glpushmatrix)
-     (glscalef 1s0 1s0 -1s0)
-     (glTranslatef 0s0 0s0 (distance Self))
-     (if (is-compiled Self) (draw-compiled Self) (draw-uncompiled Self))
      (glpopmatrix))
     ;; CUBE
     (cube 

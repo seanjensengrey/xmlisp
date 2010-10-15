@@ -68,7 +68,7 @@
       </row>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="distance"/>
-        <slider action="adjust-distance-action" min-value="0.0" max-value="1.0" flex="1" name="distance-slider"/>
+        <slider action="adjust-distance-action" min-value="-.2" max-value="1.0" flex="1" name="distance-slider"/>
         <label name="distance-text" align="right" width="35" text="0.0"/>
       </row>
     </column>
