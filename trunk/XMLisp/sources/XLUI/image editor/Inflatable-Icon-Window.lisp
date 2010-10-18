@@ -326,10 +326,22 @@
   (invoke-action Self))
 
 
-(defmethod VIEW-LEFT-MOUSE-UP-EVENT-HANDLER ((Self icon-editor) X Y)
+(defmethod VIEW-LEFT-MOUSE-DRAGGED-EVENT-HANDLER ((Self icon-editor) X Y DX DY)
   (declare (ignore X y))
+    
   (call-next-method)
-  (display (view-named (Window self) 'model-editor)))
+  (case (selected-tool (window self))
+    ((or draw erase paint-bucket)
+     (let ((Inflatable-Icon (inflatable-icon (or (view-named (window self) 'model-editor) (error "model editor missing")))))
+       ;; Force the creation of a new texture
+       (when (texture-id inflatable-icon)
+         (ccl::rlet ((&Tex-Id :long (texture-id inflatable-icon)))
+           (glDeleteTextures 1 &Tex-Id))
+         (setf (texture-id inflatable-icon) nil)))
+     (display (view-named (Window self) 'model-editor)))
+    (t 
+     (display (view-named (Window self) 'model-editor)))))
+
 
 ;________________________________________________
 ;  Lobster Icon Editor                           |
@@ -793,8 +805,6 @@
       (setf (distance (inflatable-icon Model-Editor)) Distance)
       (unless do-not-display
         (display Model-Editor)))))
-
-
 
 
 (defmethod CHANGE-ICON-ACTION ((Window inflatable-icon-editor-window) (Icon-Editor icon-editor))
