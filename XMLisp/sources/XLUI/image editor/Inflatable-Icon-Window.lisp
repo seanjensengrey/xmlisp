@@ -850,6 +850,9 @@
 (defmethod EDIT-ICON-FLATTEN-ACTION ((Window inflatable-icon-editor-window) (Button bevel-button))
   (let ((Model-Editor (view-named Window 'model-editor)))
     (flatten (inflatable-icon Model-Editor))
+    (unless (> (distance (inflatable-icon Model-Editor)) 0.0)
+      (setf (value (view-named Window "distance-slider")) 0.0)
+      (setf (distance (inflatable-icon (view-named Window 'model-editor))) 0.0))
     ;; update GUI: pressure is 0.0
     (setf (value (view-named Window 'pressure_slider)) 0.0)
     (setf (text (view-named Window 'pressuretext)) "0.0")
@@ -910,18 +913,22 @@
 
 
 (defmethod CLEAR-ACTION ((Window inflatable-icon-editor-window) (Button button))
+  
   (erase-all (view-named window 'icon-editor))
+  ;(clear-selection (view-named window 'icon-editor))
   (let* ((Model-Editor (or (view-named window 'model-editor) (error "model editor missing")))
          (Inflatable-Icon (inflatable-icon Model-Editor)))
     (dotimes (Row (rows Inflatable-Icon ))
       (dotimes (Column (columns Inflatable-Icon ))
         (setf (aref (altitudes Inflatable-Icon ) Row Column) 0.0)))
     (Setf (pressure Inflatable-Icon) 0.0)
-    (setf (value (view-named window "distance-slider")) 0.0)
+    (setf (value (view-named window "distance-slider")) 0.00)
+    (setf (distance (inflatable-icon Model-Editor)) 0.0)
     (setf (value (view-named window "ceiling_slider")) 1.0)
     (setf (value (view-named window "smooth_slider")) 0.0)
     (setf (value (view-named window "noise_slider")) 0.0)
     (setf (value (view-named window "z_slider")) 0.0)
+    (setf (dz (inflatable-icon Model-Editor) ) 0.0)
     (let ((Text-View (view-named window 'distance-text)))
       ;; update label
       (setf (text Text-View) (format nil "~4,2F" 0.0))
