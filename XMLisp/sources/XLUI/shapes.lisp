@@ -195,6 +195,10 @@
   (call-next-method))
 
 
+(defmethod SELECTION-PRIORITY ((Self sky-dome))
+  -2)
+
+
 (defmethod DRAW ((Self sky-dome))
   ;; no light, decal texture
   (unless (is-visible Self) (return-from draw))
