@@ -327,22 +327,45 @@
 
 
 (defmethod VIEW-LEFT-MOUSE-DRAGGED-EVENT-HANDLER ((Self icon-editor) X Y DX DY)
-  (declare (ignore X y))
-    
+  (declare (ignore X y dx dy))
+
   (call-next-method)
+  (print (selected-tool (window self)))
   (case (selected-tool (window self))
     ((or draw erase paint-bucket)
+     
      (let ((Inflatable-Icon (inflatable-icon (or (view-named (window self) 'model-editor) (error "model editor missing")))))
-       ;; Force the creation of a new texture
-       (when (texture-id inflatable-icon)
-         (ccl::rlet ((&Tex-Id :long (texture-id inflatable-icon)))
-           (glDeleteTextures 1 &Tex-Id))
-         (setf (texture-id inflatable-icon) nil)))
+       (when (connectors Inflatable-Icon)
+         (compute-connectors inflatable-icon))
+       (when (and (is-flat inflatable-icon) (texture-id inflatable-icon))
+         ;; Force the creation of a new texture
+         (update-texture-from-image inflatable-icon)))
      (display (view-named (Window self) 'model-editor)))
     (t 
      (display (view-named (Window self) 'model-editor)))))
 
 
+(defmethod VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER ((Self icon-editor) X Y)
+  (declare (ignore X y))
+  (call-next-method)
+  (case (selected-tool (window self))
+    ((or draw erase paint-bucket)
+     (let ((Inflatable-Icon (inflatable-icon (or (view-named (window self) 'model-editor) (error "model editor missing")))))
+       (when (connectors Inflatable-Icon)
+         (compute-connectors inflatable-icon))
+       (when (and (is-flat inflatable-icon) (texture-id inflatable-icon))
+         ;; Force the creation of a new texture
+         (update-texture-from-image inflatable-icon)))
+     (display (view-named (Window self) 'model-editor)))
+    (t 
+     (display (view-named (Window self) 'model-editor)))))
+
+#|
+(defmethod VIEW-LEFT-MOUSE-UP-EVENT-HANDLER ((Self icon-editor) X Y)
+  (let ((Inflatable-Icon (inflatable-icon (or (view-named (window self) 'model-editor) (error "model editor missing")))))
+       (when (connectors Inflatable-Icon)
+         (compute-connectors inflatable-icon))))
+|#
 ;________________________________________________
 ;  Lobster Icon Editor                           |
 ;________________________________________________
@@ -923,14 +946,18 @@
 
 
 (defmethod CLEAR-ACTION ((Window inflatable-icon-editor-window) (Button button))
-  
   (erase-all (view-named window 'icon-editor))
   ;(clear-selection (view-named window 'icon-editor))
   (let* ((Model-Editor (or (view-named window 'model-editor) (error "model editor missing")))
          (Inflatable-Icon (inflatable-icon Model-Editor)))
+    
     (dotimes (Row (rows Inflatable-Icon ))
       (dotimes (Column (columns Inflatable-Icon ))
         (setf (aref (altitudes Inflatable-Icon ) Row Column) 0.0)))
+    (when (texture-id Inflatable-Icon)
+      (ccl::rlet ((&Tex-Id :long (texture-id Inflatable-Icon)))
+        (glDeleteTextures 1 &Tex-Id))
+      (setf (texture-id Inflatable-Icon) nil))
     (Setf (pressure Inflatable-Icon) 0.0)
     (setf (value (view-named window "distance-slider")) 0.00)
     (setf (distance (inflatable-icon Model-Editor)) 0.0)

@@ -595,6 +595,7 @@
       (error "could not create mipmaps")))
   ;; render as textured quad
   (glEnable GL_TEXTURE_2D)
+  
   (glTexEnvi GL_TEXTURE_ENV GL_TEXTURE_ENV_MODE GL_MODULATE)
   (glBindTexture GL_TEXTURE_2D (texture-id Self))
   (glBegin GL_QUADS)
@@ -603,7 +604,8 @@
   (glTexCoord2i 1 0) (glVertex2f 1.0 0.0)
   (glTexCoord2i 1 1) (glVertex2f 1.0 1.0)
   (glTexCoord2i 0 1) (glVertex2f 0.0 1.0)
-  (glEnd))
+  (glEnd)
+  (glDisable GL_TEXTURE_2D))
 
 
 (defmethod DRAW-UNCOMPILED ((Self inflatable-icon)) 
@@ -612,6 +614,7 @@
   (when (is-flat Self)  ;; optimization
     (draw-as-flat-texture Self)
     (return-from draw-uncompiled))
+  
   (let* ((X 0s0)
          (Dx (/ (dx Self) (columns Self)))
          (Y 0s0)
