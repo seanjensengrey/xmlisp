@@ -79,6 +79,7 @@
 
 (defmethod WINDOW-WILL-CLOSE ((Self inflatable-icon-editor-window) Notification)
   (declare (ignore Notification))
+  (set-cursor "arrowCursor")
   (when (transparent-ceiling-update-process self)
     (setf *ceiling-update-thread-should-stop* t)
     (setf (transparent-ceiling-update-process self) nil))
