@@ -330,12 +330,11 @@
   (declare (ignore X y dx dy))
 
   (call-next-method)
-  (print (selected-tool (window self)))
   (case (selected-tool (window self))
     ((or draw erase paint-bucket)
      
      (let ((Inflatable-Icon (inflatable-icon (or (view-named (window self) 'model-editor) (error "model editor missing")))))
-       (when (connectors Inflatable-Icon)
+       (when (equal (surfaces inflatable-icon) 'xlui::front-and-back-connected)
          (compute-connectors inflatable-icon))
        (when (and (is-flat inflatable-icon) (texture-id inflatable-icon))
          ;; Force the creation of a new texture
@@ -351,7 +350,7 @@
   (case (selected-tool (window self))
     ((or draw erase paint-bucket)
      (let ((Inflatable-Icon (inflatable-icon (or (view-named (window self) 'model-editor) (error "model editor missing")))))
-       (when (connectors Inflatable-Icon)
+       (when (equal (surfaces inflatable-icon) 'xlui::front-and-back-connected)
          (compute-connectors inflatable-icon))
        (when (and (is-flat inflatable-icon) (texture-id inflatable-icon))
          ;; Force the creation of a new texture
@@ -363,10 +362,10 @@
 #|
 (defmethod VIEW-LEFT-MOUSE-UP-EVENT-HANDLER ((Self icon-editor) X Y)
   (let ((Inflatable-Icon (inflatable-icon (or (view-named (window self) 'model-editor) (error "model editor missing")))))
-       (when (connectors Inflatable-Icon)
-         (compute-connectors inflatable-icon))))
+    (when (equal (surfaces inflatable-icon) 'xlui::front-and-back-connected)
+      (compute-connectors inflatable-icon))))
 |#
-;________________________________________________
+;_______________________________________________
 ;  Lobster Icon Editor                           |
 ;________________________________________________
 
@@ -946,8 +945,9 @@
 
 
 (defmethod CLEAR-ACTION ((Window inflatable-icon-editor-window) (Button button))
+  
   (erase-all (view-named window 'icon-editor))
-  ;(clear-selection (view-named window 'icon-editor))
+  
   (let* ((Model-Editor (or (view-named window 'model-editor) (error "model editor missing")))
          (Inflatable-Icon (inflatable-icon Model-Editor)))
     
@@ -986,6 +986,7 @@
       ;; update label
       (setf (text Text-View) (format nil "~A" 0.0))
       (display Text-View))
+    (clear-selection (view-named window 'icon-editor))
     (display (view-named window 'model-editor))))
 
 
