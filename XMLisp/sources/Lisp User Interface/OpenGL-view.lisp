@@ -189,10 +189,12 @@
   ;;(format t "~%down: ~A, ~A" x y)
   )
 
+
 (defmethod VIEW-LEFT-MOUSE-DRAGGED-EVENT-HANDLER ((Self opengl-view) X Y DX DY)
   (declare (ignore X Y))
   (track-mouse-3d (camera Self) Self dx dy)
   (unless (is-animated Self) (display Self)))
+
 
 (defmethod ADJUST-X-Y-FOR-WINDOW-OFFSET ((Self opengl-view) X Y)
   #-cocotron
