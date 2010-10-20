@@ -85,6 +85,7 @@
                           :event-type (native-to-lui-event-type (#/type event))
                           :native-event Event))))
 
+
 (objc:defmethod (#/rightMouseDown: :void) ((self native-opengl-view) event)
   (let ((mouse-loc (#/locationInWindow event)))
     (view-event-handler (window (lui-view Self)) 
@@ -94,11 +95,13 @@
                           :event-type (native-to-lui-event-type (#/type event))
                           :native-event Event))))
 
+
 (objc:defmethod (#/viewDidMoveToWindow :void) ((self native-opengl-view))
   (call-next-method)
   (view-did-move-to-window (lui-view self)))
 
-(defmethod make-native-object ((Self opengl-view))
+
+(defmethod MAKE-NATIVE-OBJECT ((Self opengl-view))
   (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
     (let ((Pixel-Format (#/initWithAttributes: 
                           (#/alloc ns:NS-OpenGL-Pixel-Format) 
@@ -151,10 +154,12 @@
         (#/release Pixel-Format)
         Native-Control))))
 
+
 (defmethod SHARE-TEXTURE-FOR-WINDOWS ((Self opengl-view))
   (print "WGL SHARE LISTS")
   #+cocotron
   (print (#_wglShareLists (%get-ptr (#/CGLContextObj (#/openGLContext (native-view (shared-opengl-view))))36) (%get-ptr (#/CGLContextObj (#/openGLContext (native-view self))) 36))))
+
 
 (defmethod DISPLAY ((Self opengl-view))  
   (with-glcontext Self
@@ -175,8 +180,6 @@
           (return (values Frame-Count (- (get-internal-real-time)
                                          (- Stop-Time internal-time-units-per-second)))))))))
 
-
-;;; (defmethod SET-SIZE :around ((Self opengl-view) Width Height)  )
 
 (defmethod SET-SIZE :after ((Self opengl-view) Width Height)
   (in-main-thread ()
@@ -236,13 +239,35 @@
   )
 
 
+(defvar *Animation-Lock* nil "Lock used to protect animations initiated in different threads")
+
+
+(defun ANIMATION-LOCK () "Return animation lock. Create lock if needed"
+  (or *Animation-Lock* 
+      (setq *Animation-Lock* (ccl::make-lock))))
+
+
+(defmacro WITH-ANIMATION-LOCKED (&rest Body) "Make sure only one animation thread is active at a time"
+  `(with-lock-grabbed ((animation-lock))
+     ,@Body))
+
+
+(defun GRAB-ANIMATION-LOCK ()
+  "Grab animation lock. Wait if necesary"
+  (ccl::grab-lock (animation-lock)))
+
+
+(defun RELEASE-ANIMATION-LOCK ()
+  "Release animation lock. Wait if necesary"
+  (ccl::release-lock (animation-lock)))
+       
+       
 (defmethod ANIMATE-OPENGL-VIEW-ONCE ((Self opengl-view))
-  (animate Self (delta-time Self))
-  (with-glcontext Self
-    (clear-background Self)
-    (draw Self))
-  (sleep 0.01)  ;; need to compute this time 
-  )
+  (with-animation-locked 
+    (animate Self (delta-time Self))
+    (display Self)
+    (sleep 0.01)  ;; ease off CPU time, need to compute this time 
+    ))
 
 
 (defmethod ANIMATE-OPENGL-VIEWS-ONCE ((Self opengl-view))"
@@ -250,9 +275,6 @@
   (dolist (View (animated-views Self))
     (animate-opengl-view-once View)))
 
-(defparameter *animation-lock* (ccl::make-lock))
-
-(export '(*animation-lock*))
 
 (defmethod START-ANIMATION ((Self opengl-view))
   ;; add myself to list
@@ -269,12 +291,8 @@
                   (cond
                    ;; at least one view to be animated
                    ((animated-views Self)
-                    (grab-lock *animation-lock*)
-                    (release-lock *animation-lock*)
                     (ccl::with-autorelease-pool
-                        (animate-opengl-views-once Self))
-                    
-                    )
+                        (animate-opengl-views-once Self)))
                    ;; nothing to animate: keep process but use little CPU
                    (t
                     (sleep 0.5))))))))))
@@ -286,7 +304,6 @@
 ;------------------------------
 ; Query functions              |
 ;______________________________
-
 
 (defun GET-CURRENT-OPENGL-VIEW ()
   "return the view of the currently active OpenGL context"
@@ -301,9 +318,11 @@
   (call-next-method event)
   (mouse-entered (lui-view self)))
 
+
 (objc:defmethod (#/mouseExited: :void) ((self native-opengl-view) Event)
   (call-next-method event)
   (mouse-exited (lui-view self)))
+
 
 (objc:defmethod (#/mouseMoved: :void) ((self native-opengl-view) Event)
   (call-next-method event)
