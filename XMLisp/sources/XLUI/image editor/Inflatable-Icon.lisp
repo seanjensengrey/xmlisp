@@ -105,7 +105,8 @@
   ;; convert the icon into an RGBA image and initialize the altitude array
   (when (part-of Self)
     (when (texture-file (part-of Self) (icon Self))
-      (setf (auto-compile Self) t)
+      ;; Flat inflatable icons should not be auto-compiled
+      (setf (auto-compile self) (not (is-flat self)))
       (multiple-value-bind (Image Columns Rows)
                            (create-image-from-file (texture-file (part-of Self) (icon Self)))
       (setf (image Self) Image)
