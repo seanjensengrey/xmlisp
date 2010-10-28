@@ -176,6 +176,7 @@
    "SELECTED-GROUP-CHANGED-ACTION" "GROUP-ITEMS" "GROUP-NAME-CHANGED" "ITEM-NAME-CHANGED"
    "INCREMENT-ITEM-COUNTER" "CLEAR-ITEM-COUNTERS"
    "PROJECT-MANAGER-REFERENCE" "AGENT-GALLERY-VIEW"
+   "CONVERT-IMAGE-FILE"
    )
   (:import-from "XML"
                 "FILE"))
@@ -285,6 +286,8 @@
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;chooser-file-dialogs")
 
 (load "lui:sources;XLUI;progress-meter")
+;;Image Tools
+(load "lui:sources;XLUI;image-tools")
 
 
 ;;*************** Build functions
@@ -349,11 +352,12 @@
   (ccl::recursive-copy-directory
    (truename "lui:resources;templates;")
    (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/templates/" (user-homedir-pathname)))
-  (format t "~%- patch info plist resources")
-  (copy-file 
+  #-cocotron (format t "~%- patch info plist resources")
+  #-cocotron (copy-file 
    (truename "lui:resources;English.lproj;InfoPlist.strings")
    (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/English.lproj/InfoPlist.strings" (user-homedir-pathname))
-   :if-exists :supersede))
+   :if-exists :supersede)
+  )
 
 
 (defun BUILD-XMLISP ()
@@ -381,6 +385,7 @@
    :name "XMLisp"
    :directory (format nil "~ADesktop/XMLisp/" (user-homedir-pathname))
    :application-class 'xmlisp-application
+   #+cocotron :info-plist (ccl::make-info-dict)
    :nibfiles '("lui:resources;English.lproj;MainMenu.nib")))
 
 
