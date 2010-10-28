@@ -42,32 +42,34 @@
     (setf (%get-ptr Planes) Image)
     (let ((Bitmap (#/alloc ns:ns-bitmap-image-rep)))
       ;; welcome to Cocoa's longest function
-      (#/initWithBitmapDataPlanes:pixelsWide:pixelsHigh:bitsPerSample:samplesPerPixel:hasAlpha:isPlanar:colorSpaceName:bitmapFormat:bytesPerRow:bitsPerPixel:
-       Bitmap
-       Planes
-       Width
-       Height
-       (* 2 Depth)
-       4 ;; channels (RGBA)
-       #$YES
-       #$NO
-       #$NSCalibratedRGBColorSpace
-       #$NSAlphaNonpremultipliedBitmapFormat
-       (* Width Depth)
-       (* 8 Depth))
-      (#/writeToFile:atomically:
-       (#/representationUsingType:properties: 
-        Bitmap 
-        (case Image-Type
-          (:png #$NSPNGFileType)
-          (:tiff #$NSTIFFFileType)
-          (:jpeg #$NSJPEGFileType)
-          (:jpeg2000 #$NSJPEG2000FileType))
-        nil)
-       (native-string (namestring (translate-logical-pathname Pathname)))
-       #$YES)
-      (#/release Bitmap)
-     )))
+      (let ((Initialized-Bitmap
+             (#/initWithBitmapDataPlanes:pixelsWide:pixelsHigh:bitsPerSample:samplesPerPixel:hasAlpha:isPlanar:colorSpaceName:bitmapFormat:bytesPerRow:bitsPerPixel:
+              Bitmap
+              Planes
+              Width
+              Height
+              (* 2 Depth)
+              4 ;; channels (RGBA)
+              #$YES
+              #$NO
+              #$NSCalibratedRGBColorSpace
+              #$NSAlphaNonpremultipliedBitmapFormat
+              (* Width Depth)
+              (* 8 Depth))))
+        (unless (%ptr-eql Bitmap Initialized-Bitmap) (error "Trapped the rare white Cocoa elephant: initWithBitmapDataPlanes... returns a different pointer!!"))
+        (#/writeToFile:atomically:
+         (#/representationUsingType:properties: 
+          Initialized-Bitmap 
+          (case Image-Type
+            (:png #$NSPNGFileType)
+            (:tiff #$NSTIFFFileType)
+            (:jpeg #$NSJPEGFileType)
+            (:jpeg2000 #$NSJPEG2000FileType))
+          nil)
+         (native-string (namestring (translate-logical-pathname Pathname)))
+         #$YES)
+        (#/release Bitmap)
+        ))))
 
 #|
 (defun WRITECG-RGBA-IMAGE-TO-FILE (Image Height Width Pathname &key (Depth 4) (Image-Type :png)) "
