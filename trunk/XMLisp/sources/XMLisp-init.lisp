@@ -110,6 +110,8 @@
    "SET-SIZE" "SET-POSITION" "DISPLAY" "DRAW" "PREPARE-OPENGL" "CLEAR-BACKGROUND" "RECURSIVE-MAP-SUBVIEWS"
    "WINDOW-X" "WINDOW-Y"
    "RECTANGLE-VIEW" "SET-COLOR"
+   "COLOR-PALETTE-VIEW"
+   "PLOT-VIEW"
    "ZOOMABLE" "MINIMIZABLE" "RESIZABLE" "CLOSEABLE" "BORDERLESS" "TITLE" "WINDOW-NEEDS-SAVING-P"
    "SCREEN-WIDTH" "SCREEN-HEIGHT" "CONTROL" "VALUE" "INITIALIZE-EVENT-HANDLING" "SIZE-CHANGED-EVENT-HANDLER" "START-DISABLED"
    "ACTION" "SUBVIEWS" "DO-SUBVIEWS" "MAP-SUBVIEWS" "ADD-SUBVIEW" "SUPERVIEW" "ADD-SUBVIEWS" "SWAP-SUBVIEW" "SUBVIEWS-SWAPPED" "SET-FRAME" 
@@ -210,7 +212,6 @@
 (load "lui:sources;Lisp User Interface;OpenGL-view")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;LUI Cocoa")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;standard-alert-dialog")
-(load "lui:sources;Lisp User Interface;specific;Mac CCL;get-color-from-user")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;image-import")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;image-export")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;OpenGL-view Cocoa")
@@ -289,7 +290,7 @@
 ;;Image Tools
 (load "lui:sources;XLUI;image-tools")
 
-
+(load "lui:sources;Lisp User Interface;specific;Mac CCL;get-color-from-user")
 ;;*************** Build functions
 
 (defun ccl::CCL-CONTENTS-DIRECTORY ()
