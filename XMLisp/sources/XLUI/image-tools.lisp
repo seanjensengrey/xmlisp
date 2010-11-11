@@ -24,19 +24,24 @@
          #$NSCompositeSourceOver
          1.0)
         (#/unlockFocus resized-image))
-      (#/writeToFile:atomically: 
-       (#/representationUsingType:properties: 
-        (#/initWithData: (#/alloc ns:ns-bitmap-image-rep) (#/TIFFRepresentation resized-image))  
-        (case image-format
-          (:png #$NSPNGFileType)
-          (:jpg #$NSJPEGFileType)
-          (:bmp #$NSBMPFileType)
-          (:tiff #$NSTIFFFileType))
-        ccl::+null-ptr+)
-       (lui::native-string Destination) 
-       #$YES))))
+      (let ((image-rep (#/initWithData: (#/alloc ns:ns-bitmap-image-rep) (#/TIFFRepresentation resized-image))))
+        (#/setBitsPerSample: image-rep depth)
+        (#/setAlpha: image-rep #$YES)
+        (#/writeToFile:atomically: 
+         (#/representationUsingType:properties: 
+          image-rep  
+          (case image-format
+            (:png #$NSPNGFileType)
+            (:jpg #$NSJPEGFileType)
+            (:bmp #$NSBMPFileType)
+            (:tiff #$NSTIFFFileType))
+          ccl::+null-ptr+)
+         (lui::native-string Destination) 
+         #$YES)))))
 
 #| Example:
+
 (convert-image-file "/Users/Mike/working copies/XMLisp svn/trunk/XMLisp/resources/images/logo_active.gif" "/Users/Mike/working copies/XMLisp svn/trunk/XMLisp/resources/images/logo_active.png" :width 64 :height 64)
+
 |#
 
