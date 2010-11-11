@@ -421,6 +421,9 @@
   ;; alpha
   (glEnable gl_blend)
   (glBlendFunc gl_src_alpha gl_one_minus_src_alpha)
+  ;; Transparency Hack for low alpha values http://www.opengl.org/wiki/Transparency_Sorting
+  (glAlphaFunc GL_GREATER 0.1)
+  (glEnable GL_ALPHA_TEST)
   ;; top down 45 degree angle view
   (setf (camera Self)
         (duplicate <camera eye-x="0.0" eye-y="0.89" eye-z="1.0" center-x="0.0" center-y="0.0" center-z="0.0" up-x="0.0" up-y="0.5726468643072211" up-z="-1.5649032618904695" fovy="60.0" aspect="1.0" near="0.004999999888241291" far="2000.0" azimuth="0.0" zenith="0.7200000286102295"/>
@@ -773,7 +776,8 @@
 (defmethod UPDATE-CEILING-TRANSPARENCY ((Self inflatable-icon-editor-window))
   (when (timer-due-p self (truncate (* (transparent-ceiling-update-frequency self) internal-time-units-per-second)))
     (setf (ceiling-transparency self)  (- (ceiling-transparency self) (transparent-ceiling-decrement-value self)))
-    (display self)))
+    (display (view-named self 'model-editor))
+    ))
 
   
 (defmethod ADJUST-NOISE-ACTION ((Window inflatable-icon-editor-window) (Slider slider))
@@ -926,7 +930,8 @@
       (when (is-flat (destination-inflatable-icon Window))
         ;(setf (update-texture-from-image-p (destination-inflatable-icon Window)) t)
         )))
-  (if (container window)
+  (when (container window)
+    (lui::save-button-pressed (container window))
     (display-world (project-window (project-manager-reference (container window))))))
 
 
@@ -1012,11 +1017,9 @@
         ;(setf (update-texture-from-image-p (destination-inflatable-icon Window)) t)
         )))
   (window-close window)
-  (if (container window)
-    (display-world (project-window (project-manager-reference (container window)))))
-  (if (container window)
+  (when (container window)
     (lui::save-button-pressed (container window))
-    (print "NOT")))
+    (display-world (project-window (project-manager-reference (container window))))))
 
 
 ;___________________________________________
