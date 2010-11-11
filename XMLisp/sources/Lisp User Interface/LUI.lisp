@@ -420,6 +420,7 @@ Call with most important parameters. Make other paramters accessible through *Cu
   (or *Red-Color-Vector*
       (setq *Red-Color-Vector* (make-byte-vector 255 0 255))))
 
+
 (defclass PLOT-VIEW (opengl-view)
   ((native-color :accessor native-color :initform nil)
    (text :accessor text :initform "mil")
@@ -462,7 +463,6 @@ Call with most important parameters. Make other paramters accessible through *Cu
     (setf (max-value self) value))
   (when (< value (min-value self))
     (setf (min-value self) value))
-  
   (let ((plot-list (find representing (plot-list self) :key #'first :test 'equal)))
     (unless plot-list   
       (setf (plot-list self) (append (plot-list self) (list (list  representing  color  (make-array 5 :fill-pointer 0 :adjustable t) (max-time self))))))
@@ -471,8 +471,7 @@ Call with most important parameters. Make other paramters accessible through *Cu
         (setf (second plot-list) color))
       (vector-push-extend  value (third plot-list))
       (when (> (length (third plot-list)) (max-time self))
-        (setf (max-time self) (length (third plot-list))))))
-  
+        (setf (max-time self) (length (third plot-list))))))  
   (display self))
 
 
