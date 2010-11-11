@@ -32,7 +32,7 @@
 
 ;________________________________________________
 ; Rectangle                                      |
-;   colored rectangle                            |fcolor
+;   colored rectangle                            |
 ;   Examples: color picker                       |
 ;                                                |
 ;  <rectangle color="FF0000"/>                   |
@@ -55,6 +55,30 @@
                :red (/ (logand (ash Color -16) 255) 255.0)
                :green (/ (logand (ash Color -8) 255) 255.0)
                :blue (/ (logand Color 255) 255.0))))
+
+
+;________________________________________________
+; Color Palette                                  |
+;________________________________________________
+
+
+(defclass COLOR-PALETTE (color-palette-view xml-layout-interface)
+  ()
+  (:documentation "A rectangular view that will be displayed as a constant color rectangle if it has no transparency and if it is transparent will display in the apple transparency preview mode."))
+
+
+;________________________________________________
+; Plot-BOX                                      |
+;________________________________________________
+
+
+(defclass PLOT-BOX (plot-view xml-layout-interface)
+  ()
+  (:documentation "A rectangle that plots some value vs time"))
+
+
+(defmethod PRINT-SLOTS ((Self rectangle))
+  '())
 
 
 ;________________________________________________
