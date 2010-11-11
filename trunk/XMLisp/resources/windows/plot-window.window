@@ -1,0 +1,3 @@
+<plot-window title="Plot Window" margin="0">
+  <plot-box name="plot-view"/>
+</plot-window>
