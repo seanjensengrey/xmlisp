@@ -39,6 +39,22 @@
          (lui::native-string Destination) 
          #$YES)))))
 
+
+(defun IMAGE-FILE-INFORMATION (Pathname) "
+  in:  Pathname pathname.
+  out: Width Height fixnum.
+  Return basic image information."
+  (unless (probe-file Pathname)
+    (error "File ~A does not exist." Pathname)
+    (return-from image-file-information))
+  (let* ((Image (#/initWithContentsOfFile: (#/alloc ns:ns-image) (lui::native-string (namestring Pathname))))
+         (Image-Size (#/size Image)))
+    (values (NS:NS-SIZE-WIDTH image-size)
+            (NS:NS-SIZE-HEIGHT image-size)
+            )))
+
+
+
 #| Example:
 
 (convert-image-file "/Users/Mike/working copies/XMLisp svn/trunk/XMLisp/resources/images/logo_active.gif" "/Users/Mike/working copies/XMLisp svn/trunk/XMLisp/resources/images/logo_active.png" :width 64 :height 64)
