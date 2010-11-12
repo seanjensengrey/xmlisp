@@ -101,24 +101,40 @@
     (setf (auto-compile Self) nil)))
 
 
+
+(defun CREATE-32BIT-RGBA-IMAGE-FROM-24BIT-RGB-IMAGE (Image Width Height) 
+  ;; may have to consider deallocating original image
+  (let ((New-Image (make-vector-of-size (* Width Height 4))))
+    (dotimes (i (* Width Height))
+      (let ((Source-Offset (* i 3))
+            (Destination-Offset (* i 4)))
+        (set-byte New-Image (get-byte Image Source-Offset) Destination-Offset)
+        (set-byte New-Image (get-byte Image (+ Source-Offset 1)) (+ Destination-Offset 1))
+        (set-byte New-Image (get-byte Image (+ Source-Offset 2)) (+ Destination-Offset 2))
+        (set-byte New-Image #xFF (+ Destination-Offset 3))))
+    New-Image))
+
+
 (defmethod MAKE-IMAGE-FROM-ICON ((Self inflatable-icon))
   ;; convert the icon into an RGBA image and initialize the altitude array
   (when (part-of Self)
     (when (texture-file (part-of Self) (icon Self))
       ;; Flat inflatable icons should not be auto-compiled
       (setf (auto-compile self) (not (is-flat self)))
-      (multiple-value-bind (Image Columns Rows)
+      (multiple-value-bind (Image Columns Rows Depth)
                            (create-image-from-file (texture-file (part-of Self) (icon Self)))
-      (setf (image Self) Image)
-      (setf (columns Self) Columns)
-      (setf (rows Self) Rows)
-      ;; don't overwrite existing altitudes
-      (unless (altitudes Self)
-        (setf (altitudes Self) (make-array (list Rows Columns) 
-                                           :element-type 'short-float
-                                           :initial-element 0.0)))))
-   
-  Self))
+        (case Depth
+          (24 (setf (image Self) (create-32bit-rgba-image-from-24bit-rgb-image Image Columns Rows)))
+          (32 (setf (image Self) Image)))
+        (setf (columns Self) Columns)
+        (setf (rows Self) Rows)
+        ;; don't overwrite existing altitudes
+        (unless (altitudes Self)
+          (setf (altitudes Self) (make-array (list Rows Columns) 
+                                             :element-type 'short-float
+                                             :initial-element 0.0)))))
+    
+    Self))
 
 
 (defmethod OPEN-RESOURCE ((Self inflatable-icon))
