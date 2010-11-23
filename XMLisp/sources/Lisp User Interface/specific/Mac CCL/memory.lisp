@@ -59,6 +59,7 @@
 (defmethod SIZEOF ((Self double-float)) 8)
 (defmethod SIZEOF ((Self fixnum)) 4)
 
+(defmethod SIZEOF ((Type (eql 'long))) 4)
 (defmethod SIZEOF ((Type (eql 'float))) 4)
 (defmethod SIZEOF ((Type (eql 'double-float))) 8)
 (defmethod SIZEOF ((Type (eql 'fixnum))) 4)
