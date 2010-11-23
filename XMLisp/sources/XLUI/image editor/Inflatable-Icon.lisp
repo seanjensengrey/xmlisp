@@ -984,9 +984,10 @@
 (defparameter *window2*
 <application-window title="window2">
   <agent-3d-view name="losbter-view">
-    <lobster-inflatable-icon distance=".5" surfaces="front-and-back" name="lobster2"/>
+    <lobster-inflatable-icon distance=".5" surfaces="front" name="lobster2"/>
   </agent-3d-view>
 </application-window>)
+
 
 (defparameter *window3*
 <application-window title="window3">
@@ -995,11 +996,12 @@
   </agent-3d-view>
 </application-window>)
 
-(format t " ~% ~A klops" 
-         (/ 100000000.0 (hemlock::time-to-run
-          (dotimes (i 100)
-            (draw  (first (agents(view-named *window2* "losbter-view")))))))
-               )
+(with-glcontext (view-named *window2* "losbter-view")
+  (format t " ~% ~A klops" 
+    (/ 100000000.0 (hemlock::time-to-run
+      (dotimes (i 100)
+            (draw  (first (agents (view-named *window2* "losbter-view")))))))
+               ))
 
 (inspect (view-named *window* "losbter-view"))
 
