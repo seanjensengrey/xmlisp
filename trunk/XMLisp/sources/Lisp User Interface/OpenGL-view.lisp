@@ -124,10 +124,12 @@
   (glVertex3f 0.2 -0.3 0.0)
   (glEnd))
 
+
 (defmethod PREPARE-OPENGL :before ((Self opengl-view))
   (when (need-to-wgl-share self)
     (share-texture-for-windows self)
     (setf (need-to-wgl-share self) nil)))
+
 
 (defmethod PREPARE-OPENGL ((Self opengl-view))
   ;; nothing
@@ -148,13 +150,6 @@
      1.050 ;; magic! should be computed from camera view angle
      (float (eye-z (camera Self)) 0.0)))
 
-;;object-coordinate-window-width not implemented
-#| 
-(defmethod OBJECT-COORDINATE-VIEW-HEIGHT ((Self opengl-view))
-  (* (/ (object-coordinate-window-width Self) 
-        (width Self))
-     (height Self)))
-|#
 
 (defmethod MOUSE-ENTERED ((Self opengl-view))
   ; do nothing
@@ -215,6 +210,7 @@
  - 8 bit and 16 bit image will work too 
   - Image size must be 2^n x 2^m, at least 64 x 64
   - This function must be called with active AGL context, e.g., inside OpenGL-Window INIT method."
+  (declare (ftype function create-image-from-file))
   (rlet ((&texName :long))
     (multiple-value-bind (&Image Width Height Depth) (create-image-from-file Filename :verbose Verbose :flip-vertical t)
       (unless &Image (return-from create-texture-from-file nil))
