@@ -409,6 +409,17 @@ Call with most important parameters. Make other paramters accessible through *Cu
     :y 10))
 
 
+;**********************************
+;* BROWSER-VIEW                   *
+;**********************************
+
+(defclass BROWSER-VIEW (view)
+  ((text :accessor text :initform "untitled" :initarg :text :type string :documentation "text associated with control"))
+  (:documentation "colored rectangle and if it has transparency it is shown in one half of the view")
+  (:default-initargs 
+    :x 10
+    :y 10))
+
 
 ;**********************************
 ;* PLOT-VIEW                      *
@@ -689,7 +700,6 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defmethod KEY-EVENT-HANDLER ((Self window) Event)
   (setf *current-event* event)
-  (print "LUI KEy HANDLER")
   (format t "~%window key event ~A" (native-event Event)))
 
 
@@ -887,20 +897,16 @@ after any of the window controls calls stop-modal close window and return value.
   (declare (ignore self)))
 
 
-
-
-
 (defclass POPUP-BUTTON-CONTROL (control)
   ((actions :initarg :actions :accessor actions  :initform ()
             :documentation "list of actions")
    (container :initarg :container :accessor container  :initform nil
-            :documentation "list of actions")
+            :documentation "The object that contains this control")
    )
   (:default-initargs
       :text ""
     :action 'popup-action)
   (:documentation "Popup Button"))
-
 
 
 (defclass POPUP-IMAGE-BUTTON-CONTROL (control)
@@ -916,10 +922,6 @@ after any of the window controls calls stop-modal close window and return value.
       :text ""
     :action 'popup-image-button-action)
   (:documentation "Popup Image Button"))
-
-
-
-
 
 
 (defclass POPUP-IMAGE-BUTTON-ITEM-CONTROL (control)
