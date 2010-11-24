@@ -25,8 +25,8 @@
          1.0)
         (#/unlockFocus resized-image))
       (let ((image-rep (#/initWithData: (#/alloc ns:ns-bitmap-image-rep) (#/TIFFRepresentation resized-image))))
-        (#/setBitsPerSample: image-rep depth)
-        (#/setAlpha: image-rep #$YES)
+        ;(#/setBitsPerSample: image-rep depth)
+        ;(#/setAlpha: image-rep #$YES)
         (#/writeToFile:atomically: 
          (#/representationUsingType:properties: 
           image-rep  
