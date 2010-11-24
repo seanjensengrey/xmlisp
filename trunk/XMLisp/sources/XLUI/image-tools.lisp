@@ -1,5 +1,6 @@
 (in-package :xlui)
 
+
 (defun CONVERT-IMAGE-FILE (Source Destination &key (Width 32) (Height 32) (Depth 32) 
                                      (image-format :png)
                                      ) "
@@ -8,6 +9,7 @@
        Image-Format can be :png :bmp :jpg :tiff
   Create a new image file of different size and image-format."
   ;; I still need to find a way to set the image depth.
+  (declare (ignore Depth))
   (unless (probe-file source)
     (error "Cannot covnert image file because ~A does not exist." source)
     (return-from convert-image-file))
