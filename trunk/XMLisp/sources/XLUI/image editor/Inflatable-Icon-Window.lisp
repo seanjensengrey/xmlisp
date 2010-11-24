@@ -22,6 +22,8 @@
    ;*                                                                *
    ;******************************************************************
 
+;; This file should move from XMLisp into AgentCubes
+
 (in-package :xlui)
    
 
@@ -54,6 +56,7 @@
 
 
 (defmethod INITIALIZE-INSTANCE :after ((Self inflatable-icon-editor-window) &rest Args) 
+  (declare (ignore Args))
   (let ((Model-Editor (view-named self 'model-editor)))
     (if (is-upright (inflatable-icon Model-Editor))
       (enable (view-named self "upright")))))
@@ -120,7 +123,7 @@
   out: Pathname
   When loading saving: where to look first."
   (when (file Self)
-    (make-pathname :name nil :type nil :defaults (file Self))))
+    (make-pathname :name nil :type nil :defaults (file Self))))
 
 
 (defmethod WINDOW-CLOSE-EVENT-HANDLER ((Self inflatable-icon-editor-window))
@@ -607,7 +610,9 @@
      (track-mouse-3d (camera Self) Self dx dy)))
   (unless (is-animated Self) (display Self)))
 
+
 (defmethod VIEW-CURSOR ((Self inflated-icon-editor) x y)
+  (declare (ignore x y))
   (case (selected-camera-tool (window Self))
     (zoom "zoomCursor")
     (pan "panCursor")
@@ -847,7 +852,7 @@
 ;; surface actions
 
 (defmethod FRONT-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up pop-up))
-  (declare (ignore Pop-Up-item))
+  (declare (ignore Pop-Up))
   (let ((Model-Editor (view-named Window 'model-editor)))
     (setf (value (view-named window "distance-slider")) 0.0)
     (adjust-distance-action window (view-named window "distance-slider") t)
@@ -918,6 +923,7 @@
 
 
 (defmethod EDIT-ICON-APPLY-ACTION ((Window inflatable-icon-editor-window) (Button button))
+  (declare (ftype function project-window display-world project-manager-reference lui::save-button-pressed lui::apply-button-pressed))  ;; this file is in the wrong place: should move into AgentCubes
   (let ((Model-Editor (view-named Window 'model-editor)))
     ;; finalize geometry
     (compute-depth (inflatable-icon Model-Editor))
@@ -935,28 +941,10 @@
     (display-world (project-window (project-manager-reference (container window))))))
 
 
-#|
-
-(defmethod EDIT-ICON-OK-ACTION ((Window inflatable-icon-editor-window) (Button button))
-  ;; finalize geometry
-  (compute-depth (inflatable-icon (view-named Window 'model-editor)))
-  ;; save
-  (when (destination-inflatable-icon Window)
-    ;;(format t "~%copy into icon")
-    (copy-content-into (inflatable-icon (view-named Window 'model-editor)) (destination-inflatable-icon Window)))
-  (window-hide Window)
-  (window-save Window))
-
-|#
-
-
 (defmethod CLEAR-ACTION ((Window inflatable-icon-editor-window) (Button button))
-  
   (erase-all (view-named window 'icon-editor))
-  
   (let* ((Model-Editor (or (view-named window 'model-editor) (error "model editor missing")))
          (Inflatable-Icon (inflatable-icon Model-Editor)))
-    
     (dotimes (Row (rows Inflatable-Icon ))
       (dotimes (Column (columns Inflatable-Icon ))
         (setf (aref (altitudes Inflatable-Icon ) Row Column) 0.0)))
@@ -997,6 +985,7 @@
 
 
 (defmethod EDIT-ICON-SAVE-ACTION ((Window inflatable-icon-editor-window) (Button button))
+  (declare (ftype function project-window display-world project-manager-reference save shape lui::save-button-pressed lui::apply-button-pressed))  ;; this file is in the wrong place: should move into AgentCubes
   ;; finalize geometry
   (compute-depth (inflatable-icon (view-named Window 'model-editor)))
   (window-save Window)
@@ -1026,7 +1015,6 @@
 ; Update Thread                             |
 ;___________________________________________
 
-
 (defmethod TIMER-DUE-P ((Self inflatable-icon-editor-window) Ticks) 
   (let ((Time (getf (timer-triggers Self) Ticks 0))
         (Now (get-internal-real-time)))
@@ -1034,6 +1022,7 @@
               (> Time (+ Now Ticks Ticks)))    ;; timer is out of synch WAY ahead
       (setf (getf (timer-triggers Self) Ticks) (+ Now Ticks))
       t)))
+
 ;___________________________________________
 ; Open & New                                |
 ;___________________________________________
@@ -1065,6 +1054,8 @@
 (defun NEW-INFLATABLE-ICON-EDITOR-WINDOW-FROM-IMAGE (Pathname &key Shape-Name Shape-Filename Destination-Inflatable-Icon Close-Action Alert-Close-Action Alert-Close-Target) "
   Create and return an new inflatable icon editor by loading an image. 
   If folder contains .shape file matching image file name then load shape file."
+  (declare (ignore Close-Action Destination-Inflatable-Icon)
+           (ftype function shape))
   (let* ((Window (load-object "lui:resources;windows;inflatable-icon-editor.window" :package (find-package :xlui)))
          (Icon-Editor (view-named Window "icon-editor"))
          (Inflated-Icon-Editor (view-named Window "model-editor")))
