@@ -66,16 +66,6 @@
   ()
   (:documentation "A rectangular view that will be displayed as a constant color rectangle if it has no transparency and if it is transparent will display in the apple transparency preview mode."))
 
-
-;________________________________________________
-; BROWSER                                        |
-;________________________________________________
-
-(defclass BROWSER (browser-view xml-layout-interface)
-  ()
-  (:documentation ""))
-
-
 ;________________________________________________
 ; Plot-BOX                                      |
 ;________________________________________________
