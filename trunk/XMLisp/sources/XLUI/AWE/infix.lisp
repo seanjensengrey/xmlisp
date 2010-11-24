@@ -217,7 +217,8 @@
     (format stream "~%;;; ~V,,,'*A~%" 73 "*")
     (force-output stream))
 
-  (infix-copyright))
+  ;;(infix-copyright)
+  )
 
 ;;; ********************************
 ;;; Readtable **********************
