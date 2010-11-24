@@ -165,7 +165,7 @@
    "SHARED-OPENGL-VIEW"
    "NATIVE-PATH"
    ;; Dialogs
-   "STANDARD-ALERT-DIALOG"
+   "STANDARD-ALERT-DIALOG" "CHOOSE-FILE-DIALOG"
    ;; colors
    "*SYSTEM-SELECTION-COLOR*"
    ;; Multimedia
@@ -265,12 +265,6 @@
 (load "lui:sources;XLUI;agent-3D")
 (load "lui:sources;XLUI;shapes")
 (load "lui:sources;XLUI;keyboard")
-;; inflatable icons
-(load "lui:sources;XLUI;image editor;selection-mask")
-(load "lui:sources;XLUI;image editor;image-editor")
-(load "lui:sources;XLUI;image editor;Inflatable-Icon")
-(load "lui:sources;XLUI;image editor;Inflatable-Icon-Window")
-
 
 ;; Agent Warp Engine
 (load "lui:sources;XLUI;AWE;infix")
@@ -291,6 +285,14 @@
 (load "lui:sources;XLUI;image-tools")
 
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;get-color-from-user")
+;; inflatable icons
+(load "lui:sources;XLUI;image editor;selection-mask")
+(load "lui:sources;XLUI;image editor;image-editor")
+(load "lui:sources;XLUI;image editor;Inflatable-Icon")
+(load "lui:sources;XLUI;image editor;Inflatable-Icon-Window")
+
+
+
 ;;*************** Build functions
 
 (defun ccl::CCL-CONTENTS-DIRECTORY ()
@@ -362,6 +364,7 @@
 
 
 (defun BUILD-XMLISP ()
+  (declare (ftype function ccl::build-application ccl::make-info-dict))
   (setq *Package* (find-package :xlui))
   (require :build-application)
   ;; load a different init file
