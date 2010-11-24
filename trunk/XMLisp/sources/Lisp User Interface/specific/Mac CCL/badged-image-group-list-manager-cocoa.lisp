@@ -486,7 +486,7 @@
   (call-next-method Notification))
 
 
-(objc:defmethod (#/becomeFirstResponder  :void) ((self mouse-detection-text-field))
+(objc:defmethod (#/becomeFirstResponder  :<BOOL>) ((self mouse-detection-text-field))
   (setf (name-storage self) (ccl::lisp-string-from-nsstring (#/stringValue self)))
   (call-next-method))
 
