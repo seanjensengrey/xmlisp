@@ -59,7 +59,7 @@
          
           <row align="stretch" minimize="vertical"  valign="bottom"  flex="1">
             <row align="stretch"  minimize="vertical" valign="bottom" flex="1">
-              <status-bar align="stretch" flex="1" name="status-bar" text="bla"/>
+              <status-bar align="stretch" flex="1" name="status-bar" text=""/>
             </row>
             <row align="stretch" minimize="vertical" valign="bottom" flex="1" src="gradient-transparent.png">
               <label width="100" text="Layer Height:"/>
