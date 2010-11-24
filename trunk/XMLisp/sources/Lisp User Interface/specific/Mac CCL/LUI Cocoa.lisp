@@ -405,73 +405,12 @@
   (setf (opaque-native-color Self) (#/colorWithCalibratedRed:green:blue:alpha: ns:ns-color Red Green Blue 1.0))
   (#/retain (opaque-native-color Self)))
 
-
-
-;**********************************
-;* BROWSER-VIEW                   *
-;**********************************
-(defclass BROWSER-DELEGATE (ns:ns-object)
-  ((lui-view :accessor lui-view :initarg :lui-view))
-  (:metaclass ns:+ns-object
-	      :documentation "delegate object receiving window events"))
-
-
-(objc:defmethod (#/browser:numberOfRowsInColumn: :<NSI>nteger) ((self browser-delegate) sender column)
-  5)
-
-
-(objc:defmethod (#/browser:willDisplayCell:atRow:column: :void) ((self browser-delegate) sender cell row column)
-  (print "BROWSER WILL DISPLAY")
-  (print row)
-  (print column)
-  ;(unless (equal row +null-ptr+)
-   ; (print (parse-integer row)))
-  ;(print (parse-integer row))
-  (#/setLeaf: cell #$YES)
-  (#/setIntValue:  cell 5)
-  5)
-
-#|
-(objc:defmethod (#/browser:createRowsForColumn:inMatrix: :void) ((self browser-delegate) sender column matrix)
-  (print "BROWSER CREATE ROWS FOR COLUMN IN MATRIX"))
-|#
-(defclass NATIVE-BROWSER-VIEW (ns:ns-browser)
-  ((lui-view :accessor lui-view :initform nil :initarg :lui-view))
-  (:metaclass ns:+ns-object
-	      :documentation ""))
-
-
-(defmethod make-native-object ((Self browser-view))
-  (let ((Native-Control (make-instance 'native-browser-view :lui-view Self)))
-    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
-      (#/initWithFrame: Native-Control Frame)
-      (#/setMaxVisibleColumns: Native-Control 2)
-      (#/setDelegate: native-control (make-instance 'browser-delegate))
-    Native-Control)))
-
-
-(defmethod MAP-SUBVIEWS ((Self browser-view) Function &rest Args)
-  (declare (ignore Function Args))
-  ;; no Cocoa digging
-  )
-
-
-(defmethod SUBVIEWS ((Self browser-view))
-  ;; no Cocoa digging
-  )
-;**********************************
-;* PLOT-VIEW                      *
-;**********************************
-
-
-
 ;;************************************
 ;; WINDOW                            *
 ;;************************************
 
 (defmethod WINDOW-CLOSE ((Self Window))
   (#/close (native-window Self)))
-
 
 ;__________________________________
 ; NATIVE-WINDOW                     |
