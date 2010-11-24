@@ -356,6 +356,7 @@
     (dolist (Hit-Record (get-selection-array-hit-records Hit-Number Selection-Array))
       ;; indentify the agent that is closest
       (dolist (Agent (mapcar #'(lambda (Name) (find-agent-by-reference-id Self Name)) (first Hit-Record)))
+        (declare (ftype function layer))
         (when (and Agent
                    (or (null Agent-Type)
                        (and Agent-Type (subtypep (type-of Agent) Agent-Type)))
@@ -486,7 +487,10 @@
   ;;(format t "~%hover: x=~A y=~A dx=~A dy=~A" x y dx dy)
   (let ((Agent (find-agent-at Self x y *Selection-Tolerance* *Selection-Tolerance*)))
     (when (or (not (eq Agent (agent-hovered Self))) 
-              (and Agent (find-class 'matrix-background-agent nil) (subtypep (type-of Agent) 'matrix-background-agent)))  ;; hack! matrix-background-agent are shared
+              (and Agent 
+                   (find-class 'matrix-background-agent nil)
+                   (let ((Matrix-Background-Agent-Type 'matrix-background-agent)) ;; shut up the compiler warnings
+                     (subtypep (type-of Agent) Matrix-Background-Agent-Type))))  ;; hack! matrix-background-agent are shared
       (with-animation-locked
           (when (agent-hovered Self)
             (setf (is-hovered (agent-hovered Self)) nil)
@@ -646,8 +650,6 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 (defgeneric UNSELECT (agent-3d)
   (:documentation "Unselect me"))
 
-
-
 ;_______________________________________
 ; Implementation                        |
 ;_______________________________________
@@ -695,31 +697,32 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
   ;; BEGIN display with transformations
   (glPushmatrix)
   (cond
-     ;; simple: no rotation
-     ((and (not (has-shade Self)) (= (roll Self) 0.0) (= (heading Self) 0.0) (= (pitch Self) 0.0))
-      ;; translate to world coordinate
-      (glTranslatef (x Self) (y Self) (z Self))
-      (glScalef (scale-x Self) (scale-y Self) (scale-z Self)))
-     ;; rotation
-     (t
-      ;; translate to world coordinate
-      (glTranslatef (x Self) (y Self) (z Self))
-      (glTranslatef (x-turn Self) (y-turn Self) (z-turn Self))
-      (draw-shade Self)
-      ;; Rotate
-      (glRotatef (roll Self) 0.0 0.0 1.0)
-      (glRotatef (heading Self) 0.0 1.0 0.0)
-      (glRotatef (pitch Self) 1.0 0.0 0.0)
-      ;; Scale
-      (glScalef (scale-x Self) (scale-y Self) (scale-z Self)) 
-      ;; Translate to rotation center GARBAGE!! 24 bytes
-      (glTranslatef (- (x-turn Self)) (- (y-turn Self)) (- (z-turn Self)))))
-    ;; project agent?
-    (when (eq Self *Projected-Agent*)
-      (multiple-value-bind (x y z) (reference-point Self)
-        (setq *Projected-Agent-Window-Position*
-              (multiple-value-list (glu-project x y z))))))
-
+   ;; simple: no rotation
+   ((and (not (has-shade Self)) (= (roll Self) 0.0) (= (heading Self) 0.0) (= (pitch Self) 0.0))
+    ;; translate to world coordinate
+    (glTranslatef (x Self) (y Self) (z Self))
+    (glScalef (scale-x Self) (scale-y Self) (scale-z Self)))
+   ;; rotation
+   (t
+    ;; translate to world coordinate
+    (glTranslatef (x Self) (y Self) (z Self))
+    (glTranslatef (x-turn Self) (y-turn Self) (z-turn Self))
+    (draw-shade Self)
+    ;; Rotate
+    (glRotatef (roll Self) 0.0 0.0 1.0)
+    (glRotatef (heading Self) 0.0 1.0 0.0)
+    (glRotatef (pitch Self) 1.0 0.0 0.0)
+    ;; Scale
+    (glScalef (scale-x Self) (scale-y Self) (scale-z Self)) 
+    ;; Translate to rotation center GARBAGE!! 24 bytes
+    (glTranslatef (- (x-turn Self)) (- (y-turn Self)) (- (z-turn Self)))))
+  ;; project agent?
+  #| Projection does not work yet in Cocoa
+  (when (eq Self *Projected-Agent*)
+    (multiple-value-bind (x y z) (reference-point Self)
+      (setq *Projected-Agent-Window-Position*
+            (multiple-value-list (glu-project x y z))))) |#  )
+  
 
 (defmethod DRAW ((Self agent-3d))
   (cond
@@ -779,9 +782,6 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
   (incf (velocity-y Self) (* Time (acceleration-y Self)))
   (incf (velocity-z Self) (* Time (acceleration-z Self))))
 
-
-(defmethod UPDATE-Z-VALUE ((Self agent-3d) layer-height)
-  (setf (z self) (* (layer self) layer-height)))
 
 (defmethod BROADCAST-TO-AGENTS ((Self agent-3d) Function &rest Args)
   ;; me
@@ -875,17 +875,19 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
    (y-turn Self)
    (z-turn Self)))
 
+
 (defmethod VIEW-RIGHT-MOUSE-DOWN-EVENT-HANDLER ((Self agent-3d) X Y)
-  (call-next-method)
-  (print "MOUSE RIGHT AGENT 3D"))
+  (declare (ignore x y))
+  (call-next-method))
+
 
 (defmethod PROJECTED-WINDOW-POSITION ((Self agent-3d))
   ;; this implementation is not very elegant as it includes all agents to be drawn as side effect.
   (setq *Projected-Agent* Self)
   (unwind-protect
     (progn
-      (make-me-the-current-context (view Self))
-      (draw (view Self))
+      (with-glcontext (view Self)
+        (draw (view Self)))
       (values
        (first *Projected-Agent-Window-Position*)
        (second *Projected-Agent-Window-Position*)))
@@ -988,6 +990,12 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
       (when (subtypep (type-of Agent) Type) (return Agent))
       (setq Agent (part-of Agent))
       (unless Agent (return nil)))))
+
+;; Stubb Functions
+
+(defmethod LAYER ((Self agent-3d))
+  ;; stub method: agent-3d do not really have layers
+  nil)
 
 
 ;______________________________
