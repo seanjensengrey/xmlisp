@@ -50,7 +50,7 @@
   (fovy :accessor fovy :initarg :fovy :initform 60.0d0 :type double-float :documentation "viewing angle")
   (aspect :accessor aspect :initarg :aspect :initform 1.0d0 :type double-float)
   (near :accessor near :initarg :near :initform 0.005d0 :type double-float)
-  (far :accessor far :initarg :near :initform 2000.0d0 :type double-float)
+  (far :accessor far :initarg :far :initform 2000.0d0 :type double-float)
   (azimuth :accessor azimuth :initarg :azimuth :initform 0.0d0 :type double-float)
   (zenith :accessor zenith :initarg :zenith :initform 0.0d0 :type double-float))
  (:documentation "OpenGL camera to control user perspective"))
