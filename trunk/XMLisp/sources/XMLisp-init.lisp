@@ -8,8 +8,6 @@
 
 (in-package :cl-user)
 
-;<application-window><agent-3d-view><text-3d/></agent-3d-view></application-window>
-
 ;; temporary fix for CCL's issue with turning warnings into errors
 ;; should remove with new release
 (setq ccl::*objc-error-return-condition* 'error)
@@ -211,11 +209,14 @@
 (load "lui:sources;Lisp User Interface;LUI")
 (load "lui:sources;Lisp User Interface;Camera")
 (load "lui:sources;Lisp User Interface;OpenGL-view")
+(load "lui:sources;Lisp User Interface;Plot-view")
+
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;LUI Cocoa")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;standard-alert-dialog")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;image-import")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;image-export")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;OpenGL-view Cocoa")
+
 
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;Transparent-OpenGL-Window")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;speech")
@@ -266,6 +267,7 @@
 (load "lui:sources;XLUI;agent-3D")
 (load "lui:sources;XLUI;shapes")
 (load "lui:sources;XLUI;keyboard")
+
 ;; inflatable icons
 (load "lui:sources;XLUI;image editor;selection-mask")
 (load "lui:sources;XLUI;image editor;image-editor")
@@ -281,17 +283,16 @@
 
 
 ;; Dialogs
-
 (load "lui:sources;XLUI;dialogs;get-string-from-user")
 (load "lui:sources;XLUI;dialogs;yes-no-dialog")
 (load "lui:sources;XLUI;dialogs;get-new-agent-info-from-user-window")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;chooser-file-dialogs")
 
 (load "lui:sources;XLUI;progress-meter")
-;;Image Tools
 (load "lui:sources;XLUI;image-tools")
-
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;get-color-from-user")
+
+
 ;;*************** Build functions
 
 (defun ccl::CCL-CONTENTS-DIRECTORY ()
