@@ -202,7 +202,7 @@
         (if (item-selection-view group)
           (#/setHidden: (item-selection-view group) #$YES)))))
   (let ((subviews (gui::list-from-ns-array (#/subviews self))))
-    (dolist (subview subviews)
+    (dolist (subview subviews)   
       (#/setNeedsDisplay: subview #$YES)
       (if (equal (type-of subview) 'LUI::mouse-detection-text-field)
         (if (equal (type-of (#/superview self)) 'LUI::ITEM-CONTAINER-VIEW)
@@ -212,9 +212,13 @@
             (setf (group-name self) (ccl::lisp-string-from-nsstring (#/stringValue subview)))
             (setf (group-name (list-group self)) (ccl::lisp-string-from-nsstring (#/stringValue subview)))
             (#/setFrameOrigin: subview Point )))
-        (unless (equal (type-of subview) 'LUI::ITEM-CONTAINER-VIEW )
+        
+        (unless (or (equal (type-of subview) 'LUI::GROUP-ITEM-IMAGE-VIEW  ) (equal (type-of subview) 'LUI::ITEM-CONTAINER-VIEW ))
           (ns:with-ns-point (Point (NS:NS-RECT-X (#/frame subview)) 0)
-            (#/setFrameOrigin: subview Point ))))))
+            (#/setFrameOrigin: subview Point ))))
+      (when (equal (type-of subview) 'LUI::GROUP-ITEM-IMAGE-VIEW  )
+          (ns:with-ns-point (Point (NS:NS-RECT-X (#/frame subview)) (y subview))
+            (#/setFrameOrigin: subview Point )))))
   (call-next-method))
 
 
@@ -278,9 +282,10 @@
 
 
 (defclass GROUP-ITEM-IMAGE-VIEW (group-detection-view)
-  ((image-name :accessor image-name :initform nil :initarg :image-name)
+  ((container-height :accessor container-height :initform nil :initarg :container-height :documentation "the height of the componeent that contains this view")
+   (image-name :accessor image-name :initform nil :initarg :image-name)
    (image-path :accessor image-path :initform "lui:resources;images" :initarg :image-path)
-   (image-size :accessor image-size :initform 28 :initarg :image-size)
+   (image-size :accessor image-size :initform 20 :initarg :image-size)
    (x :accessor x :initform 0 :initarg :x :documentation "screen position, pixels")
    (y :accessor y :initform 00 :initarg :y :documentation "screen position, pixels")
    (item-name :accessor item-name :initform nil :initarg :item-name))
@@ -297,6 +302,7 @@
 
 
 (defmethod CREATE-IMAGE ((self group-item-image-view)(list-item list-group-item))
+  (setf (y self) (round (- (container-height self) (image-size self)) 2))
   (ns:with-ns-point (Point (x self) (y self))
     (#/setFrameOrigin: Self Point))
   (ns:with-ns-size (Size (image-size self) (image-size self))
@@ -312,7 +318,6 @@
 
 
 (defmethod UPDATE-IMAGE ((self group-item-image-view) &key (image-name nil)) 
-  
   (if image-name
     (setf (image-name self) image-name))
   (let ((subviews (gui::list-from-ns-array (#/subviews self))))   
@@ -479,9 +484,7 @@
           (#/setDrawsBackground: self #$YES)
           (#/setEditable: self #$YES)
           (call-next-method event)))
-      
       ;(print 
-      
       (set-selected (container self) (ccl::lisp-string-from-nsstring (#/stringValue self)) :resign nil )))
   (if (item-name self)
     (progn 
@@ -493,6 +496,7 @@
           (#/setEditable: self #$YES)
           (call-next-method event)))
       (set-selected-item (container self) (group-name (#/superview (#/superview (#/superview self)))) (ccl::lisp-string-from-nsstring (#/stringValue self)) ))))
+
 
 (objc:defmethod (#/didChangeText :void) ((self mouse-detection-text-field))
   (let ((width (calculate-width-for-text-field self)))
@@ -715,8 +719,9 @@
           (nil (setf (item-detection-views group) (list detection-view-item)))
           (t (setf (item-detection-views group) (append (item-detection-views group) (list detection-view-item)))))    
         (#/addSubview: (item-view group) detection-view-item))  
-      (let ((image (make-instance 'group-item-image-view   :image-path (image-path group-item)   :group-name (group-name group) :container self :item-name (item-name group-item)  :x x :y item-y :image-name (image-name group-item)  ))) ;'image-control :src (group-image group) :x x :y y :width (row-height self) :height (row-height self)))) 
+      (let ((image (make-instance 'group-item-image-view   :image-path (image-path group-item)   :container-height (row-height self) :group-name (group-name group) :container self :item-name (item-name group-item)  :x x :y 0 :image-name (image-name group-item)  ))) ;'image-control :src (group-image group) :x x :y y :width (row-height self) :height (row-height self)))) 
         (incf x (row-height self))
+        
         (#/addSubview: #|items-container|# detection-view-item (create-image image group-item))
       (let ((text (#/alloc mouse-detection-text-field))) 
         (ns:with-ns-rect (Frame x  item-y  text-length (text-height self))  
