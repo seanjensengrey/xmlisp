@@ -27,11 +27,8 @@
            (equal (type-of subview) 'NS:NS-TEXT-VIEW )
            (equal (type-of subview) 'LUI::MOUSE-DETECTION-TEXT-FIELD ))
         (progn
-          (ns:with-ns-range (range 0 0)
-            ;(#/setSelectedRange: subview range)
-            )
+          (ns:with-ns-range (range 0 0))
           (#/setBezeled: subview #$NO)
-          
           (#/setDrawsBackground: subview #$NO))
         (remove-background-from-text-fields subview)))))
 
@@ -130,9 +127,7 @@
         (ns:with-ns-size (Size (width (lui-view self)) group-height)
           (#/setFrameSize:  (group-view group ) Size))
         (ns:with-ns-size (Size (width (lui-view self)) (NS:NS-RECT-HEIGHT (#/frame (item-view group))))
-          (#/setFrameSize:  (item-view group ) Size))
-        #| (dolist (item-view (item-detection-views group))
-             (#/setFrameSize:  item-view Size))|#          
+          (#/setFrameSize:  (item-view group ) Size))      
         (ns:with-ns-point (Point 0 y)
           (#/setFrameOrigin: (group-view group ) Point ))
         (if (is-disclosed group)
@@ -144,7 +139,6 @@
         (if (is-highlighted group)
           (#/setHidden: (selection-view group ) #$NO)
           (#/setHidden: (selection-view group ) #$YES))
-        ; #-cocotron (setf (width (lui-view self)) (NS:NS-RECT-WIDTH (#/frame (#/superview (#/superview (native-view self))))))
         (ns:with-ns-point (Point (NS:NS-RECT-X (#/frame (group-view group))) (+ 0  (NS:NS-RECT-Y (#/frame (group-view group)))) )
           (#/setFrameOrigin: (selection-view group) Point ))
         (ns:with-ns-size (Size (width (lui-view self)) (row-height (lui-view self)))
@@ -343,7 +337,6 @@
   (remove-background-and-end-editting-for-all-text-fields (native-view (container (#/superview (#/superview  self)))))
   (call-next-method Event)
   (select (#/superview self)) 
-  
   (if (> ( #/clickCount Event) 1)
     (double-clicked (#/superview self))))
 
@@ -388,8 +381,7 @@
                 (#/setImage: badge-image-view (#/image (native-view image)))))
             (#/setImage: badge-image-view (#/image (native-view badge-image)))))
         (#/setImageScaling: badge-image-view #$NSScaleToFit)
-        (#/addSubview: self badge-image-view)
-        )))
+        (#/addSubview: self badge-image-view))))
   self) 
 
 
@@ -431,32 +423,18 @@
   (:metaclass ns:+ns-object
               :documentation "A text field that detects mouse events.  "))
 
-#|
-(defmethod INITIALIZE-INSTANCE :after  ((Self mouse-detection-text-field) &rest Initargs)
-  (declare (ignore initargs))
-  (let ((delegate (#/alloc mouse-detection-text-field-delegate)))
-    
-    (#/init delegate)
-    ;(inspect self)
-    ;(#/setDelegate: self delegate)
-    )
-  ;(call-next-method)
-  )
-|#
 
 (defmethod CALCULATE-WIDTH-FOR-TEXT-FIELD ((self mouse-detection-text-field)) 
-  ;(if (< (NS:NS-SIZE-WIDTH (#/sizeWithAttributes: (#/string self) (#/dictionary ns:ns-dictionary)))  (- (width (container self)) 50))
-    ; (let ((width (* 1.25 (NS:NS-SIZE-WIDTH (#/sizeWithAttributes: (#/stringValue self) (#/dictionary ns:ns-dictionary))))))
-    (let ((width (* 1.25 (NS:NS-SIZE-WIDTH (#/sizeWithAttributes: (#/stringValue self) (#/dictionary ns:ns-dictionary))))))
-      (if (< width 50)
-        (setf width 50))
-      width))
-    ;)
+  (let ((width (* 1.25 (NS:NS-SIZE-WIDTH (#/sizeWithAttributes: (#/stringValue self) (#/dictionary ns:ns-dictionary))))))
+    (if (< width 50)
+      (setf width 50))
+    width))
 
 
 (objc:defmethod (#/isFlipped :<BOOL>) ((self mouse-detection-text-field))
   ;; Flip to coordinate system to 0, 0 = upper left corner
   #$YES)
+
 
 (objc:defmethod (#/acceptsFirstMouse :<BOOL>) ((self mouse-detection-text-field))
   ;; Flip to coordinate system to 0, 0 = upper left corner
@@ -466,9 +444,8 @@
   ;; Flip to coordinate system to 0, 0 = upper left corner
   (call-next-method sender)
   #+cocotron
-  (#/currentEvent (#/sharedApplication ns:ns-application))
-  ;(#/mouseDown: self (#/currentEvent (#/sharedApplication ns:ns-application)))
-  )
+  (#/currentEvent (#/sharedApplication ns:ns-application)))
+
 
 (defmethod LAYOUT ((Self mouse-detection-text-field))
   ;do nothing 
@@ -484,7 +461,6 @@
           (#/setDrawsBackground: self #$YES)
           (#/setEditable: self #$YES)
           (call-next-method event)))
-      ;(print 
       (set-selected (container self) (ccl::lisp-string-from-nsstring (#/stringValue self)) :resign nil )))
   (if (item-name self)
     (progn 
@@ -495,39 +471,24 @@
           (#/setDrawsBackground: self #$YES)
           (#/setEditable: self #$YES)
           (call-next-method event)))
-      (set-selected-item (container self) (group-name (#/superview (#/superview (#/superview self)))) (ccl::lisp-string-from-nsstring (#/stringValue self)) ))))
+      (set-selected-item (container self) (group-name (#/superview (#/superview (#/superview self)))) (ccl::lisp-string-from-nsstring (#/stringValue self))))))
 
 
 (objc:defmethod (#/didChangeText :void) ((self mouse-detection-text-field))
   (let ((width (calculate-width-for-text-field self)))
     (ns:with-ns-size (Size  width (NS:NS-RECT-HEIGHT (#/frame self)))
       (#/setFrameSize: self Size )))
-  ;(setf (group-name (group self))(ccl::lisp-string-from-nsstring (#/string self)))
-  ;(setf (group-name (group-view (group self)))(ccl::lisp-string-from-nsstring (#/stringValue self)))
-  (call-next-method)  
-  )
-   
-#|             
- (objc:defmethod (#/textDidEndEditing: :void) ((Self mouse-detection-text-field-delegate) Notification)
-   (print "DID END EDITING ___"))
-
-(objc:defmethod (#/textDidChange: :void) ((Self mouse-detection-text-field-delegate) Notification)
-   (print "CHANGING"))     
-                                      
-(objc:defmethod (#/textDidBeginEditing: :void) ((Self mouse-detection-text-field-delegate) Notification)
-   (print "DID BEGIN EDITING___"))
-|#
+  (call-next-method))
 
 
-
-(objc:defmethod (#/textShouldBeginEditing: :void) ((Self mouse-detection-text-field) Notification)
+(objc:defmethod (#/textShouldBeginEditing: :<BOOL>) ((Self mouse-detection-text-field) Notification)
   (setf (name-storage self) (ccl::lisp-string-from-nsstring (#/stringValue self)))
   (call-next-method Notification))
+
 
 (objc:defmethod (#/becomeFirstResponder  :void) ((self mouse-detection-text-field))
   (setf (name-storage self) (ccl::lisp-string-from-nsstring (#/stringValue self)))
   (call-next-method))
-
 
 
 (objc:defmethod (#/textDidEndEditing: :void) ((Self mouse-detection-text-field) Notification)
@@ -535,49 +496,28 @@
     (if (item self)
       (progn
         (setf (item-name (#/superview self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
-        #|
-        (let ((agent-manager (xlui::find-agent-manager xlui::*Project-Manager* (agentcubes:agentcubes-class-symbol (selected-group (container self))))))
-          (xlui::load-behavior agent-manager))
-        |#
-        
         (if (item-name-changed (container self) (group-name (group self)) (item-name (item self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
-          ;(remove-background-and-end-editting-for-all-text-fields (native-view (container self)))
           (progn
             (#/setEditable: self #$NO)
             (#/setDrawsBackground:  self #$NO))
           (#/setStringValue: self (native-string (name-storage self))))
-        
         (setf (item-name (item self))(ccl::lisp-string-from-nsstring (#/stringValue self))))
       (progn
         (if (group-name-changed (container self) (group-name (group self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
           (progn
             (#/setEditable: self #$NO)
-            (#/setDrawsBackground:  self #$NO)
-            )
+            (#/setDrawsBackground:  self #$NO))
           (#/setStringValue: self (native-string (name-storage self))))
-
         (setf (group-name (group self))(ccl::lisp-string-from-nsstring (#/stringValue self))))))
-  ;(setf (group-name (group-view (group self)))(ccl::lisp-string-from-nsstring (#/stringValue self)))
   (call-next-method Notification))
 
 
-(objc:defmethod (#/textDidChange: :void) ((self mouse-detection-text-field) Notification)
-  
-   (let ((width (calculate-width-for-text-field self)))
+(objc:defmethod (#/textDidChange: :void) ((self mouse-detection-text-field) Notification) 
+  (let ((width (calculate-width-for-text-field self)))
     (ns:with-ns-size (Size  width (NS:NS-RECT-HEIGHT (#/frame self)))
       (#/setFrameSize: self Size )))
   (call-next-method Notification))
 
-#|
-
-(objc:defmethod (#/textDidBeginEditing: :void) ((self mouse-detection-text-field))
-  (print "DID END"))
-
-
-(objc:defmethod (#/becomeFirstResponder  :void) ((self mouse-detection-text-field))
-  ;(remove-background-from-text-fields (native-view (container self)))
-  (print "BECOME FIRST"))
-|#
 
 ;;*********************************
 ;; GROUP DISCLOSURE BUTTON        *
@@ -641,10 +581,6 @@
 (defmethod SET-SIZE ((Self badged-image-group-list-manager-view) Width Height)
   (declare (ignore Width Height))
   (call-next-method)
-  
-  ; #-cocotron(set-size (lui-view (#/superview (#/superview (native-view self)))) (width (lui-view (#/superview (#/superview (native-view self))))) (height (lui-view (#/superview (#/superview (native-view self))))))
-  ;(call-next-method self width height)
-  
   #-cocotron 
   (if (> (-(width (lui-view (#/superview (#/superview (native-view self)))))1)  (minimum-width self))
     (setf (width self) (-(width (lui-view (#/superview (#/superview (native-view self)))))1)))
@@ -659,15 +595,6 @@
         (progn
           (#/setFrameSize: (item-selection-view group) Size )
           (#/setNeedsDisplay: (item-selection-view group) #$YES)))) )  
-  #|
-  (if (and 
-       (#/superview (native-view self)) 
-       (#/superview (#/superview (native-view self))) 
-       (lui-view (#/superview (#/superview (native-view self))))
-       
-       )
-    (setf (height self) (- (height (lui-view (#/superview (#/superview (native-view self)))))1))) 
-  |#
   (resize-height-of-view self :call-set-size nil)
   (display self)
   (#/setNeedsDisplay: (native-view self) #$YES))
@@ -721,8 +648,7 @@
         (#/addSubview: (item-view group) detection-view-item))  
       (let ((image (make-instance 'group-item-image-view   :image-path (image-path group-item)   :container-height (row-height self) :group-name (group-name group) :container self :item-name (item-name group-item)  :x x :y 0 :image-name (image-name group-item)  ))) ;'image-control :src (group-image group) :x x :y y :width (row-height self) :height (row-height self)))) 
         (incf x (row-height self))
-        
-        (#/addSubview: #|items-container|# detection-view-item (create-image image group-item))
+        (#/addSubview:  detection-view-item (create-image image group-item))
       (let ((text (#/alloc mouse-detection-text-field))) 
         (ns:with-ns-rect (Frame x  item-y  text-length (text-height self))  
           (setf (container text) self)
@@ -743,7 +669,7 @@
           (let ((width (calculate-width-for-text-field text)))
             (ns:with-ns-size (Size  width (NS:NS-RECT-HEIGHT (#/frame text)))
               (#/setFrameSize: text Size )))
-          (#/addSubview: #|items-container|# detection-view-item  text)
+          (#/addSubview: detection-view-item  text)
           (case (item-detection-views group)
             (nil (setf (item-text-views group) (list text)))
             (t (setf (item-text-views group) (append (item-text-views group) (list text))))))))
@@ -772,7 +698,6 @@
           (setf group-height (+ group-height (* (length (group-items group)) (row-height self)))))     
         (ns:with-ns-rect (detection-frame   x 0 (width self) (+ (item-category-label-height self) group-height))
           (setf (list-group detection-view) group)
-          ; (setf (y group) (+ (row-height self)(- y group-height)))
           (setf (group-name detection-view) (group-name group))
           (setf (container detection-view) self)         
           (#/initWithFrame: detection-view detection-frame)
@@ -795,14 +720,11 @@
             (setf (container text) self)
             (#/initWithFrame: text Frame)
             (incf x text-length)     
-            ;(#/setStringValue: text (native-string (string-capitalize (validate-agent-name (group-name group)))))
             (#/setStringValue: text (native-string (string-capitalize (validate-agent-name (group-name group)))))
             (#/setBackgroundColor: text (#/whiteColor ns:ns-color))
             (#/setDrawsBackground:  text #$NO)
             (#/setBezeled: text #$NO)
             (#/setDrawsBackground: text #$NO)
-            ; (#/setBezeled: text #$NO)
-            ;  (#/setBordered: text #$NO)
             (#/setEditable: text #$NO)
             (setf (group text) group)
             (setf (text-view group) text)
@@ -812,15 +734,12 @@
             (#/addSubview: detection-view  text)
             (setf (text-view detection-view) text)
             (setf (text-view image) text)))))    
-      ;   (incf y (- 0(row-height self)))
       (setf X (left-margin self))      
       (let ((items-container (#/alloc item-container-view)) 
             (label (make-instance 'label-control :text (item-category-label self) :x (- (group-item-offset self) 5):width (width self) :height (item-category-label-height self))))
         (ns:with-ns-rect (item-detection-frame x (row-height self) (width self) (+ (item-category-label-height self) (* (length (group-items group))  (row-height self))))  
           (#/initWithFrame: items-container item-detection-frame)
-          (#/addSubview: items-container (native-view label))
-          ;(inspect items-container)
-           )
+          (#/addSubview: items-container (native-view label)))
         (setf x (+ (left-margin self)(group-item-offset self)))
         (#/addSubview: detection-view items-container)
         (setf (item-view group) items-container)
@@ -851,14 +770,12 @@
           (setf (width self) (width (lui-view (#/superview (#/superview (native-view self)))))))
         (add-group-to-gui self (get-group-with-name self (group-name list-group)))
         (#/setNeedsDisplay: (native-view self) #$YES)
-        ;(w (item-view (get-group-with-name self (group-name list-group))))
         (layout (native-view self))))
     list-group))
 
 
 (defmethod ADD-GROUP-ITEM ((Self badged-image-group-list-manager-view) group-name item &key (image-path "lui:resources;images;"))
   (setf (first item) (string-capitalize (first item)))
-  ;(setf group-name (string-capitalize group-name))
   (let ((list-item (make-instance 'list-group-item :item-name (first item) :image-path image-path :image-name (second item))))
     (let ((group (get-group-with-name self (String-capitalize group-name))))
       (if (group-items group)
@@ -885,41 +802,40 @@
     (progn       
       (group-deselected self)))
   (let ((previously-selected-group-name  (selected-group self)))
-  (with-simple-restart (cancel-pop "Stop to create view for ~s" Self)    
-    (dolist (group (groups self))
-      (setf (selected-item-name group) nil) 
-      (if (equal (String-capitalize group-name) (String-capitalize (group-name group)))
-        (progn   
-          (setf (selected-item-name group) nil )
-          (if (item-selection-view group)
-            (#/setHidden: (item-selection-view group) #$YES))
-          (setf (is-selected group) "YES")
-          (setf (is-highlighted group) highlight)
-          (ns:with-ns-point (Point (NS:NS-RECT-X (#/frame (group-view group))) (+ 0  (NS:NS-RECT-Y (#/frame (group-view group)))) )
-            (#/setFrameOrigin: (selection-view group) Point ))
-          (ns:with-ns-size (Size (width self)  (row-height self) ) 
-            (#/setFrameSize: (selection-view group) Size ))
-          (if (is-highlighted group)
-            (#/setHidden: (selection-view group) #$NO))
-         ; (#/setEditable:  (text-view group) #$YES)
-          (#/setNeedsDisplay: (selection-view group) #$YES))
-        (progn
-          (setf (is-highlighted group) nil)
-          (if resign
-            (if (or
-                 (equal (type-of (#/firstResponder (#/window (native-view self)))) 'NS:NS-TEXT-VIEW )
-                 (equal (type-of (#/firstResponder (#/window (native-view self)))) 'LUI::MOUSE-DETECTION-TEXT-FIELD ))
-              (progn
-                (#/endEditingFor: (#/window (native-view self)) nil ))))
-          (setf (selected-item-name group) nil)
-          (#/setDrawsBackground:  (text-view group) #$NO)
-          (#/setEditable:  (text-view group) #$NO)
-          (if (item-selection-view group)
-            (#/setHidden: (item-selection-view group) #$YES))
-          (setf (is-selected group) nil)
-          (setf (is-highlighted group) nil)
-          (#/setHidden: (selection-view group) #$YES)
-          (#/setNeedsDisplay: (selection-view group) #$YES)))))
+    (with-simple-restart (cancel-pop "Stop to create view for ~s" Self)    
+      (dolist (group (groups self))
+        (setf (selected-item-name group) nil) 
+        (if (equal (String-capitalize group-name) (String-capitalize (group-name group)))
+          (progn   
+            (setf (selected-item-name group) nil )
+            (if (item-selection-view group)
+              (#/setHidden: (item-selection-view group) #$YES))
+            (setf (is-selected group) "YES")
+            (setf (is-highlighted group) highlight)
+            (ns:with-ns-point (Point (NS:NS-RECT-X (#/frame (group-view group))) (+ 0  (NS:NS-RECT-Y (#/frame (group-view group)))) )
+              (#/setFrameOrigin: (selection-view group) Point ))
+            (ns:with-ns-size (Size (width self)  (row-height self) ) 
+              (#/setFrameSize: (selection-view group) Size ))
+            (if (is-highlighted group)
+              (#/setHidden: (selection-view group) #$NO))
+            (#/setNeedsDisplay: (selection-view group) #$YES))
+          (progn
+            (setf (is-highlighted group) nil)
+            (if resign
+              (if (or
+                   (equal (type-of (#/firstResponder (#/window (native-view self)))) 'NS:NS-TEXT-VIEW )
+                   (equal (type-of (#/firstResponder (#/window (native-view self)))) 'LUI::MOUSE-DETECTION-TEXT-FIELD ))
+                (progn
+                  (#/endEditingFor: (#/window (native-view self)) nil ))))
+            (setf (selected-item-name group) nil)
+            (#/setDrawsBackground:  (text-view group) #$NO)
+            (#/setEditable:  (text-view group) #$NO)
+            (if (item-selection-view group)
+              (#/setHidden: (item-selection-view group) #$YES))
+            (setf (is-selected group) nil)
+            (setf (is-highlighted group) nil)
+            (#/setHidden: (selection-view group) #$YES)
+            (#/setNeedsDisplay: (selection-view group) #$YES)))))
     (unless (equal (string-capitalize previously-selected-group-name)  (string-capitalize (selected-group self)))
       (selected-group-changed self )))
   (layout-changed self))
@@ -939,7 +855,6 @@
       (setf (is-highlighted group) nil)
       (if (equal group-name (group-name group))
         (progn 
-          
           (dolist (item (group-items group))
             (if (equal item-name (item-name item))
               (progn
@@ -951,9 +866,7 @@
                     (#/setFrameOrigin: (item-selection-view group) Point ))
                   (#/setHidden: (item-selection-view group) #$NO)
                   (#/setNeedsDisplay: (item-selection-view group) #$YES)
-                  (setf (selected-item-name group) (item-name item) ))
-                ;(#/setEditable: (text-view item) #$YES)
-                )
+                  (setf (selected-item-name group) (item-name item))))
               (progn
                 (#/setEditable: (text-view item) #$NO)))))
         (progn 
@@ -963,8 +876,7 @@
           (if (item-selection-view group)
             (progn
               (#/setHidden: (item-selection-view group) #$YES)
-              (#/setNeedsDisplay: (item-selection-view group) #$YES)
-              ))))
+              (#/setNeedsDisplay: (item-selection-view group) #$YES)))))
       (incf i))
     (unless (equal previously-selected-group-name  (selected-group self))
       (selected-group-changed self )))
@@ -976,28 +888,16 @@
   (dolist (group (groups self))     
     (if (equal group-name (group-name group))
       (dolist (item (group-items group))      
-        (if (equal item-name (item-name item))   
-          (progn
-            (let ((item-counter-value (read-from-string (value (item-counter item)))))
-              (incf item-counter-value number-of-agents)
-              (setf (VALUE (item-counter item))  (write-to-string item-counter-value )))
-            )
-          )))))
+        (when (equal item-name (item-name item))   
+          (let ((item-counter-value (read-from-string (value (item-counter item)))))
+            (incf item-counter-value number-of-agents)
+            (setf (VALUE (item-counter item))  (write-to-string item-counter-value ))))))))
 
 
 (defmethod CLEAR-ITEM-COUNTERS ((Self badged-image-group-list-manager-view) )
   (dolist (group (groups self))     
     (dolist (item (group-items group))          
       (setf (VALUE (item-counter item))  (write-to-string 0)))))
-  
-
-#|
-(objc:defmethod (#/becomeFirstResponder  :void) ((self mouse-detection-text-field))
-  ;(remove-background-from-text-fields (native-view (container self)))
-  
-  ;(#/setDrawsBackground: self #$YES)
-  (call-next-method))
-|#
 
 
 (defmethod LAYOUT ((Self lui::native-bevel-button))
