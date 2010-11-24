@@ -108,6 +108,8 @@
   "Returns t if all the characters in the font can be rendered using the current font-size
    into a box with the given width and height.
    in: Width {integer}, Height {integer}."
+  (declare (ignore Self Width Height))
+  #| only use to MAKE fonts. Need to be implemented in Cocoa
   (let ((Font-Spec (list (font-name Self) (font-size Self) (font-style Self))))
     (multiple-value-bind (Ascent Descent Max-Width Leading)
                          (font-info Font-Spec)
@@ -125,7 +127,8 @@
               (incf y (+ Ascent Descent Leading *Padding-V*))
               ;; check that the current font-baseline + font-descent does not exceed the box height
               (when (> (+ y Descent) Height) (return nil))
-              (setq x (+ w *Padding-H*))))))))))
+              (setq x (+ w *Padding-H*)))))))))) |#  )
+
 
 
 (defmethod OPTIMIZE-CHAR-SIZE ((Self font))
@@ -143,6 +146,8 @@
   "Creates glyphs for all the characters in the font. 
    If optimized, the character size will be adjusted to best fit the texture size.
    in: Optimized {boolean}."
+  (declare (ignore Self Optimized))
+  #| Used only when MAKING Font: Implement for Cocoa
   ;; ensure glyphs array is initialized
   (unless (glyphs Self) 
     (setf (glyphs Self) (make-array (- (end Self) (start Self)) :initial-element nil)))
@@ -168,7 +173,7 @@
                                  :y0 (float (- 1 (/ y (texture-size Self))) 0s0)
                                  :x1 (float (/ (+ x w) (texture-size Self)) 0s0)
                                  :y1 (float (- 1 (/ (- y Ascent Descent) (texture-size Self))) 0s0)))
-            (incf x (+ w *Padding-H*))))))))
+            (incf x (+ w *Padding-H*))))))))  |# )
 
 #| if needed reimplement with Cocoa:
 (defmethod RENDER-GLYPHS ((Self font) Window &key (Clear-Background t) Debug-Lines)
@@ -223,9 +228,11 @@
 (defmethod SAVE-GLYPHS-TEXTURE-IMAGE ((Self font) To-File)
   "Saves the glyphs texture image to the given file.
    in: To-File {pathname}."
+  (declare (ignore to-file)
+  #| need to implement with Cocoa
   (let ((Buffer-Window (make-instance 'font-rendering-window :font Self :window-show nil)))
     (render-and-save-to-file Buffer-Window To-File)
-    (window-close Buffer-Window)))
+    (window-close Buffer-Window)))  |# ))
 
 
 (defmethod SAVE-FONT-SPEC ((Self font) To-File)
