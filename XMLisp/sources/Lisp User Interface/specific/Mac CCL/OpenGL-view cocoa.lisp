@@ -263,9 +263,9 @@
        
        
 (defmethod ANIMATE-OPENGL-VIEW-ONCE ((Self opengl-view))
-  (animate Self (delta-time Self))
-  (with-animation-locked 
-      (display Self))
+  (with-animation-locked
+      (animate Self (delta-time Self)))
+  (display Self)
   (sleep 0.01)  ;; ease off CPU time, need to compute this time 
   )
 
