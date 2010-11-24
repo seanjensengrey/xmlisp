@@ -7,6 +7,7 @@
 
 (defvar *Red-Color-Vector* nil "pointer to 4 bytes holding 32 bit RGBA vector")
 
+
 (defun RED-COLOR-VECTOR ()
   (or *Red-Color-Vector*
       (setq *Red-Color-Vector* (make-byte-vector 255 0 255 255))))
@@ -97,7 +98,7 @@
     (let ((increment-value 1))
       (setf increment-value 1)
       (dotimes (i (round (length (third plot-sublist)) increment-value))
-        (glVertex3f (+ (fourth plot-sublist)(* i  1.0)) (aref (third plot-sublist) (* increment-value i)) 0.0))      
+        (glVertex2f (+ (fourth plot-sublist) (* i  1.0)) (aref (third plot-sublist) (* increment-value i))))      
       (glEnd))))
 
 
