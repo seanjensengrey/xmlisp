@@ -141,7 +141,7 @@
     (cond
      ((command-key-p)
       (case Key
-        (#\l (load-image-from-file Self (choose-file-dialog :directory "ad3d:resources;textures;")))
+        (#\l (load-image-from-file Self (choose-file-dialog :directory "lui:resources;textures;")))
         (#\a (select-all Icon-Editor))
         (#\d (clear-selection Icon-Editor))
         (#\I (invert-selection Icon-Editor))))
