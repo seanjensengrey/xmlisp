@@ -1242,8 +1242,6 @@
   (cond
    ((command-key-p)
     (case Key
-      (#\l (load-image-from-file Self (choose-file-dialog :directory "ad3d:resources;textures;")))
-      (#\s (save-image-to-file Self (choose-new-file-dialog)))
       (#\a (select-all (image-editor-view Self)))
       (#\d (clear-selection (image-editor-view Self)))
       (#\I (invert-selection (image-editor-view Self)))))
@@ -1251,7 +1249,7 @@
     (case Key
       (#\Delete 
        (cond
-        ((option-key-p)
+        ((alt-key-p)
          (fill-selected-pixels (image-editor-view Self))
          (image-changed-event (image-editor-view Self)))
         (t
@@ -1267,6 +1265,7 @@
   "png")
 
 
+#+:needs-to-be-reimplemented-in-cocoa
 (defmethod WINDOW-SAVE-AS ((Self image-editor-window) &optional External-Format)
   (declare (ignore External-Format))
   (let ((File (choose-new-file-dialog 
@@ -1281,6 +1280,7 @@
     (setf (window-needs-saving-p Self) nil)))
 
 
+#+:needs-to-be-reimplemented-in-cocoa
 (defmethod WINDOW-SAVE-COPY-AS ((Self image-editor-window) &optional File)
   (declare (ignore File))
   ;; do not change saved status or make this the new file
@@ -1298,11 +1298,14 @@
    ((file Self)
     (let ((File-Existed-Before-Save (probe-file (file Self))))
       (save-image-to-file Self (file Self))
-      (unless File-Existed-Before-Save (add-window-proxy-icon Self (file Self))))
+      (unless File-Existed-Before-Save 
+      ;;;; not proxy icons not implemented yet in Cocoa   (add-window-proxy-icon Self (file Self))
+        ))
     (setf (window-needs-saving-p Self) nil))
    ;; ask user
    (t
-    (window-save-as Self))))
+    #+:needs-to-be-reimplemented-in-cocoa (window-save-as Self)
+    )))
 
   
 ;**************************************
