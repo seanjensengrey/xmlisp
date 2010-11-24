@@ -12,7 +12,7 @@
 ;; Event Classes                 *
 ;;********************************
 
-(defvar *View-Last-Clicked* nil "the view that got clicked last")
+(defvar *Mouse-Down-View* nil "view last received a mouse down but not yet a mouse up. Upon mouse up view will be reset to nil")
 
 
 (defvar *Current-Event* nil "event")
@@ -265,46 +265,12 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 
 (defun FIND-VIEW-AT-SCREEN-POSITION (screen-x screen-y &key Window-Type)
+  (declare (ftype function find-window-at-screen-position))
   (let ((Window (find-window-at-screen-position screen-x screen-y :type Window-Type)))
     (when Window
       (find-view-containing-point Window (- Screen-x (x Window)) (- Screen-y (y Window))))))
 
 ;; Events
-
-(defmethod MOUSE-EVENT-HANDLER ((Self view) X Y DX DY Event)
-  (multiple-value-bind (new-x new-y)
-                      (adjust-x-y-for-window-offset self x y)
-                      (setq x new-x)
-                      (setq y new-y))
-  (do-subviews (Subview Self)
-    ;; a left mouse down may be the start of a drag, remember the view starting this
-    (when (and (member (event-type Event) '(:left-mouse-down))
-               (<= (x Subview) x (+ (x Subview) (width Subview)))
-               (<= (y Subview) y (+ (y Subview) (height Subview))))
-      (setf *View-Last-Clicked* Subview))
-    ;; forward event with relative coordinates to ALL subviews overlapping click position
-    (mouse-event-handler Subview (- x (x Subview)) (- y (y Subview)) DX DY Event))
-  ;; and dispatch event to view
-  (case (event-type Event)
-    (:left-mouse-down 
-     (when (and (<= 0 x (width Self))
-                (<= 0 y (height Self)))
-       
-       (view-left-mouse-down-event-handler Self x y)))
-    (:right-mouse-down 
-     (when (and (<= 0 x (width Self))
-                (<= 0 y (height Self)))
-       (view-right-mouse-down-event-handler Self x y)))
-    (:left-mouse-up (view-left-mouse-up-event-handler Self x y))
-    (:left-mouse-dragged
-     (when (equal Self *View-Last-Clicked*)
-       (view-left-mouse-dragged-event-handler Self x y dx dy)))
-    (:mouse-moved 
-     (if (and (<= 0 x (width Self))
-                (<= 0 y (height Self)))
-       (view-mouse-moved-event-handler Self x y dx dy)
-       (view-mouse-moved-outside-event-handler Self x y dx dy)))
-    (t (format t "not handling ~A event yet~%" (event-type Event)))))
 
 
 (defmethod VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER ((Self view) X Y)
@@ -333,15 +299,16 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 
 (defmethod VIEW-MOUSE-MOVED-EVENT-HANDLER ((Self view) x y dx dy)
-  (declare (ignore DX DY))
+  (declare (ignore DX DY)
+           (ftype function get-cursor set-cursor))
   (unless (equal (view-cursor self x y) (get-cursor))
     (set-cursor (view-cursor self x y))
     (Setf (current-cursor self) (view-cursor self x y))))
 
 
 (defmethod VIEW-MOUSE-MOVED-OUTSIDE-EVENT-HANDLER ((Self view) x y dx dy)
-  (declare (ignore X Y DX DY))
- 
+  (declare (ignore X Y DX DY)
+           (ftype function get-cursor set-cursor))
   (when (and (current-cursor self)
              (equal (current-cursor self) (get-cursor)))
     (set-cursor "arrowCursor")
@@ -357,6 +324,7 @@ Call with most important parameters. Make other paramters accessible through *Cu
   (values
    X
    Y))
+
 ;**********************************
 ;* SCROLL-VIEW                    *
 ;**********************************
@@ -407,123 +375,6 @@ Call with most important parameters. Make other paramters accessible through *Cu
   (:default-initargs 
     :x 10
     :y 10))
-
-
-;**********************************
-;* BROWSER-VIEW                   *
-;**********************************
-
-(defclass BROWSER-VIEW (view)
-  ((text :accessor text :initform "untitled" :initarg :text :type string :documentation "text associated with control"))
-  (:documentation "colored rectangle and if it has transparency it is shown in one half of the view")
-  (:default-initargs 
-    :x 10
-    :y 10))
-
-
-;**********************************
-;* PLOT-VIEW                      *
-;**********************************
-
-(defvar *Red-Color-Vector* nil "pointer to 4 bytes holding 32 bit RGBA vector")
-
-(defun RED-COLOR-VECTOR ()
-  (or *Red-Color-Vector*
-      (setq *Red-Color-Vector* (make-byte-vector 255 0 255))))
-
-
-(defclass PLOT-VIEW (opengl-view)
-  ((native-color :accessor native-color :initform nil)
-   (text :accessor text :initform "mil")
-   (min-value :accessor min-value :initform 0.0d0 :initarg :min-value)
-   (max-value :accessor max-value :initform 0.0d0 :initarg :max-value)
-   (min-time :accessor min-time :initform 0)
-   (max-time :accessor max-time :initform 0.0)
-   (value-array :accessor value-array :initform (make-array 5 :fill-pointer 0 :adjustable t))
-   (plot-color :accessor plot-color :initform (red-color-vector))
-   (min-data-points-to-end-of-screen :accessor min-data-points-to-end-of-screen :initform 10)
-   (plot-list :accessor plot-list :initform () :documentation "This list of lists.  Each sublist contains first, the name of the representation, second, the color and third the vector of values and the fourth is ther starting time of the plot element")
-   (y-padding-factor :accessor y-padding-factor :initform 1.1)
-   )
-  (:documentation "A view for plotting values vs time")
-  (:default-initargs 
-    :x 100
-    :y 100))
-
-
-(defmethod VIEW-LEFT-MOUSE-DRAGGED-EVENT-HANDLER ((Self plot-view) X Y DX DY)
-  (declare (ignore X Y))
-  ;(track-mouse-3d (camera Self) Self dx dy)
-  (unless (is-animated Self) (display Self)))
-
-
-(defmethod PREPARE-OPENGL :after ((Self plot-view))
-  ;; nothing
-  (glClearColor 1.0 0.5 0.5 0.0)
-  (glEnable GL_BLEND)
-  (glBlendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA)
-  (glMatrixMode GL_PROJECTION)
-  (glLoadIdentity)
-  (gluOrtho2D 0.0d0 (* 1.0d0 (Width self)) 0.0d0 (* 1.0d0 (height self)))
-    (glMatrixMode GL_MODELVIEW)
-  (glLoadIdentity))
-
-
-(defmethod ADD-PLOT-VALUE ((Self plot-view) value representing &key (color nil))
-  (when (> value (max-value self))
-    (setf (max-value self) value))
-  (when (< value (min-value self))
-    (setf (min-value self) value))
-  (let ((plot-list (find representing (plot-list self) :key #'first :test 'equal)))
-    (unless plot-list   
-      (setf (plot-list self) (append (plot-list self) (list (list  representing  color  (make-array 5 :fill-pointer 0 :adjustable t) (max-time self))))))
-    (when plot-list
-      (unless (equal color (second plot-list))
-        (setf (second plot-list) color))
-      (vector-push-extend  value (third plot-list))
-      (when (> (length (third plot-list)) (max-time self))
-        (setf (max-time self) (length (third plot-list))))))  
-  (display self))
-
-
-(defmethod DRAW ((Self plot-view))
-  (glClearColor 0.0 0.0 0.0 1.0)
-  (glClear (logior GL_COLOR_BUFFER_BIT gl_depth_buffer_bit))
-  (glMatrixMode GL_PROJECTION)
-  (glEnable GL_LINE_SMOOTH)
-  (glLoadIdentity)
-  (gluOrtho2D
-   0.0d0
-   (* 1.0d0 (max-time self))
-   (+
-    (if (equal (max-value self) 0.0)
-      0.0
-      (* -.1 (- (max-value self) (min-value self))))
-    (* 1.0d0 
-       (y-padding-factor self)
-       (if (< (min-value self) 0.0) 
-         (min-value self)
-         0.0)))
-   (* 1.0d0 (y-padding-factor self) (max-value self)))
-  (glMatrixMode GL_MODELVIEW)
-  (glLoadIdentity)
-  (glColor3f 1.0 1.0 1.0)
-  (glBegin GL_LINES)
-  (glVertex3f 0.0 0.0 0.0)
-  (glVertex3f (* 1.0 (if (> (max-time self) (width self)) (max-time self) (width self))) 0.0 0.0)
-  (glEnd)
-  (dolist (plot-sublist (plot-list self))
-    (glcolor4f (first (second plot-sublist)) (second (second plot-sublist)) (third (second plot-sublist))  (fourth (second plot-sublist)))
-    (glBegin GL_LINE_STRIP)
-    (let ((increment-value 1)
-          (length-of-sublist (length (third plot-sublist))))
-      ;(setf increment-value (round (- length-of-sublist (fourth plot-sublist)) (width self)))      
-      (setf increment-value 1)
-      (dotimes (i (round (length (third plot-sublist)) increment-value))
-        
-        (glVertex3f (+ (fourth plot-sublist)(* i  1.0)) (aref (third plot-sublist) (* increment-value i)) 0.0))      
-      (glEnd))))
-
 
 ;**********************************
 ;* WINDOW                         *
@@ -612,6 +463,9 @@ after any of the window controls calls stop-modal close window and return value.
 (defgeneric WINDOW-SHOULD-CLOSE (Window)
   (:documentation "This method will be called by the window delegate when the user clicks the close button or a perfomClose action is issued. Return non-nil value to have window closed"))
 
+(defgeneric MOST-SPECIFIC-VIEW-CONTAINING-POINT (Window window-x window-y)
+  (:documentation "in: window, window-x, window-y; out: view, x, y; return the most specific, i.e., view that contains x, y but does not have subviews containing x, y"))
+
 ;;_______________________________
 ;; default implementations       |
 ;;_______________________________
@@ -674,32 +528,55 @@ after any of the window controls calls stop-modal close window and return value.
   )
 
 
+(defmethod MOST-SPECIFIC-VIEW-CONTAINING-POINT ((Self t) x y)
+  (labels ((view-containing-point (View x y)
+             (do-subviews (Subview View)
+               (when (and (<= (x Subview) x (+ (x Subview) (width Subview)))
+                          (<= (y Subview) y (+ (y Subview) (height Subview))))
+                 (view-containing-point Subview (- x (x Subview)) (- y (y Subview)))))
+             ;; no subviews (if any) matched. I am the ONE!
+             (return-from most-specific-view-containing-point (values View x y))))
+    (when (and (<= x (width Self)) (<= y (height Self)))
+      (view-containing-point Self x y))))
+
 ;; Events
 
-(defmethod MOUSE-EVENT-HANDLER ((Self window) X Y DX DY Event)
-
-  (do-subviews (Subview Self)
-    ;; a left mouse down may be the start of a drag, remember the view starting this
-    (when (and (member (event-type Event) '(:left-mouse-down))
-               (<= (x Subview) x (+ (x Subview) (width Subview)))
-               (<= (y Subview) y (+ (y Subview) (height Subview))))
-      (setf *View-Last-Clicked* Subview) )
-    ;; forward event with relative coordinates to ALL subviews overlapping click position
-    (mouse-event-handler Subview (- x (x Subview)) (- y (y Subview)) DX DY Event))
-  ;; and dispatch event to window
-  (case (event-type Event)
-    (:left-mouse-down   (view-left-mouse-down-event-handler Self x y))
-    (:right-mouse-down  (view-right-mouse-down-event-handler Self x y))
-    (:left-mouse-up (view-left-mouse-up-event-handler Self x y))
-    (:left-mouse-dragged
-     (when (equal Self *View-Last-Clicked*)
-       (view-left-mouse-dragged-event-handler Self x y dx dy)))
-    (:mouse-moved (view-mouse-moved-event-handler Self x y dx dy))
-    (t (format t "not handling ~A event yet~%" (event-type Event)))))
+(defmethod MOUSE-EVENT-HANDLER ((Self window) Window-x Window-y DX DY Event)
+  (multiple-value-bind (View x y)
+                       (most-specific-view-containing-point Self Window-x Window-y)
+    ;;(format t "~%mouse event, object=~A, x=~A, y=~A" (string-capitalize (type-of View)) x y)
+    (case (event-type Event)
+      ;; MOVED
+      (:mouse-moved
+       (when View
+         (view-mouse-moved-event-handler View x y dx dy)))
+      ;; DOWN: start the down/drag/up cycle, must be in view
+      (:left-mouse-down
+       (when View
+         (setf *Mouse-Down-View* View)
+         (view-left-mouse-down-event-handler View x y)))
+      (:right-mouse-down 
+       (when View
+         (setf *Mouse-Down-View* View)
+         (view-right-mouse-down-event-handler View x y)))
+      ;; DRAG: use view set by down
+      (:left-mouse-dragged
+       (when *Mouse-Down-View*
+         (view-left-mouse-dragged-event-handler *Mouse-Down-View* x y dx dy)))
+      ;; UP: use view set by down
+      (:left-mouse-up
+       (when *Mouse-Down-View*
+         (view-left-mouse-up-event-handler *Mouse-Down-View* x y)
+         ;; cleanup time: nobody should use refer to the mouse down view anymore
+         ;; the down/drag/up cycle is offially over
+         (setq *Mouse-Down-View* nil)))
+      (t
+       (format t "not handling ~A event yet~%" (event-type Event))))))
 
 
 (defmethod KEY-EVENT-HANDLER ((Self window) Event)
   (setf *current-event* event)
+  ;; (print "LUI KEy HANDLER")
   (format t "~%window key event ~A" (native-event Event)))
 
 
@@ -1335,12 +1212,12 @@ after any of the window controls calls stop-modal close window and return value.
 
 ;;***  EXAMPLE 1: a click and drag window containing a mouse controlled view
 
-(defclass click-and-drag-window (window)
+(defclass CLICK-AND-DRAG-WINDOW (window)
   ((blob :accessor blob :initform (make-instance 'rectangle-view))
    (drag-lag-rect :accessor drag-lag-rect :initform (make-instance 'rectangle-view))))
 
 
-(defmethod initialize-instance :after ((Self click-and-drag-window) &rest Args)
+(defmethod INITIALIZE-INSTANCE :after ((Self click-and-drag-window) &rest Args)
   (declare (ignore Args))
   (set-color (blob Self) :red 0.5 :green 0.1)
   (set-frame (blob Self) :width 100 :height 100)
@@ -1369,11 +1246,11 @@ after any of the window controls calls stop-modal close window and return value.
 
 ;; define window and view subclasses
 
-(defclass color-selection-window (window)
+(defclass COLOR-SELECTION-WINDOW (window)
   ())
 
 
-(defmethod initialize-instance :after ((Self color-selection-window) &rest Args)
+(defmethod INITIALIZE-INSTANCE :after ((Self color-selection-window) &rest Args)
   (declare (ignore Args))
   ;; make all views and link up the targets
   (let* ((Color-View (make-instance 'color-selection-view :y 50))
@@ -1383,21 +1260,21 @@ after any of the window controls calls stop-modal close window and return value.
     (add-subviews Self Color-View Red-Button Green-Button Blue-Button)))
 
 
-(defclass color-selection-view (rectangle-view)
+(defclass COLOR-SELECTION-VIEW (rectangle-view)
   ())
 
 ;; actions
 
-(defmethod turn-red ((window color-selection-window) (view color-selection-view))
+(defmethod TURN-RED ((window color-selection-window) (view color-selection-view))
   (set-color View :red 1.0 :green 0.0 :blue 0.0)
   (display window))
 
-(defmethod turn-green ((window color-selection-window) (view color-selection-view))
+(defmethod TURN-GREEN ((window color-selection-window) (view color-selection-view))
   (set-color View :red 0.0 :green 1.0 :blue 0.0)
   (display window))
 
 
-(defmethod turn-blue ((window color-selection-window) (view color-selection-view))
+(defmethod TURN-BLUE ((window color-selection-window) (view color-selection-view))
   (set-color View :red 0.0 :green 0.0 :blue 1.0)
   (display window))
 
