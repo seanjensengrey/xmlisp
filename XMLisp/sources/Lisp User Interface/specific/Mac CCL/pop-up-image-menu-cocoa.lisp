@@ -137,7 +137,7 @@
 	      :documentation "Native window"))
 
 
-(objc:defmethod (#/canBecomeKeyWindow :boolean) ((self popup-window))
+(objc:defmethod (#/canBecomeKeyWindow :<BOOL>) ((self popup-window))
   #$YES)
 
 
@@ -149,9 +149,11 @@
 (objc:defmethod (#/mouseDown: :void) ((self popup-window) Event)
   (call-next-method event))
 
+
 (objc:defmethod (#/keyDown: :void) ((self popup-window) event)
   (if (equal (#/keyCode event) 53)
     (#/stopModal (#/sharedApplication ns:ns-application))))
+
 
 #|  Attemp to track off window mouse events
 (objc:defmethod (#/resignKeyWindow :void) ((Self popup-window))
