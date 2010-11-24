@@ -432,6 +432,7 @@
       (broadcast-to-agents Self #'(lambda (Agent) (setf (is-selected Agent) nil)))
       (setf (agents-selected Self) nil)))))
 
+
 (defmethod VIEW-RIGHT-MOUSE-DOWN-EVENT-HANDLER ((Self agent-3d-view) X Y)
   (declare (ignore x y)))
 
@@ -778,6 +779,9 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
   (incf (velocity-y Self) (* Time (acceleration-y Self)))
   (incf (velocity-z Self) (* Time (acceleration-z Self))))
 
+
+(defmethod UPDATE-Z-VALUE ((Self agent-3d) layer-height)
+  (setf (z self) (* (layer self) layer-height)))
 
 (defmethod BROADCAST-TO-AGENTS ((Self agent-3d) Function &rest Args)
   ;; me
