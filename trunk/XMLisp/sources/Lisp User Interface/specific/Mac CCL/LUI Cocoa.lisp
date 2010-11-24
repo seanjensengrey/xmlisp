@@ -150,7 +150,6 @@
 (defmethod MAP-SUBVIEWS ((Self subview-manager-interface) Function &rest Args)
   (let ((Subviews (#/subviews (native-view Self))))
     (dotimes (i (#/count Subviews))
-      
       (apply Function (lui-view (#/objectAtIndex: Subviews i)) Args))))
 
 
@@ -365,7 +364,106 @@
   (when (native-color Self)
     (#/set (native-color Self)))
   (ns:with-ns-rect (Frame 0.0 0.0 (width Self) (height Self))
-    (#_NSRectFill Frame)))
+    (#/fillRect: ns:ns-bezier-path Frame)))
+
+
+;**********************************
+;* COLOR-PALETTE-VIEW             *
+;**********************************
+
+(defmethod DRAW ((Self color-palette-view))
+  (if (draw-transparency-triangles self)
+    (let ((triangle (#/bezierPath ns:ns-bezier-path))(triangle2 (#/bezierPath ns:ns-bezier-path)))
+      (ns:with-ns-point (point 0 0)
+        (ns:with-ns-point (point1 (width Self) 0 )
+          (ns:with-ns-point (point2 0 (height Self))
+            (ns:with-ns-point (point3 (width Self) (height Self))
+              (when (native-color Self)
+                (#/set (opaque-native-color Self)))
+              (#/moveToPoint: triangle point)
+              (#/lineToPoint: triangle point1)
+              (#/lineToPoint: triangle point2)
+              (#/lineToPoint: triangle point)
+            (#/fill triangle)
+              (#/moveToPoint: triangle2 point1)
+            (#/lineToPoint: triangle2 point2)
+              (#/lineToPoint: triangle2 point3)
+              (#/lineToPoint: triangle2 point1)
+              (when (native-color Self)
+              (#/set (native-color Self)))
+              (#/fill triangle2))))))
+    (call-next-method)))
+
+
+(defmethod SET-COLOR ((Self color-palette-view) &key (Red 0.0) (Green 0.0) (Blue 0.0) (Alpha 1.0))
+  (if (>=  alpha 1.0 )
+    (setf (draw-transparency-triangles self) nil)
+    (setf (draw-transparency-triangles self) t))
+  (when (native-color Self) (#/release (native-color Self)))
+  (setf (native-color Self) (#/colorWithCalibratedRed:green:blue:alpha: ns:ns-color Red Green Blue Alpha))
+  (#/retain (native-color Self))
+  (setf (opaque-native-color Self) (#/colorWithCalibratedRed:green:blue:alpha: ns:ns-color Red Green Blue 1.0))
+  (#/retain (opaque-native-color Self)))
+
+
+
+;**********************************
+;* BROWSER-VIEW                   *
+;**********************************
+(defclass BROWSER-DELEGATE (ns:ns-object)
+  ((lui-view :accessor lui-view :initarg :lui-view))
+  (:metaclass ns:+ns-object
+	      :documentation "delegate object receiving window events"))
+
+
+(objc:defmethod (#/browser:numberOfRowsInColumn: :<NSI>nteger) ((self browser-delegate) sender column)
+  5)
+
+
+(objc:defmethod (#/browser:willDisplayCell:atRow:column: :void) ((self browser-delegate) sender cell row column)
+  (print "BROWSER WILL DISPLAY")
+  (print row)
+  (print column)
+  ;(unless (equal row +null-ptr+)
+   ; (print (parse-integer row)))
+  ;(print (parse-integer row))
+  (#/setLeaf: cell #$YES)
+  (#/setIntValue:  cell 5)
+  5)
+
+#|
+(objc:defmethod (#/browser:createRowsForColumn:inMatrix: :void) ((self browser-delegate) sender column matrix)
+  (print "BROWSER CREATE ROWS FOR COLUMN IN MATRIX"))
+|#
+(defclass NATIVE-BROWSER-VIEW (ns:ns-browser)
+  ((lui-view :accessor lui-view :initform nil :initarg :lui-view))
+  (:metaclass ns:+ns-object
+	      :documentation ""))
+
+
+(defmethod make-native-object ((Self browser-view))
+  (let ((Native-Control (make-instance 'native-browser-view :lui-view Self)))
+    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+      (#/initWithFrame: Native-Control Frame)
+      (#/setMaxVisibleColumns: Native-Control 2)
+      (#/setDelegate: native-control (make-instance 'browser-delegate))
+    Native-Control)))
+
+
+(defmethod MAP-SUBVIEWS ((Self browser-view) Function &rest Args)
+  (declare (ignore Function Args))
+  ;; no Cocoa digging
+  )
+
+
+(defmethod SUBVIEWS ((Self browser-view))
+  ;; no Cocoa digging
+  )
+;**********************************
+;* PLOT-VIEW                      *
+;**********************************
+
+
 
 ;;************************************
 ;; WINDOW                            *
@@ -462,6 +560,12 @@
   (let ((Content-View (#/contentView (native-window (lui-window Self)))))
     (setf (width (lui-window Self)) (truncate (pref (#/frame Content-View) <NSR>ect.size.width)))
     (setf (height (lui-window Self)) (truncate (pref (#/frame Content-View) <NSR>ect.size.height)))
+    (let ((Window (lui-window Self)))
+      (setf (x Window) (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.x)))
+      (setf (y Window) 
+            (- (screen-height (lui-window Self)) 
+               (height (lui-window Self))
+               (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.y)))))    (screen-height nil)
     (size-changed-event-handler (lui-window Self) (width (lui-window Self)) (height (lui-window Self)))))
 
 
@@ -616,6 +720,7 @@
 
 
 (defmethod CANCEL-MODAL ((Self window))
+  (print "CANCEL MODAL")
   (setq *Run-Modal-Return-Value* :cancel)
   (#/stopModal (#/sharedApplication ns:ns-application)))
 
@@ -2256,7 +2361,9 @@
     (when selected-item
       (#/selectItemWithTitle: (native-view pop-up) (native-string selected-item)))
     (#/setTransparent: (native-view Pop-Up) #$YES)
+    (print "PERFORM CLICK SHOW STRING POPUP")
     (#/performClick:  (native-view Pop-up) +null-ptr+)
+    ;(#/setState: (native-view Pop-up) #$NSOnState)
     (#/removeFromSuperview (native-view Pop-up))
     (ccl::lisp-string-from-nsstring  (#/titleOfSelectedItem (native-view Pop-Up)))))
 
