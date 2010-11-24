@@ -71,7 +71,7 @@
     #+windows-target (#_HeapFree (#_GetProcessHeap) 0 Row-Buffer)))
 
 
-(defun ns-image-rep-from-file (native-filename)
+(defun NS-IMAGE-REP-FROM-FILE (native-filename)
   ;; Cocotron doesn't implement #/imageRepWithContentsOfFile: (Issue 376)
   #+cocotron
   (let* ((images (#/imageRepsWithContentsOfFile: ns:NS-Image-Rep native-filename)))
