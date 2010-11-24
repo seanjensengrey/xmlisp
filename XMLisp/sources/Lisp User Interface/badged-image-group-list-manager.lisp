@@ -26,9 +26,8 @@
    (window :accessor window :initform nil)
    (left-margin :accessor left-margin :initform 0)
    (item-category-label :accessor item-category-label :initarg :item-category-label :initform "items:")
-   (item-category-label-height :accessor item-category-label-height :initarg :item-category-label-height :initform 15)
-   )
-   (:documentation "This class will is a view that contains groups of items that are identified by a badge image."))
+   (item-category-label-height :accessor item-category-label-height :initarg :item-category-label-height :initform 15))
+  (:documentation "This class will is a view that contains groups of items that are identified by a badge image."))
 
 
 ;;*********************************
@@ -139,6 +138,7 @@
 
 (defgeneric take-focus (badged-image-group-list-manager-view)
   (:documentation "A method to be called when another view takes focus from this view."))
+
 ;---------------------------------
 ; Implementation                  |
 ;________________________________
@@ -217,6 +217,7 @@
 
 
 (defmethod TAKE-FOCUS ((Self badged-image-group-list-manager-view))
+  (declare (ftype function remove-background-and-end-editting-for-all-text-fields)) ;; implemented in cocoa specific file
   (remove-background-and-end-editting-for-all-text-fields (native-view self)))
 
 #|
