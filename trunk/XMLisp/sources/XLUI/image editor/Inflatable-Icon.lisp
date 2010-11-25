@@ -108,7 +108,7 @@
     (when (texture-file (part-of Self) (icon Self))
       ;; Flat inflatable icons should not be auto-compiled
       (setf (auto-compile self) (not (is-flat self)))
-      (multiple-value-bind (Image Columns Rows #|Depth|#)
+      (multiple-value-bind (Image Columns Rows)
                            (create-image-from-file (texture-file (part-of Self) (icon Self)) :forced-depth 32)
         (setf (image Self) Image)
         (setf (columns Self) Columns)
