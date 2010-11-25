@@ -201,7 +201,7 @@
 ; Textures                      |
 ;_______________________________
 
-(defun CREATE-TEXTURE-FROM-FILE (Filename &key Verbose (Build-Mipmaps t) Repeat (Mag-Filter GL_LINEAR)) "
+(defun CREATE-TEXTURE-FROM-FILE (Filename &key Verbose (Build-Mipmaps t) Repeat (Mag-Filter GL_LINEAR) Forced-Depth) "
   in:  Filename {string}, 
     &key Verbose {boolean}, Repeat
   out: OpenGL-Texture-Name {int}, width, height, depth
@@ -212,7 +212,7 @@
   - This function must be called with active AGL context, e.g., inside OpenGL-Window INIT method."
   (declare (ftype function create-image-from-file))
   (rlet ((&texName :long))
-    (multiple-value-bind (&Image Width Height Depth) (create-image-from-file Filename :verbose Verbose :flip-vertical t)
+    (multiple-value-bind (&Image Width Height Depth) (create-image-from-file Filename :verbose Verbose :flip-vertical t :forced-depth Forced-Depth)
       (unless &Image (return-from create-texture-from-file nil))
       (glPixelStorei GL_UNPACK_ROW_LENGTH Width)  ; Set proper unpacking row length for image
       (glPixelStorei GL_UNPACK_ALIGNMENT 1)       ; Set byte aligned unpacking (needed for 3-byte-per-pixel image)
