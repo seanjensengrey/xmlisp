@@ -59,8 +59,7 @@
    (connectors :accessor connectors :initform nil :documentation "connectors are polygons connecting inner and outer edges of the symetric sides")
    (visible-alpha-threshold :accessor visible-alpha-threshold :initform 64 :allocation :class :documentation "8 bit alpha value used as visible/invisible threshold")
    (texture-id :accessor texture-id :initform nil :documentation "OpenGL texture name")
-   (is-flat :accessor is-flat :initform nil :type boolean :documentation "speed optimized rendering if flat")
-   (update-texture-from-image-p :accessor update-texture-from-image-p :initform nil :documentation "set this flag to t to trigger texture update"))
+   (is-flat :accessor is-flat :initform nil :type boolean :documentation "speed optimized rendering if flat"))
   (:documentation "High polygon count 3D object made from inflated icon")
   (:default-initargs 
       :depth 0.0d0))
@@ -447,9 +446,6 @@
 (defmethod DRAW ((Self inflatable-icon))
   ;; the texture update needs to happen in the right opengl context
   ;; just in time while display is not elegant but works
-  (when (update-texture-from-image-p Self)
-    (update-texture-from-image Self)
-    (setf (update-texture-from-image-p Self) nil))
   (glpushmatrix)
   (glTranslatef 0s0 0s0 (dz Self))  ;; keep from interfering with background
   (when (is-upright Self)
