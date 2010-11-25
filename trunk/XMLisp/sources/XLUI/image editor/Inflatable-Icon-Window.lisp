@@ -931,11 +931,16 @@
       (lui::apply-button-pressed (container window) Window))
     ;; save
     (when (destination-inflatable-icon Window)
-      ;; (format t "~%copy into icon")     
+      ;; (format t "~%copy into icon")
+      ;; copy the buffer and other flags
       (copy-content-into (inflatable-icon Model-Editor) (destination-inflatable-icon Window))
+      ;; reinitialize the texture
       (when (is-flat (destination-inflatable-icon Window))
-        ;(setf (update-texture-from-image-p (destination-inflatable-icon Window)) t)
-        )))
+        (unless (view (destination-inflatable-icon Window))
+          ;; hack: if the destination inflatable icon does not have a view use the current world
+          (setf (view (destination-inflatable-icon Window)) 
+                (view-named (project-window (project-manager-reference (container window))) "the world")))
+        (update-texture-from-image (destination-inflatable-icon Window)))))
   (when (container window)
     (lui::save-button-pressed (container window))
     (display-world (project-window (project-manager-reference (container window))))))
@@ -1002,9 +1007,13 @@
     (when (destination-inflatable-icon Window)
       ;; (format t "~%copy into icon")     
       (copy-content-into (inflatable-icon Model-Editor) (destination-inflatable-icon Window))
+      ;; reinitialize the texture
       (when (is-flat (destination-inflatable-icon Window))
-        ;(setf (update-texture-from-image-p (destination-inflatable-icon Window)) t)
-        )))
+        (unless (view (destination-inflatable-icon Window))
+          ;; hack: if the destination inflatable icon does not have a view use the current world
+          (setf (view (destination-inflatable-icon Window)) 
+                (view-named (project-window (project-manager-reference (container window))) "the world")))
+        (update-texture-from-image (destination-inflatable-icon Window)))))
   (window-close window)
   (when (container window)
     (lui::save-button-pressed (container window))
