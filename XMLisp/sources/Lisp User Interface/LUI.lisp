@@ -544,7 +544,7 @@ after any of the window controls calls stop-modal close window and return value.
 (defmethod MOUSE-EVENT-HANDLER ((Self window) Window-x Window-y DX DY Event)
   (multiple-value-bind (View x y)
                        (most-specific-view-containing-point Self Window-x Window-y)
-    ;;(format t "~%mouse event, object=~A, x=~A, y=~A" (string-capitalize (type-of View)) x y)
+    ;; (format t "~%mouse ~A, object=~A, x=~A, y=~A" (event-type Event) (string-capitalize (type-of View)) x y)
     (case (event-type Event)
       ;; MOVED
       (:mouse-moved
@@ -562,13 +562,23 @@ after any of the window controls calls stop-modal close window and return value.
       ;; DRAG: use view set by down
       (:left-mouse-dragged
        (when *Mouse-Down-View*
-         (view-left-mouse-dragged-event-handler *Mouse-Down-View* x y dx dy)))
+         ;; coordinates relative to mouse Down view
+         (view-left-mouse-dragged-event-handler 
+          *Mouse-Down-View*
+          (- Window-x (window-x *Mouse-Down-View*))
+          (- Window-Y (window-y *Mouse-Down-View*))
+          dx
+          dy)))
       ;; UP: use view set by down
       (:left-mouse-up
        (when *Mouse-Down-View*
-         (view-left-mouse-up-event-handler *Mouse-Down-View* x y)
+         ;; coordinates relative to mouse Down view
+         (view-left-mouse-up-event-handler 
+          *Mouse-Down-View*
+          (- Window-x (window-x *Mouse-Down-View*))
+          (- Window-Y (window-y *Mouse-Down-View*)))
          ;; cleanup time: nobody should use refer to the mouse down view anymore
-         ;; the down/drag/up cycle is offially over
+         ;; the down/drag/up cycle is officially over
          (setq *Mouse-Down-View* nil)))
       (t
        (format t "not handling ~A event yet~%" (event-type Event))))))
