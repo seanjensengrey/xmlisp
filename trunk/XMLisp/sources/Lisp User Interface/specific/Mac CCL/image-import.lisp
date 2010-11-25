@@ -84,6 +84,19 @@
   #-cocotron (#/imageRepWithContentsOfFile: ns:NS-Image-Rep native-filename))
 
 
+(defun CREATE-32BIT-RGBA-IMAGE-FROM-24BIT-RGB-IMAGE (Image Width Height) 
+  ;; may have to consider deallocating original image
+  (let ((New-Image (make-vector-of-size (* Width Height 4))))
+    (dotimes (i (* Width Height))
+      (let ((Source-Offset (* i 3))
+            (Destination-Offset (* i 4)))
+        (set-byte New-Image (get-byte Image Source-Offset) Destination-Offset)
+        (set-byte New-Image (get-byte Image (+ Source-Offset 1)) (+ Destination-Offset 1))
+        (set-byte New-Image (get-byte Image (+ Source-Offset 2)) (+ Destination-Offset 2))
+        (set-byte New-Image #xFF (+ Destination-Offset 3))))
+    New-Image))
+
+
 (defun CREATE-IMAGE-FROM-FILE (Filename &key Verbose Forced-Depth (Flip-Vertical t)) "
   in:  Filename string-or-pathname, &key Verbose boolean, Forced-Depth int, 
   out: Pixels byte-vector,
@@ -105,13 +118,25 @@
        (* (#/bytesPerRow Image-Representation) (#/pixelsHigh Image-Representation))
        (#/bytesPerRow Image-Representation)))
     ;(format t "bitmap Data = ~A pixelsWide = ~A pixelsHigh = ~A bitsPerPixel = ~A" (#/bitmapData Image-Representation) (#/pixelsWide Image-Representation) (#/pixelsHigh Image-Representation) (#/bitsPerPixel Image-Representation))
-    (values 
-     (#/bitmapData Image-Representation)
-     (#/pixelsWide Image-Representation)
-     (#/pixelsHigh Image-Representation)
-     (#/bitsPerPixel Image-Representation)
-     (#/hasAlpha Image-Representation)
-     (#/bitmapFormat Image-Representation))))
+    (if (and Forced-Depth
+             (= Forced-Depth 32)
+             (= (#/bitsPerPixel Image-Representation) 24))
+      (values 
+       (create-32bit-rgba-image-from-24bit-rgb-image (#/bitmapData Image-Representation)
+                                                     (#/pixelsWide Image-Representation)
+                                                     (#/pixelsHigh Image-Representation))
+       (#/pixelsWide Image-Representation)
+       (#/pixelsHigh Image-Representation)
+       Forced-Depth
+       t
+       (#/bitmapFormat Image-Representation))
+      (values 
+       (#/bitmapData Image-Representation)
+       (#/pixelsWide Image-Representation)
+       (#/pixelsHigh Image-Representation)
+       (#/bitsPerPixel Image-Representation)
+       (#/hasAlpha Image-Representation)
+       (#/bitmapFormat Image-Representation)))))
 
 
 (defun RGBA-IMAGE-RED (Image X Y Width) "
