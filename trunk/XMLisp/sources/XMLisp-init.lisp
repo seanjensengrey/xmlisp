@@ -393,6 +393,13 @@
    :nibfiles '("lui:resources;English.lproj;MainMenu.nib")))
 
 
+;;*************** Also Run AgentCubes
+
+;; If we find AgentCubes lets just load it unless user indicates no by holding down shift key
+(unless (lui::shift-key-p)
+  (when (probe-file "lui:sources;AgentCubes;AgentCubes-init.lisp")
+    (load "lui:sources;AgentCubes;AgentCubes-init")))
+
 
 #| 
 
