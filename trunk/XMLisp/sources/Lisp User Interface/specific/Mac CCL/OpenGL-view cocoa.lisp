@@ -40,9 +40,6 @@
              (progn ,@Forms))
          (#/flushBuffer ,GLContext)
          (#/clearCurrentContext ns:ns-opengl-context)
-         ;;New Code....
-         ;(#/makeCurrentContext ,GLContext)
-         ;;Ask Alex....
          (#_CGLUnlockContext  ,CGLContext))))))
 
 
@@ -263,12 +260,29 @@
        
        
 (defmethod ANIMATE-OPENGL-VIEW-ONCE ((Self opengl-view))
+  ;; version with performance tracking
+  (let* ((Animation-Time (with-animation-locked
+                             (hemlock::time-to-run (animate Self (delta-time Self)))))
+         (Rendering-Time (hemlock::time-to-run (display Self)))
+         (Total-Time (+ Animation-Time Rendering-Time)))
+    (format t "~%animate: ~4,1F ms, ~4D %   render: ~4,1,F ms, ~4D %   Framerate: ~4D fps"
+            (* 1.0e-6 Animation-Time)
+            (truncate (/ (* 100 Animation-Time) Total-Time))
+            (* 1.0e-6 Rendering-Time)
+            (- 100 (truncate (/ (* 100 Animation-Time) Total-Time)))
+            (truncate (/ 1.0e9 Total-Time)))
+    ;;(sleep 0.01)
+    ))
+
+
+#| Regular animation
+(defmethod ANIMATE-OPENGL-VIEW-ONCE ((Self opengl-view))
   (with-animation-locked
       (animate Self (delta-time Self)))
   (display Self)
-  (sleep 0.01)  ;; ease off CPU time, need to compute this time 
+  ;; (sleep 0.01)  ;; ease off CPU time, need to compute this time 
   )
-
+|#
 
 (defmethod ANIMATE-OPENGL-VIEWS-ONCE ((Self opengl-view))"
   Cycle once through all the OpenGL views that need to be animated"
