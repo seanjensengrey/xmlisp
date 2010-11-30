@@ -14,6 +14,8 @@
 
 (defvar *Mouse-Down-View* nil "view last received a mouse down but not yet a mouse up. Upon mouse up view will be reset to nil")
 
+(defvar *Mouse-Last-Moved-View* nil "view that received a moved event last. If mouse gets moved outside the view send a mouse exited event")
+
 
 (defvar *Current-Event* nil "event")
 
@@ -140,11 +142,21 @@ Call with most important parameters. Make other paramters accessible through *Cu
 (defgeneric VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER (event-listener-interface X Y)
   (:documentation "Mouse Click Event handler"))
 
+
 (defgeneric VIEW-RIGHT-MOUSE-DOWN-EVENT-HANDLER (event-listener-interface X Y)
   (:documentation "Mouse Click Event handler"))
 
+
 (defgeneric VIEW-LEFT-MOUSE-DRAGGED-EVENT-HANDLER (event-listener-interface X Y DX DY)
   (:documentation "Mouse dragged event handler"))
+
+
+(defgeneric VIEW-MOUSE-ENTERED-EVENT-HANDLER (event-listener-interface)
+  (:documentation "Mouse moved outside of the view last receiving mouse moved events"))
+
+
+(defgeneric VIEW-MOUSE-EXITED-EVENT-HANDLER (event-listener-interface)
+  (:documentation "Mouse moved outside of the view last receiving mouse moved events"))
 
 ;; more mouse events here...
 
@@ -296,6 +308,14 @@ Call with most important parameters. Make other paramters accessible through *Cu
   (declare (ignore X Y DX DY))
   ;; nada
   )
+
+
+(defmethod VIEW-MOUSE-ENTERED-EVENT-HANDLER ((Self view))
+  (format t "~%entered ~A" (type-of Self)))
+
+
+(defmethod VIEW-MOUSE-EXITED-EVENT-HANDLER ((Self view))
+  (format t "~%exited ~A" (type-of Self)))
 
 
 (defmethod VIEW-MOUSE-MOVED-EVENT-HANDLER ((Self view) x y dx dy)
@@ -546,10 +566,22 @@ after any of the window controls calls stop-modal close window and return value.
                        (most-specific-view-containing-point Self Window-x Window-y)
     ;; (format t "~%mouse ~A, object=~A, x=~A, y=~A" (event-type Event) (string-capitalize (type-of View)) x y)
     (case (event-type Event)
-      ;; MOVED
+      ;; MOVED: also trigger enter and leave events
       (:mouse-moved
-       (when View
-         (view-mouse-moved-event-handler View x y dx dy)))
+       (cond
+        ;; still moving on same view
+        ((equal View *Mouse-Last-Moved-View*)
+         (when View
+           (view-mouse-moved-event-handler View x y dx dy)))
+        ;; different view
+        (t
+         (when *Mouse-Last-Moved-View*
+           (view-mouse-exited-event-handler *Mouse-Last-Moved-View*)
+           (setq *Mouse-Last-Moved-View* nil))
+         (when View
+           (view-mouse-entered-event-handler View)
+           (setq *Mouse-Last-Moved-View* View)
+           (view-mouse-moved-event-handler View x y dx dy)))))
       ;; DOWN: start the down/drag/up cycle, must be in view
       (:left-mouse-down
        (when View
@@ -638,10 +670,20 @@ after any of the window controls calls stop-modal close window and return value.
   )
 
 
+
 (defmethod SIZE-CHANGED-EVENT-HANDLER ((Self Window) Width Height)
   (declare (ignore Width Height))
   ;; nothing
   )
+
+
+(defmethod VIEW-MOUSE-ENTERED-EVENT-HANDLER ((Self window))
+  (format t "~%entered ~A" (type-of Self)))
+
+
+(defmethod VIEW-MOUSE-EXITED-EVENT-HANDLER ((Self window))
+  (format t "~%exited ~A" (type-of Self)))
+
 
 ;; notifications
 
