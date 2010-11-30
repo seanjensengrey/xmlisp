@@ -610,6 +610,9 @@
      (track-mouse-3d (camera Self) Self dx dy)))
   (unless (is-animated Self) (display Self)))
 
+(defmethod VIEW-MOUSE-EXITED-EVENT-HANDLER ((Self inflated-icon-editor))
+  (set-cursor "arrowCursor"))
+
 
 (defmethod VIEW-CURSOR ((Self inflated-icon-editor) x y)
   (declare (ignore x y))
@@ -740,6 +743,7 @@
         (display Text-View))   
       ;; update model editor
       (let ((Model-Editor (view-named Window 'model-editor)))
+        (print Pressure)
         (incf (pressure (inflatable-icon Model-Editor)) (* 0.02 Pressure))
         (update-inflation Window)
         (setf (is-flat (inflatable-icon Model-Editor)) nil)))))
@@ -858,6 +862,7 @@
     (adjust-distance-action window (view-named window "distance-slider") t)
     (disable (view-named window "distance-slider"))
     (setf (surfaces (inflatable-icon Model-Editor)) 'front)
+    (update-inflation window)
     (display Model-Editor)))
 
 
