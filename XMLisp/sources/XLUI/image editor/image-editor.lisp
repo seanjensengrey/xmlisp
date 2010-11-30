@@ -1186,6 +1186,10 @@
          (display Self)))))
 
 
+(defmethod VIEW-MOUSE-EXITED-EVENT-HANDLER ((Self image-editor))
+  (set-cursor "arrowCursor"))
+
+
 (defmethod VIEW-CURSOR ((Self image-editor) x y)
   (if (and (selection-active-p self)
              (or 
