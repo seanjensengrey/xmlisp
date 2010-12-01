@@ -46,7 +46,7 @@
         <image-button name="reload button" start-disabled="true" action="reload-tool-action"  image="reload-button.png"/> 
         <bevel-button text="Clear" start-disabled="true" name="clear-button" action="clear-tool-action" width="65" height="28" />
         <label width="35" text="slow"/>
-        <slider value="2.0" start-disabled="true" name="speed-slider" max-value="4.0" min-value="0.0" action="speed-slider-action"/>
+        <slider value="3.9" start-disabled="true" name="speed-slider" max-value="4.0" min-value="0.0" action="speed-slider-action"/>
         <label width="35" text="fast"/>
       </row>
       <row align="stretch"  valign="stretch" flex="1" vflex="1">
@@ -61,8 +61,8 @@
             <row align="stretch"  minimize="vertical" valign="bottom" flex="1">
               <status-bar align="stretch" flex="1" name="status-bar" text=""/>
             </row>
-            <row align="stretch" minimize="vertical" valign="bottom" flex="1" src="gradient-transparent.png">
-              <label width="100" text="Layer Height:"/>
+            <row align="stretch" minimize="vertical" valign="middle" flex="1" src="gradient-transparent.png">
+              <label width="85" text="Layer Height:"/>
               <slider value="5.0" start-disabled="true" name="layer-height-slider" max-value="10.0" min-value="0.0" tick-marks="10" action="layer-height-slider-action"/>
               <bevel-button text="Push Layer" start-disabled="true" name="push-layer-button" action="push-layer-action" width="90" height="28" />
               <bevel-button text="Pop Layer" start-disabled="true" name="pop-layer-button" action="pop-layer-action" width="85" height="28" />
