@@ -117,7 +117,6 @@
           (setf (altitudes Self) (make-array (list Rows Columns) 
                                              :element-type 'short-float
                                              :initial-element 0.0)))))
-    
     Self))
 
 
@@ -218,16 +217,14 @@
 
 (defmethod COMPUTE-DEPTH ((Self inflatable-icon))
   ;; this can just be a heuristic: maybe ability for user to change
-  
   (setf (depth Self)
         (max *Minimal-Inflatable-Icon-depth*
              ;; this cond may not be needed, we need to take distance into account for both upright and non upright inflatable icons.
              (cond
               ((is-upright Self)
                (float (/ (max-visible-pixel-row Self) (rows Self)) 0.0))
-              (t  (float (/ (max-visible-pixel-row Self) (rows Self)) 0.0);(maximum-altitude Self)
-                  )
-              ))))
+              (t  
+               (maximum-altitude Self))))))
 #| need to take these into account
 
   (case (surfaces Self)
@@ -969,7 +966,6 @@
   </agent-3d-view>
 </application-window>)
 
-
 (defparameter *window3*
 <application-window title="window3">
   <agent-3d-view name="losbter-view">
@@ -979,10 +975,12 @@
 
 (with-glcontext (view-named *window2* "losbter-view")
   (format t " ~% ~A klops" 
-    (/ 100000000.0 (hemlock::time-to-run
-      (dotimes (i 100)
+         (/ 100000000.0 (hemlock::time-to-run
+          (dotimes (i 100)
             (draw  (first (agents (view-named *window2* "losbter-view")))))))
                ))
+
+;;; osx 10.6.2 3.06GHz Intel Core 2 Duo 256MB ATI Radio HD 4670 ~26klops 
 
 (inspect (view-named *window* "losbter-view"))
 
