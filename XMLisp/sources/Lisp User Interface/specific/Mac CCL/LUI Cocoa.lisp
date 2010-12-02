@@ -474,8 +474,14 @@
        (+ (pref (#/frame (#/screen Self)) <NSR>ect.size.height) Window-Title-Bar-Height)))
     Rect))
 
+;;RESPONDER CHAIN HACK
+(objc:defmethod (#/noResponderFor: :void)
+                ((self native-window) (eventSelector :<SEL>))
+  ;; For now, if we get to the bottom of the responder chain and no one has taken responsibility for the event just do nothing
+  ;;Do nothing
+  )
 
-#| 
+#|
 (objc:defmethod (#/displayIfNeeded :void) ((Self native-window))
   (call-next-method)
   (display (lui-window Self))
@@ -2293,6 +2299,7 @@
 (defun SHOW-STRING-POPUP (window list &key selected-item container item-addition-action-string-list) 
   (let ((Pop-up (make-instance 'popup-button-control  :container container :width 1 :height 1 :x   (- (rational (NS:NS-POINT-X (#/mouseLocation ns:ns-event)))(x window))  :y   (-  (- (NS:NS-RECT-HEIGHT (#/frame (#/mainScreen ns:ns-screen)))(NS:NS-POINT-Y (#/mouseLocation ns:ns-event)))(y window))  )))
     (dolist (String list)
+      (print String)
       (add-item Pop-Up String nil))
     (if item-addition-action-string-list
       (add-item Pop-Up (first item-addition-action-string-list) (second item-addition-action-string-list)))
@@ -2300,7 +2307,6 @@
     (when selected-item
       (#/selectItemWithTitle: (native-view pop-up) (native-string selected-item)))
     (#/setTransparent: (native-view Pop-Up) #$YES)
-    (print "PERFORM CLICK SHOW STRING POPUP")
     (#/performClick:  (native-view Pop-up) +null-ptr+)
     ;(#/setState: (native-view Pop-up) #$NSOnState)
     (#/removeFromSuperview (native-view Pop-up))
