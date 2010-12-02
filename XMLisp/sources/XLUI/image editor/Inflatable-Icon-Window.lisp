@@ -743,7 +743,6 @@
         (display Text-View))   
       ;; update model editor
       (let ((Model-Editor (view-named Window 'model-editor)))
-        (print Pressure)
         (incf (pressure (inflatable-icon Model-Editor)) (* 0.02 Pressure))
         (update-inflation Window)
         (setf (is-flat (inflatable-icon Model-Editor)) nil)))))
