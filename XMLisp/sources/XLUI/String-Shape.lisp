@@ -272,7 +272,7 @@
 (defmethod SET-STRING-SHAPE ((Self string-shape) &key Str Font)
   "Changes the string and/or font of this string-shape.
    in: Str {string}, Font {font}."
-  (when Str (setf (str Self) Str))
+  (when Str (setf (str Self) str))
   (when Font (setf (font Self) Font))
   (update-vertex-arrays Self))
 
@@ -281,9 +281,6 @@
 ;__________________________
 
 (defmethod DISPLAY-VERTEX-ARRAYS ((Self string-shape))
-  ;(print "TEXTURE")
-  ;(print (texture (font Self)))
-  ;(setf (texture (font Self)) 4)
   (glEnable gl_texture_2d)
   (cond
    ;; Color!
