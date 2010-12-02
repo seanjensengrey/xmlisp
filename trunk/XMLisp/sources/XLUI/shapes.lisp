@@ -566,7 +566,6 @@
 
 
 (defmethod DRAW ((Self tile))
-  ;(ccl::with-lock-grabbed (*tile-draw-lock*)
   (unless (is-visible Self) (return-from draw))
   (call-next-method)
   (cond
@@ -584,7 +583,6 @@
   (glTexCoord2f 1.0 1.0) (glVertex2f (width Self) (height Self))
   (glTexCoord2f 1.0 0.0) (glVertex2f (width Self) 0.0)
   (glEnd))
-;)
 
 
 (defmethod PRINT-SLOTS ((Self tile))
