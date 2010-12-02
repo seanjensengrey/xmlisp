@@ -81,6 +81,11 @@
               (setf (height self) (height (lui-view (#/superview (#/superview (native-view self)))))))))))))
 
 
+
+(defmethod SIZE-CHANGED ((Self badged-image-group-list-manager-view) )
+  (layout (native-view self)))
+
+
 ;;*********************************
 ;; LAYOUT VIEW                    *
 ;;*********************************
