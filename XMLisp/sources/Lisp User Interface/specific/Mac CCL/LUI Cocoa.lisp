@@ -812,6 +812,19 @@
                           :native-event Event))))
 
 
+(objc:defmethod (#/scrollWheel: :void) ((self native-window-view) Event)
+  (let ((mouse-loc (#/locationInWindow event)))
+    ;;(format t "~%dragged to ~A, ~A," (pref mouse-loc :<NSP>oint.x) (- (height (lui-window Self)) (pref mouse-loc :<NSP>oint.y)))
+    (view-event-handler (lui-window Self) 
+                        (make-instance 'mouse-event
+                          :x (truncate (pref mouse-loc :<NSP>oint.x))
+                          :y (truncate (- (height (lui-window Self)) (pref mouse-loc :<NSP>oint.y)))
+                          :dx (truncate (#/deltaX Event))
+                          :dy (truncate (#/deltaY Event))
+                          :event-type (native-to-lui-event-type (#/type event))
+                          :native-event Event))))
+
+
 (objc:defmethod (#/isFlipped :<BOOL>) ((self native-window-view))
   ;; Flip to coordinate system to 0, 0 = upper left corner
   #$YES)
@@ -1115,10 +1128,7 @@
 
 (defmethod ADD-STRING-LIST-ITEM ((Self string-list-view-control) string)
   "Adds an item to the string-list that will display the text contained in the variable string"
-  
-    (let ((text (make-instance 'string-list-text-view))) 
-      
-      
+  (let ((text (make-instance 'string-list-text-view))) 
     (ns:with-ns-rect (Frame2 1 (+ 1 (* (item-height self) (length (list-items self)))) (width self)  20 )
       (setf (container text) self)
       (setf (text text) string)
@@ -1129,7 +1139,7 @@
       (#/setEditable: (native-view text) #$NO)
       (#/setSelectable: (native-view text) #$NO)
       (#/addSubview:  (Native-view self) (native-view text)))
-      (case (list-items self)
+    (case (list-items self)
       (nil 
        (setf (list-items self) (list text))
        (setf (is-selected (first (list-items self))) t)
@@ -1424,6 +1434,11 @@
       (#/setEnabled: Native-Control #$YES)
       Native-Control)))
 
+;; Hack: NSscroller does not automatically deal with scrollWheel events
+(objc:defmethod (#/scrollWheel: :void) ((self native-scroller) Event)
+  (#/setDoubleValue: Self (- (#/doubleValue Self) (* 0.005d0 (#/deltaY Event))))
+  (#/activateAction (#/target Self)))
+
 
 (defmethod SET-SCROLLER-POSITION ((Self scroller-control) float)
   (#/setFloatValue:knobProportion: (native-view self) float .2))
@@ -1465,6 +1480,7 @@
     (progn
       (#/set (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color .2 .2 .2 .62))
       (#/fillRect: ns:ns-bezier-path rect))))
+
 
 (defmethod (setf text) :after (Text (Self image-button-control))
   (#/setTitle: (native-view Self) (native-string Text)))

@@ -158,6 +158,10 @@ Call with most important parameters. Make other paramters accessible through *Cu
 (defgeneric VIEW-MOUSE-EXITED-EVENT-HANDLER (event-listener-interface)
   (:documentation "Mouse moved outside of the view last receiving mouse moved events"))
 
+
+(defgeneric VIEW-MOUSE-SCROLL-WHEEL-EVENT-HANDLER (event-listener-interface X Y DX DY)
+  (:documentation "Scroll wheel events received by views that are contained in active or non active windows at the mouse position. Typically only <dx> <dy> is used"))
+
 ;; more mouse events here...
 
 ;**********************************
@@ -311,11 +315,13 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 
 (defmethod VIEW-MOUSE-ENTERED-EVENT-HANDLER ((Self view))
-  (format t "~%entered ~A" (type-of Self)))
+  ;; (format t "~%entered ~A" (type-of Self))
+  )
 
 
 (defmethod VIEW-MOUSE-EXITED-EVENT-HANDLER ((Self view))
-  (format t "~%exited ~A" (type-of Self)))
+  ;; (format t "~%exited ~A" (type-of Self))
+  )
 
 
 (defmethod VIEW-MOUSE-MOVED-EVENT-HANDLER ((Self view) x y dx dy)
@@ -333,6 +339,11 @@ Call with most important parameters. Make other paramters accessible through *Cu
              (equal (current-cursor self) (get-cursor)))
     (set-cursor "arrowCursor")
     (setf (current-cursor self) nil)))
+
+
+(defmethod VIEW-MOUSE-SCROLL-WHEEL-EVENT-HANDLER ((Self view) x y dx dy)
+  (declare (ignore x y))
+  (format t "~%scroll wheel ~A dx=\"~A\" dy=\"~A\"" (type-of Self) dx dy))
 
 
 (defmethod SIZE-CHANGED-EVENT-HANDLER ((Self view) Width Height)
@@ -612,6 +623,10 @@ after any of the window controls calls stop-modal close window and return value.
          ;; cleanup time: nobody should use refer to the mouse down view anymore
          ;; the down/drag/up cycle is officially over
          (setq *Mouse-Down-View* nil)))
+      ;; Scroll Wheel
+      (:scroll-wheel
+       (when View
+         (view-mouse-scroll-wheel-event-handler View x y dx dy)))
       (t
        (format t "not handling ~A event yet~%" (event-type Event))))))
 
@@ -678,11 +693,13 @@ after any of the window controls calls stop-modal close window and return value.
 
 
 (defmethod VIEW-MOUSE-ENTERED-EVENT-HANDLER ((Self window))
-  (format t "~%entered ~A" (type-of Self)))
+  ;; (format t "~%entered ~A" (type-of Self))
+  )
 
 
 (defmethod VIEW-MOUSE-EXITED-EVENT-HANDLER ((Self window))
-  (format t "~%exited ~A" (type-of Self)))
+  ;; (format t "~%exited ~A" (type-of Self))
+  )
 
 
 ;; notifications
