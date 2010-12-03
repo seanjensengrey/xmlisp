@@ -79,7 +79,7 @@
           </row>
           <row vflex="1" valign="stretch" align="stretch">
             <visual-agentalk-view name="conditions" flex="1" vflex="1"  />
-            <scroller small-scroller-size="true" action="scroll-conditions"/>
+            <scroller name="conditions scroller" small-scroller-size="true" action="scroll-conditions"/>
           </row>
          </column>
         <column vflex="1" flex="1" valign="stretch" align="stretch">
@@ -89,7 +89,7 @@
           </row>
           <row vflex="1" valign="stretch" align="stretch">
             <visual-agentalk-view name="behavior" content-changed-action="behavior-changed" flex="3" vflex="1"/>
-            <scroller small-scroller-size="true" action="scroll-behavior"/>
+            <scroller name="behavior scroller" small-scroller-size="true" action="scroll-behavior"/>
           </row>
         </column>
         <column vflex="1" width="250" valign="stretch" align="stretch">
@@ -98,7 +98,7 @@
           </row>
           <row vflex="1" valign="stretch" align="stretch">
             <visual-agentalk-view name="actions" flex="1" vflex="1"/>
-            <scroller small-scroller-size="true" action="scroll-actions"/>
+            <scroller name="actions scroller" small-scroller-size="true" action="scroll-actions"/>
           </row>
         </column>
       </row>
