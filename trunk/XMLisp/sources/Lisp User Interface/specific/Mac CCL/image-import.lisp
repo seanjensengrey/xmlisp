@@ -103,7 +103,6 @@
        Width Height Forced-Depth int; Has-Alpha boolean.
   Create an image buffer from <Filename>
   - File must be 32 bit ARGB compatible, e.g., .png with mask or 24 bit RGB."
-  (declare (ignore Forced-Depth))
   (when Verbose (format t "CREATE-IMAGE-FROM-FILE: ~A~%" Filename))
   (let* ((Image-Representation (#/retain (ns-image-rep-from-file (native-string (namestring (translate-logical-pathname Filename)))))))
     ;; should massage data: GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV for best performance
