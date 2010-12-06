@@ -966,6 +966,19 @@
   </agent-3d-view>
 </application-window>)
 
+
+(with-glcontext (view-named *window2* "losbter-view")
+  (format t " ~% ~,1F klops" 
+         (/ 1e10 (hemlock::time-to-run
+          (dotimes (i 10000)
+            (draw (first (agents (view-named *window2* "losbter-view")))))))
+               ))
+
+;;; OS X 10.6.2 3.06GHz Intel Core 2 Duo 256MB ATI Radio HD 4670 ~26klops 
+;;; OS X 10.6.5 2.66 Intel Core i7, NVIDIA GeForce GT 330M        54 klops
+
+
+
 (defparameter *window3*
 <application-window title="window3">
   <agent-3d-view name="losbter-view">
@@ -973,14 +986,6 @@
   </agent-3d-view>
 </application-window>)
 
-(with-glcontext (view-named *window2* "losbter-view")
-  (format t " ~% ~A klops" 
-         (/ 100000000.0 (hemlock::time-to-run
-          (dotimes (i 100)
-            (draw  (first (agents (view-named *window2* "losbter-view")))))))
-               ))
-
-;;; osx 10.6.2 3.06GHz Intel Core 2 Duo 256MB ATI Radio HD 4670 ~26klops 
 
 (inspect (view-named *window* "losbter-view"))
 
