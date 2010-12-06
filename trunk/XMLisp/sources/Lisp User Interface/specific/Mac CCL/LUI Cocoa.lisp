@@ -17,11 +17,26 @@
   (open-shared-library "/System/Library/Frameworks/Carbon.framework/Carbon"))
 
 ;;*********************************
+;; Missing Header Hacks           *
+;;*********************************
+
+;; remove these Gesture events once the OS X 10.6 headers have been integrated into CCL
+
+(defconstant NSEventTypeGesture 29)
+(defconstant NSEventTypeMagnify 30)
+(defconstant NSEventTypeSwipe 31)
+(defconstant NSEventTypeRotate 18)
+(defconstant NSEventTypeBeginGesture 19)
+(defconstant NSEventTypeEndGesture 20)
+
+
+;;*********************************
 ;; Native -> LUI name converters  *
 ;;*********************************
 
 (defmethod NATIVE-TO-LUI-EVENT-TYPE (NS-Type)
   (case NS-Type
+    ;; mouse 
     (#.#$NSLeftMouseDown :left-mouse-down)
     (#.#$NSLeftMouseUp :left-mouse-up)
     (#.#$NSRightMouseDown :right-mouse-down)
@@ -42,7 +57,15 @@
     (#.#$NSApplicationDefined :application-defined)
     (#.#$NSPeriodic :periodic)
     (#.#$NSCursorUpdate :cursor-update)
+    ;; scroll wheel
     (#.#$NSScrollWheel :scroll-wheel)
+    ;; Gesture 
+    (#.nseventtypebegingesture :begin-gesture)
+    (#.nseventtypemagnify :magnify-gesture)
+    (#.nseventtypeswipe :swipe-gesture)
+    (#.nseventtyperotate :rotate-gesture)
+    (#.nseventtypeendgesture :end-gesture)
+    ;; trouble!!
     (t :undefined-event)))
 
 ;;*********************************
@@ -270,9 +293,6 @@
   #$YES)
 
 
-
-
-
 ;**********************************
 ;* SCROLL-VIEW                    *
 ;**********************************
@@ -283,7 +303,7 @@
 	      :documentation "the native NSScrollView associated with the LUI view"))
 
 
-(defmethod make-native-object ((Self scroll-view))
+(defmethod MAKE-NATIVE-OBJECT ((Self scroll-view))
   (let ((Native-Control (make-instance 'native-scroll-view :lui-view Self)))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
       (#/initWithFrame: Native-Control Frame)
@@ -474,14 +494,8 @@
        (+ (pref (#/frame (#/screen Self)) <NSR>ect.size.height) Window-Title-Bar-Height)))
     Rect))
 
-;;RESPONDER CHAIN HACK
-(objc:defmethod (#/noResponderFor: :void)
-                ((self native-window) (eventSelector :<SEL>))
-  ;; For now, if we get to the bottom of the responder chain and no one has taken responsibility for the event just do nothing
-  ;;Do nothing
-  )
 
-#|
+#| 
 (objc:defmethod (#/displayIfNeeded :void) ((Self native-window))
   (call-next-method)
   (display (lui-window Self))
@@ -815,15 +829,64 @@
 (objc:defmethod (#/scrollWheel: :void) ((self native-window-view) Event)
   (let ((mouse-loc (#/locationInWindow event)))
     ;;(format t "~%dragged to ~A, ~A," (pref mouse-loc :<NSP>oint.x) (- (height (lui-window Self)) (pref mouse-loc :<NSP>oint.y)))
-    (view-event-handler (lui-window Self) 
-                        (make-instance 'mouse-event
-                          :x (truncate (pref mouse-loc :<NSP>oint.x))
-                          :y (truncate (- (height (lui-window Self)) (pref mouse-loc :<NSP>oint.y)))
-                          :dx (truncate (#/deltaX Event))
-                          :dy (truncate (#/deltaY Event))
-                          :event-type (native-to-lui-event-type (#/type event))
-                          :native-event Event))))
+    (view-event-handler 
+     (lui-window Self) 
+     (make-instance 'mouse-event
+       :x (truncate (pref mouse-loc :<NSP>oint.x))
+       :y (truncate (- (height (lui-window Self)) (pref mouse-loc :<NSP>oint.y)))
+       ;; Apple has still (OS X 10.6.5) not provided public interfaces for these accessors: http://lists.apple.com/archives/cocoa-dev/2007/Feb/msg00050.html
+       :dx (objc:objc-message-send Event "deviceDeltaX" #>CGFloat)
+       :dy (objc:objc-message-send Event "deviceDeltaY" #>CGFloat)
+       :event-type (native-to-lui-event-type (#/type event))
+       :native-event Event))))
 
+;; Gesture Events (OS X 10.6 and later)
+
+(objc:defmethod (#/beginGestureWithEvent: :void) ((Self native-window-view) Event)
+  ;; should be save at this event method should not even get called in non OS x and pre 10.6 environments
+  (when (mac-os-x-10.6-and-later)  
+    (let ((mouse-loc (#/locationInWindow event)))
+      (view-event-handler 
+       (lui-window Self)
+       (make-instance 'gesture-event 
+         :event-type (native-to-lui-event-type (#/type event))
+         :x (truncate (pref mouse-loc :<NSP>oint.x))
+         :y (truncate (- (height (lui-window Self)) (pref mouse-loc :<NSP>oint.y)))
+         :native-event Event)))))
+
+
+(objc:defmethod (#/magnifyWithEvent: :void) ((self native-window-view) Event)
+  ;; should be save at this event method should not even get called in non OS x and pre 10.6 environments
+  (when (mac-os-x-10.6-and-later) 
+    (let ((mouse-loc (#/locationInWindow event)))
+      (view-event-handler 
+       (lui-window Self)
+       (make-instance 'gesture-event
+         :magnification (objc:objc-message-send Event "magnification" #>CGFloat)
+         :event-type (native-to-lui-event-type (#/type event))
+         :x (truncate (pref mouse-loc :<NSP>oint.x))
+         :y (truncate (- (height (lui-window Self)) (pref mouse-loc :<NSP>oint.y)))
+         :native-event Event)))))
+
+
+(objc:defmethod (#/rotateWithEvent: :void) ((self native-window-view) Event)
+  ;; should be save at this event method should not even get called in non OS x and pre 10.6 environments
+  (when (mac-os-x-10.6-and-later) 
+    (let ((mouse-loc (#/locationInWindow event)))
+      (view-event-handler 
+       (lui-window Self)
+       (make-instance 'gesture-event
+         :rotation (objc:objc-message-send Event "rotation" #>float)
+         :event-type (native-to-lui-event-type (#/type event))
+         :x (truncate (pref mouse-loc :<NSP>oint.x))
+         :y (truncate (- (height (lui-window Self)) (pref mouse-loc :<NSP>oint.y)))
+         :native-event Event)))))
+
+
+
+;****************************************************
+; Orientation of coordinates                        *
+;****************************************************
 
 (objc:defmethod (#/isFlipped :<BOOL>) ((self native-window-view))
   ;; Flip to coordinate system to 0, 0 = upper left corner
@@ -2043,6 +2106,7 @@
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
 
+
 (defmethod make-native-object ((Self progress-indicator-control))
   (let ((Native-Control (make-instance 'native-progress-indicator-control :lui-view Self)))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
@@ -2050,8 +2114,10 @@
       (#/setIndeterminate: Native-Control #$YES))
   Native-Control))
 
+
 (defmethod initialize-event-handling ((Self progress-indicator-control))
   (declare (ignore self)))
+
 
 (defmethod START-ANIMATION ((self progress-indicator-control))
   (#/startAnimation: (native-view self) (native-view self)))
@@ -2315,7 +2381,6 @@
 (defun SHOW-STRING-POPUP (window list &key selected-item container item-addition-action-string-list) 
   (let ((Pop-up (make-instance 'popup-button-control  :container container :width 1 :height 1 :x   (- (rational (NS:NS-POINT-X (#/mouseLocation ns:ns-event)))(x window))  :y   (-  (- (NS:NS-RECT-HEIGHT (#/frame (#/mainScreen ns:ns-screen)))(NS:NS-POINT-Y (#/mouseLocation ns:ns-event)))(y window))  )))
     (dolist (String list)
-      (print String)
       (add-item Pop-Up String nil))
     (if item-addition-action-string-list
       (add-item Pop-Up (first item-addition-action-string-list) (second item-addition-action-string-list)))
@@ -2323,6 +2388,7 @@
     (when selected-item
       (#/selectItemWithTitle: (native-view pop-up) (native-string selected-item)))
     (#/setTransparent: (native-view Pop-Up) #$YES)
+    (print "PERFORM CLICK SHOW STRING POPUP")
     (#/performClick:  (native-view Pop-up) +null-ptr+)
     ;(#/setState: (native-view Pop-up) #$NSOnState)
     (#/removeFromSuperview (native-view Pop-up))
