@@ -343,6 +343,51 @@
   ;(mouse-exited (lui-view self))
   )
 
+;______________________________
+; Shader Support               |
+;______________________________
+
+(defmethod SET-SHADER-SOURCE (Shader Name)
+  (let ((Strings nil))
+    (with-open-file (Source (native-path "lui:resources;shaders;" Name) :direction :input)
+      (loop
+        (let ((String (read-line Source nil nil)))
+          (unless String (return))
+          (setq Strings (append Strings (list String))))))
+    (let ((Size 0))
+      ;; compute size
+      (dolist (String Strings)
+        (incf Size (1+ (length String)))) ;; add space for #\null char
+      (with-vector-of-size (Null-Terminated-Strings Size)
+        (let ((I 0))
+          (dolist (String Strings)
+            ;; copy string
+            (dotimes (J (length String))
+              (set-byte Null-Terminated-Strings (char-code (char String j)) i)
+              (incf i))
+            ;; terminate
+            (set-byte Null-Terminated-Strings (char-code #\newline) i)
+            (incf i))
+          ;; replace last linefeed with null
+          (set-byte Null-Terminated-Strings (char-code #\null) (1- Size))
+          ;; set shader source
+          (ccl::rlet ((&Null-Terminated-Strings :address))
+            ;; need a pointer to a pointer of chars for source string
+            (setf (ccl::%get-ptr &Null-Terminated-Strings) Null-Terminated-Strings)
+            (glShaderSource Shader 1 &Null-Terminated-Strings (ccl::%null-ptr)))
+          Strings)))))
+
+
+(defmethod GET-SHADER-INFO-LOG (Object)
+  (let* ((Max-Size 2000))
+    (with-vector-of-size (&chars Max-Size)
+      (with-output-to-string (string)
+        (ccl::rlet ((&size :long))
+          (glGetShaderInfoLog Object Max-Size &size &Chars)
+          (dotimes (I (ccl::%get-long &size))
+            (princ (code-char (ccl::%get-byte &Chars i)) String)))))))
+
+
 #| Examples:
 
 (get-current-opengl-view)  ;; returns nil if not called within the confines of a legit context
