@@ -14,28 +14,11 @@
 
 (defvar *Mouse-Down-View* nil "view last received a mouse down but not yet a mouse up. Upon mouse up view will be reset to nil")
 
+
 (defvar *Mouse-Last-Moved-View* nil "view that received a moved event last. If mouse gets moved outside the view send a mouse exited event")
 
 
 (defvar *Current-Event* nil "event")
-
-(defvar *LUI-Event-Types* 
-  '(:left-mouse-down 
-    :left-mouse-up
-    :rignt-mouse-down
-    :right-mouse-up
-    :other-mouse-down
-    :other-mouse-up
-    :mouse-moved
-    :left-mouse-dragged
-    :right-mouse-dragged
-    :other-mouse-dragged
-    :mouse-entered
-    :mouse-exited
-    ;; key events
-    :key-down
-    :key-up)
-  "Main LUI event types")
 
 
 (defclass EVENT () 
@@ -47,12 +30,18 @@
 (defclass MOUSE-EVENT (event)
   ((x :accessor x :initarg :x :type fixnum :documentation "pixel coordinate, increasing left to right")
    (y :accessor y :initarg :y :type fixnum :documentation "pixel coordinate, increasing top to bottom")
-   (dx :accessor dx :initarg :dx :type fixnum :documentation "delta x, >0 for move right")
-   (dy :accessor dy :initarg :dy :type fixnum :documentation "delta y, >0 for move down"))
+   (dx :accessor dx :initarg :dx :documentation "delta x, >0 for move right")
+   (dy :accessor dy :initarg :dy :documentation "delta y, >0 for move down"))
   (:default-initargs 
       :dx 0
     :dy 0)
   (:documentation "LUI mouse crossplatform event"))
+
+
+(defclass GESTURE-EVENT (mouse-event)
+  ((magnification :accessor magnification :initarg :magnification :type float :documentation "degree of magnification")
+   (rotation :accessor rotation :initarg :rotation :type float :documentation "degree of rotation"))
+  (:documentation "Gesture multi touch event such as magnify, rotate, and swipe"))
 
 
 (defclass KEY-EVENT (event)
@@ -162,7 +151,26 @@ Call with most important parameters. Make other paramters accessible through *Cu
 (defgeneric VIEW-MOUSE-SCROLL-WHEEL-EVENT-HANDLER (event-listener-interface X Y DX DY)
   (:documentation "Scroll wheel events received by views that are contained in active or non active windows at the mouse position. Typically only <dx> <dy> is used"))
 
-;; more mouse events here...
+;; Gestures
+
+(defgeneric GESTURE-BEGIN-EVENT-HANDLER (event-listener-interface x y)
+  (:documentation "A swipe, rotate, or magnify gesture has begun"))
+
+
+(defgeneric GESTURE-MAGNIFY-EVENT-HANDLER (event-listener-interface x y maginification)
+  (:documentation "A swipe, rotate, or magnify gesture has begun"))
+
+
+(defgeneric GESTURE-SWIPE-EVENT-HANDLER (event-listener-interface x y)
+  (:documentation "A swipe, rotate, or magnify gesture has begun"))
+
+
+(defgeneric GESTURE-ROTATE-EVENT-HANDLER (event-listener-interface x y rotation)
+  (:documentation "rotate by <rotation> gesture"))
+
+
+(defgeneric GESTURE-END-EVENT-HANDLER (event-listener-interface x y)
+  (:documentation "A swipe, rotate, or magnify gesture has ended"))
 
 ;**********************************
 ;* VIEW                           *
@@ -332,18 +340,17 @@ Call with most important parameters. Make other paramters accessible through *Cu
     (Setf (current-cursor self) (view-cursor self x y))))
 
 
-(defmethod VIEW-MOUSE-MOVED-OUTSIDE-EVENT-HANDLER ((Self view) x y dx dy)
-  (declare (ignore X Y DX DY)
-           (ftype function get-cursor set-cursor))
-  (when (and (current-cursor self)
-             (equal (current-cursor self) (get-cursor)))
-    (set-cursor "arrowCursor")
-    (setf (current-cursor self) nil)))
-
-
 (defmethod VIEW-MOUSE-SCROLL-WHEEL-EVENT-HANDLER ((Self view) x y dx dy)
   (declare (ignore x y))
   (format t "~%scroll wheel ~A dx=\"~A\" dy=\"~A\"" (type-of Self) dx dy))
+
+
+(defmethod GESTURE-MAGNIFY-EVENT-HANDLER ((Self view) x y Maginification)
+  (format t "~%magnify gesture x=\"~A\" y=\"~A\" maginifcation=\"~A\"" x y Maginification))
+
+
+(defmethod GESTURE-ROTATE-EVENT-HANDLER ((Self view) x y Rotation)
+  (format t "~%rotate gesture x=\"~A\" y=\"~A\" rotation=\"~A\"" x y Rotation))
 
 
 (defmethod SIZE-CHANGED-EVENT-HANDLER ((Self view) Width Height)
@@ -627,8 +634,13 @@ after any of the window controls calls stop-modal close window and return value.
       (:scroll-wheel
        (when View
          (view-mouse-scroll-wheel-event-handler View x y dx dy)))
+      ;; Gestures
+      (:magnify-gesture
+       (gesture-magnify-event-handler view x y (magnification Event)))
+      (:rotate-gesture
+       (gesture-rotate-event-handler view x y (rotation Event)))
       (t
-       (format t "not handling ~A event yet~%" (event-type Event))))))
+       (format t "~%not handling ~A event yet, ~A" (event-type Event) (native-event Event))))))
 
 
 (defmethod KEY-EVENT-HANDLER ((Self window) Event)
@@ -645,14 +657,20 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defmethod VIEW-EVENT-HANDLER ((Self Window) (Event mouse-event))
   (let ((*Current-Event* Event))
-    (with-simple-restart (abandon-view-event-handler "Stop event handling of event ~S of window ~S" Event Self)
+    (with-simple-restart (abandon-view-event-handler "Stop event handling of mouse event ~S of window ~S" Event Self)
       (mouse-event-handler Self (x Event) (y Event) (dx Event) (dy Event) Event))))
+
+
+(defmethod VIEW-EVENT-HANDLER ((Self Window) (Event gesture-event))
+  (let ((*Current-Event* Event))
+    (with-simple-restart (abandon-view-event-handler "Stop event handling of gesture event ~S of window ~S" Event Self)
+      (mouse-event-handler Self (x Event) (y Event) 0 0 Event))))
 
 
 (defmethod VIEW-EVENT-HANDLER ((Self Window) (Event key-event))
   ;(setf *current-event* event)
   (let ((*Current-Event* Event))
-    (with-simple-restart (abandon-view-event-handler "Stop event handling of event ~S of window ~S" Event Self)
+    (with-simple-restart (abandon-view-event-handler "Stop event handling of key event ~S of window ~S" Event Self)
       (key-event-handler Self Event))))
 
 
@@ -684,6 +702,23 @@ after any of the window controls calls stop-modal close window and return value.
   ;; nothing
   )
 
+
+(defmethod VIEW-MOUSE-SCROLL-WHEEL-EVENT-HANDLER ((Self window) x y dx dy)
+  (declare (ignore x y dx dy))
+  ;; nada
+  )
+
+
+(defmethod GESTURE-MAGNIFY-EVENT-HANDLER ((Self window) x y Maginification)
+  (declare (ignore x y Maginification))
+  ;; nada
+  )
+
+
+(defmethod GESTURE-ROTATE-EVENT-HANDLER ((Self window) x y Rotation)
+  (declare (ignore x y rotation))
+  ;; nada
+  )
 
 
 (defmethod SIZE-CHANGED-EVENT-HANDLER ((Self Window) Width Height)
