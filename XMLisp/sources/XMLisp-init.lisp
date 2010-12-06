@@ -8,20 +8,34 @@
 
 (in-package :cl-user)
 
+;;___________________________________________
+;;  Hacks                                    |
+;;___________________________________________
+
 ;; temporary fix for CCL's issue with turning warnings into errors
 ;; should remove with new release
+
 (setq ccl::*objc-error-return-condition* 'error)
+
 
 (objc:defmethod (#/invokeLispFunction: :void) ((self ns:ns-application) id)
   (gui::invoke-lisp-function self id))
 
-
-;***************** Settings
+;;___________________________________________
+;;  Pahthnames                               |
+;;___________________________________________
 
 ;; edit to point to root folder containing /sources  /resources  etc.
+
 #-cocotron
 (setf (logical-pathname-translations "lui")
       '(("**;*.*" "home:working copies;Xmlisp svn;trunk;XMLisp;**;")))
+
+
+#+cocotron
+(setf (logical-pathname-translations "lui")
+      '(("**;*.*" "mac-home:working copies;Xmlisp svn;trunk;XMLisp;**;")))
+
 
 #+cocotron
 (setf (logical-pathname-translations "mac-home")
@@ -32,24 +46,24 @@
                    :version :wild)
    #p"z:/**/*.*")))
 
-
-#+cocotron
-(setf (logical-pathname-translations "lui")
-      '(("**;*.*" "mac-home:working copies;Xmlisp svn;trunk;XMLisp;**;")))
-
+;;___________________________________________
+;;  Editor Settings                          |
+;;___________________________________________
 
 #-cocotron
 (setq gui::*paren-highlight-background-color*
       (#/retain (#/colorWithCalibratedRed:green:blue:alpha: ns:ns-color 0.9 0.8 0.8 1.0)))
 
+
 #-cocotron
 (setq GUI::*Editor-keep-backup-files* nil)
 
+
 (setq ccl::*verbose-eval-selection* t)
 
-;; Load
-
-;; IDE
+;;___________________________________________
+;;  Load IDE extensions                       |
+;;___________________________________________
   
 #-cocotron (load "lui:sources;IDE;specific;Mac CCL;anticipat-symbol-complete")
 #-cocotron (load "lui:sources;IDE;specific;Mac CCL;ns timer")
@@ -57,49 +71,68 @@
 #-cocotron (load "lui:sources;IDE;specific;Mac CCL;hemlock extensions")
 
 
-;; Open
-
-;;(ed "lui:sources;XLUI;examples;2D;test case examples.lisp")
-;; (ed "lui:sources;XLUI;examples;AgentCubes Design.lisp")
-
-;;(ed "lui:sources;Lisp User Interface;LUI.lisp")
-;;(ed "lui:sources;Lisp User Interface;specific;Mac CCL;LUI Cocoa.lisp")
-
-
-;;****** INFIX
+;;___________________________________________
+;;  Infix                                    |
+;;___________________________________________
 
 (defpackage :INFIX
   (:use :common-lisp))
 
 
-;;****** OpenGL
+;;___________________________________________
+;;  OpenGL                                   |
+;;___________________________________________
 
 (defpackage :OPENGL
   (:use :common-lisp))
 
+
 (load "lui:sources;OpenGL;specific;Mac CCL;OpenGL-interface")
 
+;; frameworks
 
-;****** XMLisp
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (ccl:use-interface-dir :GL)
+  #-windows-target (open-shared-library "/System/Library/Frameworks/OpenGL.framework/OpenGL")
+  #+windows-target (open-shared-library "opengl32.dll"))
+
+;;___________________________________________
+;;  XMLisp                                   |
+;;___________________________________________
 
 (defpackage :XML
   (:use :common-lisp)
   (:export "XML-SERIALIZER" "PARSE-FILE-NAME"))
 
+
 (load "lui:sources;XMLisp;XMLisp")
+
 
 ;; temporarily set xmlisp package to only be :xml to avoid confusion with xml-like structures in Cocoa
 (setf xml::*XMLisp-Packages* (list (find-package :xml)))
 
-;;****** LUI
+;;___________________________________________
+;;  LUI (Lisp User Interface)                |
+;;___________________________________________
 
 (defpackage :LUI
   (:use :common-lisp :ccl :opengl)
   (:export 
    "SIZEOF" "LONG"
-   "MOUSE-EVENT" "TRACK-MOUSE" "VIEW-MOUSE-MOVED-EVENT-HANDLER" "VIEW-MOUSE-MOVED-OUTSIDE-EVENT-HANDLER" "VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER" "VIEW-RIGHT-MOUSE-DOWN-EVENT-HANDLER" "VIEW-MOUSE-EXITED-EVENT-HANDLER" "KEY-EVENT-HANDLER" "*CURRENT-EVENT*" "VIEW-CURSOR"
+   "MOUSE-EVENT" "TRACK-MOUSE" "GESTURE-EVENT"
+   ;; Mouse events
+   "VIEW-MOUSE-MOVED-EVENT-HANDLER" 
+   "VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER" "VIEW-RIGHT-MOUSE-DOWN-EVENT-HANDLER" 
+   "VIEW-LEFT-MOUSE-DRAGGED-EVENT-HANDLER"
+   "VIEW-LEFT-MOUSE-UP-EVENT-HANDLER" 
+   "VIEW-MOUSE-ENTERED-EVENT-HANDLER" "VIEW-MOUSE-EXITED-EVENT-HANDLER" 
+   "VIEW-MOUSE-SCROLL-WHEEL-EVENT-HANDLER"
+   ;; key events
+   "KEY-EVENT-HANDLER" 
+   ;; Gesture Events
+   "GESTURE-MAGNIFY-EVENT-HANDLER" "GESTURE-ROTATE-EVENT-HANDLER"
+   "*CURRENT-EVENT*" "VIEW-CURSOR"
    "KEY-EVENT-HANDLER" "KEY-EVENT" "KEY-CODE"
-   "VIEW-LEFT-MOUSE-UP-EVENT-HANDLER" "VIEW-LEFT-MOUSE-DRAGGED-EVENT-HANDLER"
    "COMMAND-KEY-P" "SHIFT-KEY-P" "ALT-KEY-P" "CONTROL-KEY-P" "DOUBLE-CLICK-P"
    "WINDOW" "VIEW" "X" "Y" "WIDTH" "HEIGHT" "SHOW" "DO-SHOW-IMMEDIATELY" "SHOW-AND-RUN-MODAL" "STOP-MODAL" "CANCEL-MODAL" "HIDE"  "HAS-BECOME-MAIN-WINDOW" "WINDOW-WILL-CLOSE" "WINDOW-SHOULD-CLOSE" "MAKE-KEY-WINDOW" "ADD-TRACKING-RECT" "REMOVE-TRACKING-RECT""VIEW-DID-MOVE-TO-WINDOW"
    "SWITCH-TO-FULL-SCREEN-MODE" "SWITCH-TO-WINDOW-MODE" "FULL-SCREEN" "WINDOW-CLOSE"
@@ -151,7 +184,9 @@
    "DIRECTION-POP-UP-IMAGE-MENU" "DISPLAY-POP-UP"
    "COLOR-WELL-CONTROL" "COLOR" "GET-RED" "GET-GREEN" "GET-BLUE" "GET-ALPHA" "SHOW-ALPHA"
    "WEB-BROWSER-CONTROL" "URL"
-   "OPENGL-VIEW" "FRAME-RATE" "ANIMATE" "DELTA-TIME" "TEXTURES" "START-ANIMATION" "STOP-ANIMATION" "IS-ANIMATED" "FULL-SCENE-ANTI-ALIASING" "ANIMATE-OPENGL-VIEW-ONCE" "MOUSE-ENTERED" "MOUSE-EXITED"
+   "OPENGL-VIEW" "FRAME-RATE" "ANIMATE" "DELTA-TIME" "TEXTURES" "START-ANIMATION" "STOP-ANIMATION" "IS-ANIMATED" "FULL-SCENE-ANTI-ALIASING" "ANIMATE-OPENGL-VIEW-ONCE" 
+   ;; Shader Support
+   "SET-SHADER-SOURCE" "GET-SHADER-INFO-LOG"
    "INITIALIZE-CAMERA"
    "OBJECT-COORDINATE-VIEW-WIDTH" "OBJECT-COORDINATE-VIEW-HEIGHT"
     "USE-TEXTURE"
@@ -184,7 +219,6 @@
                 "FILE"))
 
 
-
 (defun LUI::NATIVE-PATH (Directory-Name File-Name) "
   in: Directory-Name logical-pathname-string, e.g., ''lui:resources;textures;''
       File-Name string.
@@ -193,17 +227,56 @@
   (format nil "~A~A" (truename Directory-Name) File-Name))
 
 
+;;___________________________________________
+;;  OS Version Management                     |
+;;___________________________________________
+
+(defun OS-VERSION-VALUES ()
+ "Returns values of major and minor System version"
+ (let* ((string (software-version))
+        (1st-. (position #\. string)))
+   (values (- (read-from-string string nil nil :end 1st-.) 4)
+           (read-from-string string nil nil :start (1+ 1st-.)
+                             :end (position #\. string :start (1+ 1st-.))))))
 
 
-;; frameworks
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (ccl:use-interface-dir :GL)
-  #-windows-target (open-shared-library "/System/Library/Frameworks/OpenGL.framework/OpenGL")
-  #+windows-target (open-shared-library "opengl32.dll"))
+(defvar LUI::*OS-Name* #-:cocotron :osx #+:cocotron :windows "Keyword indicating operating system: :osx or :windows")
 
 
-;; files
+(defvar lui::*OS-VERSION-MAJOR* 10 "major OS version number")
+
+
+(defvar lui::*OS-VERSION-MINOR* 0 "minor OS version number")
+
+
+(defvar lui::*OS-VERSION-MAINTENANCE* 0 "maintenance OS version number")
+
+
+(defun lui::Mac-OS-X-10.5-and-later ()
+  (and (eq lui::*Os-name* :osx)
+       (>= lui::*os-version-major* 10)
+       (>= lui::*os-version-minor* 5)))
+
+
+(defun lui::Mac-OS-X-10.6-and-later ()
+  (and (eq lui::*Os-name* :osx)
+       (>= lui::*os-version-major* 10)
+       (>= lui::*os-version-minor* 6)))
+
+
+#-:cocotron
+(multiple-value-bind (Minor Maintenance)
+                     (os-version-values)
+  (setq lui::*os-version-minor* Minor)
+  (setq lui::*os-version-maintenance* Maintenance))
+
+
+(export '(lui::Mac-OS-X-10.5-and-later lui::Mac-OS-X-10.6-and-later LUI::*OS-Name* lui::*OS-VERSION-MAJOR* lui::*OS-VERSION-MINOR* lui::*OS-VERSION-MAINTENANCE*) :lui)
+
+
+;;___________________________________________
+;;  Load LUI                                 |
+;;___________________________________________
 
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;memory")
 (load "lui:sources;Lisp User Interface;error-handling")
@@ -231,16 +304,17 @@
 (setf xml::*XMLisp-Packages* (append xml::*XMLisp-Packages* (list (find-package :xlui))))
 
 
-
-;****** XLUI
+;;___________________________________________
+;;  XLUI                                     |
+;;___________________________________________
 
 (defpackage :XLUI
   (:use :common-lisp :XML :LUI :opengl)
   ;; import MOP
   (:import-from "CCL"
                 "SLOT-DEFINITION-NAME" "SLOT-DEFINITION-TYPE")
-  (:import-from "XML"
-                "FILE")
+  (:import-from "XML" "FILE")
+  (:import-from "CCL" "WITH-CSTR")
   (:export "INFLATABLE-ICON"
            "SAVE-THE-WORLD"
            "DEPTH"
@@ -281,10 +355,11 @@
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;chooser-file-dialogs")
 
 (load "lui:sources;XLUI;progress-meter")
+
 ;;Image Tools
 (load "lui:sources;XLUI;image-tools")
-
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;get-color-from-user")
+
 ;; inflatable icons
 (load "lui:sources;XLUI;image editor;selection-mask")
 (load "lui:sources;XLUI;image editor;image-editor")
@@ -293,7 +368,9 @@
 
 
 
-;;*************** Build functions
+;;___________________________________________
+;;  Application Building                     |
+;;___________________________________________
 
 (defun ccl::CCL-CONTENTS-DIRECTORY ()
   (let* ((heap-image-path (ccl::%realpath (ccl::heap-image-name))))
@@ -314,11 +391,11 @@
   )
 
 
-
-(defclass xmlisp-application (gui::cocoa-application)
+(defclass XMLISP-APPLICATION (gui::cocoa-application)
   ())
 
-(defmethod ccl::application-init-file ((app xmlisp-application))
+
+(defmethod CCL::APPLICATION-INIT-FILE ((app xmlisp-application))
   '("home:xmlisp-init" "home:\\.xmlisp-init"))
 
 
@@ -355,12 +432,13 @@
   (ccl::recursive-copy-directory
    (truename "lui:resources;templates;")
    (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/templates/" (user-homedir-pathname)))
-  #-cocotron (format t "~%- patch info plist resources")
-  #-cocotron (copy-file 
+  #-cocotron 
+  (format t "~%- patch info plist resources")
+  #-cocotron 
+  (copy-file 
    (truename "lui:resources;English.lproj;InfoPlist.strings")
    (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/English.lproj/InfoPlist.strings" (user-homedir-pathname))
-   :if-exists :supersede)
-  )
+   :if-exists :supersede))
 
 
 (defun BUILD-XMLISP ()
@@ -392,8 +470,9 @@
    #+cocotron :info-plist (ccl::make-info-dict)
    :nibfiles '("lui:resources;English.lproj;MainMenu.nib")))
 
-
-;;*************** Also Run AgentCubes
+;;___________________________________________
+;;      Also Load AgentCubes                 |
+;;___________________________________________
 
 ;; If we find AgentCubes lets just load it unless user indicates no by holding down shift key
 (unless (lui::shift-key-p)
