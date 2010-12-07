@@ -542,6 +542,16 @@ after any of the window controls calls stop-modal close window and return value.
   (setf (y Self) Y))
 
 
+(defmethod WINDOW-X ((Self Window))
+  ;; a window has no window offset
+  0)
+
+
+(defmethod WINDOW-Y ((Self Window))
+  ;; a window has no window offset
+  0)
+
+
 (defmethod FIND-VIEW-CONTAINING-POINT ((Self window) x y)
   (labels ((find-view (View Superview x y)
              (declare (ignore superview))
