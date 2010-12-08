@@ -595,6 +595,17 @@
   (glEnd))
 
 
+(defmethod VIEW-CURSOR ((Self inflated-icon-editor) x y)
+  (declare (ignore x y))
+  (case (selected-camera-tool (window Self))
+    (zoom "zoomCursor")
+    (pan "panCursor")
+    (rotate "rotateCursor")))
+
+;*************************************************
+;  Event Handlers                                *
+;*************************************************
+
 (defmethod VIEW-LEFT-MOUSE-DRAGGED-EVENT-HANDLER ((Self inflated-icon-editor) X Y DX DY)
   (declare (ignore X Y))
   (case (selected-camera-tool (window Self))
@@ -610,16 +621,31 @@
      (track-mouse-3d (camera Self) Self dx dy)))
   (unless (is-animated Self) (display Self)))
 
+
+(defmethod VIEW-MOUSE-SCROLL-WHEEL-EVENT-HANDLER ((Self inflated-icon-editor) x y dx dy)
+  (declare (ignore x y))
+  (with-animation-locked
+      (track-mouse-pan (camera Self) dx dy 0.0005)
+    (display Self)))
+
+
+(defmethod GESTURE-MAGNIFY-EVENT-HANDLER ((Self inflated-icon-editor) x y Magnification)
+  (declare (ignore x y))
+  (with-animation-locked
+      (track-mouse-zoom (camera Self) 0 Magnification -2.0)
+    (display Self)))
+
+
+(defmethod GESTURE-ROTATE-EVENT-HANDLER ((Self inflated-icon-editor) x y Rotation)
+  (declare (ignore x y))
+  (with-animation-locked
+      (track-mouse-spin (camera Self) Rotation 0.0 +0.2)
+    (display Self)))
+
+
 (defmethod VIEW-MOUSE-EXITED-EVENT-HANDLER ((Self inflated-icon-editor))
   (set-cursor "arrowCursor"))
 
-
-(defmethod VIEW-CURSOR ((Self inflated-icon-editor) x y)
-  (declare (ignore x y))
-  (case (selected-camera-tool (window Self))
-    (zoom "zoomCursor")
-    (pan "panCursor")
-    (rotate "rotateCursor")))
 
 ;*************************************************
 ;  Specialized Controls                          *
