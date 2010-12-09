@@ -573,31 +573,32 @@
   (glCallList (display-list Self)))
 
 
-;; HACK!! move this into LUI Cocoa
 (defmethod DRAW-AS-FLAT-TEXTURE ((Self inflatable-icon)) 
+  ;; HACK!! move ccl:: parts into LUI Cocoa
   ;; JIT make texture and mipmaps
   (unless (texture-id Self) 
     ;; use image as texture
     (unless (image Self) (error "image of inflatable icon is undefined"))
     ;; HACK: sizeof always return zero so we need to find some other sort of error checking.
     ;; (unless (= (sizeof (image Self)) (* (rows Self) (columns Self) 4)) (error "image size does not match row/column size"))
+    ;; generate texture
     (ccl::rlet ((&texName :long))
       (glGenTextures 1 &texName)
       (setf (texture-id Self) (ccl::%get-long &texName)))
     (glBindTexture GL_TEXTURE_2D (texture-id Self))
+    (glTexSubImage2D GL_TEXTURE_2D 0 0 0 (columns Self) (rows Self) GL_RGBA GL_UNSIGNED_BYTE (image Self))
     ;; clam to edge to avoid gaps between adjacent textures
     (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_WRAP_S GL_CLAMP_TO_EDGE)
     (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_WRAP_T GL_CLAMP_TO_EDGE)
     ;; linear pixel magnification
     (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_MAG_FILTER GL_NEAREST)
     (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_MIN_FILTER GL_LINEAR_MIPMAP_NEAREST)
-    (glTexImage2D GL_TEXTURE_2D 0 GL_RGBA8 (columns Self) (rows Self) 0 GL_RGBA GL_UNSIGNED_BYTE (image Self))
+    ;;; (glTexImage2D GL_TEXTURE_2D 0 GL_RGBA8 (columns Self) (rows Self) 0 GL_RGBA GL_UNSIGNED_BYTE (image Self))
     ;#-cocotron (unless (zerop (gluBuild2DMipmaps GL_TEXTURE_2D 4 (columns Self) (rows Self) GL_RGBA GL_UNSIGNED_BYTE (image Self)))
     (unless (zerop (gluBuild2DMipmaps GL_TEXTURE_2D GL_RGBA8 (columns Self) (rows Self) GL_RGBA GL_UNSIGNED_BYTE (image Self)))
       (error "could not create mipmaps")))
   ;; render as textured quad
   (glEnable GL_TEXTURE_2D)
-  
   (glTexEnvi GL_TEXTURE_ENV GL_TEXTURE_ENV_MODE GL_MODULATE)
   (glBindTexture GL_TEXTURE_2D (texture-id Self))
   (glBegin GL_QUADS)
@@ -612,11 +613,9 @@
 
 (defmethod DRAW-UNCOMPILED ((Self inflatable-icon)) 
   (unless (image Self) (return-from draw-uncompiled))
-  
   (when (is-flat Self)  ;; optimization
     (draw-as-flat-texture Self)
     (return-from draw-uncompiled))
-  
   (let* ((X 0s0)
          (Dx (/ (dx Self) (columns Self)))
          (Y 0s0)
