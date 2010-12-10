@@ -36,8 +36,7 @@
    (textures :accessor textures :initform (make-hash-table :test #'equal) :allocation  :class  :documentation "table of loaded texture ids")
    (animation-time :accessor animation-time :initform 0 :documentation "Time when animation was run last")
    (animated-views :allocation :class :accessor animated-views :initform nil :documentation "class list of animated views")
-   (render-mode :accessor render-mode :initform :render :type keyword :documentation "value: :render :select or :feedback")
-   (need-to-wgl-share :accessor need-to-wgl-share :initform #-cocotron nil #+cocotron t))
+   (render-mode :accessor render-mode :initform :render :type keyword :documentation "value: :render :select or :feedback"))
   (:documentation "OpenGL View"))
 
 
@@ -50,7 +49,12 @@
   This view is usually never visible and not attached to any window.
   An OpenGL-View will be automtically be created if needed."
   (or *Shared-OpenGL-View*
-      (setf *Shared-OpenGL-View* (make-instance 'opengl-view :use-global-glcontext nil))))
+      (prog1
+          (setf *Shared-OpenGL-View* (make-instance 'opengl-view :use-global-glcontext nil))
+        #+cocotron
+        (let ((window (make-instance 'window :do-show-immediately nil)))
+          (add-subview window *shared-opengl-view*)
+          ))))
 
 
 ;**************************
@@ -115,6 +119,9 @@
 
 (defmethod DRAW ((Self opengl-view))
   ;; the obligatory OpenGL RGB triangle
+  ;(clear-background self)
+  (glClearColor 1.0 0.0 0.0 0.0)
+  (glClear #.(logior GL_COLOR_BUFFER_BIT GL_DEPTH_BUFFER_BIT))
   (glBegin GL_TRIANGLES)
   (glColor3f 1.0 0.0 0.0)
   (glVertex3f 0.0 0.6 0.0)
@@ -126,9 +133,8 @@
 
 
 (defmethod PREPARE-OPENGL :before ((Self opengl-view))
-  (when (need-to-wgl-share self)
-    (share-texture-for-windows self)
-    (setf (need-to-wgl-share self) nil)))
+  (when  (use-global-glcontext self)
+    (share-texture-for-windows self)))
 
 
 (defmethod PREPARE-OPENGL ((Self opengl-view))
