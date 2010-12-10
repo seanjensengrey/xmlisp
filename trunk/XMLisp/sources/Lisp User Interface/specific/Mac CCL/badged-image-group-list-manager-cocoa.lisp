@@ -72,17 +72,19 @@
         #-cocotron
         (if call-set-size
           (progn
-            
             (set-size (lui-view (#/superview (#/superview (native-view self))))   (width (lui-view (#/superview (#/superview (native-view self))))) (height (lui-view (#/superview (#/superview (native-view self))))))
             (layout (lui-view (#/superview (#/superview (native-view self)))))))
         (if (lui-view (#/superview (#/superview (native-view self))))
           (progn
-            (if (> (height (lui-view (#/superview (#/superview (native-view self))))) (height self))
+            (when (> (height (lui-view (#/superview (#/superview (native-view self))))) (height self))
               (setf (height self) (height (lui-view (#/superview (#/superview (native-view self)))))))))))))
 
 
 
 (defmethod SIZE-CHANGED ((Self badged-image-group-list-manager-view) )
+  ;(set-size (part-of self) (width (part-of self)) (height(part-of self)))
+  ;(set-size self (width self) (height self))
+  ;(layout (part-of self))
   (layout (native-view self)))
 
 
@@ -152,10 +154,18 @@
         (#/setNeedsDisplay: (group-view group) #$YES)
         (incf y   group-height)))) 
   (#/setNeedsDisplay: self #$YES)
-  (resize-height-of-view (lui-view self))
+  (resize-height-of-view (lui-view self) )
   (call-next-method)
   (layout-changed (lui-view self)))
 
+#|
+(objc:defmethod (#/drawRect: :void) ((Self native-badged-image-group-list-manager-view) (rect :<NSR>ect))
+  (call-next-method rect)
+  (print "DRAW RECT")
+  (print rect)
+  (#/set (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color .2 .2 .2 .62))
+  (#/fillRect: ns:ns-bezier-path rect))
+|#
 
 (objc:defmethod (#/mouseDown: :void) ((self native-badged-image-group-list-manager-view) Event)
   (declare (ignore Event))
@@ -293,11 +303,11 @@
 
 
 (defmethod SELECT ((self group-item-image-view))
-  (set-selected-item (container self)  (group-name  (#/superview(#/superview (#/superview self))))(item-name (#/superview self)) ))
+  (set-selected-item (container self)  (group-name  (#/superview(#/superview (#/superview self)))) (item-name (#/superview self)) ))
 
 
 (defmethod DOUBLE-CLICKED ((self group-item-image-view))
-  (edit-group-item (container self) (group-name self)(item-name self)))
+  (edit-group-item (container self) (group-name  (#/superview(#/superview (#/superview self)))) (item-name (#/superview self))))
 
 
 (defmethod CREATE-IMAGE ((self group-item-image-view)(list-item list-group-item))
@@ -587,7 +597,7 @@
   (declare (ignore Width Height))
   (call-next-method)
   #-cocotron 
-  (if (> (-(width (lui-view (#/superview (#/superview (native-view self)))))1)  (minimum-width self))
+  (if (> (-(width (lui-view (#/superview (#/superview (native-view self))))) 1)  (minimum-width self))
     (setf (width self) (-(width (lui-view (#/superview (#/superview (native-view self)))))1)))
   (dolist (group (groups  self))
     (ns:with-ns-size (Size (width self) (NS:NS-RECT-HEIGHT (#/frame (group-view group))))
