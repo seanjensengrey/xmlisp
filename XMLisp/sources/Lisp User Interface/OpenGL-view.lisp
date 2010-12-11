@@ -51,6 +51,7 @@
   (or *Shared-OpenGL-View*
       (prog1
           (setf *Shared-OpenGL-View* (make-instance 'opengl-view :use-global-glcontext nil))
+        ;; add the shared-opengl-view to an inivisible window, I am not quite sure why this is nescisary but if we do not do this on windows we will crash when we try to perform the wgl_share_list
         #+cocotron
         (let ((window (make-instance 'window :do-show-immediately nil)))
           (add-subview window *shared-opengl-view*)
@@ -119,9 +120,6 @@
 
 (defmethod DRAW ((Self opengl-view))
   ;; the obligatory OpenGL RGB triangle
-  ;(clear-background self)
-  (glClearColor 1.0 0.0 0.0 0.0)
-  (glClear #.(logior GL_COLOR_BUFFER_BIT GL_DEPTH_BUFFER_BIT))
   (glBegin GL_TRIANGLES)
   (glColor3f 1.0 0.0 0.0)
   (glVertex3f 0.0 0.6 0.0)
