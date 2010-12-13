@@ -2,7 +2,8 @@
 <virtual-key-table comments="Mac and Win">
   <virtual-key name="A">
     <key-binding platform="mac" code="0"/>
-    <key-binding platform="win" code="65"/>
+    <key-binding platform="win" code="65"/>    
+;<key-binding platform="win" code="65"/>
   </virtual-key>
   <virtual-key name="B">
     <key-binding platform="mac" code="11"/>
@@ -329,6 +330,74 @@
   <virtual-key name="help">
     <key-binding platform="mac" code="114"/>
     <key-binding platform="win" code="47"/>
+  </virtual-key>
+  <virtual-key name="1">
+    <key-binding platform="mac" code="83"/>
+    <key-binding platform="win" code="49"/>
+  </virtual-key>
+  <virtual-key name="2">
+    <key-binding platform="mac" code="84"/>
+    <key-binding platform="win" code="49"/>
+  </virtual-key>
+  <virtual-key name="3">
+    <key-binding platform="mac" code="85"/>
+    <key-binding platform="win" code="49"/>
+  </virtual-key>
+  <virtual-key name="4">
+    <key-binding platform="mac" code="86"/>
+    <key-binding platform="win" code="49"/>
+  </virtual-key>
+  <virtual-key name="5">
+    <key-binding platform="mac" code="87"/>
+    <key-binding platform="win" code="49"/>
+  </virtual-key>
+  <virtual-key name="6">
+    <key-binding platform="mac" code="88"/>
+    <key-binding platform="win" code="49"/>
+  </virtual-key>
+  <virtual-key name="7">
+    <key-binding platform="mac" code="89"/>
+    <key-binding platform="win" code="49"/>
+  </virtual-key>
+  <virtual-key name="8">
+    <key-binding platform="mac" code="91"/>
+    <key-binding platform="win" code="49"/>
+  </virtual-key>
+  <virtual-key name="9">
+    <key-binding platform="mac" code="92"/>
+    <key-binding platform="win" code="49"/>
+  </virtual-key>
+  <virtual-key name="0">
+    <key-binding platform="mac" code="82"/>
+    <key-binding platform="win" code="49"/>
+  </virtual-key>
+  <virtual-key name="=">
+    <key-binding platform="mac" code="81"/>
+    <key-binding platform="win" code="49"/>
+  </virtual-key>
+  <virtual-key name="/">
+    <key-binding platform="mac" code="75"/>
+    <key-binding platform="win" code="49"/>
+  </virtual-key>
+  <virtual-key name="*">
+    <key-binding platform="mac" code="67"/>
+    <key-binding platform="win" code="49"/>
+  </virtual-key>
+  <virtual-key name="-">
+    <key-binding platform="mac" code="78"/>
+    <key-binding platform="win" code="49"/>
+  </virtual-key>
+  <virtual-key name="plus">
+    <key-binding platform="mac" code="69"/>
+    <key-binding platform="win" code="49"/>
+  </virtual-key>
+  <virtual-key name=".">
+    <key-binding platform="mac" code="65"/>
+    <key-binding platform="win" code="49"/>
+  </virtual-key>
+  <virtual-key name="enter">
+    <key-binding platform="mac" code="76"/>
+    <key-binding platform="win" code="49"/>
   </virtual-key>
   <link url="http://nehe.gamedev.net/data/articles/article.asp?article=09"/>
 </virtual-key-table>
