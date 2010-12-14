@@ -293,6 +293,7 @@
   #$YES)
 
 
+
 ;**********************************
 ;* SCROLL-VIEW                    *
 ;**********************************
@@ -495,6 +496,14 @@
     Rect))
 
 
+;;RESPONDER CHAIN HACK
+(objc:defmethod (#/noResponderFor: :void)
+                ((self native-window) (eventSelector :<SEL>))
+  ;; For now, if we get to the bottom of the responder chain and no one has taken responsibility for the event just do nothing
+  ;;Do nothing
+  )
+
+
 #| 
 (objc:defmethod (#/displayIfNeeded :void) ((Self native-window))
   (call-next-method)
@@ -679,7 +688,6 @@
 
 
 (defmethod CANCEL-MODAL ((Self window))
-  (print "CANCEL MODAL")
   (setq *Run-Modal-Return-Value* :cancel)
   (#/stopModal (#/sharedApplication ns:ns-application)))
 
