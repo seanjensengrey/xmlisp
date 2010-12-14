@@ -27,8 +27,16 @@
 
 
 ;; calling this function over and over appears to corrupt memory
-(defun GET-STRING-FROM-USER (Message &key Initial-String)
+(defun GET-STRING-FROM-USER (Message &key Initial-String
+                                     (Yes-Text "Yes")
+                                     (No-Text "No")
+                                     (Cancel-Text "Cancel"))
+
   (let ((Window (load-object "lui:resources;windows;get-string-from-user.window" :package (find-package :xlui))))
+   ; (when Yes-Text (#/addButtonWithTitle: (lui::native-window Window) (native-string Yes-Text)))
+    ;(when No-Text (#/addButtonWithTitle: (lui::native-window Window) (native-string No-Text)))
+    ;(when Cancel-Text (#/addButtonWithTitle: (lui::native-window Window) (native-string Cancel-Text)))
+
     (when Initial-String
       (setf (value (view-named Window "text")) Initial-String))
     (ns:with-ns-point (Point (NS:NS-POINT-X (#/mouseLocation ns:ns-event)) (NS:NS-POINT-Y (#/mouseLocation ns:ns-event)))
@@ -38,21 +46,24 @@
 
 
 ;; HACK: alternative implementation based on alerts
-(defun GET-STRING-FROM-USER (msg  &key (Initial-String ""))
-  (ccl::with-autorelease-pool
-      (let ((alert (make-instance 'ns:ns-alert))
-            (tf (#/initWithFrame: (make-instance 'ns:ns-text-field)
-                                  (ns:make-ns-rect 0 0 400 21))))
-        (#/setStringValue: tf (ccl::%make-nsstring Initial-String))
-        (#/setEditable: tf #$YES)
-        (#/setMessageText: alert (ccl::%make-nsstring msg))
-        (#/addButtonWithTitle: alert #@"OK")
-        (#/setAccessoryView: alert tf)
-        ;;Layout only work on OSX 10.5 or higher
-        (#/layout alert)
-        (#/makeFirstResponder: (#/window alert) tf) 
-        (#/runModal alert) 
-        (ccl::lisp-string-from-nsstring (#/stringValue tf)))))
+(defun GET-STRING-FROM-USER (msg  &key (Initial-String "")
+                                  (Yes-Text "Okay")
+                                  (Cancel-Text "Cancel"))
+  (let ((alert (make-instance 'ns:ns-alert))
+        (tf (#/initWithFrame: (lui::native-view (make-instance 'editable-text-control))
+                              (ns:make-ns-rect 0 0 400 21))))
+    (#/setStringValue: tf (ccl::%make-nsstring Initial-String))
+    (#/setEditable: tf #$YES)
+    (#/setMessageText: alert (ccl::%make-nsstring msg))
+    (#/addButtonWithTitle: alert (native-string Yes-Text))
+    (when Cancel-Text (#/addButtonWithTitle: alert (native-string Cancel-Text)))
+    (#/setAccessoryView: alert tf)
+    ;;Layout only work on OSX 10.5 or higher
+    (#/layout alert)
+    (#/makeFirstResponder: (#/window alert) tf) 
+    (when (equal (#/runModal alert) 1001)
+      (return-from get-string-from-user nil))
+    (ccl::lisp-string-from-nsstring (#/stringValue tf))))
 
 
 
