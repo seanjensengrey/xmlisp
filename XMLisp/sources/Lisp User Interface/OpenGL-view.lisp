@@ -232,7 +232,7 @@
         (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_MIN_FILTER GL_LINEAR))
       (let ((PixelFormat (ecase Depth (32 GL_RGBA) (24 GL_RGB)))
             (InternalFormat (ecase Depth (32 GL_RGBA8) (24 GL_RGB8))))
-        (glTexImage2D GL_TEXTURE_2D 0 GL_RGBA8 width height 0 PixelFormat GL_UNSIGNED_BYTE &Image)
+        (glTexImage2D GL_TEXTURE_2D 0 InternalFormat width height 0 PixelFormat GL_UNSIGNED_BYTE &Image)
         (when Build-Mipmaps
           (when Verbose (format t "~%Building Mipmaps~%"))
           
