@@ -33,11 +33,6 @@
 
 
 #+cocotron
-(setf (logical-pathname-translations "lui")
-      '(("**;*.*" "mac-home:working copies;Xmlisp svn;trunk;XMLisp;**;")))
-
-
-#+cocotron
 (setf (logical-pathname-translations "mac-home")
 `((,(make-pathname :host "mac-home"
                    :directory '(:absolute :wild-inferiors)
@@ -45,6 +40,13 @@
                    :type :wild
                    :version :wild)
    #p"z:/**/*.*")))
+
+
+#+cocotron
+(setf (logical-pathname-translations "lui")
+      '(("**;*.*" "mac-home:working copies;Xmlisp svn;trunk;XMLisp;**;")))
+
+
 
 ;;___________________________________________
 ;;  Editor Settings                          |
@@ -212,7 +214,7 @@
    "BADGED-IMAGE-GROUP-LIST-MANAGER-VIEW" "ITEM-CATEGORY-LABEL" "ADD-GROUP"  "ADD-GROUP-ITEM" "DELETE-GROUP" "DELETE-GROUP-ITEM" "SELECTED-GROUP" "SELECTED-GROUP-ITEM" "SELECT-GROUP" "SELECT-GROUP-ITEM" "GROUP-NAME" "GROUPS" "TAKE-FOCUS" "GET-GROUP-WITH-NAME" "ITEM-NAME" "GET-GROUP-ITEM-WITH-NAME" "SELECTED-GROUP-ITEM" "UPDATE-IMAGE" "GROUP-ITEMS" "GROUP-VIEW" "ITEM-DETECTION-VIEWS" "SIZE-CHANGED"
    "SELECTED-GROUP-CHANGED-ACTION" "GROUP-ITEMS" "GROUP-NAME-CHANGED" "ITEM-NAME-CHANGED"
    "INCREMENT-ITEM-COUNTER" "CLEAR-ITEM-COUNTERS"
-   "PROJECT-MANAGER-REFERENCE" "AGENT-GALLERY-VIEW"
+   "PROJECT-MANAGER-REFERENCE" "AGENT-GALLERY-VIEW" "OPEN-ICON-WINDOWS"
    "CONVERT-IMAGE-FILE"
    )
   (:import-from "XML"
