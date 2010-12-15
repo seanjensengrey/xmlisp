@@ -143,7 +143,7 @@
     (set-position (drag-proxy-window Self) (- x (x-start Self)) (- y (y-start Self))))
   ;; identify agent drop targets 
   (multiple-value-bind (Agent Destination-View)
-                       (find-agent-at-screen-position x y)
+                       (drop-target (find-agent-at-screen-position x y) (source-agent Self))
     (declare (ignore Destination-View))
     (cond
      ;; drag into new agent
@@ -408,7 +408,7 @@
 
 
 (defmethod VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER ((Self agent-3d-view) X Y)
-  (let ((Agent (find-agent-at Self x y *Selection-Tolerance* *Selection-Tolerance*)))
+  (let ((Agent (click-target (find-agent-at Self x y *Selection-Tolerance* *Selection-Tolerance*))))
     (cond
      ;; clicked agent
      (Agent
@@ -632,6 +632,14 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 
 (defgeneric RECEIVE-DROP (Agent1 Agent2)
   (:documentation "Drop <Agent2> onto <Agent1>"))
+
+
+(defgeneric CLICK-TARGET (agent)
+  (:documentation "The target of a mouse click. In most cases the receiver is the target. In some cases it may be a container of the receiver."))
+
+
+(defgeneric DROP-TARGET (Target Source)
+  (:documentation "What is the actual drop target when dragging source onto target? The default is target but it could be some other object such as perhaps a container of target"))
 
 
 (defgeneric MOUSE-DRAG-ENTER-EVENT-HANDLER (Agent1 Agent2)
