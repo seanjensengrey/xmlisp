@@ -219,6 +219,8 @@
       (setf (animation-time Self) Time)))
   #+windows-target
   (let ((Time (rlet ((now #>FILETIME))
+                ;; this Win32 timer function is no good: typically 10ms or worse resolution!
+                ;; consider using QueryPerformanceCounterrad http://www.devsource.com/c/a/Techniques/High-Performance-Timing-under-Windows/1/
 		(#_GetSystemTimeAsFileTime now)
 		(dpb (pref now #>FILETIME.dwHighDateTime)
 		     (byte 32 32)
