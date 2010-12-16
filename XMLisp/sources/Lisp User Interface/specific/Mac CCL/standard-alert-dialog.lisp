@@ -5,9 +5,9 @@
 
 
 (defmethod STANDARD-ALERT-DIALOG ((Message string) &key 
-                                  (Yes-Text "Yes")
-                                  (No-Text "No")
-                                  (Cancel-Text "Cancel")
+                                  (Yes-Text "Okay")
+                                  (No-Text nil)
+                                  (Cancel-Text nil)
                                   (Explanation-Text)
                                   (Is-Critical nil))
   (let ((Alert (#/init (#/alloc ns:ns-alert))))
