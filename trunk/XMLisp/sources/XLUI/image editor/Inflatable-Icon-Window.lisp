@@ -758,6 +758,7 @@
 
 
 (defmethod ADJUST-PRESSURE-ACTION ((Window inflatable-icon-editor-window) (Slider inflation-jog-slider) &optional do-not-display)
+  (enable (view-named Window "flatten-button"))
   (let ((Pressure (value Slider)))
     ;; audio feedback
     (set-volume "whiteNoise.mp3" (abs Pressure))
@@ -933,6 +934,7 @@
     (setf (is-flat (inflatable-icon (view-named Window 'model-editor))) t)
     (change-icon-action Window (view-named Window 'icon-editor))
     (update-texture-from-image (inflatable-icon (view-named Window 'model-editor)))
+    (disable button)
     ;; update for user
     (display Model-Editor)))
 
@@ -1182,6 +1184,8 @@
     (disable (view-named self "distance-slider")))
   
   (set-selected-item-with-title (view-named self "surfaces")  (string-downcase(substitute #\space #\-  (string (surfaces Inflatable-Icon)) :test 'equal)))
+  (when (is-flat Inflatable-icon)
+    (disable (view-named self "flatten-button")))
   (if (is-upright Inflatable-Icon)
       (enable (view-named self "upright"))))
   
