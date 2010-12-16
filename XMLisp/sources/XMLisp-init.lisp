@@ -285,6 +285,7 @@
 (load "lui:sources;Lisp User Interface;LUI")
 (load "lui:sources;Lisp User Interface;Camera")
 (load "lui:sources;Lisp User Interface;OpenGL-view")
+(load "lui:sources;Lisp User Interface;plot-view")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;LUI Cocoa")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;standard-alert-dialog")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;image-import")
