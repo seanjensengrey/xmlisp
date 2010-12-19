@@ -39,6 +39,7 @@
 (defun FIND-CURSOR (Name) "
   in: Name 
   Find a cursor matching name in resources/cursors/ folder"
+  (unless Name (return-from find-cursor))
   (let ((Cursor (gethash Name *Cursors*)))
     (cond
      ;; cached
@@ -78,7 +79,7 @@
   Set the cursor to new cursor."
   (let ((Cursor (find-cursor Name)))
     (when Cursor 
-      (setf *global-Cursor-Name* Name)
+      (setf *Global-Cursor-Name* Name)
       (#/set Cursor))))
 
 
@@ -93,6 +94,8 @@
 (find-cursor "ArrowCursor")
 
 (find-cursor "NotHere")
+
+(set-cursor "rotateCursor")
 
 
 |#
