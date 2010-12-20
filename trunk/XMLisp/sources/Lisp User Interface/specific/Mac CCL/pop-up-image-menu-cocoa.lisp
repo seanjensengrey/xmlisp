@@ -32,9 +32,12 @@
         (warn "Could not find the name-of-selection in image-names")))))
 
 
-(defmethod DISPLAY-POP-UP-MENU ((Self pop-up-image-menu) &key (x (x self)) (y (y self)))
+(defmethod DISPLAY-POP-UP-MENU ((Self pop-up-image-menu) &key (name-of-selection nil) (x (x self)) (y (y self)))
   (setf (x self) x)
   (setf (y self) y)
+  (when name-of-selection
+    (setf (name-of-selection self) name-of-selection)
+    (setf (index-of-selection self) (position (name-of-selection self)(image-names Self):test #'equal)))
   (multiple-value-bind (x-selection-index y-selection-index)
                              (get-selection-indices self)
           (setf (window-offset-x self) (* x-selection-index (image-width self)))
