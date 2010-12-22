@@ -16,7 +16,8 @@
   ())
 
 
-(defmethod VIEW-CURSOR ((Self draw-cursor-view))
+(defmethod VIEW-CURSOR ((Self draw-cursor-view) x y)
+  (declare (ignore x y))
   "drawCursor")
 
 
@@ -24,7 +25,8 @@
   ())
 
 
-(defmethod VIEW-CURSOR ((Self eraser-cursor-view))
+(defmethod VIEW-CURSOR ((Self eraser-cursor-view) x y)
+  (declare (ignore x y))
   "eraseCursor")
 
 
