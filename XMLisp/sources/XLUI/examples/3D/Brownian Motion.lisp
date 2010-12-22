@@ -14,7 +14,7 @@
   (glBlendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA)
   ;; walk
   (let ((x 0.0) (y 0.0) (z 0.0))
-    (dotimes (i 50000)
+    (dotimes (i 500000)
       (incf x (- (random 2.0) 1.0))
       (incf y (- (random 2.0) 1.0))
       (incf z (- (random 2.0) 1.0))
@@ -35,6 +35,29 @@
   (glClearColor 0.0 0.0 0.0 1.0)
   (glClear #.(logior GL_COLOR_BUFFER_BIT GL_DEPTH_BUFFER_BIT)))
 
+
+;; Mouse Gesture Support
+
+(defmethod VIEW-MOUSE-SCROLL-WHEEL-EVENT-HANDLER ((Self brownian-motion) x y dx dy)
+  (declare (ignore x y))
+  ;;(format t "~%dy=\"~A\"" dy)
+  (with-animation-locked
+      (track-mouse-pan (camera Self) dx dy 0.01)
+    (display Self)))
+
+
+(defmethod GESTURE-MAGNIFY-EVENT-HANDLER ((Self brownian-motion) x y Magnification)
+  (declare (ignore x y))
+  (with-animation-locked
+      (track-mouse-zoom (camera Self) 0 Magnification -40.0)
+    (display Self)))
+
+
+(defmethod GESTURE-ROTATE-EVENT-HANDLER ((Self brownian-motion) x y Rotation)
+  (declare (ignore x y))
+  (with-animation-locked
+      (track-mouse-spin (camera Self) Rotation 0.0 +0.1)
+    (display Self)))
 
 
 <application-window title="Brownian Motion" margin="0">
