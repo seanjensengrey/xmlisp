@@ -47,9 +47,9 @@
 
 ;; HACK: alternative implementation based on alerts
 (defun GET-STRING-FROM-USER (msg  &key (Initial-String "")
-                                  (Yes-Text "Okay")
+                                  (Yes-Text "OK")
                                   (Cancel-Text "Cancel"))
-  (let ((alert (make-instance 'ns:ns-alert))
+  (let ((Alert (make-instance 'ns:ns-alert))
         (tf (#/initWithFrame: (lui::native-view (make-instance 'editable-text-control))
                               (ns:make-ns-rect 0 0 400 21))))
     (#/setStringValue: tf (ccl::%make-nsstring Initial-String))
@@ -58,10 +58,10 @@
     (#/addButtonWithTitle: alert (native-string Yes-Text))
     (when Cancel-Text (#/addButtonWithTitle: alert (native-string Cancel-Text)))
     (#/setAccessoryView: alert tf)
-    ;;Layout only work on OSX 10.5 or higher
-    (#/layout alert)
+    (when (mac-os-x-10.6-and-later)
+      (#/layout alert))
     (#/makeFirstResponder: (#/window alert) tf) 
-    (when (equal (#/runModal alert) 1001)
+    (when (equal (#/runModal alert) #$NSAlertSecondButtonReturn)
       (return-from get-string-from-user nil))
     (ccl::lisp-string-from-nsstring (#/stringValue tf))))
 
