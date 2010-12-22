@@ -860,6 +860,25 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 (defmethod RECEIVE-DROP ((Agent1 agent-3d) (Agent2 agent-3d))
   (format t "~%received drop: ~A onto ~A" (type-of Agent2) (type-of Agent1)))
 
+
+(defmethod CLICK-TARGET ((Self agent-3d))
+  Self)
+
+
+(defmethod CLICK-TARGET ((Self null))
+  Self)
+
+
+(defmethod DROP-TARGET ((Target t) (Source t))
+  ;; if in doubt the target is really the target
+  Target)
+
+
+(defmethod DROP-TARGET ((Target null) (Source t))
+  ;; no target no error but nil
+  nil)
+
+
 ;; tooltips
 
 (defmethod TOOLTIP-EVENT-HANDLER ((Self agent-3d))
