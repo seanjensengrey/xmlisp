@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project-window title="project" track-mouse="true" x="100" y="50" width="1200" height="600" margin="0">
+<project-window title="" track-mouse="true" x="100" y="50" width="1200" height="600" margin="0">
   <row align="stretch" valign="stretch" >
     <column align="stretch" valign="stretch" flex="1" width="250">
       <row valign="middle" align="center" height="32" src="gradient-transparent.png">
@@ -10,11 +10,9 @@
         <agent-gallery name="agent-gallery" selected-group-changed-action="SWITCH-TO-BEHAVIOR" height="10" width="100"/>
       </scroll-box>
       <row align="center" valign="stretch" height="24" src="gradient-transparent.png">
-        <agent-shape-plus-button  width="38" image="plus-button.png" >
-          <pop-up-image-item action="add-agent-action" text="New Agent" />
-          <pop-up-image-item enable-predicate="shape-enable-predicate" action="add-shape-action" text="New Shape" />
-        </agent-shape-plus-button>
-        <image-button start-disabled="true" name="delete agent button" image="minus-button.png" action="delete-selected-agent" />
+        <bevel-button  text="+ Agent" name="new-agent-button" action="add-agent-action" width="75" height="28" />
+        <bevel-button  text="+ Shape" name="new-shape-button" action="add-shape-action" width="75" height="28" />
+        <bevel-button start-disabled="true" name="delete agent button" text="-" width="30" action="delete-selected-agent" />
       </row>
     </column>
     <column align="stretch" valign="stretch" flex="4" vflex="1">
@@ -103,20 +101,11 @@
         </column>
       </row>
       <row align="center" valign="stretch" height="24" src="gradient-transparent.png">
-        <agent-shape-plus-button start-disabled="true" name="new-rule-button" width="38"  image="plus-button.png" >
-          <pop-up-image-item action="add-rule-action" enable-predicate="add-rule-enable-predicate" text="New Rule" />
-          <pop-up-image-item action="add-method-action" enable-predicate="add-method-enable-predicate" text="New Method" />
-        </agent-shape-plus-button>
-        <image-button start-disabled="true" name="delete vat button" image="minus-button.png" action="delete-selected-command" />
-        <popup-image-button name="rule-method-command-button" start-disabled="true" image="actionButton.png" width="38" draw-disclosure="false">
-          <pop-up-image-item action="test-action" enable-predicate="test-enable-predicate" text="Test" />
-          <pop-up-image-item action="duplicate-action" enable-predicate="duplicate-enable-predicate" key-equivalent="d" text="Duplicate"/>
-          <pop-up-image-item action="explain-action" enable-predicate="explain-enable-predicate" text="Explain"/>
-        </popup-image-button> 
-        <bevel-button text="NOT" action="negate-action"/>
-        <label align="right" width="35" text="Off"/>
-        <slider start-disabled="true" name="conversational-slider" value="5.0" max-value="10.0" min-value="0.0" action="conversational-slider-action"/>
-        <label align="right" width="45" text="Chatty"/>  
+        <bevel-button start-disabled="true" name="new-rule-button" text="+ Rule" action="add-rule-action" />
+        <bevel-button start-disabled="true" name="new-method-button" text="+ Method" action="add-method-action" width="80" />
+        <bevel-button start-disabled="true" name="delete-vat-button" text="-" action="delete-selected-command" width="30"/>
+        <bevel-button  text="Duplicate" name="duplicate-button" action="duplicate-action" start-disabled="true" width="80" height="28" />
+        <bevel-button start-disabled="true" name="not-button" text="NOT" action="negate-action"/>
       </row>
    </column>
   </row>
