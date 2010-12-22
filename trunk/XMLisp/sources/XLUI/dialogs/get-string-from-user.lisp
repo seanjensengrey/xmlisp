@@ -26,26 +26,6 @@
   Self)
 
 
-;; calling this function over and over appears to corrupt memory
-(defun GET-STRING-FROM-USER (Message &key Initial-String
-                                     (Yes-Text "Yes")
-                                     (No-Text "No")
-                                     (Cancel-Text "Cancel"))
-
-  (let ((Window (load-object "lui:resources;windows;get-string-from-user.window" :package (find-package :xlui))))
-   ; (when Yes-Text (#/addButtonWithTitle: (lui::native-window Window) (native-string Yes-Text)))
-    ;(when No-Text (#/addButtonWithTitle: (lui::native-window Window) (native-string No-Text)))
-    ;(when Cancel-Text (#/addButtonWithTitle: (lui::native-window Window) (native-string Cancel-Text)))
-
-    (when Initial-String
-      (setf (value (view-named Window "text")) Initial-String))
-    (ns:with-ns-point (Point (NS:NS-POINT-X (#/mouseLocation ns:ns-event)) (NS:NS-POINT-Y (#/mouseLocation ns:ns-event)))
-      (#/setFrameOrigin: (lui::native-window window ) Point ))
-    (setf (title Window) Message)
-    (show-and-run-modal Window)))
-
-
-;; HACK: alternative implementation based on alerts
 (defun GET-STRING-FROM-USER (msg  &key (Initial-String "")
                                   (Yes-Text "OK")
                                   (Cancel-Text "Cancel"))
