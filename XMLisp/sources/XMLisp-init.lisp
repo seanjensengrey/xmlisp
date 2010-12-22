@@ -382,7 +382,6 @@
 
 
 (defun RESTORE-XMLISP ()
-  (print "RESTORE XMLISP")
   (let* ((contents-dir (ccl::ccl-contents-directory))
          (toplevel-dir (make-pathname :directory (butlast (pathname-directory contents-dir) 2)
                                       :device (pathname-device contents-dir))))
@@ -435,6 +434,10 @@
   (ccl::recursive-copy-directory
    (truename "lui:resources;templates;")
    (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/templates/" (user-homedir-pathname)))
+  (format t "~%- copy shaders")
+  (ccl::recursive-copy-directory
+   (truename "lui:resources;shaders;")
+   (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/shaders/" (user-homedir-pathname)))
   #-cocotron 
   (format t "~%- patch info plist resources")
   #-cocotron 
@@ -470,7 +473,7 @@
    :name "XMLisp"
    :directory (format nil "~ADesktop/XMLisp/" (user-homedir-pathname))
    :application-class 'xmlisp-application
-   #+cocotron :info-plist (ccl::make-info-dict)
+   #+cocotron :info-plist #+cocotron (ccl::make-info-dict)
    :nibfiles '("lui:resources;English.lproj;MainMenu.nib")))
 
 ;;___________________________________________
@@ -478,9 +481,9 @@
 ;;___________________________________________
 
 ;; If we find AgentCubes lets just load it unless user indicates no by holding down shift key
-(unless (lui::shift-key-p)
-  (when (probe-file "lui:sources;AgentCubes;AgentCubes-init.lisp")
-    (load "lui:sources;AgentCubes;AgentCubes-init")))
+(when (and (probe-file "lui:sources;AgentCubes;AgentCubes-init.lisp")
+           (lui::standard-alert-dialog "Load AgentCubes?" :yes-text "Load" :no-text "Don't Load" :Explanation-Text "The load file for AgentCubes was found"))
+  (load "lui:sources;AgentCubes;AgentCubes-init"))
 
 
 #| 
