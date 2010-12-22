@@ -5,7 +5,7 @@
 
 
 (defmethod STANDARD-ALERT-DIALOG ((Message string) &key 
-                                  (Yes-Text "Okay")
+                                  (Yes-Text "OK")
                                   (No-Text nil)
                                   (Cancel-Text nil)
                                   (Explanation-Text)
