@@ -130,6 +130,7 @@
   (glEnd))
 
 
+#+cocotron
 (defmethod PREPARE-OPENGL :before ((Self opengl-view))
   (when  (use-global-glcontext self)
     (share-texture-for-windows self)))

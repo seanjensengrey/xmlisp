@@ -140,22 +140,17 @@
                     (#/openGLContext Native-Control)
                     Pixel-Format ;; redundant but should be OK
                     (#/openGLContext (native-view View-to-Share)))))
-              
-              ;; (format t "~%before ~A ~%after ~A" (#/openGLContext Native-Control) glContext)))
-              (unless glContext (error "cannot share OpenGLContext of view ~A" View-to-Share)))
-            ;(print "WGL SHARE LISTS")
-            ;(print (#_wglShareLists (%get-ptr (#/CGLContextObj (#/openGLContext (native-view view-to-share)))36) (%get-ptr (#/CGLContextObj glContext) 36)))
-            )
-          
-          )
+              (unless glContext (error "cannot share OpenGLContext of view ~A" View-to-Share)))))
         (#/release Pixel-Format)
         Native-Control))))
 
 
+#+cocotron  
 (defmethod SHARE-TEXTURE-FOR-WINDOWS ((Self opengl-view))
-  (print "WGL SHARE LISTS")
-  #+cocotron
-  (print (#_wglShareLists (%get-ptr (#/CGLContextObj (#/openGLContext (native-view (shared-opengl-view))))36) (%get-ptr (#/CGLContextObj (#/openGLContext (native-view self))) 36))))
+  ;; Nasty hack: for windows we need to access the win32 opengl context not the Cocotron one
+  (let ((Native-GLContext-Offset 36))
+    (#_wglShareLists (%get-ptr (#/CGLContextObj (#/openGLContext (native-view (shared-opengl-view)))) Native-GLContext-Offset)
+                     (%get-ptr (#/CGLContextObj (#/openGLContext (native-view self))) Native-GLContext-Offset))))
 
 
 (defmethod DISPLAY ((Self opengl-view))  
