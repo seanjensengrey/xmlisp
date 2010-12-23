@@ -17,7 +17,7 @@
   </category>
   <category title="messages" disclosed="true">
     <message/>
-
+    <broadcast/>
   </category>
   <category title="sound and speech" disclosed="true">
     <play-sound/>
@@ -26,11 +26,13 @@
   </category>
   <category title="attributes" disclosed="true">
     <set/>
+    <tooltip/>
   </category>
   <category title="visualization" disclosed="true">
     <set-color-to/>
     <set-rgba-color/>
     <map/>
+    <plot-to-window/>
     <plot-agents-attribute/> 
    </category>
    <category title="camera control" disclosed="true">
