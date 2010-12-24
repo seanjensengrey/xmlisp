@@ -46,7 +46,7 @@
         <label name="smooth-text" align="right" width="35" text="0.0"/>
       </row>
       <row align="center" minimize="vertical" valign="middle">
-        <bevel-button text="Flatten" width="64" height="24" action="edit-icon-flatten-action"/>
+        <bevel-button name="flatten-button" text="Flatten" width="64" height="24" action="edit-icon-flatten-action"/>
       </row>
       <spacer height="15"/>
       <label width="65" text="Geometry" align="center"/>
