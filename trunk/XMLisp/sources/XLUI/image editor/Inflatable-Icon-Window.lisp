@@ -95,11 +95,11 @@
   (cond
    ((command-key-p)
     (case (key-code Event)
-      (0
+      (#.(key-name->code "A")
        (select-all Icon-Editor))
-      (2
+       (#.(key-name->code "D")
        (clear-selection Icon-Editor))
-      (34
+       (#.(key-name->code "I")
        (invert-selection Icon-Editor))
       ))
    ((lui::alt-key-p)
@@ -109,12 +109,12 @@
       (37
        (load-image-from-file Self (lui::choose-file-dialog :directory "lui:resources;textures;")))
       |#
-      (51
+       (#.(key-name->code "delete")
        (fill-selected-pixels icon-editor)
        (display (view-named self 'model-editor)))))
     (t
     (case (key-code Event)
-      (51
+      (#.(key-name->code "delete")
         (erase-selected-pixels icon-editor)
         (display (view-named self 'model-editor))))))))
 
