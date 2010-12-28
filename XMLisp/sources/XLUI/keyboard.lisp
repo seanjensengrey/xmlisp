@@ -1,4 +1,4 @@
-;;-*- Mode: Lisp; Package: AD3D -*-
+;;-*- Mode: Lisp; Package: XLUI -*-
 ;*********************************************************************
 ;*                                                                   *
 ;*            K E Y B O A R D                                        *
@@ -6,14 +6,15 @@
 ;*********************************************************************
 ;* Author       : Alexander Repenning, alexander@agentsheets.com     *
 ;*                http://www.agentsheets.com                         *
-;* Copyright    : (c) 1996-2005, AgentSheets Inc.                    *
+;* Copyright    : (c) 1996-2010, AgentSheets Inc.                    *
 ;* Filename     : Keyboard.lisp                                      * 
 ;* Last Update  : 08/25/06                                           *
 ;* Version      :                                                    *
 ;*    1.0       : 04/05/05                                           *
 ;*    2.0       : 11/10/05 mac/win key mapping: virtual-key-table    *
 ;*    2.0.1     : 08/25/06 string-or-null slot type                  *
-;* Systems      : G4, MCL 5.2, OS X 10.4.7                           *
+;*    3.0       : 04/20/10 CCL 1.5, OS X 10.6, Cocoa                 *
+;* Systems      : Intel-Mac                                          *
 ;* Abstract     : low level keyboard interface                       *
 ;*                                                                   *
 ;*********************************************************************
@@ -34,7 +35,7 @@
   (or *Virtual-Key-Table*
       (setq *Virtual-Key-Table* 
             (load-object 
-             "lui:resources;virtual-key-table.xml" 
+             "lui:resources;keyboard;virtual-key-table.xml" 
              :package (find-package :xlui)))))
 
 ;**************************************
@@ -44,7 +45,7 @@
 (defclass VIRTUAL-KEY-TABLE (xml-serializer)
   ((links :accessor links :initform nil)
    (virtual-keys :accessor virtual-keys :initform nil)
-   (comments :accessor comments :initform nil :type string-or-null))
+   (comments :accessor comments :initform "" :type string))
   (:documentation "virtual keys"))
 
 
@@ -55,7 +56,7 @@
 
 (defclass VIRTUAL-KEY (xml-serializer)
   ((name :accessor name :type string :documentation "the platform independent name of a virtual key")
-   (comments :accessor comments :initform nil :type string-or-null :documentation "what does the key do?")
+   (comments :accessor comments :initform "" :type string :documentation "what does the key do?")
    (key-bindings :accessor key-bindings :initform nil :documentation "platform specific codes and labels"))
   (:documentation "descriptive name and comments"))
 
@@ -64,15 +65,16 @@
   ((label :accessor label  :initform nil :documentation "Label found on actual key. Nil defaults to key name")
    (platform :accessor platform :initform "mac" :type string :documentation "eg., Mac or Win")
    (code :accessor code :type integer :documentation "platform specific code typically extracted in handler")
-   (symbol-code :accessor symbol-code :initform nil :type integer-or-null :documentation "character code describing key label as symbol in special font")
+   (symbol-code :accessor symbol-code :initform 0 :type integer :documentation "character code describing key label as symbol in special font")
    (symbol-font :accessor symbol-font :initform "charcoal cy" :documentation "the font used to print the special character symbol")
-   (comments :accessor comments :initform nil :type string-or-null))
+   (comments :accessor comments :initform "" :type string))
   (:documentation "a platform specific key binding"))
 
 
 (defmethod KEY-CODE-BINDING (Code &key (Platform "mac"))
   (dolist (Key (virtual-keys (virtual-key-table)))
     (dolist (Binding (key-bindings Key))
+      
       (when (and (string-equal Platform (platform Binding))
                  (= Code (code Binding)))
         (return-from key-code-binding 
@@ -130,19 +132,18 @@
   (defconstant kKeyChordShiftBitIndex 10)
   (defconstant kKeyChordCommandBitIndex 11))
 
-#|
+
 (defun KEY-CHORD-CODE (Key-Code Controlp Optionp Shiftp Commandp)
   (logior
    Key-Code
-   (if Controlp #.(lsh 1 kKeyChordControlBitIndex) 0)
-   (if Optionp #.(lsh 1 kKeyChordOptionBitIndex) 0)
-   (if Shiftp #.(lsh 1 kKeyChordShiftBitIndex) 0)
-   (if Commandp #.(lsh 1 kKeyChordCommandBitIndex) 0)))
-|#
+   (if Controlp #.(ash 1 kKeyChordControlBitIndex) 0)
+   (if Optionp #.(ash 1 kKeyChordOptionBitIndex) 0)
+   (if Shiftp #.(ash 1 kKeyChordShiftBitIndex) 0)
+   (if Commandp #.(ash 1 kKeyChordCommandBitIndex) 0)))
+
 ;; (key-chord-code 0 nil nil t nil)
    
 #|
-OLD MCL Codes do we need this?
 (defun USER-DEFINE-KEY-CHORD (&key Idle-Function) "
   in:  &key Idle-Function lambda ().
   out: Key-Chord-Code.
@@ -171,7 +172,7 @@ OLD MCL Codes do we need this?
          #+:MCL (#_FlushEvents (logior #$keyDownMask #$keyUpMask) 0)
          (return (key-chord-code Non-Modifier-Code Controlp Optionp Shiftp Commandp)))
        (when Idle-Function (funcall Idle-Function))))))
-|#        
+  |#      
 
 
 (defgeneric KEY-CHORDS-MATCH (Chord1 Chord2)
@@ -182,23 +183,47 @@ OLD MCL Codes do we need this?
   ;; because - for now - we ignore caps lock this test is trivial
   (= Chord1 Chord2))
 
-
+#|
+;;This method no longer is able to determine which modifer keys have been pressed
 (defun KEY-CHORD-CODE->NAME (Code) "
   in: Code integer.
   out: Name string.
   Cannonical name encoding <Code> as XML friendly string without special chars"
+  
  (with-output-to-string (string)
    (when (logbitp kKeyChordControlBitIndex Code) 
      (princ "control+" String))
     (when (logbitp kKeyChordOptionBitIndex Code) 
      (princ "option+" String))
     (when (logbitp kKeyChordShiftBitIndex Code) 
+      (print "SHIFT")
      (princ "shift+" String))
     (when (logbitp kKeyChordCommandBitIndex Code) 
      (princ "command+" String))
     (format String "~A" (key-code->name (logand Code 255)))))
+|#
 
-;(KEY-CHORD-CODE->NAME 1)
+(defun KEY-CHORD-CODE->NAME (Code Flags) "
+  in: Code integer.
+  out: Name string.
+  Cannonical name encoding <Code> as XML friendly string without special chars"
+  (with-output-to-string (string)
+   (when Flags
+     (when (not (equal (logand #$NSControlKeyMask  Flags) 0)) 
+       (princ "control+" String))
+     (when (not (equal (logand #$NSAlternateKeyMask Flags) 0)) 
+       (princ "option+" String))
+     (when (not (equal (logand #$NSShiftKeyMask Flags) 0))
+       (princ "shift+" String))
+     (when (not (equal (logand #$NSCommandKeyMask Flags) 0)) 
+       (princ "command+" String)))
+
+    #-cocotron
+    (format String "~A" (key-code->name (logand Code 255) :platform "mac"))
+    #+cocotron
+    (format String "~A" (key-code->name (logand Code 255) :platform "mac"))
+    ))
+
 
 (defun KEY-CHORD-CODE->LABEL (Code) "
   in: Code integer.
@@ -244,7 +269,7 @@ OLD MCL Codes do we need this?
              (setq Token (concatenate 'string Token (string Char))))))))))
 
 ;; (split-chord-name-string "command+control+page up")
-#|      
+      
 (defun KEY-CHORD-NAME->CODE (Name) "
   in:  Name string.
   out: Code integer.
@@ -265,11 +290,12 @@ OLD MCL Codes do we need this?
    (let ((Key-Code (key-name->code Key-Name)))
      (unless Key-Code (error "\"~A\" is not a valid key name" Key-Name))
      (key-chord-code Key-Code Controlp Optionp Shiftp Commandp))))
-  |# 
+   
 ;_________________________________
 ; Internal functions              |
 ;_________________________________
-#|
+
+#+:carbon (progn
 (defun GET-KEY-CODES () "
   out: Codes list of AppleKeyCode;
   Return a list of Apple key codes.
@@ -315,7 +341,9 @@ OLD MCL Codes do we need this?
         (dotimes (Bit 8)
           (when (logbitp Bit Value) 
             (return-from get-first-key-code (+ (* Byte 8) Bit))))))))
-|#
+
+)
+
 ;_________________________________
 ; External functions              |
 ;_________________________________
