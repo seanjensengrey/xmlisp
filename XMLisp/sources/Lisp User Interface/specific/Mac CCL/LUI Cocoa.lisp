@@ -267,6 +267,23 @@
 (defmethod REMOVE-TRACKING-RECT ((Self view) Tracking-Rect)
   (#/removeTrackingRect: (native-view self) Tracking-Rect))
   
+
+(defclass TOOLTIP-DELEGATE (ns:ns-object)
+  ((lui-view :accessor lui-view :initform nil :initarg :lui-view))
+  (:metaclass ns:+ns-object
+	      :documentation "delegate object receiving window events"))
+
+
+(objc:defmethod (#/description :id) ((self tooltip-delegate) )
+  ;(native-string (get-tooltip (lui-view Self) (ns:ns-point-x (#/mouseLocationOutsideOfEventStream (native-window (window (lui-view self)))))(- (height (window (lui-view self))) (ns:ns-point-y (#/mouseLocationOutsideOfEventStream (native-window (window (lui-view self))))))))
+  (native-string (get-tooltip-of-view-at-screen-position (lui-view Self) (ns:ns-point-x (#/mouseLocation ns:ns-event )) (ns:ns-point-y (#/mouseLocation ns:ns-event ))))
+  )
+
+
+(defmethod ENABLE-TOOLTIPS ((Self view))
+  (#/addToolTipRect:owner:userData: (native-view self) (#/frame (native-view self)) (make-instance 'tooltip-delegate :lui-view self) lui::+null-ptr+))
+
+
 ;__________________________________
 ; NATIVE-VIEW                      |
 ;__________________________________/
@@ -425,6 +442,72 @@
   (#/retain (native-color Self))
   (setf (opaque-native-color Self) (#/colorWithCalibratedRed:green:blue:alpha: ns:ns-color Red Green Blue 1.0))
   (#/retain (opaque-native-color Self)))
+
+
+;**********************************
+;* BROWSER-VIEW                   *
+;**********************************
+(defclass MY-BROWSER-DELEGATE (ns:ns-object)
+  ((lui-view :accessor lui-view :initarg :lui-view))
+  (:metaclass ns:+ns-object
+	      :documentation "delegate object receiving window events"))
+
+
+
+
+(objc:defmethod (#/browser:numberOfRowsInColumn: :<NSI>nteger)
+    ((self my-browser-delegate)
+     browser
+     (column :<NSI>nteger))
+  (print "ROWS AMD COLS")
+  5)
+
+(objc:defmethod (#/browser:willDisplayCell:atRow:column: :void)
+    ((self my-browser-delegate)
+     browser
+     cell
+     (row :<NSI>nteger)
+     (column :<NSI>nteger))
+  (print "BROWSER WILL DISPLAY")
+  (print row)
+  (print column)
+  ;(unless (equal row +null-ptr+)
+   ; (print (parse-integer row)))
+  ;(print (parse-integer row))
+  (#/setLeaf: cell #$YES)
+  (#/setStringValue: cell (native-string "HELLO"));(gui::nsstringptr (format nil "Hello" )))
+  )
+
+#|
+(objc:defmethod (#/browser:createRowsForColumn:inMatrix: :void) ((self browser-delegate) sender column matrix)
+  (print "BROWSER CREATE ROWS FOR COLUMN IN MATRIX"))
+|#
+(defclass NATIVE-BROWSER-VIEW (ns:ns-browser)
+  ((lui-view :accessor lui-view :initform nil :initarg :lui-view))
+  (:metaclass ns:+ns-object
+	      :documentation ""))
+
+
+(defmethod make-native-object ((Self browser-view))
+  (let ((Native-Control (make-instance 'native-browser-view :lui-view Self)))
+    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+      (#/initWithFrame: Native-Control Frame)
+      (#/setMaxVisibleColumns: Native-Control 2)
+      (#/setDelegate: native-control (make-instance 'my-browser-delegate))
+    Native-Control)))
+
+
+(defmethod MAP-SUBVIEWS ((Self browser-view) Function &rest Args)
+  (declare (ignore Function Args))
+  ;; no Cocoa digging
+  )
+
+
+(defmethod SUBVIEWS ((Self browser-view))
+  ;; no Cocoa digging
+  )
+
+
 
 ;;************************************
 ;; WINDOW                            *
@@ -1000,6 +1083,8 @@
 (defmethod (setf text) :after (Text (Self bevel-button-control))
   (#/setTitle: (native-view Self) (native-string Text)))
 
+
+
 #|
 
 ;__________________________________
@@ -1439,10 +1524,21 @@
        (setf (list-items self) (list item))
        (setf (is-selected (first (list-items self))) t)
        (display self))
-      (t (setf (list-items self) (append (list-items self) (list item)))))))
-
-
-(defmethod SET-LIST ((Self attribute-value-list-view-control) list) 
+      (t 
+       (setf (list-items self) (append (list-items self) (list item)))))))
+  
+(defmethod ADD-ITEM-BY-MAKING-NEW-LIST  ((Self attribute-value-list-view-control) string value &key (action nil) (owner nil)) 
+  ;(set-list self (append (list-items self) (list (make-instance 'attribute-value-list-item-view :attribute-symbol string :container self :width (width self) :height (item-height self) :attribute-value value :text string :attribute-changed-action action :attribute-owner owner))))
+  (dolist (subview (gui::list-from-ns-array (#/subviews (native-view self))))
+    (#/removeFromSuperview subview))
+  (let ((temp-list (copy-list (list-items self))))
+    (setf (list-items self) nil)
+  (dolist (item temp-list)
+    (add-attribute-list-item  self (string (attribute-symbol item)) (attribute-value item) )
+  )
+  (add-attribute-list-item self string value)))
+                                         
+(defmethod SET-LIST ((Self attribute-value-list-view-control) list ) 
   "Used to set the string-list to a given list instead setting the list string by string.  Also will select the first item in the list.  "
   (dolist (subview (gui::list-from-ns-array (#/subviews (native-view self))))
     (#/removeFromSuperview subview))
@@ -1460,7 +1556,8 @@
         (#/setStringValue: (value-text-field item) (native-string (write-to-string Value)))
         (#/setTextColor: (value-text-field item) (#/redColor ns:ns-color)))
       (return-from set-value-of-item-with-name t)))
-  (add-attribute-list-item self name value)
+  ;(add-attribute-list-item self name value)
+  (lui::add-item-by-making-new-list self name value)
   (layout self)
   (display self))
 
@@ -2028,12 +2125,17 @@
       (#/initWithFrame: Native-Control Frame)
       (#/setDrawsBackground: Native-Control nil)
       (#/setStringValue: Native-Control (native-string (text Self)))
+      (#/setEditable: Native-Control #$YES)
       #| (ecase (align Self)
         (:left (#/alignLeft: Native-Control Native-Control))
         (:center (#/alignCenter: Native-Control Native-Control))
         (:right (#/alignRight: Native-Control Native-Control))
         (:justified (#/alignJustified: Native-Control Native-Control))) |# )  
     Native-Control))
+
+(objc:defmethod (#/becomeFirstResponder  :<BOOL>) ((self native-editable-text))
+  (print "BECOME FIRST RESPONDER")
+  (call-next-method))
 
 
 (defmethod (setf text) :after (Text (Self editable-text-control))
