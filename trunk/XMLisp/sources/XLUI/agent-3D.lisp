@@ -285,6 +285,8 @@
   ;;(compose-scene Self)
   )
 
+
+
 ;; Content Changed events
 
 (defmethod CONTENT-CHANGED ((Self agent-3d-view))
@@ -478,12 +480,12 @@
 
 
 ;; Hovering
-
 (defmethod VIEW-MOUSE-MOVED-EVENT-HANDLER ((Self agent-3d-view) x y dx dy)
   ;; add some delay here to avoid taxing CPU with high frequency picking
   ;; for instance: picking every 50ms would be plenty fast
   (declare (ignore dx dy))
   (call-next-method)
+  
   ;;(format t "~%hover: x=~A y=~A dx=~A dy=~A" x y dx dy)
   (let ((Agent (find-agent-at Self x y *Selection-Tolerance* *Selection-Tolerance*)))
     (when (or (not (eq Agent (agent-hovered Self))) 
@@ -580,6 +582,14 @@
   (:documentation "invoked when mouse is hovering over agent for some time and help is enabled"))
 
 
+(defgeneric MOUSECLICK-TRIGGER-EVENT-HANDLER (Agent-3D)
+  (:documentation "invoked when mouse is clicked on an agent"))
+
+
+(defgeneric MOUSEHOVER-TRIGGER-EVENT-HANDLER (Agent-3D)
+  (:documentation "invoked when mouse is hovering over agent for some time"))
+
+
 (defgeneric TOOLTIP-TEXT (Agent-3D)
   (:documentation "String returned will be displayed as tooltip if tooltip is tuned on"))
 
@@ -607,6 +617,10 @@
 
 (defgeneric MOUSE-HOVER-LEAVE-EVENT-HANDLER (agent-3d)
   (:documentation "Mouse has left hover zone above me"))
+
+
+(defgeneric MOUSE-HAS-BEEN-CLICKED (agent-3d)
+  (:documentation "Called after this agent has been clicked on"))
 
 ;; Drag and Drop
 
@@ -821,6 +835,10 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
   (display (view Self)))
 
 
+(defmethod MOUSE-HAS-BEEN-CLICKED ((Self agent-3d))
+  ;; do nothing
+  )
+
 (defmethod AGENT-SELECTED ((Self agent-3d-view) (Agent agent-3d))
   ;; do notthing
   )
@@ -893,6 +911,16 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 
 (defmethod PROCESSED-TOOLTIP-TEXT ((Self agent-3d))
   ;; nothing
+  nil)
+
+
+(defmethod MOUSECLICK-TRIGGER-EVENT-HANDLER ((Self agent-3d))
+  ;; do nothing
+  nil)
+
+
+(defmethod MOUSEHOVER-TRIGGER-EVENT-HANDLER ((Self agent-3d))
+  ;; do nothing
   nil)
 
 
@@ -1150,6 +1178,21 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
   ;; just replace current camera
   (setf (camera View) Camera))
 
+
+(defmethod GET-TOOLTIP ((Self agent-3d-view) x y)
+  (let ((agent (find-agent-at-screen-position x y)))
+    (if agent
+      (progn
+        (tooltip-event-handler agent)
+        (get-tooltip agent x y))
+      (documentation (type-of self) 'type))))
+
+
+(defmethod GET-TOOLTIP ((Self agent-3d) x y)
+  (declare (ignore x y))
+  (if (tooltip-text self)
+    (tooltip-text self)
+    (documentation (type-of self) 'type)))
 
 
 #| Examples:
