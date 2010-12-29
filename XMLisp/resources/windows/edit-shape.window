@@ -21,9 +21,8 @@
       <spacer/>
       <column flex="4" align="stretch" height="230">
         <label align="center" width="100" name="Shape Preview" text="Preview"/>
-        <3d-agent-preview-view height="230"  name="shape-preview">
-          <cube texture="crate.png"/>
-        </3d-agent-preview-view>
+        <3d-agent-preview-view height="230"  name="shape-preview"/>
+
       </column>
     </row>
     <row align="right" minimize="vertical">
