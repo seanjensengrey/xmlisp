@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<attribute-window title="scrolling" margin="0">
+  <column align="stretch" valign="stretch" vflex="1" flex="1">
+     <scroll-box flex="1" vflex="1">
+       <attribute-window-table flex="1" name="table"/>
+     </scroll-box>
+  </column>
+</attribute-window> 
