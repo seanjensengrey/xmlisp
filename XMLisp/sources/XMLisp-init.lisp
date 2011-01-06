@@ -216,6 +216,7 @@
    "INCREMENT-ITEM-COUNTER" "CLEAR-ITEM-COUNTERS"
    "PROJECT-MANAGER-REFERENCE" "AGENT-GALLERY-VIEW" "OPEN-ICON-WINDOWS"
    "CONVERT-IMAGE-FILE"
+   "GET-TOOLTIP" "ENABLE-TOOLTIP"
    )
   (:import-from "XML"
                 "FILE"))
@@ -280,17 +281,22 @@
 ;;  Load LUI                                 |
 ;;___________________________________________
 
+
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;memory")
 (load "lui:sources;Lisp User Interface;error-handling")
 (load "lui:sources;Lisp User Interface;LUI")
 (load "lui:sources;Lisp User Interface;Camera")
 (load "lui:sources;Lisp User Interface;OpenGL-view")
+(load "lui:sources;Lisp User Interface;browser-view")
+(load "lui:sources;Lisp User Interface;table-view")
 (load "lui:sources;Lisp User Interface;plot-view")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;LUI Cocoa")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;standard-alert-dialog")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;image-import")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;image-export")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;OpenGL-view Cocoa")
+(load "lui:sources;Lisp User Interface;specific;Mac CCL;browser-view-cocoa")
+(load "lui:sources;Lisp User Interface;specific;Mac CCL;table-view-cocoa")
 
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;Transparent-OpenGL-Window")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;speech")
@@ -382,6 +388,7 @@
 
 
 (defun RESTORE-XMLISP ()
+  (print "RESTORE XMLISP")
   (let* ((contents-dir (ccl::ccl-contents-directory))
          (toplevel-dir (make-pathname :directory (butlast (pathname-directory contents-dir) 2)
                                       :device (pathname-device contents-dir))))
@@ -454,26 +461,22 @@
   ;; load a different init file
   ;; create LUI host pointing to application bundle
   (pushnew 'restore-xmlisp *restore-lisp-functions*)
-
   (format t "~%- create directories and files")
   (multiple-value-bind (Path Exists)
                        (create-directory (format nil "~ADesktop/XMLisp/" (user-homedir-pathname)))
     (declare (ignore Path))
-   (unless Exists
+    (unless Exists
       (error "XMLisp folder on desktop already exists")))
-
   (format t "~%- copy examples")
   (ccl::recursive-copy-directory
    (truename "lui:sources;XLUI;examples;")
    (format nil "~ADesktop/XMLisp/examples/" (user-homedir-pathname)))
-
   (finish-xmlisp)
-
   (ccl::build-application 
    :name "XMLisp"
    :directory (format nil "~ADesktop/XMLisp/" (user-homedir-pathname))
    :application-class 'xmlisp-application
-   #+cocotron :info-plist #+cocotron (ccl::make-info-dict)
+   #+cocotron :info-plist (ccl::make-info-dict)
    :nibfiles '("lui:resources;English.lproj;MainMenu.nib")))
 
 ;;___________________________________________
@@ -481,9 +484,10 @@
 ;;___________________________________________
 
 ;; If we find AgentCubes lets just load it unless user indicates no by holding down shift key
-(when (and (probe-file "lui:sources;AgentCubes;AgentCubes-init.lisp")
-           (lui::standard-alert-dialog "Load AgentCubes?" :yes-text "Load" :no-text "Don't Load" :Explanation-Text "The load file for AgentCubes was found"))
-  (load "lui:sources;AgentCubes;AgentCubes-init"))
+
+(unless (lui::shift-key-p)
+  (when (probe-file "lui:sources;AgentCubes;AgentCubes-init.lisp")
+    (load "lui:sources;AgentCubes;AgentCubes-init")))
 
 
 #| 
