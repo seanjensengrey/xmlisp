@@ -2056,7 +2056,6 @@
     Native-Control))
 
 (objc:defmethod (#/becomeFirstResponder  :<BOOL>) ((self native-editable-text))
-  (print "BECOME FIRST RESPONDER")
   (call-next-method))
 
 
