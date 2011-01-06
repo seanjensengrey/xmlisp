@@ -1,9 +1,8 @@
 (in-package :lui)
 
 ;**********************************
-;* Browser-View                  *
+;* Browser-View                   *
 ;**********************************
-(export '(node-item name browser-view nodes get-value-of-selected-cell get-selected-column set-title-of-column get-value-of-selected-cell-at-column))
 
 (defclass BROWSER-VIEW (control)
   ((text :accessor text :initform "untitled" :initarg :text :type string :documentation "text associated with control")
@@ -48,7 +47,7 @@
 ;**********************************
 
 (defclass NODE-ITEM ()
-  ((name :accessor name :initform "Name" :initarg :name :documentation "the name of this node item"))
+  ((node-name :accessor node-name :initform "Name" :initarg :node-name :documentation "the name of this node item"))
   (:documentation "A node item represents a node in a browser tree"))
   
 
