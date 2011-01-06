@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <project-window title="" track-mouse="true" x="100" y="50" width="1200" height="600" margin="0">
   <row align="stretch" valign="stretch" >
-    <column align="stretch" valign="stretch" flex="1" width="250">
+    <column align="stretch" valign="stretch" flex="1"  width="250">
       <row valign="middle" align="center" height="32" src="gradient-transparent.png">
         <label text="Agents" width="120" align="center"/>
       </row>
@@ -86,7 +86,7 @@
              <label text="Behavior: <select an agent>" name="agent name" width="200"/>
           </row>
           <row vflex="1" valign="stretch" align="stretch">
-            <visual-agentalk-view name="behavior" content-changed-action="behavior-changed" flex="3" vflex="1"/>
+            <behavior-view name="behavior" content-changed-action="behavior-changed" flex="3" vflex="1"/>
             <scroller name="behavior scroller" small-scroller-size="true" action="scroll-behavior"/>
           </row>
         </column>
