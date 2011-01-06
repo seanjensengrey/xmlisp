@@ -81,6 +81,7 @@
 
 
 (defmethod INITIALIZE-INSTANCE  :after  ((self node) &rest args)
+  (declare (ignore args))
   (when (node-path self)
     (dolist (node (directory (concatenate 'string (node-path self) "*.*" ) ))
       (when (or (not (allowed-file-types self)) (find (string-upcase (pathname-type node)) (read-from-string (allowed-file-types self)) :test 'equal :key 'string))
