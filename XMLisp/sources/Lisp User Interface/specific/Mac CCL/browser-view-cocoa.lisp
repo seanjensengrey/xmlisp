@@ -1,27 +1,6 @@
 (in-package :lui)
 
-;**********************************
-;* BROWSER-CELL-PROTOTYPE         *
-;**********************************
 (export '(add-column ))
-#|
-(defclass BROWSER-CELL-PROTOTYPE (ns:ns-cell)
-  ((part-of :accessor part-of :initform nil :initarg :part-of))
-  (:metaclass ns:+ns-object
-             :documentation "prototype for the ns-cells of an NSBrowser, mostly used to provide actions when a cell is selected"))
-
-
-(defmethod INITIALIZE-INSTANCE :after ((self browser-cell-prototype) &rest Args)
-  (#/sendActionOn: self #$NSLeftMouseDownMask)
-  (#/setTarget: self (make-instance 'native-target 
-                       :native-control (native-view (part-of Self))
-                       :lui-control (part-of Self)))
-  (#/setAction: self (objc::@selector #/activateAction)))
-
-
-(objc:defmethod (#/activateAction :void) ((self browser-cell-prototype))
-  (print "ACTIVATE ACITON"))
-|#
 
 ;**********************************
 ;* MY-BROWSER-DELEGATE            *
