@@ -10,6 +10,7 @@
     <erase/>
     <rotate-by droll="90"/>
     <rotate-to/>
+    <tooltip/>
   </category>
   <category title="time" disclosed="true">
     <wait/>
@@ -31,6 +32,7 @@
     <set-color-to/>
     <set-rgba-color/>
     <map/>
+    <plot-to-window/>
     <plot-agents-attribute/> 
    </category>
    <category title="camera control" disclosed="true">
