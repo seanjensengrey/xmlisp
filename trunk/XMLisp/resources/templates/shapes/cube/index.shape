@@ -1,4 +1,4 @@
 <?xml version="1.0"?>
 <shape-manager>
-  <cube texture="crate.png"/>
+  <cube />
 </shape-manager>
