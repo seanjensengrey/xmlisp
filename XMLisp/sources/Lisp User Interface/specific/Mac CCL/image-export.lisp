@@ -57,7 +57,15 @@
               (* Width Depth)
               (* 8 Depth))))
         (unless (%ptr-eql Bitmap Initialized-Bitmap) (error "Trapped the rare white Cocoa elephant: initWithBitmapDataPlanes... returns a different pointer!!"))
-        (#/writeToFile:atomically:
+        (#/representationUsingType:properties: 
+          Initialized-Bitmap 
+          (case Image-Type
+            (:png #$NSPNGFileType)
+            (:tiff #$NSTIFFFileType)
+            (:jpeg #$NSJPEGFileType)
+            (:jpeg2000 #$NSJPEG2000FileType))
+          nil)
+         (#/writeToFile:atomically:
          (#/representationUsingType:properties: 
           Initialized-Bitmap 
           (case Image-Type
@@ -66,7 +74,7 @@
             (:jpeg #$NSJPEGFileType)
             (:jpeg2000 #$NSJPEG2000FileType))
           nil)
-         (native-string (namestring (translate-logical-pathname Pathname)))
+         (native-string (namestring (translate-logical-pathname (probe-file Pathname))))
          #$YES)
         (#/release Bitmap)
         ))))
