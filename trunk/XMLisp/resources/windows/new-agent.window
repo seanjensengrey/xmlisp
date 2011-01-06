@@ -8,20 +8,29 @@
     <spacer height="15"/>
     <row align="stretch" valign="stretch" height="230" > 
       <label align="left" width="60" text="Shape:"/>
-     <column flex="2" align="stretch" height="230">
+     <column flex="4" align="stretch" height="230">
         <label align="center" width="100" text="Type"/>
-        <string-list height="230" name="shape-list"  action="shape-changed-action" width="100">
-          <string-list-item text="Inflatable Icon"/>
-          <string-list-item text="Cube"/>
-          <string-list-item text="Tile"/>
-          <string-list-item text="Sphere"/>
-        </string-list>
+        <browser flex="4" height="230" action="change-shape-action" name="browser">
+          <node name="Cube" node-path="lui:resources;textures;" allowed-file-types="(png)">
+            <node name="Crate.png"/>
+            <node name="concrete.png"/>
+            <node name="Custom Texture..."/>
+          </node>
+          <node name="Tile" node-path="lui:resources;textures;" allowed-file-types="(png)">
+            <node name="Custom Texture..."/>
+          </node>
+          <node name="Sphere" node-path="lui:resources;textures;" allowed-file-types="(png)">
+            <node name="Custom Texture..."/>
+          </node>
+          <node name="Inflatable Icon">
+            <node name="Frog"/>
+            <node name="mushroom"/>
+            <node name="fire"/>
+            <node name="chocolate"/>
+          </node>
+        </browser>
       </column>
-      <spacer/>
-      <column flex="2" align="stretch" height="230">
-        <label align="center" width="100" name="shape-image-label" text="Image"/>
-        <string-list height="230" name="column2" action="image-changed-action" width="100"/>
-      </column>
+ 
       <spacer/>
       <column flex="4" align="stretch" height="230">
         <label align="center" width="100" name="Shape Preview" text="Preview"/>
@@ -32,7 +41,7 @@
     </row>
     <row align="right" minimize="vertical">
       <button text="Cancel" action="cancel-action"/>
-      <button text="OK" action="OK-action" default-button="true"/>
+      <button text="OK" action="OK-action" default-button="true" start-disabled="true" name="ok-button"/>
     </row>
   </column>
 </new-shape-window>
