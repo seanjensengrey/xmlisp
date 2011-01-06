@@ -1670,7 +1670,7 @@
 
 
 (defmethod VALUE ((self popup-button-control))
-  (#/title (#/selectedItem (native-view self))))
+  (ccl::lisp-string-from-nsstring (#/title (#/selectedItem (native-view self)))))
 
 
 (defmethod GET-SELECTED-ACTION ((Self popup-button-control))
