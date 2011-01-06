@@ -1,5 +1,4 @@
 (in-package :lui) 
-(export '(table-view add-column add-row text-changed-action-target text-changed-action SHOULD-END-EDITING-NOTIFICAITON reload-data set-color-of-cell-at-row-column get-string-value-of-cell-at-row-column GET-COLUMN-OF-CELL-BEING-EDITED GET-ROW-OF-CELL-BEING-EDITED))
 
 ;**********************************
 ;* Table-View                     *
