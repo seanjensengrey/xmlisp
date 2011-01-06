@@ -223,13 +223,20 @@ Call with most important parameters. Make other paramters accessible through *Cu
 (defgeneric LAYOUT (view-or-window)
   (:documentation "Adjust size and potentially position to container, adjust size and position of content if necesary"))
 
+(defgeneric ALIGN-LUI-SIZE-TO-NATIVE-SIZE (view)
+  (:documentation "This method should make sure the lui size and native size are the same"))
+
 (defgeneric ADJUST-X-Y-FOR-WINDOW-OFFSET (view x y)
   (:documentation "On windows, it may be necessaryto adjust the x y coordinates in order to make up for cocotrons strange offsets"))
 
 (defgeneric MAKE-NATIVE-OBJECT (view-or-window)
   (:documentation "Make and return a native view object"))
 
+(defgeneric GET-TOOLIP (view x y)
+  (:documentation "Returns a tooltip for this view or for this view's subview"))
 
+(defgeneric ENABLE-TOOLTIPS (view)
+  (:documentation "Enable Tooltips for this view"))
 ;;_______________________________
 ;; Default implementation        |
 ;;_______________________________
@@ -275,7 +282,8 @@ Call with most important parameters. Make other paramters accessible through *Cu
 (defmethod INITIALIZE-INSTANCE ((Self view) &rest Args)
   (declare (ignore Args))
   (call-next-method)
-  (setf (native-view Self) (make-native-object Self)))
+  (setf (native-view Self) (make-native-object Self))
+  (enable-tooltips self))
 
 
 (defmethod DRAW ((Self view))
@@ -293,6 +301,14 @@ Call with most important parameters. Make other paramters accessible through *Cu
   (let ((Window (find-window-at-screen-position screen-x screen-y :type Window-Type)))
     (when Window
       (find-view-containing-point Window (- Screen-x (x Window)) (- Screen-y (y Window))))))
+
+
+(defun FIND-MOST-SPECIFIC-VIEW-AT-SCREEN-POSITION (screen-x screen-y &key Window-Type)
+  (declare (ftype function find-window-at-screen-position))
+  (let ((Window (find-window-at-screen-position screen-x screen-y :type Window-Type)))
+    (when Window
+      (most-specific-view-containing-point Window (- Screen-x (x Window)) (- Screen-y (y Window))))))
+
 
 ;; Events
 
@@ -363,6 +379,19 @@ Call with most important parameters. Make other paramters accessible through *Cu
    X
    Y))
 
+
+(defmethod GET-TOOLTIP-OF-VIEW-AT-SCREEN-POSITION ((Self view) x y)
+  (get-tooltip (find-view-at-screen-position x (- (ns:ns-rect-height (#/frame (#/mainScreen ns:ns-screen))) y)) x (- (ns:ns-rect-height (#/frame (#/mainScreen ns:ns-screen))) y)))
+
+
+(defmethod GET-TOOLTIP ((Self view) x y)
+  (declare (ignore x y))
+  (documentation (type-of self) 'type))
+
+
+
+
+
 ;**********************************
 ;* SCROLL-VIEW                    *
 ;**********************************
@@ -413,6 +442,8 @@ Call with most important parameters. Make other paramters accessible through *Cu
   (:default-initargs 
     :x 10
     :y 10))
+
+
 
 ;**********************************
 ;* WINDOW                         *
@@ -763,6 +794,11 @@ after any of the window controls calls stop-modal close window and return value.
 (defmethod WINDOW-SHOULD-CLOSE ((Self window))
   t ;; should be closed by default
   )
+
+
+(defmethod GET-TOOLTIP ((Self window) x y)
+  (declare (ignore x y))
+  (documentation (type-of self) 'type))
 
 
 ;****************************************************
