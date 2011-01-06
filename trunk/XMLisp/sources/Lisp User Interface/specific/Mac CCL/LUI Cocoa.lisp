@@ -130,6 +130,12 @@
     (= (#/clickCount (native-event *Current-Event*)) 2)))
 
 
+(defmethod GET-MODIFIER-FLAGS ((Self event))
+  (#/modifierFlags (native-event self)))
+
+(defmethod GET-CHARACTERS ((Self event))
+  (#/characters (native-event self)))
+
 ;;*********************************
 ;; Mouse Polling                  *
 ;;*********************************
@@ -564,12 +570,6 @@
     #$YES
     #$NO))
 
-#|
-(objc:defmethod (#/windowDidEndLiveResize: :void) ((self window-delegate) Notification)
-  (print "-------------DID END LIVE RESIZE-------------")
-  (call-next-method)
-  )
-|#
 
 (objc:defmethod (#/windowDidMove: :void) ((self window-delegate) Notification)
   (declare (ignore Notification))
@@ -1309,19 +1309,7 @@
   (call-next-method Notification)
   (text-did-end-editing (lui-view self)))
 
-#|
-(objc:defmethod (#/textDidEndEditing: :void) ((self native-attribute-value-list-text-view) Notification)
-  (when (read-from-string (ccl::lisp-string-from-nsstring (#/stringValue self)) nil nil)
-    (unless (numberp  (read-from-string (ccl::lisp-string-from-nsstring (#/stringValue self)) nil nil))
-      (if (value-save (lui-view self))
-        (#/setStringValue: self (value-save (lui-view self)))))
-    (call-next-method Notification)
-    (unless (attribute-owner (lui-view  self))
-      (setf (attribute-owner (lui-view  self)) (part-of  (lui-view  self))))
-    (if (attribute-owner (lui-view  self))
-      (funcall (attribute-changed-action (lui-view self)) (attribute-owner (lui-view self))  (window (lui-view self))  (attribute-symbol (container (lui-view self))) (read-from-string (ccl::lisp-string-from-nsstring (#/stringValue self)) nil nil)) 
-      (print "NOT__"))))
-|#
+
 
 (defmethod TEXT-DID-END-EDITING ((Self attribute-value-list-text-view))
   (when (read-from-string (ccl::lisp-string-from-nsstring (#/stringValue (native-view self))) nil nil)
@@ -1461,18 +1449,16 @@
       (t 
        (setf (list-items self) (append (list-items self) (list item)))))))
   
-
 (defmethod ADD-ITEM-BY-MAKING-NEW-LIST  ((Self attribute-value-list-view-control) string value &key (action nil) (owner nil)) 
-  (declare (ignore Action Owner))
+  (declare (ignore action owner))
   ;(set-list self (append (list-items self) (list (make-instance 'attribute-value-list-item-view :attribute-symbol string :container self :width (width self) :height (item-height self) :attribute-value value :text string :attribute-changed-action action :attribute-owner owner))))
   (dolist (subview (gui::list-from-ns-array (#/subviews (native-view self))))
     (#/removeFromSuperview subview))
   (let ((temp-list (copy-list (list-items self))))
     (setf (list-items self) nil)
   (dolist (item temp-list)
-    (add-attribute-list-item  self (string (attribute-symbol item)) (attribute-value item)))
+    (add-attribute-list-item  self (string (attribute-symbol item)) (attribute-value item) ))
   (add-attribute-list-item self string value)))
-
                                          
 (defmethod SET-LIST ((Self attribute-value-list-view-control) list ) 
   "Used to set the string-list to a given list instead setting the list string by string.  Also will select the first item in the list.  "
@@ -2434,7 +2420,6 @@
     (when selected-item
       (#/selectItemWithTitle: (native-view pop-up) (native-string selected-item)))
     (#/setTransparent: (native-view Pop-Up) #$YES)
-    (print "PERFORM CLICK SHOW STRING POPUP")
     (#/performClick:  (native-view Pop-up) +null-ptr+)
     ;(#/setState: (native-view Pop-up) #$NSOnState)
     (#/removeFromSuperview (native-view Pop-up))
