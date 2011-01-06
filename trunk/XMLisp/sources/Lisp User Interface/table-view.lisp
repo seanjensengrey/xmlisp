@@ -1,5 +1,5 @@
-(in-package :lui)
-(export '(table-view add-column add-row text-changed-action-target text-changed-action SHOULD-END-EDITING-NOTIFICAITON reload-data set-color-of-cell-at-row-column))
+(in-package :lui) 
+(export '(table-view add-column add-row text-changed-action-target text-changed-action SHOULD-END-EDITING-NOTIFICAITON reload-data set-color-of-cell-at-row-column get-string-value-of-cell-at-row-column GET-COLUMN-OF-CELL-BEING-EDITED GET-ROW-OF-CELL-BEING-EDITED))
 
 ;**********************************
 ;* Table-View                     *
@@ -25,10 +25,53 @@
   (:documentation "notification that this table-view has ended editing"))
 
 
+(defgeneric RELOAD-DATA (table-view)
+  (:documentation "Redisplay the data of this table-view"))
+
+
+(defgeneric GET-STRING-VALUE-OF-CELL-AT-ROW-COLUMN (table-view row column)
+  (:documentation "Returns the string value of the cell at the give given row and column"))
+
+
+(defgeneric GET-ROW-OF-CELL-BEING-EDITED (table-view)
+  (:documentation "Returns the row of the cell which is being edited"))
+
+
+(defgeneric GET-COLUMN-OF-CELL-BEING-EDITED (table-view)
+  (:documentation "Returns the column of the cell which is being edited"))
+
+
 (defmethod SHOULD-END-EDITING-NOTIFICAITON ((self table-view))
   ;; do nothing
   )
 
+
+(defmethod RECALCULATE-ROWS ((Self table-view))
+  (let ((longest-column 0))
+    (dolist (column (columns self))
+      (when (> (length column) longest-column)
+        (setf longest-column (length column))))
+    (setf (rows-in-table self) longest-column)
+    (reload-data self)))
+
+
+(defmethod ADD-ROW ((self table-view) &key (data-list nil))
+  (dotimes (i (length (columns self)))
+    (if (> (length data-list) i)
+      (Setf (elt (columns self) i) (append  (elt (columns self) i) (list (elt data-list i))))
+      (setf (elt (columns self) i) (append (elt (columns self) i) (list ".")))))
+ (recalculate-rows self))
+
+
+(defmethod MAP-SUBVIEWS ((Self table-view) Function &rest Args)
+  (declare (ignore Function Args))
+  ;; no Cocoa digging
+  )
+
+
+(defmethod SUBVIEWS ((Self table-view))
+  ;; no Cocoa digging
+  )
 
 #| Example:
 
