@@ -27,9 +27,9 @@
  <column align="stretch" valign="stretch">
     <agent-3d-view name="3D View"  full-scene-anti-aliasing="false" vflex="1">
       <camera eye-z="2.0"/>
-      <cube texture="metal1.jpg"/>
-      <cylinder draggable="true" top-radius="0.2" texture="metal1.jpg"/>
-      <cube x="-1" y="-1" texture="metal1.jpg"/>
+      <cube texture="metal2.png"/>
+      <cylinder draggable="true" top-radius="0.2" texture="metal2.png"/>
+      <cube x="-1" y="-1" texture="metal2.png"/>
     </agent-3d-view>
     <row minimize="vertical" align="center">
       <bevel-button name="mode switch button" text="switch to full screen" action="switch-window-mode-action" width="140"/>
