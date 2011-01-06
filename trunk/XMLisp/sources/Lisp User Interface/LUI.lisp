@@ -52,6 +52,13 @@
 (defgeneric NATIVE-TO-LUI-EVENT-TYPE (t)
   (:documentation "return LUI event type"))
 
+
+(defgeneric GET-MODIFIER-FLAGS (event)
+  (:documentation "Returns the modifier keys if this event"))
+
+(defgeneric GET-CHARACTERS (event)
+  (:documentation "Returns the characters of this event"))
+
 ;; Modifier Keys
 
 (defgeneric COMMAND-KEY-P ()
@@ -237,6 +244,7 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 (defgeneric ENABLE-TOOLTIPS (view)
   (:documentation "Enable Tooltips for this view"))
+
 ;;_______________________________
 ;; Default implementation        |
 ;;_______________________________
