@@ -33,7 +33,7 @@
 	      :documentation ""))
 
 
-(objc:defmethod #/textShouldEndEditing: ((self native-table-view) textObject)
+(objc:defmethod (#/textShouldEndEditing: :<BOOL>) ((self native-table-view) textObject)
   (setf (elt (elt (columns (lui-view self)) (#/editedColumn self)) (#/editedRow self)) (ccl::lisp-string-from-nsstring (#/string textObject)))
   (should-end-editing-notificaiton (lui-view self))
   (call-next-method textObject))
@@ -49,7 +49,7 @@
     Native-Control))))
 
 
-(defmethod ADD-COLUMN ((self table-view) &key (editable nil)(identifier "id")(Title "Field"))
+(defmethod ADD-COLUMN ((self table-view) &key (editable nil) (Title "Field"))
   (let ((column (#/initWithIdentifier: (#/alloc ns:ns-table-column) (native-string (write-to-string (length (columns self)))))))
     (if editable 
       (#/setEditable: column #$YES)
