@@ -13,7 +13,7 @@
   (:documentation "A view that can be used for displaying and organizing data"))
 
 
-(defgeneric ADD-COLUMN (table-view &key editable identifier)
+(defgeneric ADD-COLUMN (table-view &key editable)
   (:documentation "Add a columns to this table view"))
 
 
