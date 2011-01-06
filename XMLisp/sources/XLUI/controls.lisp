@@ -56,15 +56,43 @@
                :green (/ (logand (ash Color -8) 255) 255.0)
                :blue (/ (logand Color 255) 255.0))))
 
-
 ;________________________________________________
 ; Color Palette                                  |
 ;________________________________________________
 
-
 (defclass COLOR-PALETTE (color-palette-view xml-layout-interface)
   ()
   (:documentation "A rectangular view that will be displayed as a constant color rectangle if it has no transparency and if it is transparent will display in the apple transparency preview mode."))
+
+;________________________________________________
+; BROWSER                                        |
+;________________________________________________
+
+(defclass BROWSER (browser-view xml-layout-interface)
+  ((nodes :accessor nodes :initform nil))
+  (:documentation ""))
+
+
+(defclass NODE (node-item xml-serializer)
+  ((nodes :accessor nodes :initform nil :initarg :nodes)
+   (node-path :accessor node-path :initform nil :initarg :node-path )
+   (allowed-file-types :accessor allowed-file-types :initform nil :initarg :allowed-file-types ))
+   (:documentation ""))
+
+
+(defmethod INITIALIZE-INSTANCE  :after  ((self node) &rest args)
+  (when (node-path self)
+    (dolist (node (directory (concatenate 'string (node-path self) "*.*" ) ))
+      (when (or (not (allowed-file-types self)) (find (string-upcase (pathname-type node)) (read-from-string (allowed-file-types self)) :test 'equal :key 'string))
+        (Setf (nodes self) (append (list (concatenate 'string (pathname-name node) "." (pathname-type node))) (nodes self) ))))))
+
+;________________________________________________
+;Table                                           |
+;________________________________________________
+
+(defclass TABLE (table-view xml-layout-interface)
+  ((nodes :accessor nodes :initform nil))
+  (:documentation ""))
 
 ;________________________________________________
 ; Plot-BOX                                      |
@@ -78,7 +106,6 @@
 
 (defmethod PRINT-SLOTS ((Self rectangle))
   '())
-
 
 ;________________________________________________
 ; Scroll-Box                                     |
@@ -128,18 +155,14 @@
 
 
 (defclass IMAGE-BADGE-GROUP-LIST-ITEM (xml-serializer)
-  (;(text :accessor text :initform "untitled")
-   ;(action :accessor action :initform 'default-action  :type symbol :documentation "method: window dialog")
-   (name :accessor name :initarg :name :initform "untitled")
+  ((name :accessor name :initarg :name :initform "untitled")
    (image-name :accessor image-name :initarg :image-name :initform "redlobster.png")
-   (item-list :accessor item-list :initarg :item-list :initform nil);'(("shape3" "redlobster.png")( "shape4" "redlobster.png")))
-   )
+   (item-list :accessor item-list :initarg :item-list :initform nil))
   (:documentation "a pop up menu item"))
 
 
 (defmethod ADD-SUBOBJECT ((manager badged-image-group-list-manager) (item image-badge-group-list-item))
   (add-group manager `(,(name item) ,(image-name item) ,(item-list item)) ))
- ; (add-group manager '( "hello" "redlobster.png"  (("shape3" "redlobster.png")( "shape4" "redlobster.png")))))
 
 
 (defmethod PRINT-SLOTS ((Self badged-image-group-list-manager))
@@ -153,7 +176,6 @@
 
 (defmethod ADD-SUBOBJECT ((manager agent-gallery) (item image-badge-group-list-item))
   (add-group manager `(,(name item) ,(image-name item) ,(item-list item)) ))
- ; (add-group manager '( "hello" "redlobster.png"  (("shape3" "redlobster.png")( "shape4" "redlobster.png")))))
 
 
 (defmethod PRINT-SLOTS ((Self agent-gallery))
@@ -210,7 +232,6 @@
 ;    <image-button image="redo-button.png"/>    |
 ;_______________________________________________|
 
-
 (defclass IMAGE-BUTTON (image-button-control xml-layout-interface)
   ()
   (:default-initargs
@@ -259,13 +280,11 @@
   (declare (ignore window))
   (declare (ignore self)))
 
-
 ;_______________________________________________
 ;  Popup Image Button                           |
 ;                                               |
 ;<popup-image-button image="redo-button.png"/>  |
 ;_______________________________________________|
-
 
 (defclass POPUP-IMAGE-BUTTON (popup-image-button-control xml-layout-interface)
   ()
@@ -294,11 +313,7 @@
 
 
 (defclass POP-UP-IMAGE-SUBMENU ( popup-image-button-submenu-control xml-serializer)
-  (
-   ;(text :accessor text :initform "untitled")
-   ;(action :accessor action :initform 'default-action  :type symbol :documentation "method: window dialog")
-   ;(enable-predicate :accessor enable-predicate :initform nil :type symbol :documentation "Enable predicate of this item")
-   )
+  ()
   (:documentation "a pop up menu item"))
 
 
@@ -313,7 +328,6 @@
 
 (defmethod ADD-SUBOBJECT ((supermenu pop-up-image-submenu) (submenu pop-up-image-submenu))
   (add-submenu-to-submenu supermenu submenu (text submenu) (action submenu) (enable-predicate submenu)))
-
 
 ;___________________________________________________________________________________________________________________________________
 ; Choice Image Button                                                                                                               |
@@ -351,8 +365,6 @@
 (defmethod ADD-SUBOBJECT ((Button choice-button-control) (Item choice-button-item))
   (add-menu-item Button (text Item) (action Item) (image Item)))
 
-
-
 ;__________________________________________________________________________________________________
 ; Image Button Cluster                                                                             |
 ;                                                                                                  |
@@ -361,7 +373,6 @@
 ;        <image-button image="erase-button.png" action="erase-tool-action" />                      |
 ;      </image-button-cluster>                                                                     |
 ;__________________________________________________________________________________________________
-
 
 (defclass IMAGE-BUTTON-CLUSTER (column) 
   ((selected-button :accessor selected-button :initform nil :documentation "currently selected button")
@@ -408,11 +419,9 @@
 ;      </image-button-cluster>                                                                     |
 ;__________________________________________________________________________________________________
 
-
 (defclass IMAGE-BUTTON-ROW (row) 
   ((selected-button :accessor selected-button :initform nil :documentation "currently selected button")
-   (images :accessor images :initform ())
-   )
+   (images :accessor images :initform ()))
   (:default-initargs
     :padding -1
     :action 'default-action
@@ -441,7 +450,6 @@
   (initialize-event-handling button)
   (setf (images cluster) (append (images cluster) (list button))))
 
-
 ;_____________________________________________________________________
 ; Radio Button Cluster                                                |
 ;                                                                     |
@@ -456,7 +464,6 @@
 ;</application-window>                                                |
 ;                                                                     |
 ;_____________________________________________________________________
-
 
 (defclass RADIO-BUTTON-CLUSTER (radio-button-control xml-layout-interface)
   ()
@@ -484,7 +491,6 @@
 (defmethod ADD-SUBOBJECT ((radio-control radio-button-cluster) (Item radio-item))
   (add-item radio-control (text Item) (action Item)))
 
-
 ;____________________________________________
 ; Color Well                                 |
 ;                                            |
@@ -511,7 +517,6 @@
 
 (defmethod color-action ((window window) (self COLOR-WELL-Control))
   (declare (ignore self)))
-
 
 ;______________________________________________
 ; Slider                                       |
@@ -541,7 +546,6 @@
 (defmethod PRINT-SLOTS ((Self jog-slider))
   '(max-value min-value stop-value action-interval tick-marks x y width height))
 
-
 ;__________________________________________________________________
 ; Check Box                                                        |
 ;                                                                  |
@@ -560,15 +564,6 @@
 ;                                                                  |
 ;                                                                  |
 ;__________________________________________________________________
-
-#|
-(defclass  STRING-LIST (string-list-control xml-layout-interface)
-  (title :accessor )
-  (:default-initargs
-    :width 15
-    :height 150))
-|#
-
 
 (defclass STRING-LIST-ITEM (xml-serializer)
   ((text :accessor text :initform "untitled")
@@ -603,7 +598,9 @@
 
 
 (defmethod ADD-SUBOBJECT ((attribute-value-list attribute-value-list) (string-list-item string-list-item))
-  (lui::add-attribute-list-item attribute-value-list  (text string-list-item) 0) )
+  (lui::add-attribute-list-item attribute-value-list  (text string-list-item) 0) 
+  ;(lui::add-item-by-making-new-list attribute-value-list  (text string-list-item) 0)
+  )
 
 
 (defclass ATTRIBUTE-EDITOR ( attribute-editor-view xml-layout-interface)
@@ -616,12 +613,12 @@
 (defmethod FINISHED-READING ((Self attribute-editor) Stream)
   ;do nothing
 (declare (ignore Stream)))
+
 ;__________________________________________________________________
 ; Scroller                                                         |
 ;                                                                  |
 ;                                                                  |
 ;__________________________________________________________________
-
 
 (defclass  SCROLLER (scroller-control xml-layout-interface)
   (title :accessor )
@@ -629,13 +626,11 @@
     :width 15
     :height 150))
 
-
 ;__________________________________________________________________
 ; Editable-Text                                                    |
 ;                                                                  |
 ; <editable-text text="bla"/>                                      |
 ;__________________________________________________________________
-
 
 (defclass EDITABLE-TEXT (editable-text-control xml-layout-interface)
   ((action :accessor action :initform 'print-window-and-dialog-action :type layout-value :initarg :action :documentation "method: window dialog"))
@@ -653,13 +648,11 @@
   ;; not a good idea for end users
   nil)
   
-
 ;__________________________________________________________________
 ; Status Bar                                                       |
 ;                                                                  |
 ; <status-bar text="bla"/>                                         |
 ;__________________________________________________________________
-
 
 (defclass STATUS-BAR (status-bar-control xml-layout-interface)
   ((action :accessor action :initform 'print-window-and-dialog-action :type layout-value :initarg :action :documentation "method: window dialog"))
@@ -676,7 +669,6 @@
 (defmethod SYMBOL-COMPLETION-ENABLED-P ((Self status-bar))
   ;; not a good idea for end users
   nil)
-
 
 ;__________________________________________________________________
 ; Editable-Number                                                  |
@@ -712,7 +704,6 @@
 ; <spacer width="90"/>                                             |
 ;__________________________________________________________________
 
-
 (defclass SPACER (control xml-layout-interface)
   ()
   (:default-initargs
@@ -732,8 +723,6 @@
     :height 8)
   (:documentation "small spacer, e.g., between text and dialog item"))
 
-
-
 ;__________________________________________________________________
 ; Separator                                                        |
 ;                                                                  |
@@ -747,15 +736,11 @@
     :height 1)
   (:documentation "separator line. If separator is wider than it is tall, the separator line is horizontal; otherwise it is vertical"))
 
-
-
-
 ;__________________________________________________________________
 ; Label                                                            |
 ;                                                                  |
 ; <label width="65" text="Pressure" align="right"/>                |
 ;__________________________________________________________________
-
 
 (defclass LABEL (label-control xml-layout-interface)
   ()
@@ -781,13 +766,11 @@
   (set-view-size Self (width Self) (point-v (view-size Self))))
 |#   
 
-
 ;__________________________________________________________________
 ; Progress-Indicator                                               |
 ;                                                                  |
 ; <progress-indicator width="100" align="center" height="20"/>     |
 ;__________________________________________________________________
-
 
 (defclass PROGRESS-INDICATOR (progress-indicator-control xml-layout-interface)
   ()
@@ -796,13 +779,11 @@
     :height 14)
   (:documentation "Static text"))
 
-
-;__________________________________________________________________
+;_________________________________________________________________
 ; Determinate-Progress-Indicator                                   |
 ;                                                                  |
 ; <progress-indicator width="100" align="center" height="20"/>     |
 ;__________________________________________________________________
-
 
 (defclass DETERMINATE-PROGRESS-INDICATOR (determinate-progress-indicator-control xml-layout-interface)
   ()
@@ -810,7 +791,6 @@
     :width 10
     :height 14)
   (:documentation "Static text"))
-
 
 ;;***********************************************
 ;;*    Web Browser                              *
