@@ -167,10 +167,13 @@
   (#/fillRect: ns:ns-bezier-path rect))
 |#
 
+(objc:defmethod (#/viewDidEndLiveResize :void) ((self native-badged-image-group-list-manager-view))
+  (layout self))
+
+
 (objc:defmethod (#/mouseDown: :void) ((self native-badged-image-group-list-manager-view) Event)
   (declare (ignore Event))
   (group-deselected (lui-view self)))
-
 
 
 ;;*********************************
@@ -568,7 +571,9 @@
      (layout (native-view self)))
     (progn
       (setf (is-disclosed (group button)) #$YES)
-       (layout (native-view self)))))
+       (layout (native-view self))))
+  (when (window self)
+    (size-changed-event-handler (window self) (width (window self)) (height (window self)))))
 
 
 (defmethod LAYOUT ((Self group-disclosure-button))
@@ -804,6 +809,9 @@
       (add-item-to-gui self group list-item)
       (#/setHidden: (item-view group) #$NO))
     (layout (native-view self))
+    (when (window self)
+      
+      (size-changed-event-handler (window self) (width (window self)) (height (window self))))
     t))
 
 
