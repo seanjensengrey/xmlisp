@@ -19,16 +19,6 @@
     (length (nodes (find (ccl::lisp-string-from-nsstring (#/stringValue (#/selectedCellInColumn: browser (- column 1)))) (nodes (lui-view browser)) :key 'name :test 'equal)))))
 
 
-#|
-(objc:defmethod (#/browser:titleOfColumn: :id) ((self my-browser-delegate) sender (column :<NSI>nteger))
-  (print "TITLE OF COLUMN")
-  (print sender)
-  (print (#/hasHorizontalScroller sender))
-  (print (#/isTitled sender))
-  (native-string "TITLE"))
-|#
-
-
 (objc:defmethod (#/browser:willDisplayCell:atRow:column: :void) ((self my-browser-delegate) browser cell (row :<NSI>nteger) (column :<NSI>nteger))
   (let ((node nil))
     (if (equal column 0)
