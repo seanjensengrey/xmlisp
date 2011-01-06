@@ -59,13 +59,6 @@
   (setf (columns self) (append (columns self) (list (make-list (rows-in-table self) :initial-element "."))))
   (recalculate-rows self))
 
-(defmethod ADD-ROW ((self table-view) &key (data-list nil))
-  (dotimes (i (length (columns self)))
-    (if (> (length data-list) i)
-      (Setf (elt (columns self) i) (append  (elt (columns self) i) (list (elt data-list i))))
-      (setf (elt (columns self) i) (append (elt (columns self) i) (list ".")))))
- (recalculate-rows self))
-
 
 (defmethod RELOAD-DATA ((Self table-view))
   (#/reloadData (native-view self)))
@@ -75,21 +68,13 @@
   (#/setTextColor: (#/preparedCellAtColumn:row: (lui::native-view self) column row ) (#/colorWithCalibratedRed:green:blue:alpha: ns:ns-color red green blue 1.0)))
 
 
-(defmethod RECALCULATE-ROWS ((Self table-view))
-  (let ((longest-column 0))
-    (dolist (column (columns self))
-      (when (> (length column) longest-column)
-        (setf longest-column (length column))))
-    (setf (rows-in-table self) longest-column)
-    (#/reloadData (native-view self))))
+(defmethod GET-STRING-VALUE-OF-CELL-AT-ROW-COLUMN ((self table-view) row column)
+  (ccl::lisp-string-from-nsstring (#/stringValue (#/preparedCellAtColumn:row: (native-view self) column row))))
 
 
-(defmethod MAP-SUBVIEWS ((Self table-view) Function &rest Args)
-  (declare (ignore Function Args))
-  ;; no Cocoa digging
-  )
+(defmethod GET-ROW-OF-CELL-BEING-EDITED ((self table-view))
+  (#/editedRow (native-view self)))
 
 
-(defmethod SUBVIEWS ((Self table-view))
-  ;; no Cocoa digging
-  )
+(defmethod GET-COLUMN-OF-CELL-BEING-EDITED ((self table-view))
+  (#/editedColumn (native-view self)))
