@@ -226,6 +226,7 @@
 
 
 (defmethod SET-POSITION :after ((Self view) X Y)
+  
   (ns:with-ns-point (Point X Y)
     (#/setFrameOrigin: (native-view Self) Point)))
 
@@ -2404,6 +2405,12 @@
 )
 
 |#
+;__________________________________
+; SET-ICON-AT-PATH                 |
+;__________________________________/
+
+(defun SET-ICON-OF-FILE-AT-PATH (path-to-image path-to-file)
+  (#/setIcon:forFile:options: (#/sharedWorkspace ns:ns-workspace)  (#/initByReferencingFile: (#/alloc ns:ns-image) (native-string (namestring (truename path-to-image)))) (lui::native-string (namestring path-to-file)) 0  ))
 
 ;__________________________________
 ; Show PopUp                       |
