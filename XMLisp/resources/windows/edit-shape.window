@@ -7,22 +7,22 @@
       <column flex="4" align="stretch" height="230">
         <label align="center" width="100" text="Type"/>
         <browser flex="4" height="230" action="change-shape-action" name="browser">
-          <node name="Cube" node-path="lui:resources;textures;" allowed-file-types="(png)">
-            <node name="Crate.png"/>
-            <node name="concrete.png"/>
-            <node name="Custom Texture..."/>
+          <node node-name="Cube" node-path="lui:resources;textures;" allowed-file-types="(png)">
+            <node node-name="Crate.png"/>
+            <node node-name="concrete.png"/>
+            <node node-name="Custom Texture..."/>
           </node>
-          <node name="Tile" node-path="lui:resources;textures;" allowed-file-types="(png)">
-            <node name="Custom Texture..."/>
+          <node node-name="Tile" node-path="lui:resources;textures;" allowed-file-types="(png)">
+            <node node-name="Custom Texture..."/>
           </node>
-          <node name="Sphere" node-path="lui:resources;textures;" allowed-file-types="(png)">
-            <node name="Custom Texture..."/>
+          <node node-name="Sphere" node-path="lui:resources;textures;" allowed-file-types="(png)">
+            <node node-name="Custom Texture..."/>
           </node>
-          <node name="Inflatable Icon">
-            <node name="Frog"/>
-            <node name="mushroom"/>
-            <node name="fire"/>
-            <node name="chocolate"/>
+          <node node-name="Inflatable Icon">
+            <node node-name="Frog"/>
+            <node node-name="mushroom"/>
+            <node node-name="fire"/>
+            <node node-name="chocolate"/>
           </node>
         </browser>
       </column>
