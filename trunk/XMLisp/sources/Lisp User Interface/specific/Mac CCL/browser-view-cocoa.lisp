@@ -16,17 +16,17 @@
   (#/setTitle:ofColumn: browser (native-string "HELLO") column)
   (if (equal column 0) 
     (length (nodes (lui-view browser)))
-    (length (nodes (find (ccl::lisp-string-from-nsstring (#/stringValue (#/selectedCellInColumn: browser (- column 1)))) (nodes (lui-view browser)) :key 'name :test 'equal)))))
+    (length (nodes (find (ccl::lisp-string-from-nsstring (#/stringValue (#/selectedCellInColumn: browser (- column 1)))) (nodes (lui-view browser)) :key 'node-name :test 'equal)))))
 
 
 (objc:defmethod (#/browser:willDisplayCell:atRow:column: :void) ((self my-browser-delegate) browser cell (row :<NSI>nteger) (column :<NSI>nteger))
   (let ((node nil))
     (if (equal column 0)
       (setf node (elt (nodes (lui-view browser)) row))
-      (setf node (elt (nodes (find (ccl::lisp-string-from-nsstring (#/stringValue (#/selectedCellInColumn: browser (- column 1)))) (nodes (lui-view browser)) :key 'name :test 'equal)) row)))
+      (setf node (elt (nodes (find (ccl::lisp-string-from-nsstring (#/stringValue (#/selectedCellInColumn: browser (- column 1)))) (nodes (lui-view browser)) :key 'node-name :test 'equal)) row)))
     (cond 
      ((subtypep (type-of node) 'node-item)
-      (#/setStringValue: cell (native-string (name node)))
+      (#/setStringValue: cell (native-string (node-name node)))
       (unless (nodes node)
         (#/setLeaf: cell #$YES)))
      (t 
