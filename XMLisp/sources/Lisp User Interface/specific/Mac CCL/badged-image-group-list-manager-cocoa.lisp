@@ -799,6 +799,7 @@
   (setf (first item) (string-capitalize (first item)))
   (let ((list-item (make-instance 'list-group-item :item-name (first item) :image-path image-path :image-name (second item))))
     (let ((group (get-group-with-name self (String-capitalize group-name))))
+      (disclosure-action self (lui-view (Button-view group))  :set-state t)
       (if (group-items group)
         (dolist (group-item (group-items group))
           (if (equal (first item) (item-name group-item))
@@ -811,7 +812,6 @@
       (#/setHidden: (item-view group) #$NO))
     (layout (native-view self))
     (when (window self)
-      
       (size-changed-event-handler (window self) (width (window self)) (height (window self))))
     t))
 
