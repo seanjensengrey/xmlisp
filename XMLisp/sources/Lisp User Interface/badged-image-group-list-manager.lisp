@@ -40,7 +40,7 @@
    (y :accessor y :initform 890 :initarg :y :documentation "screen position, pixels")
    (group-name :accessor group-name :initform nil :initarg :group-name)
    (group-image :accessor group-image :initform nil :initarg :group-image)
-   (is-disclosed :accessor is-disclosed :initform nil )
+   (is-disclosed :accessor is-disclosed :initform nil :initarg :is-disclosed)
    (is-selected :accessor is-selected :initform nil :initarg :is-selected )
    (is-highlighted :accessor is-highlighted :initform nil :initarg :is-highlighted)
    (group-items :accessor group-items :initform nil :initarg :group-items)
@@ -187,19 +187,8 @@
 
 (defmethod SELECT-GROUP ((Self badged-image-group-list-manager-view)group-name group-item-name)
   (if group-item-name
-       (dolist (group (groups self))
-         (setf (is-selected group) nil)
-         (if (equal (group-name group) group-name)
-           (progn
-        (setf (is-selected group) "YES")
-             (if group-item-name
-               (progn
-                 (dolist (item (group-items group))
-                   (setf (selected-item-name group) nil)
-                   (if (equal (item-name item) group-item-name)
-                     (setf (selected-item-name group) (item-name item)))))))
-           (setf (is-selected group) nil))))
-    (set-selected self group-name))
+    (set-selected-item self group-name group-item-name)
+    (set-selected self group-name)))
 
 
 (defmethod GROUP-DESELECTED ((Self badged-image-group-list-manager-view))
