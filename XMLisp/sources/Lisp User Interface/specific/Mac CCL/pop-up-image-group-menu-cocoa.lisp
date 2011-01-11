@@ -101,6 +101,22 @@
   (setf (index-of-selection (lui-superview Self)) (index self))
   (close-window (lui-superview self)))
 
+
+;--------------------------------
+; INDEXED LABEL                    |
+;________________________________
+
+(defclass INDEXED-TEXT-VIEW (ns:ns-text-field)
+  ((index :accessor index :initform 200  :initarg :index :documentation "index of button")
+   (lui-superview :accessor lui-superview :initform nil :initarg :lui-superview))
+  (:metaclass ns:+ns-object
+	      :documentation "Text view with and associated index"))
+
+(objc:defmethod (#/mouseDown: :void) ((self indexed-text-view) Event)
+  (call-next-method Event)
+  (setf (index-of-selection (lui-superview Self)) (index self))
+  (close-window (lui-superview self)))
+
 ;--------------------------------
 ; POP UP IMAGE GROUP MENU COCOA  |
 ;________________________________
@@ -155,7 +171,7 @@
               (dolist (group (image-names self))
                 (let ((group-name (first group)) 
                       (list (elt group 1))             
-                      (label (#/alloc ns:ns-text-field)))
+                      (label (make-instance 'indexed-text-view)))
                   (ns:with-ns-rect (Frame (* (image-width self) current-col) (+ (image-preview-height self)(shape-text-box-height self)(* (image-height self) current-row)) (label-width self) #|(* (image-width self) 4)|# (image-height self))   
                     (#/initWithFrame: Label Frame)
                     (#/setTextColor: Label  (#/blackColor ns:ns-color))
@@ -164,6 +180,8 @@
                     (#/setSelectable: Label #$NO)
                     (#/setDrawsBackground: Label #$NO)
                     (#/setBezeled: Label #$NO)
+                    (setf (lui-superview label) self)
+                    (setf (index label) i)
                     (#/addSubview: (native-view self) Label))     
                   (dolist (Item list )                      
                     (let ((indexed-view (make-instance 'indexed-image-view))                       
