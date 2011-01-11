@@ -180,7 +180,6 @@
 ;; GROUP DETECITON VIEW           *
 ;;*********************************
 
-
 (defclass GROUP-DETECTION-VIEW (layout-view)
   ((container :accessor container :initform nil :initarg :container)
    (group-name :accessor group-name :initform nil :initarg :group-name)
@@ -564,7 +563,9 @@
   (#/setAction: (native-view Self) (objc::@selector #/activateAction)))
 
 
-(defmethod DISCLOSURE-ACTION((self badged-image-group-list-manager-view) (button group-disclosure-button))
+(defmethod DISCLOSURE-ACTION((self badged-image-group-list-manager-view) (button group-disclosure-button) &key (set-state nil))
+  (when set-state 
+    (#/setState: (native-view button) #$NSOnState))
   (if (is-disclosed (group button))
     (progn 
       (setf (is-disclosed (group button)) nil)
@@ -649,7 +650,7 @@
 (defmethod ADD-ITEM-TO-GUI ((Self badged-image-group-list-manager-view) group group-item)
   (ns:with-ns-size (Size (NS:NS-RECT-WIDTH (#/frame (item-view group)))  (+ (row-height self) (NS:NS-RECT-HEIGHT (#/frame (item-view group)))))
     (#/setFrameSize: (item-view group) Size ))
-  (let ((x (+ (left-margin self)(group-item-offset self))) (text-length 100) (item-y (- (* (row-height self) (length (group-items group))) (row-height self))))
+  (let ((x (+ (left-margin self)(group-item-offset self))) (text-length 100) (item-y (- (item-category-label-height self) (* (row-height self) (length (group-items group))) (row-height self))))
     (unless (item-selection-view group)
       (let ((selection-image (make-instance 'image-control :src "blue-box.png" :x 0 :y item-y :width (width self) :height (row-height self))))
         (unless (eql (item-name group-item) (selected-item-name group))
@@ -780,10 +781,10 @@
         (print "Cannot add group, a group with this name already exists")
         ;(warn "Cannot add group, a group with this name already exists")
         (return-from add-group nil))))                                                                                             ;need to do a dolist for the following
-  (let ((list-group (make-instance 'list-group :group-name (first group) :group-image (second group) :group-items (create-list-of-items-from-list-of-strings (third group))))); (third group)))) ;(make-instance 'list-group-item :item-name (first (third group)) :image-name (second (third group))))))
+  (let ((list-group (make-instance 'list-group :is-disclosed t :group-name (first group) :group-image (second group) :group-items (create-list-of-items-from-list-of-strings (third group))))); (third group)))) ;(make-instance 'list-group-item :item-name (first (third group)) :image-name (second (third group))))))
     (case (groups self)
       (nil (setf (groups self) (list list-group)))
-      (t (setf (groups self) (append (groups self) (list (make-instance 'list-group :group-name (first group) :group-image (second group) :group-items (create-list-of-items-from-list-of-strings (third group))))))))
+      (t (setf (groups self) (append (groups self) (list (make-instance 'list-group :is-disclosed t  :group-name (first group) :group-image (second group) :group-items (create-list-of-items-from-list-of-strings (third group))))))))
     (if (native-view self)
       (progn
         (if (< (width self) (width (lui-view (#/superview (#/superview (native-view self))))))
@@ -869,6 +870,7 @@
 
 
 (defmethod SET-SELECTED-ITEM ((Self badged-image-group-list-manager-view) group-name item-name)
+  (setf item-name (string-capitalize item-name))
   (let ((i 1)
         (previously-selected-group-name  (selected-group self)))
     (unless (equal (selected-group self) group-name)
@@ -879,9 +881,10 @@
       (if (equal group-name (group-name group))
         (progn 
           (dolist (item (group-items group))
-            (if (equal item-name (item-name item))
+            (if (equal (String-capitalize item-name) (string-capitalize (item-name item)))
               (progn
                 (let ((y-offset   (position item-name (group-items group) :key #'item-name :test #'equal)))
+                  (print y-offset)
                   (setf (selected-item-name group) (item-name item))
                   (setf (is-selected group) "YES")
                   (#/setHidden: (selection-view group) #$YES)
