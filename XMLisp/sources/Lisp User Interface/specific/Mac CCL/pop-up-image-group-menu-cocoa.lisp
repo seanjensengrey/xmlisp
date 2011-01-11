@@ -98,15 +98,12 @@
 
 (objc:defmethod (#/mouseDown: :void) ((self indexed-image-view) Event)
   (call-next-method Event)
-  (print "MOUSE DOWN")
   (setf (index-of-selection (lui-superview Self)) (index self))
   (close-window (lui-superview self)))
-
 
 ;--------------------------------
 ; POP UP IMAGE GROUP MENU COCOA  |
 ;________________________________
-
 
 (defmethod FIND-GROUP-BY-INDEX ((Self pop-up-image-group-menu) Index)
   (let ((i 0))
@@ -116,6 +113,13 @@
           (if (eql  i Index)
             (return-from FIND-GROUP-BY-INDEX (list group-name string) ))
           (incf i))))))
+
+
+(defmethod ENSURE-FITS-ON-SCREEN ((Self pop-up-image-group-menu))
+  (let ((screen-height (ns:ns-rect-height (#/frame (#/mainScreen ns:ns-screen))))
+        (toolbar-height #+cocotron 0 #-cocotron 20))
+    (when (> (+ toolbar-height (y self) (window-height self)) screen-height)
+      (setf (y self) (+  (y self) (- screen-height (+ toolbar-height (y self) (window-height self))))))))
 
 
 (defmethod DISPLAY-POP-UP-MENU ((Self pop-up-image-group-menu) &key (x nil) (y nil))
@@ -128,6 +132,7 @@
       (setf (y self) (NS:NS-POINT-Y (#/mouseLocation ns:ns-event)))))
   (setf (window-height self) (+ (image-preview-height self)(shape-text-box-height self) (* (image-height self) (length (image-names self)))))
   (setf (width self) (get-window-width self))
+  (ensure-fits-on-screen self)
   (with-simple-restart (cancel-pop "Stop trying to pop up ~s" Self)
     (in-main-thread ()
       (ccl::with-autorelease-pool
