@@ -8,8 +8,6 @@
 
 
 (defmethod OK-ACTION ((Window get-new-agent-info-from-user-window) (Button button))
-  (inspect (value (list (value (view-named Window "image-selection"))(value (view-named Window "text")))))
-  (print "FROM OK")
   (stop-modal Window (value (list (value (view-named Window "image-selection"))(value (view-named Window "text"))))))
 
 
