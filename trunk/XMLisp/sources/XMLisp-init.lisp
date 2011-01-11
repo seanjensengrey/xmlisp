@@ -212,7 +212,7 @@
    ;; badged image
    "BADGED-IMAGE-GROUP-LIST-MANAGER-VIEW" "ITEM-CATEGORY-LABEL" "ADD-GROUP"  "ADD-GROUP-ITEM" "DELETE-GROUP" "DELETE-GROUP-ITEM" "SELECTED-GROUP" "SELECTED-GROUP-ITEM" "SELECT-GROUP" "SELECT-GROUP-ITEM" "GROUP-NAME" "GROUPS" "TAKE-FOCUS" "GET-GROUP-WITH-NAME" "ITEM-NAME" "GET-GROUP-ITEM-WITH-NAME" "SELECTED-GROUP-ITEM" "UPDATE-IMAGE" "GROUP-ITEMS" "GROUP-VIEW" "ITEM-DETECTION-VIEWS" "SIZE-CHANGED"
    "SELECTED-GROUP-CHANGED-ACTION" "GROUP-ITEMS" "GROUP-NAME-CHANGED" "ITEM-NAME-CHANGED"
-   "BROWSER-VIEW" "NODE-ITEM NODE-NAME" "NODES" "GET-VALUE-OF-SELECTED-CELL" "GET-SELECTED-COLUMN" "SET-TITLE-OF-COLUMN" "GET-VALUE-OF-SELECTED-CELL-AT-COLUMN"
+   "BROWSER-VIEW" "NODE-ITEM" "NODE-NAME" "NODES" "GET-VALUE-OF-SELECTED-CELL" "GET-SELECTED-COLUMN" "SET-TITLE-OF-COLUMN" "GET-VALUE-OF-SELECTED-CELL-AT-COLUMN"
    "TABLE-VIEW" "ADD-COLUMN" "ADD-ROW" "TEXT-CHANGED-ACTION-TARGET" "TEXT-CHANGED-ACTION" "SHOULD-END-EDITING-NOTIFICAITON" "RELOAD-DATA" "SET-COLOR-OF-CELL-AT-ROW-COLUMN" "GET-STRING-VALUE-OF-CELL-AT-ROW-COLUMN" "GET-COLUMN-OF-CELL-BEING-EDITED" "GET-ROW-OF-CELL-BEING-EDITED"
    "INCREMENT-ITEM-COUNTER" "CLEAR-ITEM-COUNTERS"
    "PROJECT-MANAGER-REFERENCE" "AGENT-GALLERY-VIEW" "OPEN-ICON-WINDOWS"
@@ -454,7 +454,7 @@
    (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/English.lproj/InfoPlist.strings" (user-homedir-pathname))
    :if-exists :supersede))
 
-
+#|
 (defun BUILD-XMLISP ()
   (declare (ftype function ccl::build-application ccl::make-info-dict))
   (setq *Package* (find-package :xlui))
@@ -479,7 +479,7 @@
    :application-class 'xmlisp-application
    #+cocotron :info-plist (ccl::make-info-dict)
    :nibfiles '("lui:resources;English.lproj;MainMenu.nib")))
-
+|#
 ;;___________________________________________
 ;;      Also Load AgentCubes                 |
 ;;___________________________________________
