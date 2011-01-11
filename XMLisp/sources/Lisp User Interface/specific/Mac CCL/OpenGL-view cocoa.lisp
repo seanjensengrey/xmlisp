@@ -183,7 +183,7 @@
       (with-glcontext Self
         (glflush)
         (glViewport 0 0 Width Height)
-        (when (camera Self)
+        (when (and (not (equal Height 0)) (camera Self))
           (aim-camera (camera Self) :aspect (float (/ Width Height)))))
       (progn
         (when (camera Self)
