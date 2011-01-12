@@ -105,6 +105,7 @@
         <bevel-button start-disabled="true" name="new-method-button" text="+ Method" action="add-method-action" width="80" />
         <bevel-button start-disabled="true" name="delete-vat-button" text="-" action="delete-selected-command" width="30"/>
         <bevel-button  text="Duplicate" name="duplicate-button" action="duplicate-action" start-disabled="true" width="80" height="28" />
+        <bevel-button start-disabled="true" name="test-button" text="Test" action="test-action"/>
         <bevel-button start-disabled="true" name="not-button" text="NOT" action="negate-action"/>
       </row>
    </column>
