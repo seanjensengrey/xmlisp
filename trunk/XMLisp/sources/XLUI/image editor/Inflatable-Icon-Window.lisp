@@ -91,32 +91,34 @@
 
 
 (defmethod KEY-EVENT-HANDLER ((Self inflatable-icon-editor-window) Event)
-  (let ((Icon-Editor (view-named Self 'icon-editor)))
+  (let ((Icon-Editor (view-named Self 'icon-editor))
+        (Inflatable-Icon (inflatable-icon (or (view-named (window self) 'model-editor) (error "model editor missing")))))
   (cond
    ((command-key-p)
     (case (key-code Event)
       (#.(key-name->code "A")
-       (select-all Icon-Editor))
-       (#.(key-name->code "D")
-       (clear-selection Icon-Editor))
-       (#.(key-name->code "I")
-       (invert-selection Icon-Editor))
-      ))
+         (select-all Icon-Editor))
+      (#.(key-name->code "D")
+         (clear-selection Icon-Editor))
+      (#.(key-name->code "I")
+         (invert-selection Icon-Editor))))
    ((lui::alt-key-p)
     
     (case (key-code Event)
       #|
       (37
-       (load-image-from-file Self (lui::choose-file-dialog :directory "lui:resources;textures;")))
+      (load-image-from-file Self (lui::choose-file-dialog :directory "lui:resources;textures;")))
       |#
-       (#.(key-name->code "delete")
-       (fill-selected-pixels icon-editor)
-       (display (view-named self 'model-editor)))))
-    (t
+      (#.(key-name->code "delete")
+       (fill-selected-pixels icon-editor))))
+   (t
     (case (key-code Event)
       (#.(key-name->code "delete")
-        (erase-selected-pixels icon-editor)
-        (display (view-named self 'model-editor))))))))
+         (erase-selected-pixels icon-editor)))))
+    (when (and (is-flat inflatable-icon) (texture-id inflatable-icon))
+      ;; Force the creation of a new texture
+      (update-texture-from-image inflatable-icon))
+    (display (view-named self 'model-editor))))
 
 
 (defmethod DOCUMENT-DEFAULT-DIRECTORY ((Self inflatable-icon-editor-window)) "
