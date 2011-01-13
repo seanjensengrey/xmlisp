@@ -158,6 +158,7 @@
   (call-next-method)
   (layout-changed (lui-view self)))
 
+
 #|
 (objc:defmethod (#/drawRect: :void) ((Self native-badged-image-group-list-manager-view) (rect :<NSR>ect))
   (call-next-method rect)
@@ -652,7 +653,7 @@
     (#/setFrameSize: (item-view group) Size ))
   (let ((x (+ (left-margin self)(group-item-offset self))) (text-length 100) (item-y (- (item-category-label-height self) (* (row-height self) (length (group-items group))) (row-height self))))
     (unless (item-selection-view group)
-      (let ((selection-image (make-instance 'image-control :src "blue-box.png" :x 0 :y item-y :width (width self) :height (row-height self))))
+      (let ((selection-image (make-instance 'image-control :src "selectionRect.png" :x 0 :y item-y :width (width self) :height (row-height self))))
         (unless (eql (item-name group-item) (selected-item-name group))
           (#/setHidden: (native-view selection-image) #$YES))
         (setf (item-selection-view group) (native-view selection-image))
@@ -708,7 +709,7 @@
       (unless (eql (is-disclosed group) nil)
         (if (> (length (group-items group)) 0)
           (setf height (* (row-height self) (+ 1 (length (group-items group)))))))
-      (let ((selection-image (make-instance 'image-control :src "blue-box.png" :x 0 :y 1 :width (width self) :height (- height 2))))
+      (let ((selection-image (make-instance 'image-control :src "selectionRect.png" :x 0 :y 1 :width (width self) :height (- height 2))))
         (unless (is-selected group)
           (#/setHidden: (native-view selection-image) #$YES))
         (setf (selection-view group) (native-view selection-image))
