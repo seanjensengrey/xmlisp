@@ -1103,8 +1103,8 @@
          (Icon-Editor (view-named Window "icon-editor"))
          (Inflated-Icon-Editor (view-named Window "model-editor")))
     (if shape-name
-      (setf (title window) (format nil "Shape Editor: ~A" shape-name))
-      (setf (title window) (format nil "Shape Editor: ~A" (pathname-name Pathname))))
+      (setf (title window) (format nil "Inflatable Icon: ~A" (String-capitalize shape-name)))
+      (setf (title window) (format nil "Inflatable Icon: ~A" (pathname-name Pathname))))
     (if alert-close-action
       (setf (alert-close-action window) alert-close-action))
     (if alert-close-target 
