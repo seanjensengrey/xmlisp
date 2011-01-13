@@ -23,6 +23,7 @@
             <node node-name="Custom Texture..."/>
           </node>
           <node node-name="Inflatable Icon">
+            <node node-name="redlobster"/>
             <node node-name="Frog"/>
             <node node-name="mushroom"/>
             <node node-name="fire"/>
