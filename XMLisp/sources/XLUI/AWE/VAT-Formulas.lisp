@@ -204,6 +204,16 @@
        (right `(message Self 0 +1 0 #'get-agent-attribute-value ',(second Formula)))
        (up    `(message Self +1 0 0 #'get-agent-attribute-value ',(second Formula)))
        (down  `(message Self -1 0 0 #'get-agent-attribute-value ',(second Formula)))
+       (layer_above    `(message Self 0 0 +1 #'get-agent-attribute-value ',(second Formula)))
+       (layer_below    `(message Self 0 0 -1 #'get-agent-attribute-value ',(second Formula)))
+       (stacked_below    
+        `(if (agent-below self)
+           (get-agent-attribute-value (agent-below self)  ',(second Formula))
+           0.0))
+       (stacked_above    
+        `(if (agent-above self)
+           (get-agent-attribute-value (agent-above self)  ',(second Formula))
+           0.0))
        ((top above) 
         `(let ((Agent (agent-above Self)))
            (when Agent
