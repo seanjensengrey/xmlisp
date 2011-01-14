@@ -877,6 +877,34 @@
   (display Self))
 
 
+(defmethod NUDGE-SELECTION-UP ((Self image-editor))
+  "Inverts the current selection."
+  (nudge-selection-up (selection-mask Self))
+  (setf (selection-outline Self) (recompute-selection-outline Self))
+  (display Self))
+
+
+(defmethod NUDGE-SELECTION-DOWN ((Self image-editor))
+  "Inverts the current selection."
+  (nudge-selection-down (selection-mask Self))
+  (setf (selection-outline Self) (recompute-selection-outline Self))
+  (display Self))
+
+
+(defmethod NUDGE-SELECTION-RIGHT ((Self image-editor))
+  "Inverts the current selection."
+  (nudge-selection-right (selection-mask Self))
+  (setf (selection-outline Self) (recompute-selection-outline Self))
+  (display Self))
+
+
+(defmethod NUDGE-SELECTION-LEFT ((Self image-editor))
+  "Inverts the current selection."
+  (nudge-selection-left (selection-mask Self))
+  (setf (selection-outline Self) (recompute-selection-outline Self))
+  (display Self))
+
+
 (defmethod ANIMATE ((Self image-editor) Time)
   "Called periodically by window-null-event-handler to update the line stipple to create
    the marching ants effect."
