@@ -172,6 +172,59 @@
       (setf (aref (pixels Self) Col Row) 0))))
 
 
+(defmethod NUDGE-SELECTION-UP ((Self selection-mask))
+  "Marks all pixels in the selection mask unselected."
+  (dotimes (col (width self))
+    (when (equal 1 (aref (pixels Self) Col 0))
+      (return-from nudge-selection-up)))
+  (dotimes (Row (height Self))
+    (dotimes (Col (width Self))
+      (unless (equal (+ 1 Row) (height self))
+        (setf (aref (pixels Self) Col Row) (aref (pixels Self) Col (+ 1 Row))))
+      (setf (aref (pixels Self) Col 31) 0))))
+
+
+(defmethod NUDGE-SELECTION-DOWN ((Self selection-mask))
+  "Marks all pixels in the selection mask unselected." 
+  (dotimes (col (width self))
+    (when (equal 1 (aref (pixels Self) Col 31))
+      (return-from nudge-selection-down)))
+  (let ((row (- (height Self) 0)))
+    (dotimes (i (height Self))
+      (dotimes (Col (width Self))
+        (unless (or (equal Row 32) (equal (- Row 1) -1)
+          (setf (aref (pixels Self) Col Row) (aref (pixels Self) Col (- Row 1)))))
+        (setf (aref (pixels Self) Col 0) 0))
+      (decf row))))
+
+
+(defmethod NUDGE-SELECTION-LEFT ((Self selection-mask))
+  "Marks all pixels in the selection mask unselected."
+  (dotimes (row (width self))
+    (when (equal 1 (aref (pixels Self) 0 row))
+      (return-from nudge-selection-left)))
+  (dotimes (Row (height Self))
+    (dotimes (Col (width Self))
+      (unless (equal (+ 1 col) (width self))
+        (setf (aref (pixels Self) Col Row) (aref (pixels Self) (+ 1 Col) Row))
+      ))
+    (setf (aref (pixels Self) 31 Row) 0)))
+
+
+(defmethod NUDGE-SELECTION-RIGHT ((Self selection-mask))
+  "Marks all pixels in the selection mask unselected."
+  (dotimes (row (width self))
+    (when (equal 1 (aref (pixels Self) 31 row))
+      (return-from nudge-selection-right)))
+    (dotimes (Row (height Self))
+      (let ((col (- (width Self) 1)))
+        (dotimes (i (width Self))
+          (unless (equal (- Col 1) -1)
+            (setf (aref (pixels Self) Col Row) (aref (pixels Self) (- Col 1) row)))
+          (decf col))
+        (setf (aref (pixels Self) 0 Row) 0))))
+
+
 (defun NORMALIZE-BOUNDS (Bounds)
   "Ensures that the given bounds are always specified as (Left Top Right Bottom)
    where Left < Right and Top < Bottom."
