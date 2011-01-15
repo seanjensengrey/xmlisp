@@ -281,6 +281,7 @@
       ;; canvas: normalize height to be 1.0 but adjust width
       (setf (canvas-width Self) (* (/ 1.0 (img-height Self)) (img-width Self))))))
 
+
 ;;  (display Self))
 
 
@@ -1029,7 +1030,6 @@
                            Cur-Red Cur-Green Cur-Blue Cur-Alpha)
                 (and (= Cur-Red Orig-Red) (= Cur-Green Orig-Green)
                      (= Cur-Blue Orig-Blue) (= Cur-Alpha Orig-Alpha)))
-          
           ;; Put the pixel into the selection and then call the four neighbors
           (select-pixel (selection-mask Self) Col Row)
           (magic-wand Self Col (- Row 1) 
@@ -1110,7 +1110,7 @@
      (unless (shift-key-p)
        (clear-selection Self))
      ;; When there is not a double click, make a selection, otherwise exit
-     (magic-wand Self Col Row :tolerance (tolerance Self) :tolerance-function #'absolute-color-difference-ignore-alpha)
+     (magic-wand Self Col Row :tolerance (tolerance Self) :tolerance-function #'absolute-color-difference)
      (display Self))
     ;; Select-Rect
     (select-rect
