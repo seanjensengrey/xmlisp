@@ -18,13 +18,14 @@
      <editable-number name="layers" text="1" width="50" />
     </row>
     <row align="stretch" minimize="vertical" valign="middle">
-     <check-box name="grid" text="Show grid" start-checked="true"/>
-    </row>
-    <row align="stretch" minimize="vertical" valign="middle">
-     <check-box name="background" text="Background" width="100" action="enable-background-info"/>
+     <label text="Background:" width="80"  />
      <label text="&lt;no file selected&gt;" width="110" name="background-file" />
      <button text="Choose image..." width="120" name="background-button" action="choose-background-image" />
     </row>
+    <row align="stretch" minimize="vertical" valign="middle">
+     <check-box name="grid" text="Show grid" start-checked="true"/>
+    </row>
+
     <row align="right" valign="bottom" vflex="1">
       <button text="Cancel" action="cancel-adding-world-action" />
       <button text="OK" action="add-new-world-action" name="ok-button" default-button="true"/>
