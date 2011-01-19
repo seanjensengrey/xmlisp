@@ -192,15 +192,17 @@
 
 
 (defmethod ADJUST-X-Y-FOR-WINDOW-OFFSET ((Self opengl-view) X Y)
-  #-cocotron
+  ;#-cocotron
   (values
    X
    Y)
+  #|
   #+cocotron
    (values
     (- x 18)
-    (- y 24)
-  ))
+    (- y 24))
+  |#
+  )
 
 ;_______________________________
 ; Textures                      |
@@ -236,11 +238,9 @@
         (glTexImage2D GL_TEXTURE_2D 0 InternalFormat width height 0 PixelFormat GL_UNSIGNED_BYTE &Image)
         (when Build-Mipmaps
           (when Verbose (format t "~%Building Mipmaps~%"))
-          
           (unless 
               (zerop (gluBuild2DMipmaps GL_TEXTURE_2D InternalFormat width height PixelFormat GL_UNSIGNED_BYTE &Image))
             (error "could not create mipmaps"))
-          
           (when Verbose (format t "Completed Mipmaps~%"))))
       (values
        (%get-long &texName)
@@ -258,6 +258,17 @@
     ;; load texture from file if necessary
     (unless Texture-Id
       (setq Texture-Id (create-texture-from-file (texture-file Self Texture-Name)))
+      (setf (gethash Texture-Name (textures Self)) Texture-Id))
+    ;; make the texture active (for now assume a 2D texture
+    (when Texture-Id
+      (glbindtexture gl_texture_2d Texture-Id))))
+
+
+(defmethod USE-TEXTURE-AT-PATH ((Self opengl-view) Texture-Name Texture-Path)
+  (let ((Texture-Id (gethash Texture-Name (textures Self))))
+    ;; load texture from file if necessary
+    (unless Texture-Id
+      (setq Texture-Id (create-texture-from-file (native-path Texture-path Texture-Name)))
       (setf (gethash Texture-Name (textures Self)) Texture-Id))
     ;; make the texture active (for now assume a 2D texture
     (when Texture-Id
