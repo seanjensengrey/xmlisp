@@ -27,7 +27,7 @@
     </row>
     <row align="right" valign="bottom" vflex="1">
       <button text="Cancel" action="cancel-adding-world-action" />
-      <button text="OK" action="add-new-world-action" default-button="true"/>
+      <button text="OK" action="add-new-world-action" name="ok-button" default-button="true"/>
     </row>
   </column>
 </new-world-dialog>
