@@ -583,6 +583,8 @@
     ;; (unless (= (sizeof (image Self)) (* (rows Self) (columns Self) 4)) (error "image size does not match row/column size"))
     ;; generate texture
     (ccl::rlet ((&texName :long))
+      (glPixelStorei GL_UNPACK_ROW_LENGTH (columns Self))  ; Set proper unpacking row length for image
+      (glPixelStorei GL_UNPACK_ALIGNMENT 1)       ; Set byte aligned unpacking (needed for 3-byte-per-pixel image)
       (glGenTextures 1 &texName)
       (setf (texture-id Self) (ccl::%get-long &texName)))
     (glBindTexture GL_TEXTURE_2D (texture-id Self))
