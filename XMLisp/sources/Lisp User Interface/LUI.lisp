@@ -319,7 +319,10 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 
 ;; Events
-
+(defmethod KEY-EVENT-HANDLER ((Self view) Event)
+  (declare (ignore event))
+  ;nada
+  )
 
 (defmethod VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER ((Self view) X Y)
   (declare (ignore X Y))
@@ -406,7 +409,8 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 (defclass SCROLL-VIEW (view)
   ((has-horizontal-scroller :accessor has-horizontal-scroller :initform t :type boolean)
-   (has-vertical-scroller :accessor has-vertical-scroller :initform t :type boolean))
+   (has-vertical-scroller :accessor has-vertical-scroller :initform t :type boolean)
+   (native-color :accessor native-color :initform nil))
   (:documentation "A scrollable view containing a view"))
 
 
@@ -894,7 +898,7 @@ after any of the window controls calls stop-modal close window and return value.
 
 
 (defclass BEVEL-BUTTON-CONTROL (control)
-  ()
+  ((bezel-style :accessor bezel-style :initform nil :documentation "the bezel style of this button, if this is nil we will use rounded by default"))
   (:documentation "Bevel Button: any height and width")
   (:default-initargs 
     :width 72
