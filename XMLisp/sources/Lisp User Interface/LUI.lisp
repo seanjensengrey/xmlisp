@@ -1357,6 +1357,55 @@ after any of the window controls calls stop-modal close window and return value.
   (setf (color self) (concatenate 'string (write-to-string (get-red self) :base 16) (concatenate 'string (write-to-string (get-green self):base 16) (write-to-string (get-blue self):base 16))))
   (funcall (user-action self) window self))
   
+
+;__________________________________
+; Color Well Button                |
+;__________________________________/
+
+(defclass COLOR-WELL-BUTTON-CONTROL (control)
+  ((color :accessor color :initform "FF0000" :type string :documentation "Hex RBB value for color e.g. FF0000 = RED")
+   (show-alpha :accessor show-alpha :initform t :type boolean :documentation "If true include alpha controls in color picker")
+   (user-action :accessor user-action :initform 'default-action2 :type symbol :documentation "The action that will be called once the default-action adjusts the color accessor"))
+  (:default-initargs
+      :text ""
+    :action 'color-well-action)
+  (:documentation "Color Well"))
+
+
+(defmethod INITIALIZE-INSTANCE ((Self color-well-control) &rest Args)
+  (declare (ignore Args))
+  (call-next-method)
+  (setf (user-action self) (action self))
+  (setf (action self) 'color-well-action)
+  (unless (target Self) (setf (target Self) Self)) ;; make me default target
+  (initialize-event-handling Self))
+
+
+(defgeneric GET-RED (color-well-control)
+  (:documentation "Returns the red value of the RGB stored as a byte"))
+
+
+(defgeneric GET-BLUE (color-well-control)
+  (:documentation "Returns the blue value of the RGB stored as a byte"))
+
+
+(defgeneric GET-GREEN (color-well-control)
+  (:documentation "Returns the green value of the RGB stored as a byte"))
+
+
+(defgeneric GET-ALPHA (color-well-control)
+  (:documentation "Returns the alpha value stored as a byte"))
+
+
+(defgeneric SET-COLOR (color-well-control &key Red Green Blue Alpha)
+  (:documentation "Set the color of the color well"))
+
+
+(defmethod COLOR-WELL-ACTION ((window window) (self COLOR-WELL-Control))
+  (setf (color self) (concatenate 'string (write-to-string (get-red self) :base 16) (concatenate 'string (write-to-string (get-green self):base 16) (write-to-string (get-blue self):base 16))))
+  (funcall (user-action self) window self))
+
+
 ;__________________________________
 ; Web                              |
 ;__________________________________/
