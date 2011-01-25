@@ -117,12 +117,23 @@
 ;________________________________________________
 
 (defclass SCROLL-BOX (scroll-view xml-layout-interface)
-  ()
+  ((color :accessor color :initform "" :type string :documentation "hex RGB value, e.g. 'FF0000' is red"))
   (:documentation "box with scrollable content"))
 
 
 (defmethod PRINT-SLOTS ((Self scroll-box))
   '(x y width height))
+
+
+(defmethod INITIALIZE-INSTANCE ((Self scroll-box) &rest Args)
+  (declare (ignore Args))
+  (call-next-method)
+  (unless (equal "" (color self))
+    (let ((Color (read-from-string (format nil "#x~A" (color Self)))))
+      (set-color Self 
+                 :red (/ (logand (ash Color -16) 255) 255.0)
+                 :green (/ (logand (ash Color -8) 255) 255.0)
+                 :blue (/ (logand Color 255) 255.0)))))
 
 
 ;________________________________________________
@@ -517,6 +528,33 @@
 
 
 (defmethod color-action ((window window) (self COLOR-WELL-Control))
+  (declare (ignore self)))
+
+;____________________________________________
+; Color Well Button                           |
+;                                            |
+;                                            |
+;____________________________________________
+
+(defclass COLOR-WELL-BUTTON (color-well-button-control xml-layout-interface)
+  ()
+  (:default-initargs
+      :action 'default-action
+    :width 22
+    :height 22)
+  (:documentation "Color Well"))
+
+
+(defmethod INITIALIZE-INSTANCE :after ((Self color-well-button) &rest Args)
+  ;; need to invoke the dialog action without color
+  (declare (ignore Args)))
+
+
+(defmethod PRINT-SLOTS ((Self color-well-button-control))
+  '(color x y width height))
+
+
+(defmethod color-action ((window window) (self COLOR-WELL-button-Control))
   (declare (ignore self)))
 
 ;______________________________________________
