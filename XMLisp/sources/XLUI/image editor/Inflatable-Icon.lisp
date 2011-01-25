@@ -62,7 +62,7 @@
    (is-flat :accessor is-flat :initform nil :type boolean :documentation "speed optimized rendering if flat"))
   (:documentation "High polygon count 3D object made from inflated icon")
   (:default-initargs 
-      :depth 0.0d0))
+      :depth 0.0))
 
 
 ;********************************************************
