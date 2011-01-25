@@ -249,13 +249,18 @@
   (#/retain (native-view Old-Subview)) ;; no GC
   (#/replaceSubview:with: (native-view View) (native-view Old-Subview) (native-view New-Subview))
   (setf (part-of New-Subview) View)
-  (subviews-swapped (window View) Old-Subview New-Subview)
-  ;; (#/flushWindow (native-window (window View)))
-  )
+  (subviews-swapped (window View) Old-Subview New-Subview))
 
 
 (defmethod WINDOW ((Self view))
-  (lui-window (#/window (native-view Self))))
+ 
+
+  ; (if (equal 'xlui::world (type-of self))
+  ;  xlui::*project-window*
+  (lui-window (#/window (native-view Self)))
+   )
+    
+  ;)
 
 
 (defmethod DISPLAY ((Self view))
@@ -338,6 +343,15 @@
       (#/setBorderType: Native-Control #$NSNoBorder)  ;;; #$NSLineBorder)
       (#/setDrawsBackground: Native-Control #$NO)
     Native-Control)))
+
+
+(defmethod SET-COLOR ((Self scroll-view) &key (Red 0.0) (Green 0.0) (Blue 0.0) (Alpha 1.0))
+  ;; keep a native color instead of creating a new one for each display
+  (when (native-color Self) (#/release (native-color Self)))
+  (setf (native-color Self) (#/colorWithCalibratedRed:green:blue:alpha: ns:ns-color Red Green Blue Alpha))
+  (#/retain (native-color Self))
+  (#/setDrawsBackground: (native-view self) #$YES)
+  (#/setBackgroundColor: (native-view self) (native-color self)))
 
 
 (defmethod ADD-SUBVIEWS ((view scroll-view)  &rest Subviews)
@@ -493,14 +507,6 @@
                         :event-type (native-to-lui-event-type (#/type event))
                         :native-event Event)))
 
-#|
-(objc:defmethod (#/flagsChanged: :void) ((self native-window) event)
-  (view-event-handler (lui-window Self)
-                      (make-instance 'key-event 
-                        :key-code (#/keyCode Event)
-                        :event-type (native-to-lui-event-type (#/type event))
-                        :native-event Event)))
-|#
 
 (objc:defmethod (#/becomeMainWindow :void) ((self native-window))
   (call-next-method)
@@ -977,8 +983,7 @@
 (defmethod make-native-object ((Self button-control))
   (let ((Native-Control (make-instance 'native-button :lui-view Self)))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
-      (#/initWithFrame: Native-Control Frame)
-
+      (#/initWithFrame: Native-Control Frame)   
       (#/setButtonType: Native-Control #$NSMomentaryPushInButton)
       (when (default-button Self)
         (#/setKeyEquivalent: Native-Control  #@#.(string #\return)))
@@ -992,8 +997,6 @@
 
 (defmethod (setf text) :after (Text (Self button-control))
   (#/setTitle: (native-view Self) (native-string Text)))
-
-
 
 ;__________________________________
 ; BEVEL BUTTON                      |
@@ -1010,7 +1013,17 @@
       (#/initWithFrame: Native-Control Frame)
       (#/setButtonType: Native-Control #$NSMomentaryPushInButton)
       (#/setImagePosition: Native-Control #$NSNoImage)
-      (#/setBezelStyle: Native-Control #$NSThickerSquareBezelStyle)
+      
+      (cond
+       ((equal (bezel-style self) "square")
+        (#/setBezelStyle: Native-Control #$NSThickerSquareBezelStyle)
+        ;(#/setBezelStyle: Native-Control #$NSShadowlessSquareBezelStyle)
+        (#/setBezelStyle: native-control #$NSSmallSquareBezelStyle)
+        )
+        (t
+         ;(#/setBezelStyle: Native-Control #$NSShadowlessSquareBezelStyle)
+         (#/setBezelStyle: Native-Control #$NSThickerSquareBezelStyle)
+         ))
       (#/setTitle: Native-Control (native-string (text Self))))
     Native-Control))
 
@@ -1556,7 +1569,7 @@
           (unless (probe-file Path) (error "no such image file for button ~A" (image Self)))
           (#/initWithContentsOfFile: NS-Image  (native-string (native-path "lui:resources;buttons;" (image Self))))
           (#/initWithFrame: Native-Control Frame)
-          (#/setButtonType: Native-Control #$NSOnOffButton)   ;;;NSMomentaryPushInButton)
+          (#/setButtonType: Native-Control #$NSOnOffButton)   
           (#/setImagePosition: Native-Control #$NSImageOnly)
           (#/setImage: Native-Control NS-Image)
           (#/setBezelStyle: Native-Control #$NSShadowlessSquareBezelStyle)
@@ -1685,13 +1698,13 @@
 
 
 (defmethod SET-SELECTED-ITEM-WITH-TITLE ((Self popup-button-control) text)
-  (#/selectItemWithTitle: (native-view self) (native-string text)))
+  (#/selectItemWithTitle: (native-view self) (native-string (string-capitalize text))))
 
 
 (defmethod ADD-ITEM ((Self popup-button-control) Text Action )
   (if (equal (#/indexOfItemWithTitle: (native-view Self) (native-string Text)) -1)
     (progn 
-      (#/addItemWithTitle: (native-view Self) (native-string Text))
+      (#/addItemWithTitle: (native-view Self) (native-string (String-capitalize Text)))
       (setf (actions Self) (append (actions Self) (list Action))))
     (warn "Cannot add item with the same title (~S)" Text)))
 
@@ -1992,7 +2005,7 @@
          (start-jog (lui-view Self))
          ;; as long as mouse is down keep running control action at interval frequency
          (loop
-           (unless (is-jog-active (lui-view Self)) (return))
+           (unless (is-jog-active (lui-view Self))   (return))
            (catch-errors-nicely
             "Jog Dial Thread"
             ;; better to activate the action in the main thread!!
@@ -2309,6 +2322,92 @@
 (defmethod SET-COLOR ((Self color-well-control) &key (Red 0.0) (Green 0.0) (Blue 0.0) (Alpha 1.0))
   ;; keep a native color instead of creating a new one for each display
   (#/setColor: (native-view Self) (#/retain (#/colorWithCalibratedRed:green:blue:alpha: ns:ns-color Red Green Blue Alpha))))
+
+;__________________________________
+; Color Well Button                |
+;__________________________________/
+
+(defclass NATIVE-COLOR-WELL-BUTTON (ns:ns-button)
+  ((lui-view :accessor lui-view :initarg :lui-view)
+   (native-color :accessor native-color :initform nil :initarg :native-color))
+  (:metaclass ns:+ns-object))
+
+
+(objc:defmethod (#/drawRect: :void) ((self native-color-well-button) (rect :<NSR>ect))
+  (call-next-method rect)
+  (NS:NS-RECT-WIDTH rect)
+  (ns:with-ns-rect (Frame (+ (NS:NS-RECT-X rect)  (* .25 (NS:NS-RECT-WIDTH rect))) (+ (NS:NS-RECT-Y rect)  (* .25 (NS:NS-RECT-HEIGHT rect))) (* .5 (NS:NS-RECT-WIDTH rect)) (* .5 (NS:NS-RECT-HEIGHT rect)))
+    (#/set (native-color self))
+    (#/fillRect: ns:ns-bezier-path frame)))
+
+
+(defmethod MAKE-NATIVE-OBJECT ((Self color-well-button-control))
+  (let ((Native-Control (make-instance 'native-color-well-button :lui-view Self)))
+    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+      (multiple-value-bind (Red Blue Green)
+                           (parse-rgb-from-hex self (color self))
+        (let ((nscolor (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color (/ red 255.0) (/ blue 255.0) (/ green 255.0)  1.0 ))
+              (image (#/initWithSize: (#/alloc ns:ns-image) Frame))) 
+          (setf (native-color Native-control) nscolor)
+          (#/setBackgroundColor: image nscolor)
+          (#/initWithFrame: Native-Control Frame)
+          (#/setButtonType: Native-Control #$NSOnOffButton)
+          (#/setImagePosition: Native-Control #$NSImageOnly)
+          (#/setImage: Native-Control image)
+          (#/setBezelStyle: Native-Control #$NSShadowlessSquareBezelStyle)))
+      ;; setup alpha control but keep in mind color panel is shared -> cannot mix alpha / no alpha
+      Native-Control)))
+
+
+(defmethod PARSE-RGB-FROM-HEX ((Self color-well-button-control) string)
+  (values
+   (read-from-string (concatenate 'string "#x" (subseq string 0 2)))   ;Red
+   (read-from-string (concatenate 'string "#x" (subseq string 2 4)))   ;Blue
+   (read-from-string (concatenate 'string "#x" (subseq string 4 6))))) ;Green
+
+
+(defmethod GET-RED ((self color-well-button-control))
+  (rlet ((r #>CGFloat)
+         (g #>CGFloat)
+         (b #>CGFloat)
+         (a #>CGFloat))
+    (#/getRed:green:blue:alpha: (native-color (native-view self)) r g b a)
+    (truncate (* (pref r #>CGFloat) 255))))
+
+
+(defmethod GET-GREEN ((Self color-well-button-control))
+  (rlet ((r #>CGFloat)
+         (g #>CGFloat)
+         (b #>CGFloat)
+         (a #>CGFloat))
+    (#/getRed:green:blue:alpha: (native-color (native-view self)) r g b a)
+    (truncate (* (pref g #>CGFloat) 255))))
+
+
+(defmethod GET-BLUE ((Self color-well-button-control))
+  (rlet ((r #>CGFloat)
+         (g #>CGFloat)
+         (b #>CGFloat)
+         (a #>CGFloat))
+    (#/getRed:green:blue:alpha: (native-color (native-view self)) r g b a)
+    (truncate (* (pref b #>CGFloat) 255))))
+
+
+(defmethod GET-ALPHA ((Self color-well-button-control))
+  (rlet ((r #>CGFloat)
+         (g #>CGFloat)
+         (b #>CGFloat)
+         (a #>CGFloat))
+    (#/getRed:green:blue:alpha: (native-color (native-view self)) r g b a)
+    (truncate (* (pref a #>CGFloat) 255))))
+
+
+(defmethod SET-COLOR ((Self color-well-button-control) &key (Red 0.0) (Green 0.0) (Blue 0.0) (Alpha 1.0))
+  ;; keep a native color instead of creating a new one for each display
+  (setf (native-color (native-view self)) (#/retain (#/colorWithCalibratedRed:green:blue:alpha: ns:ns-color Red Green Blue Alpha)))
+  (#/setNeedsDisplay: (native-view self) #$YES)
+  (#/setState: (native-view self) #$NSOffState))
+
 
 ;__________________________________
 ; Web Browser                      |
