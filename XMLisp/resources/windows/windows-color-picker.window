@@ -1,0 +1,38 @@
+<windows-color-picker title="color picker (resize me!!)" height="220">
+ <column align="stretch"  valign="stretch">
+  <row align="stretch" vflex="1" valign="stretch">
+    <column align="stretch" flex="1" vflex="1" valign="stretch">
+      <row minimize="vertical" vflex="1" align="stretch">
+         <label text="red" align="right" width="50"/>
+         <slider name="red" action="adjust-color-action" max-value="1.0" tick-marks="10" flex="1"/>
+         <label text="0.0" name="red label" width="40"/>
+      </row>
+      <spacer height="8"/>
+      <row minimize="vertical" align="stretch">
+         <label text="green" align="right" width="50"/>
+         <slider name="green" action="adjust-color-action" max-value="1.0" tick-marks="10" flex="1"/>
+         <label text="0.0" name="green label" width="40"/>
+      </row>
+      <spacer height="8"/>
+      <row minimize="vertical" align="stretch">
+         <label text="blue" align="right" width="50"/>
+         <slider name="blue" action="adjust-color-action" max-value="1.0" tick-marks="10" flex="1"/>
+         <label text="0.0" name="blue label" width="40"/>
+      </row>
+      <spacer height="8"/>
+      <row minimize="vertical" align="stretch">
+         <label text="alpha" align="right" width="50"/>
+         <slider name="alpha" action="adjust-color-action" value="1.0" max-value="1.0" tick-marks="10" flex="1"/>
+         <label text="1.0" name="alpha label" width="40"/>
+      </row>
+    </column>
+    <spacer/>
+    <color-palette name="color well" vflex="1" flex="1"/>
+    </row>
+    <spacer/>
+    <row align="right" minimize="vertical">
+      <button text="Cancel" action="cancel-action"/>
+      <button text="OK" action="ok-action"/>
+    </row>
+  </column>
+</windows-color-picker>
