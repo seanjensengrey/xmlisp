@@ -1,6 +1,5 @@
 (in-package :lui)
 
-
 (export '(get-color-from-user))
 
 (defun GET-COLOR-FROM-USER (&key (Shows-Alpha t) (Red 1.0) (Green 0.0) (Blue 0.0) (Alpha 1.0)) "
@@ -24,12 +23,14 @@
          (float (lui::pref a #>CGFloat) 0.0)))))
   #+cocotron
   ;; need to implement a real color picker
-  (values 1.0 1.0 1.0 1.0))
+  (let ((color (xlui::get-windows-color-picker)))
+    (values (first color) (second color) (third color) (fourth color) )))
 
 
 #| Examples:
 
 (get-color-from-user)
+
 (get-color-from-user :shows-alpha nil)
 
 |#
