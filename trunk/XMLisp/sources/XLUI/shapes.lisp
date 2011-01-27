@@ -204,6 +204,7 @@
   (unless (is-visible Self) (return-from draw))
   (glDisable GL_LIGHTING)
   (initialize-quadric Self)
+  (glColor4f 1.0 1.0 1.0 1.0)
   (cond
    ((texture Self) 
     (glEnable GL_TEXTURE_2D)
