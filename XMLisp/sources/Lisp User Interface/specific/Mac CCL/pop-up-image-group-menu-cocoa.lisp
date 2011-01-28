@@ -38,12 +38,14 @@
 (objc:defmethod (#/mouseMoved: :void) ((self group-menu-popup-window) Event)
   (let ((mouse-x (NS:NS-POINT-X (#/locationInWindow event)))
         (mouse-y (NS:NS-POINT-Y (#/locationInWindow event))))
-
     (let ((subviews (gui::list-from-ns-array (#/subviews (#/contentView self)))))  
       (dolist (subview subviews)
-        (if (equal (type-of subview) 'LUI::INDEXED-IMAGE-VIEW )
-          (let ((x-subview (NS:NS-RECT-X (#/frame subview)));(+ window-x (NS:NS-RECT-X (#/frame subview))))
-                (y-subview (NS:NS-RECT-Y (#/frame subview)));(+ window-y (NS:NS-RECT-Y (#/frame subview))))
+        
+        
+        (when (equal (type-of subview) 'LUI::INDEXED-IMAGE-VIEW )
+          
+          (let ((x-subview (NS:NS-RECT-X (#/frame subview)))
+                (y-subview (NS:NS-RECT-Y (#/frame subview)))
                 (width-subview  (NS:NS-RECT-WIDTH (#/frame subview)))
                 (height-subview  (NS:NS-RECT-HEIGHT (#/frame subview))))
             (if (and (<= x-subview mouse-x  (+ x-subview width-subview))
@@ -52,7 +54,22 @@
                 (#/setString: (shape-text-box (lui-window self)) (native-string (string-capitalize (name subview))))
                 (setf (selected subview) t)
                 (#/setImage: (image-preview-view (lui-window self)) (#/image subview)))
-              (setf (selected subview) nil))))))
+              (setf (selected subview) nil))))
+        (when (equal (type-of subview) 'LUI::INDEXED-TEXT-VIEW  )
+          (let ((x-subview (NS:NS-RECT-X (#/frame subview)))
+                (y-subview (NS:NS-RECT-Y (#/frame subview)))
+                (width-subview  (NS:NS-RECT-WIDTH (#/frame subview)))
+                (height-subview  (NS:NS-RECT-HEIGHT (#/frame subview))))
+            (if (and (<= x-subview mouse-x  (+ x-subview width-subview))
+                     (<= y-subview mouse-y (+ y-subview height-subview)))
+              (progn
+                (let ((image-view (first (image-views subview))))
+                  (#/setString: (shape-text-box (lui-window self)) (native-string (string-capitalize (name image-view))))
+                  (setf (selected image-view) t)
+                  (#/setImage: (image-preview-view (lui-window self)) (#/image image-view))
+                  (call-next-method event)
+                  (#/setNeedsDisplay: (#/contentView self) #$YES)
+                  (return)))))))
     (call-next-method event)
     (#/setNeedsDisplay: (#/contentView self) #$YES)))
 
@@ -86,14 +103,12 @@
   (call-next-method rect)  
   (if (selected self)
     (progn
-      ;(#/setLineWidth: ns:ns-bezier-path 1.0)
-      ;(#/set (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color .2 .2 .2 1.0))
       (#/set (#/blackColor ns:ns-color))
       (#/strokeRect: ns:ns-bezier-path rect)
-      ;(#/set (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color 1.0 1.0 1.0 1.0))
       (#/set (#/whiteColor ns:ns-color))
       (ns:with-ns-rect (inside-rect (+ 1 (NS:NS-RECT-X rect)) (+ 1 (NS:NS-RECT-Y rect)) (-(NS:NS-RECT-WIDTH rect) 2) (-(NS:NS-RECT-HEIGHT rect) 2))
-        (#/strokeRect: ns:ns-bezier-path inside-rect)))))
+        (#/strokeRect: ns:ns-bezier-path inside-rect))))
+  (setf (selected self) nil))
 
 
 (objc:defmethod (#/mouseDown: :void) ((self indexed-image-view) Event)
@@ -108,7 +123,8 @@
 
 (defclass INDEXED-TEXT-VIEW (ns:ns-text-field)
   ((index :accessor index :initform 200  :initarg :index :documentation "index of button")
-   (lui-superview :accessor lui-superview :initform nil :initarg :lui-superview))
+   (lui-superview :accessor lui-superview :initform nil :initarg :lui-superview)
+   (image-views :accessor image-views :initform nil :documentation "A list of indexed image-views ascoicated with this text-view's group"))
   (:metaclass ns:+ns-object
 	      :documentation "Text view with and associated index"))
 
@@ -128,8 +144,8 @@
         (dolist (string (second group))
           (if (eql  i Index)
             (return-from FIND-GROUP-BY-INDEX (list group-name string) ))
-          (incf i))))))
-
+          (incf i))))))      
+        
 
 (defmethod ENSURE-FITS-ON-SCREEN ((Self pop-up-image-group-menu))
   (let ((screen-height (ns:ns-rect-height (#/frame (#/mainScreen ns:ns-screen))))
@@ -209,10 +225,11 @@
                         (setf (name indexed-view) tooltip)
                         (setf (lui-superview indexed-view) self)                                 
                         (#/setImage: indexed-view NS-Image)   
-                       ; (#/setToolTip: indexed-view (native-string tooltip))
-                        ;(#/addToolTipRect:owner:userData: indexed-view Frame (native-string "HELLO") ccl:+null-ptr+)
                         (#/setImageScaling: indexed-view #$NSScaleToFit)
                         (setf (index indexed-view) i)
+                        (if (image-views label)
+                          (setf (image-views label) (append (image-views label) (list indexed-view)))
+                          (setf (image-views label) (list indexed-view)))
                         (#/addSubview: (native-view self) indexed-view)))
                     (incf i)
                     (incf current-col))
