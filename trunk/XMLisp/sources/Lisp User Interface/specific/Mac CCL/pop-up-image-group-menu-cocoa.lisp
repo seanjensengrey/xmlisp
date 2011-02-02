@@ -69,7 +69,7 @@
                   (#/setImage: (image-preview-view (lui-window self)) (#/image image-view))
                   (call-next-method event)
                   (#/setNeedsDisplay: (#/contentView self) #$YES)
-                  (return)))))))
+                  (return))))))))
     (call-next-method event)
     (#/setNeedsDisplay: (#/contentView self) #$YES)))
 
