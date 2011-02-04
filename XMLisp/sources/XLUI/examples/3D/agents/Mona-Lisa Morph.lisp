@@ -3,6 +3,9 @@
 ;;; concepts: use of image warping/morphing
 ;;; background: http://www.cs.colorado.edu/~ralex/papers/PDF/AVI08_end-user_visualizations.pdf 
 
+;; Windows Issues: 
+;; When you adjust the happy slider, it does not update her smile, this only occurs after you
+;; click or rotate the screen (triggering a display).
 (in-package :xlui)
 
 

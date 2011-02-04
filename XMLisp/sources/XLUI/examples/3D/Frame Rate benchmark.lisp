@@ -5,6 +5,9 @@
 ;;; 10/06/05 tested with OpenGL for MCL 1.6
 ;;; 03/25/09 Clozure CL
 
+;; Windows Issues:
+;; This example has framerates of a factor of ten worse then on the Mac, I get these framerates 
+;; (around 155) on Windows running paralells, this virtual machine may have something to do with this.  
 (in-package :xlui)
 
 

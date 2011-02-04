@@ -2,6 +2,10 @@
 ;;; concepts: camera control through slider; cover flow-like reflections
 ;;; Alexander Repenning 04/25/09
 
+;; Windows Issues:
+;; The first time you open this example, if you select one of the objects in the cover flow,
+;; they all will disappear.  Also, when you close the example and then reopen it, if you try
+;; and resize the window it will crash with an error.  
 (in-package :xlui)
 
 ;;-------------------------

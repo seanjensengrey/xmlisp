@@ -1,6 +1,9 @@
 ;;; LUI/OpenGL example: Brownian Motion, 3D trajectory of a particle with alpha plotting
 ;;; Alexander Repenning 04/26/09
 
+;; Windows Issues:
+;; This example always seems to have the "text editing" cursor when ever you mouse over the openGLView
+;; I experienced this issue on the an IMac running Windows 7 on Paralells.  
 (in-package :xlui)
 
 

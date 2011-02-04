@@ -1,7 +1,10 @@
 ;; Trivial OpenGL example
 ;; 8/25/09 Alexander Repenning
 ;; how to make a slow circle
-
+;; Windows Issues:
+;; When this example first stats up, the slider has no knob, as soon as you click somewhere
+;; on the slider the knob will appear at the spot where you click.  Also, sometimes when you
+;; hove over the openGL view, you see the text editing cursor instead of the arrow cursor.  
 (in-package :xlui)
 
 (defclass CIRCLE-VIEW (opengl-dialog)
