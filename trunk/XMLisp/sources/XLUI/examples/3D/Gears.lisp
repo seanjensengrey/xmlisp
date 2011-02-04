@@ -5,6 +5,11 @@
 ;;; 04/01/09 XMlisp version
 ;;; concepts: display lists
 
+;; Windows Issues:
+;; The frame rate on this this example is terrible, if you put the speed up to the max
+;; you seem to only get about 2 frames per second.  This likely has something to do with 
+;; the timing issue.  
+
 (in-package :xlui)
 
 (defvar *Pi-Single* (float Pi 0.0))

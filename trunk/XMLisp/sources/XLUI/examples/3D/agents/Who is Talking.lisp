@@ -2,6 +2,9 @@
 ;; concepts: picking and speech
 ;; Alexander Repenning, 5/20/09
 
+;; Windows Issues:
+;; This example should not be used on Windows which does not support Cocoa's text to speech. 
+;; This example will crash everytime you hover over an object in the view.  
 (in-package :xlui)
 
 

@@ -2,6 +2,9 @@
 ;; concepts: view swapping
 ;; Alexander Repenning, 03/04/10
 
+;;Windows Issues:
+;; When you drag the window around it sometimes causes the view to go all white, this can 
+;; sometimes be remedied by engaging a mouse drag on the openGL view.  
 (in-package :xlui)
 
 

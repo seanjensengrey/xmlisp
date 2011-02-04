@@ -6,6 +6,8 @@
 ;;; to software rendering mode with older GPUs.
 ;;; In this full screen mode other windows can still be layers on top, e.g., menus, drag and drop, ...
 
+;; Windows Issues:
+;; This example does not switch to full screen when the button is pressed.  
 (in-package :xlui)
 
 

@@ -2,6 +2,11 @@
 ;; concepts: picking and selection
 ;; Alexander Repenning, 5/20/09
 
+;; Windows Issues:
+;; It seems that when you draw the window to a new location, the whole openGLView goes white
+;; and does not return until you try and drag the contents of the view.  Also, rotation causes
+;; terrible frame rates.  
+
 (in-package :xlui)
 
 

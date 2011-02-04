@@ -2,6 +2,9 @@
 ;; concepts: nested animations (car moves, movement turns wheels), discrete low pass filter, alpha texture sorting
 ;; 05/22/09 Alexander Repenning
 
+;;Windows Issues:
+;; Sometimes when the example first loads, the cart is all black.  Also, if you close the 
+;; window while the simulation is running you get an error.  
 (in-package :xlui)
 
 ;; Window
