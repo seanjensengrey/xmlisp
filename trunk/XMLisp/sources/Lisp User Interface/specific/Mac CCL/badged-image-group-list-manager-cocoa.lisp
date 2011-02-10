@@ -123,7 +123,12 @@
    )
   (:metaclass ns:+ns-object
 	      :documentation ""))
-
+#|
+(defmethod INITIALIZE-INSTANCE :after ((Self native-badged-image-group-list-manager-view) &rest args)
+  (print (#/superview self))
+  ;(#/setBackgroundColor: self (#/colorWithCalibratedRed:green:blue:alpha: ns:ns-color .7 .7 .7 1.0))
+  )
+|#
 
 (defmethod LAYOUT ((Self native-badged-image-group-list-manager-view))
   (let ((y 0)) 
@@ -159,15 +164,6 @@
   (layout-changed (lui-view self)))
 
 
-#|
-(objc:defmethod (#/drawRect: :void) ((Self native-badged-image-group-list-manager-view) (rect :<NSR>ect))
-  (call-next-method rect)
-  (print "DRAW RECT")
-  (print rect)
-  (#/set (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color .2 .2 .2 .62))
-  (#/fillRect: ns:ns-bezier-path rect))
-|#
-
 (objc:defmethod (#/viewDidEndLiveResize :void) ((self native-badged-image-group-list-manager-view))
   (layout self))
 
@@ -190,13 +186,13 @@
               :documentation "This is a view that will detect mouse input fo the group and will also containt all the other views for the group"))
 
 
-(defmethod UPDATE-IMAGE ((self group-detection-view) &key (image-name nil))
+(defmethod UPDATE-IMAGE ((self group-detection-view) &key (image-name nil) (image-data nil))
   (let ((subviews (gui::list-from-ns-array (#/subviews self))))  
     (dolist (subview subviews)
       (if (or
            (equal (type-of subview) 'lui::group-item-image-view)
            (equal (type-of subview) 'lui::badged-image-view))
-        (update-image subview :image-name image-name)))))
+        (update-image subview :image-name image-name :image-data image-data)))))
 
 
 (objc:defmethod (#/mouseDown: :void) ((self group-detection-view) Event)
@@ -329,7 +325,7 @@
       self)))
 
 
-(defmethod UPDATE-IMAGE ((self group-item-image-view) &key (image-name nil)) 
+(defmethod UPDATE-IMAGE ((self group-item-image-view) &key (image-name nil) (image-data nil)) 
   (if image-name
     (setf (image-name self) image-name))
   (let ((subviews (gui::list-from-ns-array (#/subviews self))))   
@@ -340,10 +336,13 @@
           (let ((image (make-instance 'image-control  :image-path (image-path self)  :src (image-name self) :x 0 :y 0 :width (image-size self) :height (image-size self)))) 
             (let ((image-view (#/alloc mouse-detecting-image-view)))
               (ns:with-ns-rect (Frame 0 0 (image-size self) (image-size self))
-                (#/initWithFrame: image-view Frame )
-                (#/setImage: image-view (#/image (native-view image)))
+                (#/initWithFrame: image-view Frame )  
+                (if image-data 
+                  (#/setImage: image-view image-data)
+                  (#/setImage: image-view (#/image (native-view image))))
                 (#/setImageScaling: image-view #$NSScaleToFit)
-                (#/addSubview: self image-view)))))))))
+                (#/addSubview: self image-view))))))))
+  (#/setNeedsDisplay: self #$YES))
 
 
 (objc:defmethod (#/isFlipped :<BOOL>) ((self mouse-detecting-image-view))
@@ -380,7 +379,7 @@
               :documentation "A view that will be composed of two images one for the head-image and one for the badge"))
 
 ;;This method  should be totally retooled/removed when this class is reworked.  
-(defmethod CREATE-BADGED-IMAGE ((self badged-image-view))
+(defmethod CREATE-BADGED-IMAGE ((self badged-image-view) &key (image-data nil))
   (ns:with-ns-point (Point (x self) (y self))
     (#/setFrameOrigin: Self Point))
   (ns:with-ns-size (Size (head-image-size self) (head-image-size self))
@@ -396,19 +395,21 @@
                (elt (group-items (list-group (#/superview self))) 0))
             (progn
               (let ((image (make-instance 'image-control :image-path (image-path (elt (group-items (list-group (#/superview self))) 0)) :src (image-name (elt (group-items (list-group (#/superview self))) 0)) :x 0 :y 0 :width (badge-image-size self) :height (badge-image-size self)))) 
-                (#/setImage: badge-image-view (#/image (native-view image)))))
+                (if image-data
+                  (#/setImage: badge-image-view image-data)
+                  (#/setImage: badge-image-view (#/image (native-view image))))))
             (#/setImage: badge-image-view (#/image (native-view badge-image)))))
         (#/setImageScaling: badge-image-view #$NSScaleToFit)
         (#/addSubview: self badge-image-view))))
   self) 
 
 
-(defmethod UPDATE-IMAGE ((self badged-image-view) &key (Image-Name nil))
+(defmethod UPDATE-IMAGE ((self badged-image-view) &key (Image-Name nil) (image-data nil))
   (declare (ignore Image-Name))
   (let ((subviews (gui::list-from-ns-array (#/subviews self))))  
     (dolist (subview subviews)
       (#/removeFromSuperviewWithoutNeedingDisplay subview)))
-  (setf self (create-badged-image self))
+  (setf self (create-badged-image self :image-data image-data))
   (#/setNeedsDisplay: self #$YES))
 
 
@@ -517,9 +518,10 @@
         (if (item-name-changed (container self) (group-name (group self)) (item-name (item self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
           (progn
             (#/setEditable: self #$NO)
-            (#/setDrawsBackground:  self #$NO))
+            (#/setDrawsBackground:  self #$NO)
+            )
           (#/setStringValue: self (native-string (name-storage self))))
-        (setf (item-name (item self))(ccl::lisp-string-from-nsstring (#/stringValue self))))
+        (setf (item-name (item self)) (String-capitalize (ccl::lisp-string-from-nsstring (#/stringValue self)))))
       (progn
         (if (group-name-changed (container self) (group-name (group self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
           (progn
@@ -604,8 +606,8 @@
   (declare (ignore Width Height))
   (call-next-method)
   #-cocotron 
-  (if (> (-(width (lui-view (#/superview (#/superview (native-view self))))) 1)  (minimum-width self))
-    (setf (width self) (-(width (lui-view (#/superview (#/superview (native-view self)))))1)))
+  (if (> (width (lui-view (#/superview (#/superview (native-view self)))))   (minimum-width self))
+    (setf (width self) (width (lui-view (#/superview (#/superview (native-view self)))))))
   (dolist (group (groups  self))
     (ns:with-ns-size (Size (width self) (NS:NS-RECT-HEIGHT (#/frame (group-view group))))
       (#/setFrameSize:  (group-view group ) Size))
@@ -884,9 +886,8 @@
         (progn 
           (dolist (item (group-items group))
             (if (equal (String-capitalize item-name) (string-capitalize (item-name item)))
-              (progn
+              (progn               
                 (let ((y-offset   (position item-name (group-items group) :key #'item-name :test #'equal)))
-                  (print y-offset)
                   (setf (selected-item-name group) (item-name item))
                   (setf (is-selected group) "YES")
                   (#/setHidden: (selection-view group) #$YES)
@@ -942,4 +943,12 @@
   )
 
 
+(defmethod GET-IMAGE-OF-ITEM ((self list-group-item))
+  (let ((subviews (gui::list-from-ns-array (#/subviews (item-detection-view self)))))  
+    (dolist (subview subviews)
+      (if (equal (type-of subview) 'lui::group-item-image-view)
+        (let ((image-subviews (gui::list-from-ns-array (#/subviews subview))))  
+          (dolist (image-subview image-subviews)
+            (when (equal (type-of image-subview) 'lui::mouse-detecting-image-view)
+              (return-from get-image-of-item (#/image image-subview)))))))))
 
