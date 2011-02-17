@@ -191,19 +191,6 @@
   (unless (is-animated Self) (display Self)))
 
 
-(defmethod ADJUST-X-Y-FOR-WINDOW-OFFSET ((Self opengl-view) X Y)
-  ;#-cocotron
-  (values
-   X
-   Y)
-  #|
-  #+cocotron
-   (values
-    (- x 18)
-    (- y 24))
-  |#
-  )
-
 ;_______________________________
 ; Textures                      |
 ;_______________________________
