@@ -130,7 +130,7 @@
   (:documentation "Receives and handles LUI events"))
 
 
-(defgeneric VIEW-EVENT-HANDLER (event-listener-interface Event)
+(defgeneric VIEW-EVENT-HANDLER (event-listener-interface Event )
   (:documentation "Generic event handler: dispatch event types to methods. 
 Call with most important parameters. Make other paramters accessible through *Current-Event*"))
 
@@ -392,7 +392,7 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 
 (defmethod GET-TOOLTIP-OF-VIEW-AT-SCREEN-POSITION ((Self view) x y)
-  (get-tooltip (find-view-at-screen-position x (- (ns:ns-rect-height (#/frame (#/mainScreen ns:ns-screen))) y)) x (- (ns:ns-rect-height (#/frame (#/mainScreen ns:ns-screen))) y)))
+  (get-tooltip (find-view-at-screen-position x (- (Screen-height nil) y)) x (- (Screen-height nil) y)))
 
 
 (defmethod GET-TOOLTIP ((Self view) x y)
@@ -400,7 +400,9 @@ Call with most important parameters. Make other paramters accessible through *Cu
   (documentation (type-of self) 'type))
 
 
-
+(defmethod GET-TOOLTIP ((Self null) x y)
+  (declare (ignore x y))
+  nil)
 
 
 ;**********************************
@@ -620,6 +622,7 @@ after any of the window controls calls stop-modal close window and return value.
 
 
 (defmethod MOST-SPECIFIC-VIEW-CONTAINING-POINT ((Self t) x y)
+  (declare (ftype function get-x-y-offset-for-window-origin))
   (labels ((view-containing-point (View x y)
              (do-subviews (Subview View)
                (when (and (<= (x Subview) x (+ (x Subview) (width Subview)))
@@ -628,14 +631,28 @@ after any of the window controls calls stop-modal close window and return value.
              ;; no subviews (if any) matched. I am the ONE!
              (return-from most-specific-view-containing-point (values View x y))))
     (when (and (<= x (width Self)) (<= y (height Self)))
-      (view-containing-point Self x y))))
+      (let ((x-offset 0)(y-offset 0))
+        (when (subtypep (type-of self) 'window)
+          (multiple-value-bind (new-x new-y)
+                               (get-x-y-offset-for-window-origin self)
+            (setf x-offset new-x)
+            (setf y-offset new-y)))
+      (view-containing-point Self (- x x-offset) (+ y y-offset))))))
+
 
 ;; Events
-
 (defmethod MOUSE-EVENT-HANDLER ((Self window) Window-x Window-y DX DY Event)
+  (declare (ftype function get-x-y-offset-for-window-origin))
+  (declare (ftype function convert-from-window-coordinates-to-view-coordinates))
+  
   (multiple-value-bind (View x y)
                        (most-specific-view-containing-point Self Window-x Window-y)
-    ;; (format t "~%mouse ~A, object=~A, x=~A, y=~A" (event-type Event) (string-capitalize (type-of View)) x y)
+    (when view
+      (unless (subtypep (type-of view) 'window)
+        (multiple-value-bind (test-x test-y)
+                             (convert-from-window-coordinates-to-view-coordinates view window-x (- (height (window self)) window-y))
+          (setf x test-x)
+          (setf y (- (height view) test-y)))))
     (case (event-type Event)
       ;; MOVED: also trigger enter and leave events
       (:mouse-moved
@@ -666,23 +683,35 @@ after any of the window controls calls stop-modal close window and return value.
       (:left-mouse-dragged
        (when *Mouse-Down-View*
          ;; coordinates relative to mouse Down view
+         (let ((x-offset 0)(y-offset 0))
+           (when (subtypep (type-of self) 'window)
+             (multiple-value-bind (new-x new-y)
+                                  (get-x-y-offset-for-window-origin self)
+               (setf x-offset new-x)
+               (setf y-offset new-y)))
          (view-left-mouse-dragged-event-handler 
           *Mouse-Down-View*
-          (- Window-x (window-x *Mouse-Down-View*))
-          (- Window-Y (window-y *Mouse-Down-View*))
+          (- Window-x (window-x *Mouse-Down-View*) x-offset) ;test-x
+          (+ (- Window-Y (window-y *Mouse-Down-View*)) y-offset) ;test-y
           dx
-          dy)))
+          dy))))
       ;; UP: use view set by down
       (:left-mouse-up
        (when *Mouse-Down-View*
+         (let ((x-offset 0)(y-offset 0))
+           (when (subtypep (type-of self) 'window)
+             (multiple-value-bind (new-x new-y)
+                                  (get-x-y-offset-for-window-origin self)
+               (setf x-offset new-x)
+               (setf y-offset new-y)))
          ;; coordinates relative to mouse Down view
          (view-left-mouse-up-event-handler 
           *Mouse-Down-View*
-          (- Window-x (window-x *Mouse-Down-View*))
-          (- Window-Y (window-y *Mouse-Down-View*)))
+          (- Window-x (window-x *Mouse-Down-View*) x-offset)
+          (+ (- Window-Y (window-y *Mouse-Down-View*)) y-offset))
          ;; cleanup time: nobody should use refer to the mouse down view anymore
          ;; the down/drag/up cycle is officially over
-         (setq *Mouse-Down-View* nil)))
+         (setq *Mouse-Down-View* nil))))
       ;; Scroll Wheel
       (:scroll-wheel
        (when View
@@ -811,6 +840,7 @@ after any of the window controls calls stop-modal close window and return value.
 (defmethod GET-TOOLTIP ((Self window) x y)
   (declare (ignore x y))
   (documentation (type-of self) 'type))
+
 
 
 ;****************************************************
@@ -1369,7 +1399,7 @@ after any of the window controls calls stop-modal close window and return value.
   (:default-initargs
       :text ""
     :action 'color-well-action)
-  (:documentation "Color Well"))
+  (:documentation "An alternative color well that will display the selected color in a button."))
 
 
 (defmethod INITIALIZE-INSTANCE ((Self color-well-control) &rest Args)
