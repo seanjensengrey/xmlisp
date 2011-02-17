@@ -485,7 +485,6 @@
   ;; for instance: picking every 50ms would be plenty fast
   (declare (ignore dx dy))
   (call-next-method)
-  
   ;;(format t "~%hover: x=~A y=~A dx=~A dy=~A" x y dx dy)
   (let ((Agent (find-agent-at Self x y *Selection-Tolerance* *Selection-Tolerance*)))
     (when (or (not (eq Agent (agent-hovered Self))) 
@@ -493,14 +492,15 @@
                    (find-class 'matrix-background-agent nil)
                    (let ((Matrix-Background-Agent-Type 'matrix-background-agent)) ;; shut up the compiler warnings
                      (subtypep (type-of Agent) Matrix-Background-Agent-Type))))  ;; hack! matrix-background-agent are shared
-      (with-animation-locked
-          (when (agent-hovered Self)
-            (setf (is-hovered (agent-hovered Self)) nil)
-            (mouse-hover-leave-event-handler (agent-hovered Self)))
-        (when Agent
-          (setf (is-hovered Agent) t)
-          (mouse-hover-enter-event-handler Agent))
-        (setf (agent-hovered Self) Agent)))))
+      (when (and agent (is-visible agent))
+        (with-animation-locked
+            (when (agent-hovered Self)
+              (setf (is-hovered (agent-hovered Self)) nil)
+              (mouse-hover-leave-event-handler (agent-hovered Self)))
+          (when Agent
+            (setf (is-hovered Agent) t)
+            (mouse-hover-enter-event-handler Agent))
+          (setf (agent-hovered Self) Agent))))))
 
 
 ;****************************************
@@ -749,7 +749,7 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 (defmethod DRAW ((Self agent-3d))
   (cond
    ((is-selected Self) (draw-bounding-box Self (first *System-Selection-Color*) (second *System-Selection-Color*) (third *System-Selection-Color*)))
-   ((is-drag-entered Self) (draw-bounding-box Self 1.0 1.0 0.0))
+   ((and (is-visible Self) (is-drag-entered Self)) (draw-bounding-box Self 1.0 1.0 0.0))
    ((is-hovered Self) (draw-bounding-box Self 0.5 0.5 0.5)))
   ;; draw all subagents
   (dolist (Agent (agents Self))
