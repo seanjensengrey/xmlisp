@@ -86,8 +86,9 @@
   (when (transparent-ceiling-update-process self)
     (setf *ceiling-update-thread-should-stop* t)
     (setf (transparent-ceiling-update-process self) nil))
-  (ccl::with-lock-grabbed ((transparent-ceiling-update-lock))
-    (funcall (alert-close-action self) (alert-close-target self) self)))
+  (when (and (alert-close-action self) (alert-close-target self))
+    (ccl::with-lock-grabbed ((transparent-ceiling-update-lock))
+      (funcall (alert-close-action self) (alert-close-target self) self))))
 
 
 (defmethod KEY-EVENT-HANDLER ((Self inflatable-icon-editor-window) Event)
@@ -112,7 +113,6 @@
       (#.(key-name->code "delete")
        (fill-selected-pixels icon-editor))))
    (t
-    (print (key-code Event))
     (case (key-code Event)
       (#.(key-name->code "up arrow")
          (nudge-selection-up icon-editor))
@@ -147,7 +147,6 @@
 
 (defmethod VIEW-KEY-EVENT-HANDLER ((Self inflatable-icon-editor-window) Key)
   "Called when a key is typed while the image-editor-window has keyboard focus."
-  (print "VIEW KEY EVENT HANDLER")
   (let ((Icon-Editor (view-named Self 'icon-editor)))
     (cond
      ((command-key-p)
@@ -343,7 +342,6 @@
 
 (defmethod VIEW-LEFT-MOUSE-DRAGGED-EVENT-HANDLER ((Self icon-editor) X Y DX DY)
   (declare (ignore X y dx dy))
-
   (call-next-method)
   (case (selected-tool (window self))
     ((or draw erase paint-bucket)
@@ -669,11 +667,13 @@
 
 (defmethod START-JOG ((Self inflation-jog-slider))
   (call-next-method)
+  #-cocotron
   (play-sound "whiteNoise.mp3" :loops t))
 
 
 (defmethod STOP-JOG ((Self inflation-jog-slider))
   (call-next-method)
+  #-cocotron
   (stop-sound "whiteNoise.mp3"))
 
 
@@ -727,6 +727,13 @@
   (set-pen-color (view-named w "icon-editor") (get-red Color-Well) (get-green Color-Well) (get-blue Color-Well) (get-alpha Color-Well)))
 
 
+(defmethod PICK-COLOR-ACTION ((w inflatable-icon-editor-window) (Color-Well color-well-button))
+  (multiple-value-bind (red green blue alpha)
+                       (get-color-from-user)
+    (set-color color-well :red red :green green :blue blue :alpha alpha))
+  (set-pen-color (view-named w "icon-editor") (get-red Color-Well) (get-green Color-Well) (get-blue Color-Well) (get-alpha Color-Well)))
+
+
 (defmethod MIRROR-NONE-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
   (toggle-mirror-lines (view-named Window 'icon-editor) nil nil)
@@ -772,6 +779,7 @@
   (enable (view-named Window "flatten-button"))
   (let ((Pressure (value Slider)))
     ;; audio feedback
+    #-cocotron
     (set-volume "whiteNoise.mp3" (abs Pressure))
     ;; model update
     (let ((Text-View (view-named Window 'pressuretext)))
@@ -783,7 +791,9 @@
       (let ((Model-Editor (view-named Window 'model-editor)))
         (incf (pressure (inflatable-icon Model-Editor)) (* 0.02 Pressure))
         (update-inflation Window)
-        (setf (is-flat (inflatable-icon Model-Editor)) nil)))))
+        (setf (is-flat (inflatable-icon Model-Editor)) nil))))
+  ;;Wicked cocotron hack to get the inflated icon editor to update
+  )
 
 
 (defmethod ADJUST-CEILING-ACTION ((Window inflatable-icon-editor-window) (Slider slider) &key (draw-transparent-ceiling t))
@@ -816,7 +826,9 @@
       (let ((Model-Editor (view-named Window 'model-editor)))
         (setf (ceiling-value (inflatable-icon Model-Editor)) Ceiling)
         (setf (max-value (inflatable-icon Model-Editor)) (+ Ceiling (value (view-named window "z_slider")) ))
-        (update-inflation Window)))))
+        (update-inflation Window))))
+  ;;Wicked cocotron hack to get the inflated icon editor to update
+  )
 
 
 (defmethod UPDATE-CEILING-TRANSPARENCY ((Self inflatable-icon-editor-window))
@@ -839,7 +851,9 @@
       (let ((Model-Editor (view-named Window 'model-editor)))
         (setf (noise (inflatable-icon Model-Editor)) Noise)
         (update-inflation Window)
-        (setf (is-flat (inflatable-icon Model-Editor)) nil)))))
+        (setf (is-flat (inflatable-icon Model-Editor)) nil))))
+    ;;Wicked cocotron hack to get the inflated icon editor to update
+  )
 
 
 (defmethod ADJUST-SMOOTH-ACTION ((Window inflatable-icon-editor-window) (Slider slider))
@@ -851,7 +865,9 @@
       ;; update model editor
       (setf (smoothing-cycles Window) Smooth)
       (setf (smooth (inflatable-icon (view-named Window 'model-editor))) smooth)
-      (update-inflation Window))))
+      (update-inflation Window)))
+    ;;Wicked cocotron hack to get the inflated icon editor to update
+  )
 
 
 (defmethod ADJUST-Z-OFFSET-ACTION ((Window inflatable-icon-editor-window) (Slider slider))
@@ -864,7 +880,9 @@
       (let* ((Model-Editor (view-named Window 'model-editor)))
         (setf (dz (inflatable-icon Model-Editor)) Offset)
         (adjust-ceiling-action window (view-named window "ceiling_slider"))
-        (display Model-Editor)))))
+        (display Model-Editor))))
+    ;;Wicked cocotron hack to get the inflated icon editor to update
+  )
 
 
 (defmethod ADJUST-DISTANCE-ACTION ((Window inflatable-icon-editor-window) (Slider slider) &optional do-not-display)
@@ -877,7 +895,9 @@
     (let ((Model-Editor (view-named Window 'model-editor)))
       (setf (distance (inflatable-icon Model-Editor)) Distance)
       (unless do-not-display
-        (display Model-Editor)))))
+        (display Model-Editor))))
+  ;;Wicked cocotron hack to get the inflated icon editor to update
+  )
 
 
 (defmethod CHANGE-ICON-ACTION ((Window inflatable-icon-editor-window) (Icon-Editor icon-editor))
@@ -970,8 +990,16 @@
   (let ((Model-Editor (view-named Window 'model-editor)))
     ;; finalize geometry
     (compute-depth (inflatable-icon Model-Editor))
-    (if (container window)
-      (lui::apply-button-pressed (container window) Window))
+    (when (container window)
+      (let ((Icon-Editor (view-named window 'icon-editor)))
+        (with-vector-of-size (&image (* (img-width icon-editor) (img-height icon-editor)(truncate (img-depth icon-editor) 8)))
+          (glBindTexture GL_TEXTURE_2D (img-texture icon-editor))  ; make the texture current
+          (glGetTexImage GL_TEXTURE_2D 0 (ecase (truncate (img-depth icon-editor) 8)
+                                           (3 GL_RGB)
+                                           (4 GL_RGBA))
+                         GL_UNSIGNED_BYTE &image)
+          (lui::apply-button-pressed (container window) Window :applied-image (print (lui::get-image-as-data &image 
+                               (img-width icon-editor) (img-height icon-editor) :depth (truncate (img-depth icon-editor) 8)))))))
     ;; save
     (when (destination-inflatable-icon Window)
       ;; (format t "~%copy into icon")
@@ -985,8 +1013,9 @@
                 (view-named (project-window (project-manager-reference (container window))) "the world")))
         (update-texture-from-image (destination-inflatable-icon Window)))))
   (when (container window)
-    (lui::save-button-pressed (container window))
-    (display-world (project-window (project-manager-reference (container window))))))
+    ;  (lui::save-button-pressed (container window))
+    (display-world (project-window (project-manager-reference (container window)))))
+  )
 
 
 (defmethod CLEAR-ACTION ((Window inflatable-icon-editor-window) (Button button))
@@ -1029,7 +1058,8 @@
       (setf (text Text-View) (format nil "~A" 0.0))
       (display Text-View))
     (clear-selection (view-named window 'icon-editor))
-    (display (view-named window 'model-editor))))
+    (display (view-named window 'model-editor))
+    ))
 
 
 (defmethod EDIT-ICON-SAVE-ACTION ((Window inflatable-icon-editor-window) (Button button))
@@ -1108,9 +1138,10 @@
   If folder contains .shape file matching image file name then load shape file."
   (declare (ignore Close-Action Destination-Inflatable-Icon)
            (ftype function shape))
-  (let* ((Window (load-object "lui:resources;windows;inflatable-icon-editor.window" :package (find-package :xlui)))
+  (let* ((Window #-cocotron (load-object "lui:resources;windows;inflatable-icon-editor.window" :package (find-package :xlui)) #+cocotron (load-object "lui:resources;windows;inflatable-icon-editor-windows.window" :package (find-package :xlui)))
          (Icon-Editor (view-named Window "icon-editor"))
          (Inflated-Icon-Editor (view-named Window "model-editor")))
+    
     (if shape-name
       (setf (title window) (format nil "Inflatable Icon: ~A" (String-capitalize shape-name)))
       (setf (title window) (format nil "Inflatable Icon: ~A" (pathname-name Pathname))))
@@ -1133,8 +1164,14 @@
       (cond
        ;; make shape from shape file
        ((probe-file Shape-Pathname)
-        (setf (inflatable-icon Inflated-Icon-Editor) 
-              (shape (load-object Shape-Pathname :package (find-package :xlui))))
+        
+        
+        (let ((shape (load-object Shape-Pathname :package (find-package :xlui))))
+          (if (equal (type-of shape) 'xlui::inflatable-icon)
+            (setf (inflatable-icon Inflated-Icon-Editor) shape)
+            (setf (inflatable-icon Inflated-Icon-Editor) 
+                  (shape shape))))
+        
         (setf (view (inflatable-icon Inflated-Icon-Editor)) Inflated-Icon-Editor))
        ;; make new one
        (t
