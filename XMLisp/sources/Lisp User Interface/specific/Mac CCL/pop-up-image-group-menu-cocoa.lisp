@@ -40,10 +40,7 @@
         (mouse-y (NS:NS-POINT-Y (#/locationInWindow event))))
     (let ((subviews (gui::list-from-ns-array (#/subviews (#/contentView self)))))  
       (dolist (subview subviews)
-        
-        
         (when (equal (type-of subview) 'LUI::INDEXED-IMAGE-VIEW )
-          
           (let ((x-subview (NS:NS-RECT-X (#/frame subview)))
                 (y-subview (NS:NS-RECT-Y (#/frame subview)))
                 (width-subview  (NS:NS-RECT-WIDTH (#/frame subview)))
@@ -64,12 +61,13 @@
                      (<= y-subview mouse-y (+ y-subview height-subview)))
               (progn
                 (let ((image-view (first (image-views subview))))
-                  (#/setString: (shape-text-box (lui-window self)) (native-string (string-capitalize (name image-view))))
-                  (setf (selected image-view) t)
-                  (#/setImage: (image-preview-view (lui-window self)) (#/image image-view))
-                  (call-next-method event)
-                  (#/setNeedsDisplay: (#/contentView self) #$YES)
-                  (return))))))))
+                  (when image-view
+                    (#/setString: (shape-text-box (lui-window self)) (native-string (string-capitalize (name image-view))))
+                    (setf (selected image-view) t)
+                    (#/setImage: (image-preview-view (lui-window self)) (#/image image-view))
+                    (call-next-method event)
+                    (#/setNeedsDisplay: (#/contentView self) #$YES)
+                    (return)))))))))
     (call-next-method event)
     (#/setNeedsDisplay: (#/contentView self) #$YES)))
 
@@ -203,27 +201,22 @@
                     (let ((indexed-view (make-instance 'indexed-image-view))                       
                           (NS-Image (#/alloc ns:ns-image))
                           (image-pathname (image-pathname self))
-                          (image-name nil)
-                          (tooltip nil))
+                          (image-name nil))
                       (ns:with-ns-rect (Frame (+ (label-width self) (* (image-width self) current-col)) (+ (image-preview-height self)(shape-text-box-height self)(* (image-height self) current-row)) (-(image-width self)(image-border-thickness self)) (-(image-height self)(image-border-thickness self)))                                      
                         (#/initWithFrame: indexed-view Frame)
                         (etypecase Item
                           (list
                            (setf image-name (second item)) ;(concatenate 'string (first Item) "." (image-file-extension self)))
-                           ;(setf image-pathname (Second Item))
-                           (setf tooltip (first item))
                            (unless (probe-file  image-name)
                              (warn "Cannot load file ~A does not exist" image-name))
-                           (#/initWithContentsOfFile: NS-Image  (native-string  (namestring image-name))))
+                           (#/initWithContentsOfFile: NS-Image  (native-string  (namestring (truename image-name)))))
                           (string
-                           (setf tooltip item)
                            (setf Item (concatenate 'string Item "." (image-file-extension self)))
                            (setf image-name Item)  
                            (unless (probe-file (native-path image-pathname image-name))
                              (warn "Cannot load file ~A does not exist" (native-path image-pathname image-name)))
                            (#/initWithContentsOfFile: NS-Image  (native-string (native-path image-pathname image-name)))))
-                        (setf (name indexed-view) tooltip)
-                        (setf (lui-superview indexed-view) self)                                 
+                        (setf (lui-superview indexed-view) self)        
                         (#/setImage: indexed-view NS-Image)   
                         (#/setImageScaling: indexed-view #$NSScaleToFit)
                         (setf (index indexed-view) i)
@@ -248,10 +241,8 @@
               (ns:with-ns-rect (Frame 0 0 (width self) (image-preview-height self))
                 (#/initWithFrame: image-preview Frame)
                 (#/addSubview: (native-view self) image-preview)
-                
                 (#/setImageScaling: image-preview 3)
-                (setf (image-preview-view self) image-preview)
-                ))
+                (setf (image-preview-view self) image-preview)))
             (#/setAcceptsMouseMovedEvents: Window #$YES)
             (#/makeKeyAndOrderFront: Window Window)
             (#/runModalForWindow: (#/sharedApplication ns:ns-application) Window)
