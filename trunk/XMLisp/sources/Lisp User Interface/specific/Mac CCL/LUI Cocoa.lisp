@@ -66,7 +66,7 @@
     (#.nseventtyperotate :rotate-gesture)
     (#.nseventtypeendgesture :end-gesture)
     ;; trouble!!
-    (t :undefined-event)))
+    (t  :undefined-event)))
 
 ;;*********************************
 ;; user defined System parameters *
@@ -154,7 +154,7 @@
 ;* SUBVIEW-MANAGER-INTERFACE      *
 ;**********************************
 
-(defmethod ADD-SUBVIEW ((View subview-manager-interface) (Subview subview-manager-interface))
+(defmethod ADD-SUBVIEW ((View subview-manager-interface) (Subview subview-manager-interface)) 
   (#/addSubview: (native-view View) (native-view Subview))
   (setf (part-of Subview) View))
   
@@ -226,7 +226,6 @@
 
 
 (defmethod SET-POSITION :after ((Self view) X Y)
-  
   (ns:with-ns-point (Point X Y)
     (#/setFrameOrigin: (native-view Self) Point)))
 
@@ -257,8 +256,11 @@
 
   ; (if (equal 'xlui::world (type-of self))
   ;  xlui::*project-window*
-  (lui-window (#/window (native-view Self)))
-   )
+  (let ((native-window (#/window (native-view Self))))
+    (if (%null-ptr-p native-window)
+      (return-from WINDOW nil)
+      (lui-window native-window))
+    ))
     
   ;)
 
@@ -294,6 +296,14 @@
 
 (defmethod ENABLE-TOOLTIPS ((Self view))
   (#/addToolTipRect:owner:userData: (native-view self) (#/frame (native-view self)) (make-instance 'tooltip-delegate :lui-view self) lui::+null-ptr+))
+
+
+(defmethod CONVERT-FROM-WINDOW-COORDINATES-TO-VIEW-COORDINATES ((Self view) x y)
+  (ns:with-ns-point (point x y)
+    (let ((convertedPoint (#/convertPoint:fromView: (native-view self) point nil)))
+      (values
+       (ns:ns-point-x convertedPoint)
+       (ns:ns-point-y convertedPoint)))))
 
 
 ;__________________________________
@@ -481,11 +491,11 @@
   (:metaclass ns:+ns-object
 	      :documentation "Native window"))
 
-
+#|
 (objc:defmethod (#/sendEvent: :void) ((Self native-window) Event)
   ;; (print (native-to-lui-event-type (#/type Event)))
   (call-next-method Event))
-
+|#
 
 (objc:defmethod (#/mouseMoved: :void) ((self native-window) Event)
   (let ((mouse-loc (#/locationInWindow event)))
@@ -633,7 +643,6 @@
         (when (track-mouse Self) (#/setAcceptsMouseMovedEvents: (native-window Self) #$YES))
         Window))))
 
-
 (defmethod DISPLAY ((Self window))
   ;; excessive?  
   (in-main-thread ()
@@ -747,7 +756,13 @@
   (#/makeKeyWindow (native-window self))
   (#/orderFront: (native-window self) nil))
 
-  
+
+(defmethod GET-X-Y-OFFSET-FOR-WINDOW-ORIGIN ((Self Window))
+  (let ((frame (#/frame (#/contentView (native-window self)))))
+    (values
+     (NS:NS-RECT-X frame)
+     (NS:NS-RECT-Y frame))))
+
 ;__________________________________
 ; Window query functions            |
 ;__________________________________/
@@ -806,8 +821,10 @@
 ; NATIVE-WINDOW-VIEW                |
 ;__________________________________/
 
+
 (defclass native-window-view (ns:ns-view)
-  ((lui-window :accessor lui-window :initarg :lui-window))
+  ((lui-window :accessor lui-window :initarg :lui-window)
+   (lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object
 	      :documentation "dispatch NS events to LUI events. A LUI window needs to contain on dispatch view"))
 
@@ -820,6 +837,7 @@
                           :y (truncate (- (height (lui-window Self)) (pref mouse-loc :<NSP>oint.y)))
                           :event-type (native-to-lui-event-type (#/type event))
                           :native-event Event))))
+
 
 (objc:defmethod (#/rightMouseDown: :void) ((self native-window-view) event)
   (declare (ignore event))
@@ -868,9 +886,10 @@
        :y (truncate (- (height (lui-window Self)) (pref mouse-loc :<NSP>oint.y)))
        ;; Apple has still (OS X 10.6.5) not provided public interfaces for these accessors: http://lists.apple.com/archives/cocoa-dev/2007/Feb/msg00050.html
        :dx (objc:objc-message-send Event "deviceDeltaX" #>CGFloat)
-       :dy (objc:objc-message-send Event "deviceDeltaY" #>CGFloat)
+       :dy (* (objc:objc-message-send Event "deltaY" #>CGFloat) 10);(objc:objc-message-send Event "deviceDeltaY" #>CGFloat)
        :event-type (native-to-lui-event-type (#/type event))
        :native-event Event))))
+
 
 ;; Gesture Events (OS X 10.6 and later)
 
