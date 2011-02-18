@@ -69,7 +69,6 @@
     ;)
     (unless (equal (#/superview (native-view self)) +null-ptr+)
       (progn
-        #-cocotron
         (if call-set-size
           (progn
             (set-size (lui-view (#/superview (#/superview (native-view self))))   (width (lui-view (#/superview (#/superview (native-view self))))) (height (lui-view (#/superview (#/superview (native-view self))))))
@@ -605,7 +604,6 @@
 (defmethod SET-SIZE ((Self badged-image-group-list-manager-view) Width Height)
   (declare (ignore Width Height))
   (call-next-method)
-  #-cocotron 
   (if (> (width (lui-view (#/superview (#/superview (native-view self)))))   (minimum-width self))
     (setf (width self) (width (lui-view (#/superview (#/superview (native-view self)))))))
   (dolist (group (groups  self))
