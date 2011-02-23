@@ -245,6 +245,9 @@ Call with most important parameters. Make other paramters accessible through *Cu
 (defgeneric ENABLE-TOOLTIPS (view)
   (:documentation "Enable Tooltips for this view"))
 
+(defgeneric WINDOW-OF-VIEW-WILL-CLOSE (view)
+  (:documentation "Notify the view that its window is closing so it may do any cleanup it needs done. "))
+
 ;;_______________________________
 ;; Default implementation        |
 ;;_______________________________
@@ -389,6 +392,11 @@ Call with most important parameters. Make other paramters accessible through *Cu
   (values
    X
    Y))
+
+(defmethod  WINDOW-OF-VIEW-WILL-CLOSE  ((Self view))
+  (when (subtypep (type-of self) (find-class 'view))
+    (dolist (subview (subviews self))
+      (window-of-view-will-close subview))))
 
 
 (defmethod GET-TOOLTIP-OF-VIEW-AT-SCREEN-POSITION ((Self view) x y)
@@ -828,6 +836,10 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defmethod WINDOW-WILL-CLOSE ((Self window) Notification)
   (declare (ignore Notification))
+  (when (and (subviews self) (first (subviews self)) )
+  (dolist (subview (subviews (first (subviews self))))
+    (window-of-view-will-close subview)))
+  
   ;;Do nothing, override this method if you need to do any cleanup when the window closes.
   )
 
