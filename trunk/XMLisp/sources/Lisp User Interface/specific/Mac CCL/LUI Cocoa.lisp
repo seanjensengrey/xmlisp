@@ -188,7 +188,9 @@
            (Count (#/count Subviews))
            (Subview-List nil))
       (dotimes (i Count Subview-List)
-        (push (lui-view (#/objectAtIndex: Subviews (- Count 1 i))) Subview-List)))))
+        ;; If the subview does not have a slot matching lui-view it will trigger an error, so ignore that subview and don't push it.  
+        (when (slot-exists-p (#/objectAtIndex: Subviews (- Count 1 i)) 'lui-view)
+          (push (lui-view (#/objectAtIndex: Subviews (- Count 1 i))) Subview-List))))))
 
 
 (defmethod SUPERVIEW ((Self subview-manager-interface))
