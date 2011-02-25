@@ -580,7 +580,9 @@
 
 
 (objc:defmethod (#/windowWillClose: :void) ((self window-delegate) Notification)
-  (window-will-close (lui-window self) Notification))
+  ;; HACK: This should not be needed and will not be if christopher fixes the cocotron problem where windowWillClose gets called on windows that have already been closed
+  (when (#/isVisible (native-window (lui-window self)))
+    (window-will-close (lui-window self) Notification)))
 
 
 (objc:defmethod (#/windowShouldClose: :<BOOL>) ((self window-delegate) Sender)
