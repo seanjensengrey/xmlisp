@@ -25,6 +25,7 @@
 
 (export '(transparent-opengl-window))
 
+
 ;____________________________________________
 ; NATIVE-TRANSPARENT-OPENGL-VIEW             |
 ;____________________________________________
@@ -79,9 +80,10 @@
                                  :style-mask #$NSBorderlessWindowMask
                                  :backing #$NSBackingStoreBuffered
                                  :defer #$NO))
-      (#/setOpaque: (native-window Self) #$NO)
-      (#/setAlphaValue: (native-window Self) (gui::cgfloat 0.5))
-      (#/setBackgroundColor: (native-window Self) (#/clearColor ns:ns-color))
+    (#/setOpaque: (native-window Self) #$NO)
+    (#/setAlphaValue: (native-window Self) (gui::cgfloat 0.5))
+    (#/setBackgroundColor: (native-window Self) (#/clearColor ns:ns-color))
+    (#/setHasShadow: (native-window self) #$NO)
     (let ((Pixel-Format (#/initWithAttributes: 
                          (#/alloc ns:NS-OpenGL-Pixel-Format)
 			 ;;--- I'd like to simply #-cocotron the #$NSOpenGLPFANoRecovery
@@ -166,6 +168,11 @@
 
 (defmethod WINDOW-CLOSE ((Self transparent-opengl-window))
   (#/close (native-window Self)))
+
+
+(defmethod WINDOW-WILL-CLOSE ((Self transparent-opengl-window) Notification)
+  ;;do nothing
+)
 
 
 #| Examples:
