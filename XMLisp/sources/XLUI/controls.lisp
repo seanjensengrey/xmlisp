@@ -403,7 +403,9 @@
       (progn        
         (set-button-off image-button)
         (setf (selected-in-cluster image-button) nil))
-      (setf (selected-in-cluster image-button) t))))
+      (progn 
+        (set-button-on image-button)
+        (setf (selected-in-cluster image-button) t)))))
 
 
 (defmethod CLUSTER-ACTION ((window window) (self image-button-control))
@@ -447,7 +449,9 @@
       (progn        
         (set-button-off image-button)
         (setf (selected-in-cluster image-button) nil))
-      (setf (selected-in-cluster image-button) t))))
+      (progn 
+        (set-button-on image-button)
+        (setf (selected-in-cluster image-button) t)))))
 
 
 (defmethod DEFAULT-ACTION ((Window window) (Self image-button-row)))
