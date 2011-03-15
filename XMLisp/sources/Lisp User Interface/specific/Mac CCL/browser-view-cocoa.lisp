@@ -72,7 +72,9 @@
   (#/setTitled: (native-view self) #$YES)
   (#/setTitle:ofColumn: (native-view self) (native-string title) column)
   (#/setNeedsDisplay: (native-view self) #$YES)
-  (#/displayAllColumns (native-view self)))
+  #-cocotron
+  (#/displayAllColumns (native-view self))
+  )
 
 
 (defmethod MAP-SUBVIEWS ((Self browser-view) Function &rest Args)
