@@ -253,18 +253,36 @@
   (subviews-swapped (window View) Old-Subview New-Subview))
 
 
-(defmethod WINDOW ((Self view))
- 
+(defmethod WINDOW ((Self view)) 
+  (if (full-screen self)
+    (full-screen-window self)
+    (let ((ns-window (#/window (native-view Self))))
+      (if (%null-ptr-p ns-window)
+        (return-from WINDOW nil)
+        (lui-window ns-window)))))
 
-  ; (if (equal 'xlui::world (type-of self))
-  ;  xlui::*project-window*
-  (let ((native-window (#/window (native-view Self))))
-    (if (%null-ptr-p native-window)
-      (return-from WINDOW nil)
-      (lui-window native-window))
-    ))
-    
-  ;)
+
+(defmethod ENTER-FULL-SCREEN ((Self view) &key (full-screen-window nil))
+  (setf (full-screen-height-storage self) (height self))
+  (setf (full-screen-width-storage self) (width self))
+  (Setf (full-screen self) t)
+  (setf (full-screen-window self) full-screen-window)
+  (#/enterFullScreenMode:withOptions:  (native-view self) (#/mainScreen ns:ns-screen) nil)
+  (#/makeFirstResponder: (#/window (native-view self)) (native-view self))
+  (#/makeKeyAndOrderFront: (#/window (native-view self)) nil)
+  (set-size self (truncate (ns:ns-rect-width (#/frame (#/mainScreen ns:ns-screen)))) (truncate (ns:ns-rect-height (#/frame (#/mainScreen ns:ns-screen)))))
+  (display self))
+
+
+(defmethod EXIT-FULL-SCREEN ((Self view))
+  (Setf (full-screen self) nil)
+  (setf (full-screen-window self) nil)
+  (setf *full-screen-view* nil)
+  (setf *full-screen-proxy-window* nil)
+  (#/exitFullScreenModeWithOptions:  (native-view self)  nil)
+  (set-size self (full-screen-width-storage self) (full-screen-height-storage self))
+  (set-cursor "arrowCursor")
+  (display self))
 
 
 (defmethod DISPLAY ((Self view))
@@ -642,6 +660,8 @@
         ;; content view
         (#/setContentView: Window (#/autorelease (native-view Self)))
         (#/setTitle: Window (native-string (title Self)))
+        (ns:with-ns-size (minSize (min-width self) (min-height self))
+          (#/setMinSize: Window minSize))
         (ns:with-ns-size (Position (x Self) (- (screen-height Self)  (y Self)))
           (#/setFrameTopLeftPoint: (native-window Self) Position))
         (when (track-mouse Self) (#/setAcceptsMouseMovedEvents: (native-window Self) #$YES))
@@ -788,10 +808,21 @@
        (let ((array-window (#/objectAtIndex: window-array i)))         
          (if (equal window array-window)
            (progn            
-             (return-from ordered-window-index (+ 1 i))))))
+             (return-from ordered-window-index i)))))
+     (return-from ordered-window-index nil)))
+#|
+  #-:cocotron 
+  (#/orderedIndex Window)
+  #+:cocotron
+   (let ((window-array  (#/orderedWindows (#/sharedApplication ns::ns-application)))) 
+     (dotimes (i (#/count window-array))
+       (let ((array-window (#/objectAtIndex: window-array i)))         
+         (if (equal window array-window)
+           (progn            
+             (return-from ordered-window-index i)))))
      (return-from ordered-window-index nil)))
 
-
+|#
 (defun ORDERED-TEST ()
   (let ((window-array  (#/orderedWindows (#/sharedApplication ns::ns-application)))) 
     (dotimes (i (#/count window-array))
@@ -889,8 +920,8 @@
        :x (truncate (pref mouse-loc :<NSP>oint.x))
        :y (truncate (- (height (lui-window Self)) (pref mouse-loc :<NSP>oint.y)))
        ;; Apple has still (OS X 10.6.5) not provided public interfaces for these accessors: http://lists.apple.com/archives/cocoa-dev/2007/Feb/msg00050.html
-       :dx (objc:objc-message-send Event "deviceDeltaX" #>CGFloat)
-       :dy (* (objc:objc-message-send Event "deltaY" #>CGFloat) 10);(objc:objc-message-send Event "deviceDeltaY" #>CGFloat)
+       :dx (* (objc:objc-message-send Event "deltaX" #>CGFloat) 10) ;(objc:objc-message-send Event "deviceDeltaX" #>CGFloat)
+       :dy (* (objc:objc-message-send Event "deltaY" #>CGFloat) 10) ;(objc:objc-message-send Event "deviceDeltaY" #>CGFloat)
        :event-type (native-to-lui-event-type (#/type event))
        :native-event Event))))
 
