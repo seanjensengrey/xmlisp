@@ -131,9 +131,10 @@
 
 
 #+cocotron
-(defmethod PREPARE-OPENGL :before ((Self opengl-view))
+(defmethod PREPARE-OPENGL :after ((Self opengl-view))
   (when  (use-global-glcontext self)
     (share-texture-for-windows self)))
+
 
 
 (defmethod PREPARE-OPENGL ((Self opengl-view))
@@ -261,6 +262,9 @@
     (when Texture-Id
       (glbindtexture gl_texture_2d Texture-Id))))
 
+
+(defmethod WINDOW-OF-VIEW-WILL-CLOSE ((Self opengl-view))
+  (stop-animation self))
 
 #| Examples:
 
