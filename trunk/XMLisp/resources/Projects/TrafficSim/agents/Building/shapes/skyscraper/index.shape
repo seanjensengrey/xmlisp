@@ -1,0 +1,8 @@
+<shape-manager>
+  <box front-texture="skyg-128.jpg"
+     back-texture="skyg-128.jpg"
+     right-texture="skyg-128.jpg"
+     left-texture="skyg-128.jpg"
+     top-texture="skyg-roof-128.jpg"
+     bottom-texture="skyg-128.jpg"/>
+</shape-manager>

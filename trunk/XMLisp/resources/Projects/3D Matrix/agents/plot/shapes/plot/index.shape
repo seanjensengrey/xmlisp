@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="PLOT">
+  <cube texture="skyIsland.png"/>
+</shape-manager>

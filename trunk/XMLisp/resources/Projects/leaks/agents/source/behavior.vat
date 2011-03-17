@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if>
+        <once-every seconds="0.05"/>
+      </if>
+      <then>
+        <new disclosed="true" shape="WATER Water">
+          <direction/>
+        </new>
+        <set attribute="LEVEL" value="level[below] + 1"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

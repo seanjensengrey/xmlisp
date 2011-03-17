@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<world width="960" height="252">
+  <sky-dome roll="-60.0" size="100.0D0" texture="skyIsland.png"/>
+  <agent-matrix name="AGENT-MATRIX11743" layers="1" layer-height="10.0">
+    <agent_agent col="1" shape-name="AGENT-CUBE" color="E752E17F"/>
+    <agent_agent col="2" shape-name="AGENT-CUBE" color="A092E673"/>
+    <agent_agent col="2" shape-name="AGENT-CUBE" color="7E70116C"/>
+    <agent_agent col="3" shape-name="AGENT-CUBE" color="185021FA"/>
+    <agent_agent col="3" shape-name="AGENT-CUBE" color="80E95621"/>
+    <agent_agent col="3" shape-name="AGENT-CUBE" color="E4E0B86C"/>
+    <agent_agent col="4" shape-name="AGENT-CUBE" color="B2B23152"/>
+    <agent_agent col="5" shape-name="AGENT-CUBE" color="D94FB300"/>
+    <agent_agent col="7" shape-name="AGENT-CUBE" color="2C59F6F9"/>
+    <agent_agent col="9" shape-name="AGENT-CUBE" color="A79A62F4"/>
+    <agent_agent col="9" shape-name="AGENT-CUBE" color="08070D7A"/>
+    <agent_agent row="1" shape-name="AGENT-CUBE" color="906E3CF6"/>
+    <agent_agent row="1" col="1" shape-name="AGENT-CUBE" color="8063BA95"/>
+    <agent_agent row="1" col="6" shape-name="AGENT-CUBE" color="1E5B1E77"/>
+    <agent_agent row="1" col="7" shape-name="AGENT-CUBE" color="B148F7AA"/>
+    <agent_agent row="1" col="7" shape-name="AGENT-CUBE" color="EA2F62FD"/>
+    <agent_agent row="2" col="2" shape-name="AGENT-CUBE" color="6EA1947E"/>
+    <agent_agent row="2" col="2" shape-name="AGENT-CUBE" color="6EC07029"/>
+    <agent_agent row="2" col="3" shape-name="AGENT-CUBE" color="11D74181"/>
+    <agent_agent row="2" col="3" shape-name="AGENT-CUBE" color="3C7039EF"/>
+    <agent_agent row="2" col="4" shape-name="AGENT-CUBE" color="ECE8F012"/>
+    <agent_agent row="2" col="4" shape-name="AGENT-CUBE" color="03B5118F"/>
+    <agent_agent row="2" col="5" shape-name="AGENT-CUBE" color="2491F1B6"/>
+    <agent_agent row="2" col="5" shape-name="AGENT-CUBE" color="FAC26F5F"/>
+    <agent_agent row="2" col="6" shape-name="AGENT-CUBE" color="DA0FC6AC"/>
+    <agent_agent row="2" col="8" shape-name="AGENT-CUBE" color="6C126D98"/>
+    <agent_agent row="3" shape-name="AGENT-CUBE" color="1BE4D0E2"/>
+    <agent_agent row="3" shape-name="AGENT-CUBE" color="E4752DE4"/>
+    <agent_agent row="3" col="1" shape-name="AGENT-CUBE" color="AFA99962"/>
+    <agent_agent row="3" col="1" shape-name="AGENT-CUBE" color="F6EC7C35"/>
+    <agent_agent row="3" col="6" shape-name="AGENT-CUBE" color="F3D43689"/>
+    <agent_agent row="3" col="6" shape-name="AGENT-CUBE" color="522D470E"/>
+    <agent_agent row="3" col="7" shape-name="AGENT-CUBE" color="31B4FC90"/>
+    <agent_agent row="3" col="8" shape-name="AGENT-CUBE" color="2FABA563"/>
+    <agent_agent row="3" col="8" shape-name="AGENT-CUBE" color="373768FB"/>
+    <agent_agent row="3" col="9" shape-name="AGENT-CUBE" color="268528E1"/>
+    <agent_agent row="4" shape-name="AGENT-CUBE" color="6666F693"/>
+    <agent_agent row="4" col="1" shape-name="AGENT-CUBE" color="0DFCDB47"/>
+    <agent_agent row="4" col="1" shape-name="AGENT-CUBE" color="AC3904D4"/>
+    <agent_agent row="4" col="1" shape-name="AGENT-CUBE" color="42DB27E2"/>
+    <agent_agent row="4" col="2" shape-name="AGENT-CUBE" color="7A136C34"/>
+    <agent_agent row="4" col="2" shape-name="AGENT-CUBE" color="881423EC"/>
+    <agent_agent row="4" col="3" shape-name="AGENT-CUBE" color="D5B4A931"/>
+    <agent_agent row="4" col="3" shape-name="AGENT-CUBE" color="7199A6CA"/>
+    <agent_agent row="4" col="4" shape-name="AGENT-CUBE" color="86C07624"/>
+    <agent_agent row="4" col="5" shape-name="AGENT-CUBE" color="3253B3C2"/>
+    <agent_agent row="4" col="5" shape-name="AGENT-CUBE" color="8ED2322F"/>
+    <agent_agent row="4" col="5" shape-name="AGENT-CUBE" color="80EDAFA0"/>
+    <agent_agent row="4" col="5" shape-name="AGENT-CUBE" color="B0987CBC"/>
+    <agent_agent row="4" col="5" shape-name="AGENT-CUBE" color="1CE1D702"/>
+    <agent_agent row="4" col="6" shape-name="AGENT-CUBE" color="2DD4A015"/>
+    <agent_agent row="4" col="8" shape-name="AGENT-CUBE" color="49297833"/>
+    <agent_agent row="4" col="8" shape-name="AGENT-CUBE" color="E3113BAD"/>
+    <agent_agent row="4" col="9" shape-name="AGENT-CUBE" color="56FCB6FD"/>
+    <agent_agent row="5" col="2" shape-name="AGENT-CUBE" color="54FDA7BC"/>
+    <agent_agent row="5" col="4" shape-name="AGENT-CUBE" color="9227BFC6"/>
+    <agent_agent row="5" col="4" shape-name="AGENT-CUBE" color="696B20AD"/>
+    <agent_agent row="5" col="4" shape-name="AGENT-CUBE" color="8F8F6AEF"/>
+    <agent_agent row="5" col="6" shape-name="AGENT-CUBE" color="E55C7765"/>
+    <agent_agent row="5" col="6" shape-name="AGENT-CUBE" color="5E4802A3"/>
+    <agent_agent row="5" col="7" shape-name="AGENT-CUBE" color="D085F8CF"/>
+    <agent_agent row="5" col="9" shape-name="AGENT-CUBE" color="679E03DF"/>
+    <agent_agent row="6" col="1" shape-name="AGENT-CUBE" color="E310B79F"/>
+    <agent_agent row="6" col="1" shape-name="AGENT-CUBE" color="B4842649"/>
+    <agent_agent row="6" col="1" shape-name="AGENT-CUBE" color="6624EBBC"/>
+    <agent_agent row="6" col="1" shape-name="AGENT-CUBE" color="9286D4A0"/>
+    <agent_agent row="6" col="3" shape-name="AGENT-CUBE" color="A8BDA5F2"/>
+    <agent_agent row="6" col="3" shape-name="AGENT-CUBE" color="81820D3B"/>
+    <agent_agent row="6" col="5" shape-name="AGENT-CUBE" color="7807BC35"/>
+    <agent_agent row="6" col="5" shape-name="AGENT-CUBE" color="D1620A4A"/>
+    <agent_agent row="6" col="5" shape-name="AGENT-CUBE" color="A8EFFA8E"/>
+    <agent_agent row="6" col="5" shape-name="AGENT-CUBE" color="AA873A7A"/>
+    <agent_agent row="6" col="8" shape-name="AGENT-CUBE" color="0169A6DC"/>
+    <agent_agent row="7" shape-name="AGENT-CUBE" color="1D86AA78"/>
+    <agent_agent row="7" shape-name="AGENT-CUBE" color="E0488EC3"/>
+    <agent_agent row="7" col="1" shape-name="AGENT-CUBE" color="C8D4DD9C"/>
+    <agent_agent row="7" col="1" shape-name="AGENT-CUBE" color="86407894"/>
+    <agent_agent row="7" col="1" shape-name="AGENT-CUBE" color="AA5A23AE"/>
+    <agent_agent row="7" col="4" shape-name="AGENT-CUBE" color="FC4D353B"/>
+    <agent_agent row="7" col="5" shape-name="AGENT-CUBE" color="0B3650DD"/>
+    <agent_agent row="7" col="5" shape-name="AGENT-CUBE" color="BA264E8F"/>
+    <agent_agent row="7" col="8" shape-name="AGENT-CUBE" color="937BEE06"/>
+    <agent_agent row="8" shape-name="AGENT-CUBE" color="CE42CC4D"/>
+    <agent_agent row="8" col="3" shape-name="AGENT-CUBE" color="BDC80928"/>
+    <agent_agent row="8" col="3" shape-name="AGENT-CUBE" color="A2AE6A8C"/>
+    <agent_agent row="8" col="4" shape-name="AGENT-CUBE" color="8DF38B7D"/>
+    <agent_agent row="8" col="4" shape-name="AGENT-CUBE" color="7AF3F104"/>
+    <agent_agent row="8" col="6" shape-name="AGENT-CUBE" color="83FE12AB"/>
+    <agent_agent row="8" col="6" shape-name="AGENT-CUBE" color="9F428E58"/>
+    <agent_agent row="8" col="6" shape-name="AGENT-CUBE" color="7D6266BD"/>
+    <agent_agent row="8" col="6" shape-name="AGENT-CUBE" color="6AC867CB"/>
+    <agent_agent row="8" col="8" shape-name="AGENT-CUBE" color="771077EA"/>
+    <agent_agent row="8" col="9" shape-name="AGENT-CUBE" color="BBE9132A"/>
+    <agent_agent row="8" col="9" shape-name="AGENT-CUBE" color="56F5C749"/>
+    <agent_agent row="9" col="2" shape-name="AGENT-CUBE" color="02D1449F"/>
+    <agent_agent row="9" col="5" shape-name="AGENT-CUBE" color="61EDE3E1"/>
+    <agent_agent row="9" col="6" shape-name="AGENT-CUBE" color="61387F06"/>
+    <agent_agent row="9" col="6" shape-name="AGENT-CUBE" color="F1496C3D"/>
+    <agent_agent row="9" col="8" shape-name="AGENT-CUBE" color="F149C3CD"/>
+    <agent_agent row="9" col="9" shape-name="AGENT-CUBE" color="BCDB03DB"/>
+  </agent-matrix>
+  <camera eye-x="4.249999832361937D0" eye-y="-3.508354176289452D0" eye-z="8.842206473219536D0" center-x="4.249999832361937D0" center-y="4.000000048428774D0" center-z="0.0D0" up-x="0.0D0" up-y="10.89203331272298D0" up-z="2.253320296983347D0" fovy="60.0D0" aspect="3.8095238095238093D0" near="0.005D0" far="2000.0D0" azimuth="0.0D0" zenith="-0.7040000334382057D0"/>
+</world>

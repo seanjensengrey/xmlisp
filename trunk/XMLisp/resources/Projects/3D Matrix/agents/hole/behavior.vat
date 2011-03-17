@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if>
+        <key label="I"/>
+      </if>
+      <then>
+        <change shape="hole_box">
+          <direction/>
+        </change>
+        <set-color-to color="1.0 1.0 1.0 1.0"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <key label="V"/>
+      </if>
+      <then>
+        <change shape="hole">
+          <direction/>
+        </change>
+        <set-color-to color="1.0 1.0 1.0 0.0"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <key label="F"/>
+      </if>
+      <then>
+        <change shape="hole">
+          <direction/>
+        </change>
+        <set-color-to color="1.0 1.0 1.0 1.0"/>
+      </then>
+    </rule>
+  </method>  <method disclosed="true">
+    <when-creating-new-agent/>
+    <rule>
+      <if/>
+      <then>
+        <set-color-to color="1.0 1.0 1.0 0.0"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

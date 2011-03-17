@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if>
+        <see shape="FROG Frog">
+          <direction dcol="1"/>
+        </see>
+      </if>
+      <then>
+        <erase>
+          <direction dcol="1"/>
+        </erase>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="FROG Frog">
+          <direction dcol="-1"/>
+        </see>
+      </if>
+      <then>
+        <erase>
+          <direction dcol="-1"/>
+        </erase>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="FROG Frog">
+          <direction drow="-1"/>
+        </see>
+      </if>
+      <then>
+        <erase>
+          <direction drow="-1"/>
+        </erase>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="FROG Frog">
+          <direction drow="1"/>
+        </see>
+      </if>
+      <then>
+        <erase>
+          <direction drow="1"/>
+        </erase>
+      </then>
+    </rule>
+  </method>
+</behavior>

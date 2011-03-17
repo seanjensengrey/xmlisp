@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="LEVEL" value="level[below] + 1"/>
+        <message selector="drift">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="drift"/>
+    <rule>
+      <if>
+        <percent-chance expression="25"/>
+        <test expression1="level[down]" operator="&lt;" expression2="level"/>
+      </if>
+      <then>
+        <move>
+          <direction drow="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <percent-chance expression="33"/>
+        <test expression1="level[up]" operator="&lt;" expression2="level"/>
+      </if>
+      <then>
+        <move>
+          <direction drow="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <percent-chance/>
+        <test expression1="level[left]" operator="&lt;" expression2="level"/>
+      </if>
+      <then>
+        <move>
+          <direction dcol="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="level[right]" operator="&lt;" expression2="level"/>
+      </if>
+      <then>
+        <move>
+          <direction dcol="1"/>
+        </move>
+      </then>
+    </rule>
+  </method>
+</behavior>

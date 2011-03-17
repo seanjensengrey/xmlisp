@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true" comments="create randomly a new car">
+    <on selector="GENERATECAR"/>
+    <rule>
+      <if>
+        <test expression1="CarsLeft" operator="&gt;" expression2="0"/>
+      </if>
+      <then>
+        <new shape="CAR small_car">
+          <direction/>
+        </new>
+        <set attribute="CARSLEFT" value="Carsleft - 1.0"/>
+        <rotate-by droll="45" duration="0.5"/>
+      </then>
+    </rule>
+  </method>
+  <method>
+    <while-running/>
+    <rule>
+      <if>
+        <key label="G"/>
+      </if>
+      <then>
+        <set attribute="CARSLEFT" value="20.0"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

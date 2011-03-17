@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if/>
+      <then>
+        <plot-agents-attribute attribute="VISIBLE" row2="4" col2="4" agent1="MISSING-AGENT-PLACEHOLDER" agent2="MISSING-AGENT-PLACEHOLDER" agent3="MISSING-AGENT-PLACEHOLDER"/>
+      </then>
+    </rule>
+  </method>
+</behavior>
