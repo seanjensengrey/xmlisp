@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="tv">
+  <box texture="wall.jpg"/>
+</shape-manager>

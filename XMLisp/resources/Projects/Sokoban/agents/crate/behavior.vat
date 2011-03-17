@@ -1,0 +1,178 @@
+<?xml version="1.0"?>
+<behavior comments="I can be pushed around">
+  <method>
+    <on selector="PUSH_RIGHT"/>
+    <rule>
+      <if>
+        <see shape="goal_tile">
+          <direction dcol="1"/>
+        </see>
+      </if>
+      <then>
+        <play-sound ref="Fupp.mp3"/>
+        <message selector="MOVE_RIGHT">
+          <direction dcol="-1"/>
+        </message>
+        <move disclosed="true">
+          <direction dcol="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="floor_tile">
+          <direction dcol="1"/>
+        </see>
+      </if>
+      <then>
+        <play-sound ref="Fupp.mp3"/>
+        <message selector="MOVE_RIGHT">
+          <direction dcol="-1"/>
+        </message>
+        <move disclosed="true">
+          <direction dcol="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <play-sound ref="Glass-On-Stown.mp3"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if>
+        <stacked shape="goal_tile"/>
+      </if>
+      <then>
+        <set-color-to color="1.0 1.0 1.0 0.5"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="PUSH_LEFT"/>
+    <rule>
+      <if>
+        <see shape="goal_tile">
+          <direction dcol="-1"/>
+        </see>
+      </if>
+      <then>
+        <play-sound ref="Fupp.mp3"/>
+        <message selector="MOVE_LEFT">
+          <direction dcol="1"/>
+        </message>
+        <move disclosed="true">
+          <direction dcol="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="floor_tile">
+          <direction dcol="-1"/>
+        </see>
+      </if>
+      <then>
+        <play-sound ref="Fupp.mp3"/>
+        <message selector="MOVE_LEFT">
+          <direction dcol="1"/>
+        </message>
+        <move disclosed="true">
+          <direction dcol="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <play-sound ref="Glass-On-Stown.mp3"/>
+      </then>
+    </rule>
+  </method>
+  <method>
+    <on selector="PUSH_UP"/>
+    <rule>
+      <if>
+        <see shape="floor_tile">
+          <direction drow="1"/>
+        </see>
+      </if>
+      <then>
+        <play-sound ref="Fupp.mp3"/>
+        <message selector="MOVE_UP">
+          <direction drow="-1"/>
+        </message>
+        <move>
+          <direction drow="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="goal_tile">
+          <direction drow="1"/>
+        </see>
+      </if>
+      <then>
+        <play-sound ref="Fupp.mp3"/>
+        <message selector="MOVE_UP">
+          <direction drow="-1"/>
+        </message>
+        <move>
+          <direction drow="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <play-sound ref="Glass-On-Stown.mp3"/>
+      </then>
+    </rule>
+  </method>
+  <method>
+    <on selector="PUSH_DOWN"/>
+    <rule>
+      <if>
+        <see shape="goal_tile">
+          <direction drow="-1"/>
+        </see>
+      </if>
+      <then>
+        <play-sound ref="Fupp.mp3"/>
+        <message selector="MOVE_DOWN">
+          <direction drow="1"/>
+        </message>
+        <move>
+          <direction drow="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="floor_tile">
+          <direction drow="-1"/>
+        </see>
+      </if>
+      <then>
+        <play-sound ref="Fupp.mp3"/>
+        <message selector="MOVE_DOWN">
+          <direction drow="1"/>
+        </message>
+        <move>
+          <direction drow="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <play-sound ref="Glass-On-Stown.mp3"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

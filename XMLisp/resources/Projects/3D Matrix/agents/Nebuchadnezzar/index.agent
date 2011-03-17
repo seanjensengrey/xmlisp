@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<agent-manager name="NEBUCHADNEZZAR_AGENT">
+  <agent-tracking-camera eye-x="0.4990226073311831D0" eye-y="1.2760025128879247D0" eye-z="0.699999988079071D0" center-x="0.5D0" center-y="1.5D0" center-z="0.699999988079071D0" up-x="0.0D0" up-y="0.0D0" up-z="1.0D0" fovy="100.0D0" aspect="3.0476190476190474D0" near="0.005D0" far="2000.0D0" azimuth="-1.5707963267948966D0" zenith="-1.5664329454082442D0" distance="0.22399962" elevation="0.65" camera-rotation-offset="-90.25"/>
+</agent-manager>

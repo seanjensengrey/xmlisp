@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if>
+        <once-every seconds="0.05"/>
+      </if>
+      <then>
+        <set attribute="P" value=".25 * (p[left]+p[right]+p[up]+p[down])"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

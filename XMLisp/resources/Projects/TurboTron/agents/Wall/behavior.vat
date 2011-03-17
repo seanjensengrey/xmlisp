@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="P" value="0"/>
+        <set attribute="VP" value="0"/>
+        <set attribute="HP" value="0"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="colorRed"/>
+    <rule>
+      <if/>
+      <then>
+        <set-color-to color="0.39795917 0.022584064 0.026902614 1.0"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="colorBlue"/>
+    <rule>
+      <if/>
+      <then>
+        <set-color-to color="0.14206149 0.5157702 0.60898757 1.0"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

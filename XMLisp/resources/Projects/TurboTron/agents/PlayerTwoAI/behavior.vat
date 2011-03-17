@@ -1,0 +1,310 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if>
+        <once-every seconds="0.2"/>
+      </if>
+      <then>
+        <set attribute="P" value="0"/>
+        <message selector="AI">
+          <direction/>
+        </message>
+        <message selector="Advance">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="AI"/>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="MAXP" value="-100000"/>
+        <message selector="AI_Up">
+          <direction/>
+        </message>
+        <message selector="AI_Left">
+          <direction/>
+        </message>
+        <message selector="AI_Down">
+          <direction/>
+        </message>
+        <message selector="AI_Right">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method>
+    <on selector="Advance"/>
+    <rule>
+      <if>
+        <test expression1="DIR" expression2="0"/>
+      </if>
+      <then>
+        <message selector="MoveUp">
+          <direction/>
+        </message>
+        <rotate-to roll-angle="90"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="DIR" expression2="1"/>
+      </if>
+      <then>
+        <message selector="MoveLeft">
+          <direction/>
+        </message>
+        <rotate-to/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="DIR" expression2="2"/>
+      </if>
+      <then>
+        <message selector="MoveDown">
+          <direction/>
+        </message>
+        <rotate-to roll-angle="-90"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="DIR" expression2="3"/>
+      </if>
+      <then>
+        <message selector="MoveRight">
+          <direction/>
+        </message>
+        <rotate-to roll-angle="180"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <when-creating-new-agent/>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="DIR" value="2"/>
+        <set attribute="@ENEMYNUM" value="@enemynum+1"/>
+      </then>
+    </rule>
+  </method>
+  <method>
+    <on selector="MoveUp"/>
+    <rule>
+      <if>
+        <see shape="FLOOR Floor">
+          <direction drow="1"/>
+        </see>
+      </if>
+      <then>
+        <move>
+          <direction drow="1"/>
+        </move>
+        <new shape="WALL Wall">
+          <direction drow="-1"/>
+        </new>
+        <message selector="colorRed">
+          <direction drow="-1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="WALL Wall">
+          <direction drow="1"/>
+        </see>
+      </if>
+      <then>
+        <erase>
+          <direction/>
+        </erase>
+        <new shape="WALL Wall">
+          <direction/>
+        </new>
+        <set attribute="@ENEMYNUM" value="@enemynum-1"/>
+        <play-sound ref="Kaboom.mp3"/>
+      </then>
+    </rule>
+  </method>
+  <method>
+    <on selector="MoveLeft"/>
+    <rule>
+      <if>
+        <see shape="FLOOR Floor">
+          <direction dcol="-1"/>
+        </see>
+      </if>
+      <then>
+        <move>
+          <direction dcol="-1"/>
+        </move>
+        <new shape="WALL Wall">
+          <direction dcol="1"/>
+        </new>
+        <message selector="colorRed">
+          <direction dcol="1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="WALL Wall">
+          <direction dcol="-1"/>
+        </see>
+      </if>
+      <then>
+        <erase>
+          <direction/>
+        </erase>
+        <new shape="WALL Wall">
+          <direction/>
+        </new>
+        <set attribute="@ENEMYNUM" value="@enemynum-1"/>
+        <play-sound ref="Kaboom.mp3"/>
+      </then>
+    </rule>
+  </method>
+  <method>
+    <on selector="MoveDown"/>
+    <rule>
+      <if>
+        <see shape="FLOOR Floor">
+          <direction drow="-1"/>
+        </see>
+      </if>
+      <then>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <new shape="WALL Wall">
+          <direction drow="1"/>
+        </new>
+        <message selector="colorRed">
+          <direction drow="1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="WALL Wall">
+          <direction drow="-1"/>
+        </see>
+      </if>
+      <then>
+        <erase>
+          <direction/>
+        </erase>
+        <new shape="WALL Wall">
+          <direction/>
+        </new>
+        <set attribute="@ENEMYNUM" value="@enemynum-1"/>
+        <play-sound ref="Kaboom.mp3"/>
+      </then>
+    </rule>
+  </method>
+  <method>
+    <on selector="MoveRight"/>
+    <rule>
+      <if>
+        <see shape="FLOOR Floor">
+          <direction dcol="1"/>
+        </see>
+      </if>
+      <then>
+        <move>
+          <direction dcol="1"/>
+        </move>
+        <new shape="WALL Wall">
+          <direction dcol="-1"/>
+        </new>
+        <message selector="colorRed">
+          <direction dcol="-1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="WALL Wall">
+          <direction dcol="1"/>
+        </see>
+      </if>
+      <then>
+        <erase>
+          <direction/>
+        </erase>
+        <new shape="WALL Wall">
+          <direction/>
+        </new>
+        <set attribute="@ENEMYNUM" value="@enemynum-1"/>
+        <play-sound ref="Kaboom.mp3"/>
+      </then>
+    </rule>
+  </method>
+  <method>
+    <on selector="AI_Up"/>
+    <rule>
+      <if>
+        <see shape="FLOOR Floor">
+          <direction drow="1"/>
+        </see>
+        <test expression1="p[up]" operator="&gt;" expression2="maxp"/>
+      </if>
+      <then>
+        <set attribute="MAXP" value="p[up]"/>
+        <set attribute="DIR" value="0"/>
+      </then>
+    </rule>
+  </method>
+  <method>
+    <on selector="AI_Left"/>
+    <rule>
+      <if>
+        <see shape="FLOOR Floor">
+          <direction dcol="-1"/>
+        </see>
+        <test expression1="p[left]" operator="&gt;" expression2="maxp"/>
+      </if>
+      <then>
+        <set attribute="MAXP" value="p[left]"/>
+        <set attribute="DIR" value="1"/>
+      </then>
+    </rule>
+  </method>
+  <method>
+    <on selector="AI_Down"/>
+    <rule>
+      <if>
+        <see shape="FLOOR Floor">
+          <direction drow="-1"/>
+        </see>
+        <test expression1="p[down]" operator="&gt;" expression2="maxp"/>
+      </if>
+      <then>
+        <set attribute="MAXP" value="p[down]"/>
+        <set attribute="DIR" value="2"/>
+      </then>
+    </rule>
+  </method>
+  <method>
+    <on selector="AI_right"/>
+    <rule>
+      <if>
+        <see shape="FLOOR Floor">
+          <direction dcol="1"/>
+        </see>
+        <test expression1="p[right]" operator="&gt;" expression2="maxp"/>
+      </if>
+      <then>
+        <set attribute="MAXP" value="p[right]"/>
+        <set attribute="DIR" value="3"/>
+      </then>
+    </rule>
+  </method>
+</behavior>
