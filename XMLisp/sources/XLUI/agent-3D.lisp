@@ -289,7 +289,7 @@
 
 ;; Content Changed events
 
-(defmethod CONTENT-CHANGED ((Self agent-3d-view))
+(defmethod CONTENT-CHANGED ((Self agent-3d-view)) 
   (funcall (content-changed-action Self)  (window Self) Self))
 
 
@@ -450,7 +450,8 @@
    ;; dragging in progress
    ((drag-and-drop-handler Self)
     ;; JIT proxy window
-    (unless (drag-proxy-window (drag-and-drop-handler Self))
+    
+    (unless (or (full-screen self) (drag-proxy-window (drag-and-drop-handler Self)))
       (when (or (>= (abs (- x (x-start (drag-and-drop-handler Self)))) *Drag-Beging-Distance*)
                 (>= (abs (- y (y-start (drag-and-drop-handler Self)))) *Drag-Beging-Distance*))
         (setf (drag-proxy-window (drag-and-drop-handler Self))
@@ -461,7 +462,8 @@
                 :height (height Self)
                 :use-global-glcontext t
                 :drag-and-drop-handler (drag-and-drop-handler Self)))))
-    (when (drag-proxy-window (drag-and-drop-handler Self))
+    
+    (when (or (full-screen self) (drag-proxy-window (drag-and-drop-handler Self)))
       (dragged-to
        (drag-and-drop-handler Self)
        (+ x (window-x Self) (x (window Self)))
@@ -474,7 +476,7 @@
 (defmethod VIEW-LEFT-MOUSE-UP-EVENT-HANDLER ((Self agent-3d-view) X Y)
   (declare (ignore x y))
   ;; conclude drag and terminate hander
-  (when (drag-and-drop-handler Self)
+  (when  (drag-and-drop-handler Self)
     (conclude-drag (drag-and-drop-handler Self))
     (setf (drag-and-drop-handler Self) nil)))
 
