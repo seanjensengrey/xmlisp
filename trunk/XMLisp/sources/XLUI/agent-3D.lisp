@@ -450,7 +450,7 @@
    ;; dragging in progress
    ((drag-and-drop-handler Self)
     ;; JIT proxy window
-    
+    ;; *HACK* This doesn't really work for dragging but at least it doesn't crash when we are dragging in full screen mode, I need to fix this up and handle this differently. 
     (unless (or (full-screen self) (drag-proxy-window (drag-and-drop-handler Self)))
       (when (or (>= (abs (- x (x-start (drag-and-drop-handler Self)))) *Drag-Beging-Distance*)
                 (>= (abs (- y (y-start (drag-and-drop-handler Self)))) *Drag-Beging-Distance*))
