@@ -17,6 +17,11 @@
    (rotation-speed :accessor rotation-speed :initform 0.0 :documentation "degrees per second")))
 
 
+(defmethod PRINT-SLOTS ((Self globe-view))
+ 
+   '())
+
+
 (defmethod PREPARE-OPENGL ((Self globe-view))
   ;; GL setup
   (glClearColor 0.0 0.0 0.0 0.0)
@@ -58,19 +63,24 @@
   (glRotatef (roll Self) 0.0 0.0 1.0)
   (glRotatef (heading Self) 0.0 1.0 0.0)
   (glRotatef (pitch Self) 1.0 0.0 0.0)
-
   ;; sphere
   (gltexenvi gl_texture_env gl_texture_env_mode gl_modulate)
   (use-texture Self "warhol_flat.png")
   (glEnable gl_texture_2d)
-  (gluSphere (quadric Self) 10d0 40 40)
-  (glPopMatrix))
+  ;(print "QUADRIC")
+  ;(print (slot-exists-p self 'quadric))
 
+   (gluSphere (quadric Self) 10d0 40 40)
+  (glPopMatrix)
+  )
 
+(defmethod DRAW :after ((Self globe-view))
+  (glFlush))
 (defmethod ANIMATE ((Self globe-view) Dt)
   ;; if frame rate is dropping below 25 [fps] => alarm. 
   ;; Probably some other CPU intensive application like iTunes
   ;;(when (>= dt 0.04) (ed-beep))   
+  ;( (name self))
   (setf (heading Self)
         (mod (+ (heading Self) (* dt (rotation-speed Self))) 360.0)))
 
@@ -121,8 +131,130 @@
 </logo-window>
 
 
+<logo-window title="Logo" margin="0">
+  <column align="stretch" valign="stretch">
+    <globe-view name="globe" vflex="1"/>
+      <row minimize="vertical" align="stretch" valign="middle">
+         <label text="speed" align="right" width="50"/>
+         <slider name="speed slider" action="adjust-speed" max-value="360.0" flex="1"/>
+         <label text="0.0 [deg/s]" name="speed label" width="100"/>
+      </row>
+      <row minimize="vertical" align="center">
+        <bevel-button text="start" action="start-action" width="55"/>
+        <bevel-button text="stop" action="stop-action" width="55"/>
+        <bevel-button text="frame rate" action="compute-frame-rate" width="100"/>
+      </row>
+  </column>
+</logo-window>
 
 #| Examples:
+
+<logo-window title="Logo" margin="0">
+  <column align="stretch" valign="stretch">
+    <globe-view name="globe2" vflex="1"/>
+      <row minimize="vertical" align="stretch" valign="middle">
+         <label text="speed" align="right" width="50"/>
+         <slider name="speed slider" action="adjust-speed" max-value="360.0" flex="1"/>
+         <label text="0.0 [deg/s]" name="speed label" width="100"/>
+      </row>
+      <row minimize="vertical" align="center">
+        <bevel-button text="start" action="start-action" width="55"/>
+        <bevel-button text="stop" action="stop-action" width="55"/>
+        <bevel-button text="frame rate" action="compute-frame-rate" width="100"/>
+      </row>
+  </column>
+</logo-window>
+
+<logo-window title="Logo" margin="0">
+  <column align="stretch" valign="stretch">
+    <globe-view name="globe3" vflex="1"/>
+      <row minimize="vertical" align="stretch" valign="middle">
+         <label text="speed" align="right" width="50"/>
+         <slider name="speed slider" action="adjust-speed" max-value="360.0" flex="1"/>
+         <label text="0.0 [deg/s]" name="speed label" width="100"/>
+      </row>
+      <row minimize="vertical" align="center">
+        <bevel-button text="start" action="start-action" width="55"/>
+        <bevel-button text="stop" action="stop-action" width="55"/>
+        <bevel-button text="frame rate" action="compute-frame-rate" width="100"/>
+      </row>
+  </column>
+</logo-window>
+<logo-window title="Logo" margin="0">
+  <column align="stretch" valign="stretch">
+    <globe-view name="globe4" vflex="1"/>
+      <row minimize="vertical" align="stretch" valign="middle">
+         <label text="speed" align="right" width="50"/>
+         <slider name="speed slider" action="adjust-speed" max-value="360.0" flex="1"/>
+         <label text="0.0 [deg/s]" name="speed label" width="100"/>
+      </row>
+      <row minimize="vertical" align="center">
+        <bevel-button text="start" action="start-action" width="55"/>
+        <bevel-button text="stop" action="stop-action" width="55"/>
+        <bevel-button text="frame rate" action="compute-frame-rate" width="100"/>
+      </row>
+  </column>
+</logo-window>
+<logo-window title="Logo" margin="0">
+  <column align="stretch" valign="stretch">
+    <globe-view name="globe5" vflex="1"/>
+      <row minimize="vertical" align="stretch" valign="middle">
+         <label text="speed" align="right" width="50"/>
+         <slider name="speed slider" action="adjust-speed" max-value="360.0" flex="1"/>
+         <label text="0.0 [deg/s]" name="speed label" width="100"/>
+      </row>
+      <row minimize="vertical" align="center">
+        <bevel-button text="start" action="start-action" width="55"/>
+        <bevel-button text="stop" action="stop-action" width="55"/>
+        <bevel-button text="frame rate" action="compute-frame-rate" width="100"/>
+      </row>
+  </column>
+</logo-window>
+<logo-window title="Logo" margin="0">
+  <column align="stretch" valign="stretch">
+    <globe-view name="globe6" vflex="1"/>
+      <row minimize="vertical" align="stretch" valign="middle">
+         <label text="speed" align="right" width="50"/>
+         <slider name="speed slider" action="adjust-speed" max-value="360.0" flex="1"/>
+         <label text="0.0 [deg/s]" name="speed label" width="100"/>
+      </row>
+      <row minimize="vertical" align="center">
+        <bevel-button text="start" action="start-action" width="55"/>
+        <bevel-button text="stop" action="stop-action" width="55"/>
+        <bevel-button text="frame rate" action="compute-frame-rate" width="100"/>
+      </row>
+  </column>
+</logo-window>
+<logo-window title="Logo" margin="0">
+  <column align="stretch" valign="stretch">
+    <globe-view name="globe7" vflex="1"/>
+      <row minimize="vertical" align="stretch" valign="middle">
+         <label text="speed" align="right" width="50"/>
+         <slider name="speed slider" action="adjust-speed" max-value="360.0" flex="1"/>
+         <label text="0.0 [deg/s]" name="speed label" width="100"/>
+      </row>
+      <row minimize="vertical" align="center">
+        <bevel-button text="start" action="start-action" width="55"/>
+        <bevel-button text="stop" action="stop-action" width="55"/>
+        <bevel-button text="frame rate" action="compute-frame-rate" width="100"/>
+      </row>
+  </column>
+</logo-window>
+<logo-window title="Logo" margin="0">
+  <column align="stretch" valign="stretch">
+    <globe-view name="globe8" vflex="1"/>
+      <row minimize="vertical" align="stretch" valign="middle">
+         <label text="speed" align="right" width="50"/>
+         <slider name="speed slider" action="adjust-speed" max-value="360.0" flex="1"/>
+         <label text="0.0 [deg/s]" name="speed label" width="100"/>
+      </row>
+      <row minimize="vertical" align="center">
+        <bevel-button text="start" action="start-action" width="55"/>
+        <bevel-button text="stop" action="stop-action" width="55"/>
+        <bevel-button text="frame rate" action="compute-frame-rate" width="100"/>
+      </row>
+  </column>
+</logo-window>
 
 <application-window margin="0" title="AgentSheets Nation">
   <globe-view/>

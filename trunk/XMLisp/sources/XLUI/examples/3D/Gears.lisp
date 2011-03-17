@@ -6,9 +6,8 @@
 ;;; concepts: display lists
 
 ;; Windows Issues:
-;; The frame rate on this this example is terrible, if you put the speed up to the max
-;; you seem to only get about 2 frames per second.  This likely has something to do with 
-;; the timing issue.  
+;; Sometimes while moving the slider the simulation will stop, often if you move the slider again the simulation will resume, but not always.  
+;; Also, sometimes when moving the slider the button on the bottom will even disappear.  
 
 (in-package :xlui)
 
@@ -181,9 +180,10 @@
     (#\u  (print (incf (rotation-speed Self) 5)))
     (#\d (print (decf (rotation-speed Self) 5)))))
 
-
-(defmethod PREPARE-OPENGL ((Self gear-demo))
+(defmethod PREPARE-OPENGL  ((Self gear-demo))
+  (print "PREPARE GEARS")
   (glClearColor 0.5 0.5 0.5 1.0)
+  
   (glShadeModel gl_smooth)
   ;; define material
   (glmaterialfv gl_front_and_back gl_specular {0.5 0.5 0.5 0.0})
@@ -195,8 +195,11 @@
   ;; enablers
   (glenable gl_lighting)
   (glenable gl_light0)
-  (glenable gl_depth_test)
+  (glenable gl_depth_test))
 
+
+(defmethod PREPARE-OPENGL :after ((Self gear-demo))
+  (print "PREAPARE GEARS after")
   ;;/* make the gears */
   (setf (gear1 Self) (glGenLists 1))
   (glNewList (gear1 Self) GL_COMPILE)

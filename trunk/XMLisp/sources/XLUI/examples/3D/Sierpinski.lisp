@@ -1,12 +1,7 @@
 ;;; LUI/OpenGL example: Sierpinski Triangles (based on Example openmcl FFI by hamlink)
 ;;; Alexander Repenning 04/27/09
 
-;; Windows Issues:
-;; The first time this example is laoded, the triangles all show up white, if you close the window
-;; and reload the example, the triangles will be red (ax they should be).  Also, if you resize
-;; the window after reloading it you will get an error in the method windowDidResize (this does
-;; not seem related to the other windowDidResize issue because windowDidResize: should in fact
-;; be called at this point.  
+
 (in-package :xlui)
 
 

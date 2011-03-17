@@ -4,6 +4,10 @@
 ;;; drag and drop benchmark including a large number of animated agents
 ;;; observe interaction of drag and drop and animation
 
+;; Windows Issues: 
+
+;; When you have multiple windows layered ontop of each other, if there is an acceptable drop target below the top window, often times this window will 
+;; reveive the drop instead of the top window.  
 (in-package :xlui)
 
 ;;______________________________________________
@@ -43,6 +47,7 @@
 
 
 (defmethod ANIMATE ((Self cog) dt)
+  
   (setf (roll Self)
         (if (spin-right Self)
           (mod (+ (roll Self) (* dt (rotation-speed (window Self)))) 360)
