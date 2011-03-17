@@ -622,6 +622,7 @@
 ;__________________________________
 ; window methods                   |
 ;__________________________________/
+(defparameter *use-custom-window-controller* nil)
 
 (defmacro IN-MAIN-THREAD (() &body body)
   (let ((thunk (gensym))
@@ -660,12 +661,15 @@
         ;; content view
         (#/setContentView: Window (#/autorelease (native-view Self)))
         (#/setTitle: Window (native-string (title Self)))
+        (if *use-custom-window-controller* 
+          (#/setWindowController: Window (window-controller)))
         (ns:with-ns-size (minSize (min-width self) (min-height self))
           (#/setMinSize: Window minSize))
         (ns:with-ns-size (Position (x Self) (- (screen-height Self)  (y Self)))
           (#/setFrameTopLeftPoint: (native-window Self) Position))
         (when (track-mouse Self) (#/setAcceptsMouseMovedEvents: (native-window Self) #$YES))
         Window))))
+
 
 (defmethod DISPLAY ((Self window))
   ;; excessive?  
@@ -1052,6 +1056,13 @@
 (defmethod (setf text) :after (Text (Self button-control))
   (#/setTitle: (native-view Self) (native-string Text)))
 
+
+(defmethod TURN-ON ((self checkbox-control))
+  (#/setState: (Native-View self) #$NSOnState))
+
+
+(defmethod TURN-OFF ((self checkbox-control))
+  (#/setState: (Native-View self) #$NSOffState))
 ;__________________________________
 ; BEVEL BUTTON                      |
 ;__________________________________/
@@ -1189,6 +1200,8 @@
 
 (defmethod ENABLE ((self checkbox-control))
   (#/setState: (Native-View self) #$NSOnState))
+
+
 
 ;__________________________________
 ; STRING-LIST-TEXT-VIEW            |
