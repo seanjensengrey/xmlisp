@@ -2,10 +2,10 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">10C2234</string>
+		<string key="IBDocument.SystemVersion">10J567</string>
 		<string key="IBDocument.InterfaceBuilderVersion">762</string>
-		<string key="IBDocument.AppKitVersion">1038.25</string>
-		<string key="IBDocument.HIToolboxVersion">458.00</string>
+		<string key="IBDocument.AppKitVersion">1038.35</string>
+		<string key="IBDocument.HIToolboxVersion">462.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
 			<string key="NS.object.0">762</string>
@@ -60,7 +60,7 @@
 						</object>
 						<string key="NSAction">submenuAction:</string>
 						<object class="NSMenu" key="NSSubmenu" id="1049562793">
-							<string key="NSTitle">Clozure CL</string>
+							<string key="NSTitle">AgentCubes</string>
 							<object class="NSMutableArray" key="NSMenuItems">
 								<bool key="EncodedWithXMLCoder">YES</bool>
 								<object class="NSMenuItem" id="777077771">
@@ -206,6 +206,22 @@
 									<reference key="NSOnImage" ref="979386962"/>
 									<reference key="NSMixedImage" ref="37735634"/>
 								</object>
+								<object class="NSMenuItem" id="275906060">
+									<reference key="NSMenu" ref="15543210"/>
+									<string key="NSTitle">Remove Background</string>
+									<string key="NSKeyEquiv"/>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="979386962"/>
+									<reference key="NSMixedImage" ref="37735634"/>
+								</object>
+								<object class="NSMenuItem" id="754207471">
+									<reference key="NSMenu" ref="15543210"/>
+									<string key="NSTitle">Edit World</string>
+									<string key="NSKeyEquiv"/>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="979386962"/>
+									<reference key="NSMixedImage" ref="37735634"/>
+								</object>
 								<object class="NSMenuItem" id="244358795">
 									<reference key="NSMenu" ref="15543210"/>
 									<bool key="NSIsDisabled">YES</bool>
@@ -250,6 +266,7 @@
 									<string key="NSKeyEquiv">z</string>
 									<int key="NSKeyEquivModMask">1048576</int>
 									<int key="NSMnemonicLoc">2147483647</int>
+									<int key="NSState">1</int>
 									<reference key="NSOnImage" ref="979386962"/>
 									<reference key="NSMixedImage" ref="37735634"/>
 								</object>
@@ -587,14 +604,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">undo:</string>
-						<reference key="source" ref="948186097"/>
-						<reference key="destination" ref="362060115"/>
-					</object>
-					<int key="connectionID">180</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
 						<string key="label">copy:</string>
 						<reference key="source" ref="948186097"/>
 						<reference key="destination" ref="459961514"/>
@@ -688,6 +697,30 @@
 						<reference key="destination" ref="290223329"/>
 					</object>
 					<int key="connectionID">586</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">undo:</string>
+						<reference key="source" ref="948186097"/>
+						<reference key="destination" ref="362060115"/>
+					</object>
+					<int key="connectionID">588</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">removeBackgroundTexture:</string>
+						<reference key="source" ref="948186097"/>
+						<reference key="destination" ref="275906060"/>
+					</object>
+					<int key="connectionID">590</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">editWorld:</string>
+						<reference key="source" ref="948186097"/>
+						<reference key="destination" ref="754207471"/>
+					</object>
+					<int key="connectionID">592</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -788,6 +821,8 @@
 							<reference ref="762609354"/>
 							<reference ref="244358795"/>
 							<reference ref="297193521"/>
+							<reference ref="275906060"/>
+							<reference ref="754207471"/>
 						</object>
 						<reference key="parent" ref="481718910"/>
 					</object>
@@ -823,9 +858,9 @@
 							<reference ref="813635853"/>
 							<reference ref="725565254"/>
 							<reference ref="225083175"/>
-							<reference ref="362060115"/>
 							<reference ref="459961514"/>
 							<reference ref="421592251"/>
+							<reference ref="362060115"/>
 						</object>
 						<reference key="parent" ref="662928565"/>
 					</object>
@@ -892,11 +927,6 @@
 					<object class="IBObjectRecord">
 						<int key="objectID">160</int>
 						<reference key="object" ref="225083175"/>
-						<reference key="parent" ref="506261759"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">158</int>
-						<reference key="object" ref="362060115"/>
 						<reference key="parent" ref="506261759"/>
 					</object>
 					<object class="IBObjectRecord">
@@ -1056,6 +1086,21 @@
 						<reference key="object" ref="290223329"/>
 						<reference key="parent" ref="620126217"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">587</int>
+						<reference key="object" ref="362060115"/>
+						<reference key="parent" ref="506261759"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">589</int>
+						<reference key="object" ref="275906060"/>
+						<reference key="parent" ref="15543210"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">591</int>
+						<reference key="object" ref="754207471"/>
+						<reference key="parent" ref="15543210"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -1090,8 +1135,6 @@
 					<string>156.ImportedFromIB2</string>
 					<string>157.IBPluginDependency</string>
 					<string>157.ImportedFromIB2</string>
-					<string>158.IBPluginDependency</string>
-					<string>158.ImportedFromIB2</string>
 					<string>159.IBEditorWindowLastContentRect</string>
 					<string>159.IBPluginDependency</string>
 					<string>159.ImportedFromIB2</string>
@@ -1163,13 +1206,14 @@
 					<string>58.IBPluginDependency</string>
 					<string>58.ImportedFromIB2</string>
 					<string>585.IBPluginDependency</string>
+					<string>587.IBPluginDependency</string>
+					<string>589.IBPluginDependency</string>
+					<string>591.IBPluginDependency</string>
 					<string>92.IBPluginDependency</string>
 					<string>92.ImportedFromIB2</string>
 				</object>
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<boolean value="YES"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<boolean value="YES"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1213,7 +1257,7 @@
 					<boolean value="YES"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<boolean value="YES"/>
-					<string>{{516, 1134}, {151, 183}}</string>
+					<string>{{986, 944}, {151, 183}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<boolean value="YES"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1229,15 +1273,13 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<boolean value="YES"/>
 					<boolean value="YES"/>
-					<string>{{610, 1214}, {226, 103}}</string>
+					<string>{{1080, 1024}, {226, 103}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<boolean value="YES"/>
-					<string>{{356, 1317}, {337, 20}}</string>
+					<string>{{826, 1127}, {337, 20}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<boolean value="YES"/>
-					<string>{{474, 1244}, {178, 73}}</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<boolean value="YES"/>
+					<string>{{944, 1014}, {216, 113}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<boolean value="YES"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1259,15 +1301,20 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<boolean value="YES"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{560, 1294}, {237, 23}}</string>
+					<boolean value="YES"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>{{1030, 1104}, {237, 23}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<boolean value="YES"/>
-					<string>{{368, 1144}, {216, 173}}</string>
+					<string>{{838, 954}, {216, 173}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<boolean value="YES"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<boolean value="YES"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<boolean value="YES"/>
@@ -1289,7 +1336,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">586</int>
+			<int key="maxID">592</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -1306,6 +1353,7 @@
 							<string>compileBuffer:</string>
 							<string>compileFile:</string>
 							<string>continue:</string>
+							<string>editWorld:</string>
 							<string>evalSelection:</string>
 							<string>exitBreak:</string>
 							<string>hyperSpecLookUp:</string>
@@ -1317,6 +1365,7 @@
 							<string>newProject:</string>
 							<string>openProject:</string>
 							<string>openSimulationProerties:</string>
+							<string>removeBackgroundTexture:</string>
 							<string>restarts:</string>
 							<string>showAproposWindow:</string>
 							<string>showListener:</string>
@@ -1328,6 +1377,8 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
