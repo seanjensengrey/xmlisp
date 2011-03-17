@@ -2,7 +2,9 @@
 ;; Alexander Repenning, 4/28/09
 ;; compare to http://o3d-life.googlecode.com/svn/trunk/life_colors.html
 ;; Lisp version is still faster than JavaScript
-
+;; Windows Issues: 
+;; When you open game of life for the second time, strange grey horizontal lines appear and
+;; make the simulation look strange.  
 (in-package :xlui)
 
 

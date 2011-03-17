@@ -4,7 +4,7 @@
 ;; Windows Issues:
 ;; When this example first stats up, the slider has no knob, as soon as you click somewhere
 ;; on the slider the knob will appear at the spot where you click.  Also, sometimes when you
-;; hove over the openGL view, you see the text editing cursor instead of the arrow cursor.  
+;; hove over the openGL view, you see the text editing cursor instead of the arrow cursor.   
 (in-package :xlui)
 
 (defclass CIRCLE-VIEW (opengl-dialog)
@@ -28,7 +28,7 @@
 
 (defmethod ADJUST-SLICES-ACTION ((Window application-window) (Slider slider))
   (setf (slices (view-named Window "crappy circle")) (truncate (value Slider)))
-  (display (view-named Window "crappy circle")))
+  (display-with-force (view-named Window "crappy circle")))
 
 
 <application-window title="circle, really?" y="50">

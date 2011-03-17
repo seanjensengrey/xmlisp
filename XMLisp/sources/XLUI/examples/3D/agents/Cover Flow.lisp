@@ -3,9 +3,9 @@
 ;;; Alexander Repenning 04/25/09
 
 ;; Windows Issues:
-;; The first time you open this example, if you select one of the objects in the cover flow,
-;; they all will disappear.  Also, when you close the example and then reopen it, if you try
-;; and resize the window it will crash with an error.  
+;; When you open this example, for some reason all of the items show up lined up in a row, 
+;; but when you click on one they will warp to the location that they begin at when you open
+;; the example on the mac.  
 (in-package :xlui)
 
 ;;-------------------------
@@ -104,7 +104,7 @@
   (let ((Value (* 10.0 (value Slider))))
     (setf (value (view-named Window "cover flow view")) Value)
     (aim-camera (camera (view-named Window "cover flow view")) :eye-x Value :center-x Value)
-    (display (view-named Window "cover flow view"))))
+    (display-with-force (view-named Window "cover flow view"))))
 
 
 ;; Window

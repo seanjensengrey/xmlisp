@@ -35,12 +35,7 @@
   (glRotatef (heading Self) 0.0 1.0 0.0)
   (glRotatef (pitch Self) 1.0 0.0 0.0)
 
-  ;; sphere
- ; (gltexenvi gl_texture_env gl_texture_env_mode gl_modulate)
- ; (use-texture Self "warhol_flat.png")
- ; (glEnable gl_texture_2d)
-  ;(gluSphere (quadric Self) 10d0 40 40)
-  
+
   (glBegin GL_POLYGON)
 
   (glColor3f (red self) (green self) (blue self))

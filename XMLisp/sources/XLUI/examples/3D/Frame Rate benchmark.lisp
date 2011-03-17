@@ -7,7 +7,8 @@
 
 ;; Windows Issues:
 ;; This example has framerates of a factor of ten worse then on the Mac, I get these framerates 
-;; (around 155) on Windows running paralells, this virtual machine may have something to do with this.  
+;; (around 155) on Windows 7 running on paralells, this virtual machine may have something to do with this.  
+;; Inside the Windows application I seem to get aorund 450.  
 (in-package :xlui)
 
 
