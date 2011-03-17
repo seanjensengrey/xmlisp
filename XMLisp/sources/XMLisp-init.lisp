@@ -3,7 +3,7 @@
 ;; 5/20/09 + speech
 ;; for CCL 1.3 
 ;; 5/28/09
-;; 07/15/09 + font support
+;; 07/15/09 + font support 
 ;; 02/17/10 + inflatable icons and inflatable icon editor window
 
 (in-package :cl-user)
@@ -13,10 +13,10 @@
 ;;___________________________________________
 
 ;; temporary fix for CCL's issue with turning warnings into errors
-;; should remove with new release
+;; should remove with new release 
 
-(setq ccl::*objc-error-return-condition* 'error)
-
+ 
+ 
 
 (objc:defmethod (#/invokeLispFunction: :void) ((self ns:ns-application) id)
   (gui::invoke-lisp-function self id))
@@ -44,7 +44,7 @@
 
 #+cocotron
 (setf (logical-pathname-translations "lui")
-      '(("**;*.*" "mac-home:working copies;Xmlisp svn;trunk;XMLisp;**;")))
+      '(("**;*.*" "mac-home:Xmlisp svn;trunk;XMLisp;**;")))
 
 
 
@@ -136,12 +136,12 @@
    "*CURRENT-EVENT*" "VIEW-CURSOR" "CURRENT-CURSOR"
    "KEY-EVENT-HANDLER" "KEY-EVENT" "KEY-CODE"
    "COMMAND-KEY-P" "SHIFT-KEY-P" "ALT-KEY-P" "CONTROL-KEY-P" "DOUBLE-CLICK-P"
-   "WINDOW" "VIEW" "X" "Y" "WIDTH" "HEIGHT" "SHOW" "DO-SHOW-IMMEDIATELY" "SHOW-AND-RUN-MODAL" "STOP-MODAL" "CANCEL-MODAL" "HIDE"  "HAS-BECOME-MAIN-WINDOW" "WINDOW-WILL-CLOSE" "WINDOW-SHOULD-CLOSE" "MAKE-KEY-WINDOW" "ADD-TRACKING-RECT" "REMOVE-TRACKING-RECT""VIEW-DID-MOVE-TO-WINDOW"
+   "WINDOW" "VIEW" "X" "Y" "WIDTH" "HEIGHT" "SHOW" "DO-SHOW-IMMEDIATELY" "SHOW-AND-RUN-MODAL" "STOP-MODAL" "CANCEL-MODAL" "HIDE"  "HAS-BECOME-MAIN-WINDOW" "WINDOW-WILL-CLOSE" "WINDOW-OF-VIEW-WILL-CLOSE" "WINDOW-SHOULD-CLOSE" "MAKE-KEY-WINDOW" "ADD-TRACKING-RECT" "REMOVE-TRACKING-RECT""VIEW-DID-MOVE-TO-WINDOW"
    "SWITCH-TO-FULL-SCREEN-MODE" "SWITCH-TO-WINDOW-MODE" "FULL-SCREEN" "WINDOW-CLOSE"
    "FIND-WINDOW-AT-SCREEN-POSITION" "FIND-VIEW-CONTAINING-POINT" "FIND-VIEW-AT-SCREEN-POSITION"
    "SCROLL-VIEW" "HAS-HORIZONTAL-SCROLLER" "HAS-VERTICAL-SCROLLER"
    "SCROLL-VIEW-ADJUSTING-CONTENTS"
-   "SET-SIZE" "SET-POSITION" "DISPLAY" "DRAW" "PREPARE-OPENGL" "CLEAR-BACKGROUND" "RECURSIVE-MAP-SUBVIEWS"
+   "SET-SIZE" "SET-POSITION" "DISPLAY" "DISPLAY-WITH-FORCE" "DRAW" "PREPARE-OPENGL" "CLEAR-BACKGROUND" "RECURSIVE-MAP-SUBVIEWS"
    "WINDOW-X" "WINDOW-Y"
    "RECTANGLE-VIEW" "SET-COLOR"
    "COLOR-PALETTE-VIEW"
@@ -149,7 +149,7 @@
    "ZOOMABLE" "MINIMIZABLE" "RESIZABLE" "CLOSEABLE" "BORDERLESS" "TITLE" "WINDOW-NEEDS-SAVING-P"
    "SCREEN-WIDTH" "SCREEN-HEIGHT" "CONTROL" "VALUE" "INITIALIZE-EVENT-HANDLING" "SIZE-CHANGED-EVENT-HANDLER" "START-DISABLED"
    "ACTION" "SUBVIEWS" "DO-SUBVIEWS" "MAP-SUBVIEWS" "ADD-SUBVIEW" "SUPERVIEW" "ADD-SUBVIEWS" "SWAP-SUBVIEW" "SUBVIEWS-SWAPPED" "SET-FRAME" 
-   "BUTTON-CONTROL" "DEFAULT-BUTTON"
+   "BUTTON-CONTROL" "DEFAULT-BUTTON" "TURN-ON" "TURN-OFF"
    "INVOKE-ACTION"
    "BEVEL-BUTTON-CONTROL" "DISABLE" "SLIDER-CONTROL" "TICK-MARKS" "MIN-VALUE" "MAX-VALUE" "ENABLE" "DISABLE" "BEZEL-STYLE"
    "JOG-SLIDER-CONTROL" "START-JOG" "STOP-JOG" "STOP-VALUE" "ACTION-INTERVAL"
@@ -219,6 +219,7 @@
    "PROJECT-MANAGER-REFERENCE" "AGENT-GALLERY-VIEW" "OPEN-ICON-WINDOWS"
    "CONVERT-IMAGE-FILE"
    "GET-TOOLTIP" "ENABLE-TOOLTIPS" "SET-ICON-OF-FILE-AT-PATH"
+   "FULL-SCREEN" "ENTER-FULL-SCREEN" "EXIT-FULL-SCREEN"
    )
   (:import-from "XML"
                 "FILE"))
@@ -455,7 +456,7 @@
    (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/English.lproj/InfoPlist.strings" (user-homedir-pathname))
    :if-exists :supersede))
 
-#|
+
 (defun BUILD-XMLISP ()
   (declare (ftype function ccl::build-application ccl::make-info-dict))
   (setq *Package* (find-package :xlui))
@@ -477,16 +478,16 @@
   (ccl::build-application 
    :name "XMLisp"
    :directory (format nil "~ADesktop/XMLisp/" (user-homedir-pathname))
-   :application-class 'xmlisp-application
-   #+cocotron :info-plist (ccl::make-info-dict)
-   :nibfiles '("lui:resources;English.lproj;MainMenu.nib")))
-|#
+   ;:application-class 'xmlisp-application
+   ;#+cocotron :info-plist (ccl::make-info-dict)
+   ;:nibfiles '("lui:resources;English.lproj;MainMenu.nib")
+   ))
+
 ;;___________________________________________
 ;;      Also Load AgentCubes                 |
 ;;___________________________________________
 
 ;; If we find AgentCubes lets just load it unless user indicates no by holding down shift key
-
 (unless (lui::shift-key-p)
   (when (probe-file "lui:sources;AgentCubes;AgentCubes-init.lisp")
     (load "lui:sources;AgentCubes;AgentCubes-init")))
