@@ -3,7 +3,7 @@
   <column align="stretch" valign="distribute">
     <row align="stretch" valign="top" height="20" > 
       <label  align="left" width="90" text="Agent Name:"/>
-      <editable-text flex="1" name="text"/>
+      <agent-name-type flex="1" name="text"/>
     </row>
     <spacer height="15"/>
     <row align="stretch" valign="stretch" height="230" > 
@@ -22,12 +22,8 @@
           <node node-name="Sphere" node-path="lui:resources;textures;" allowed-file-types="(png)">
             <node node-name="Custom Texture..."/>
           </node>
-          <node node-name="Inflatable Icon">
-            <node node-name="redlobster"/>
-            <node node-name="Frog"/>
-            <node node-name="mushroom"/>
-            <node node-name="fire"/>
-            <node node-name="chocolate"/>
+          <node node-name="Inflatable Icon" node-path="lui:resources;templates;;shapes;inflatable icons;" allowed-file-types="directories">
+
           </node>
         </browser>
       </column>
