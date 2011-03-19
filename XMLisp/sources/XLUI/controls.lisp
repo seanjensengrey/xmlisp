@@ -83,9 +83,17 @@
 (defmethod INITIALIZE-INSTANCE  :after  ((self node) &rest args)
   (declare (ignore args))
   (when (node-path self)
-    (dolist (node (directory (concatenate 'string (node-path self) "*.*" ) ))
-      (when (or (not (allowed-file-types self)) (find (string-upcase (pathname-type node)) (read-from-string (allowed-file-types self)) :test 'equal :key 'string))
-        (Setf (nodes self) (append (list (concatenate 'string (pathname-name node) "." (pathname-type node))) (nodes self) ))))))
+    (print (allowed-file-types self))
+    (print (equal (allowed-file-types self) "directories"))
+    (if (equal (allowed-file-types self) "directories")
+      (dolist (node (ccl::directory (make-pathname :directory (pathname-directory (truename (node-path self))):name :wild) :directories t :directory-pathnames nil))
+        (print "INSIDE")
+        (print node)
+        (Setf (nodes self) (append (list (pathname-name node)) (nodes self) ))
+        )
+      (dolist (node (directory (concatenate 'string (node-path self) "*.*" ) ))
+        (when (or (not (allowed-file-types self)) (find (string-upcase (pathname-type node)) (read-from-string (allowed-file-types self)) :test 'equal :key 'string))
+          (Setf (nodes self) (append (list (concatenate 'string (pathname-name node) "." (pathname-type node))) (nodes self) )))))))
 
 ;________________________________________________
 ;Table                                           |
@@ -676,7 +684,8 @@
 ;__________________________________________________________________
 
 (defclass EDITABLE-TEXT (editable-text-control xml-layout-interface)
-  ((action :accessor action :initform 'print-window-and-dialog-action :type layout-value :initarg :action :documentation "method: window dialog"))
+  ((action :accessor action :initform 'print-window-and-dialog-action :type layout-value :initarg :action :documentation "method: window dialog")
+   )
   (:default-initargs
     :width 100 
     :height 20)
@@ -690,7 +699,35 @@
 (defmethod SYMBOL-COMPLETION-ENABLED-P ((Self editable-text))
   ;; not a good idea for end users
   nil)
-  
+  ;__________________________________________________________________
+; Type-Interactors                                                 |
+;                                                                  |
+;                                                                  |
+;__________________________________________________________________
+
+(defclass AGENT-NAME-TYPE (agent-name-type-control xml-layout-interface)
+  ()
+  (:default-initargs
+    :width 100 
+    :height 20)
+  (:documentation "This class is a text field with agent name validation"))
+
+
+(defclass NUMBER-TYPE (number-type-control xml-layout-interface)
+  ()
+  (:default-initargs
+    :width 100 
+    :height 20)
+  (:documentation "This class is a text field whose contents must be a number with no more then one."))
+
+
+(defclass FORMULA-TYPE (formula-type-control xml-layout-interface)
+  ()
+  (:default-initargs
+    :width 100 
+    :height 20)
+  (:documentation "This class is a text field whose contents must be a valid vat-formula"))
+
 ;__________________________________________________________________
 ; Status Bar                                                       |
 ;                                                                  |
