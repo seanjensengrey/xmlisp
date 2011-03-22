@@ -36,7 +36,8 @@
    (textures :accessor textures :initform (make-hash-table :test #'equal) :allocation  :class  :documentation "table of loaded texture ids")
    (animation-time :accessor animation-time :initform 0 :documentation "Time when animation was run last")
    (animated-views :allocation :class :accessor animated-views :initform nil :documentation "class list of animated views")
-   (render-mode :accessor render-mode :initform :render :type keyword :documentation "value: :render :select or :feedback"))
+   (render-mode :accessor render-mode :initform :render :type keyword :documentation "value: :render :select or :feedback")
+   (camera-type :reader camera-type :initarg :camera-type :initform 'camera))
   (:documentation "OpenGL View"))
 
 
@@ -102,10 +103,11 @@
 ;* default implementation *
 ;**************************
 
+
 (defmethod INITIALIZE-INSTANCE :after ((Self opengl-view) &rest Args)
   (declare (ignore Args))
   (unless (camera Self)
-    (setf (camera Self) (make-instance 'camera :view Self))))
+    (setf (camera Self) (make-instance (camera-type self) :view Self))))
 
 
 (defmethod CLEAR-BACKGROUND ((Self opengl-view))
@@ -153,6 +155,12 @@
 
 (defmethod OBJECT-COORDINATE-VIEW-WIDTH ((Self opengl-view))
   (* (/ (width Self) (height Self))
+     1.050 ;; magic! should be computed from camera view angle
+     (float (eye-z (camera Self)) 0.0)))
+
+
+(defmethod OBJECT-COORDINATE-VIEW-HEIGHT ((Self opengl-view))
+  (* (/  (height Self) (width Self)) 
      1.050 ;; magic! should be computed from camera view angle
      (float (eye-z (camera Self)) 0.0)))
 
