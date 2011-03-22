@@ -517,6 +517,20 @@
   (call-next-method Event))
 |#
 
+(objc:defmethod (#/zoom: :void) ((self native-window) sender)
+  (call-next-method sender)
+  (let ((Content-View (#/contentView (native-window (lui-window Self)))))
+    (setf (width (lui-window Self)) (truncate (pref (#/frame Content-View) <NSR>ect.size.width)))
+    (setf (height (lui-window Self)) (truncate (pref (#/frame Content-View) <NSR>ect.size.height)))
+    (let ((Window (lui-window Self)))
+      (setf (x Window) (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.x)))
+      (setf (y Window) 
+            (- (screen-height (lui-window Self)) 
+               (height (lui-window Self))
+               (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.y)))))    (screen-height nil)
+    (size-changed-event-handler (lui-window Self) (width (lui-window Self)) (height (lui-window Self)))))
+
+
 (objc:defmethod (#/mouseMoved: :void) ((self native-window) Event)
   (let ((mouse-loc (#/locationInWindow event)))
     (view-event-handler (lui-window Self) 
@@ -2118,7 +2132,8 @@
 ;__________________________________/
 
 (defclass native-editable-text (ns:ns-text-field)
-  ((lui-view :accessor lui-view :initarg :lui-view))
+  ((lui-view :accessor lui-view :initarg :lui-view)
+   (text-before-edit :accessor text-before-edit :initform "" :documentation "sometimes it will be nescisary to remember the value of the text field before a text field is editted and restore this value if a bad value is entered"))
   (:metaclass ns:+ns-object))
 
 
@@ -2136,8 +2151,34 @@
         (:justified (#/alignJustified: Native-Control Native-Control))) |# )  
     Native-Control))
 
+
 (objc:defmethod (#/becomeFirstResponder  :<BOOL>) ((self native-editable-text))
   (call-next-method))
+
+
+(objc:defmethod (#/textDidChange: :void) ((self native-editable-text) Notification) 
+  (let ((lui-view (lui-view self)))
+    (if (validate-text-change lui-view (value lui-view))
+      (setf (validation-text-storage lui-view) (value lui-view))
+      (progn 
+        (#_NSBeep)
+        (setf (value lui-view) (validation-text-storage lui-view)))))
+  (call-next-method Notification))
+
+
+(objc:defmethod (#/textShouldBeginEditing: :<BOOL>) ((self native-editable-text) Notification)
+  (setf (text-before-edit self) (ccl::lisp-string-from-nsstring (#/stringValue self)))
+  (call-next-method Notification))
+
+
+(objc:defmethod (#/textShouldEndEditing: :<BOOL>) ((self native-editable-text) Notification)
+  (print "TEXT SHOUYLD END EDITING")
+  (let ((lui-view (lui-view self)))
+    (if (validate-final-text-value lui-view (value lui-view))
+      (print "OK")
+      (setf (value lui-view) (text-before-edit self))))
+  (call-next-method Notification)
+  )
 
 
 (defmethod (setf text) :after (Text (Self editable-text-control))
@@ -2574,10 +2615,10 @@
 ;__________________________________
 ; SET-ICON-AT-PATH                 |
 ;__________________________________/
-
+#|
 (defun SET-ICON-OF-FILE-AT-PATH (path-to-image path-to-file)
   (#/setIcon:forFile:options: (#/sharedWorkspace ns:ns-workspace)  (#/initByReferencingFile: (#/alloc ns:ns-image) (native-string (namestring (truename path-to-image)))) (lui::native-string (namestring path-to-file)) 0  ))
-
+|#
 ;__________________________________
 ; Show PopUp                       |
 ;__________________________________/
