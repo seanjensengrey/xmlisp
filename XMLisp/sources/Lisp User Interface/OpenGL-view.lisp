@@ -154,15 +154,11 @@
 
 
 (defmethod OBJECT-COORDINATE-VIEW-WIDTH ((Self opengl-view))
-  (* (/ (width Self) (height Self))
-     1.050 ;; magic! should be computed from camera view angle
-     (float (eye-z (camera Self)) 0.0)))
+  (float (* (/ (width Self) (height Self)) (object-coordinate-view-height self)) 0.0))
 
-
+      
 (defmethod OBJECT-COORDINATE-VIEW-HEIGHT ((Self opengl-view))
-  (* (/  (height Self) (width Self)) 
-     1.050 ;; magic! should be computed from camera view angle
-     (float (eye-z (camera Self)) 0.0)))
+  (float (* (tan (/ (* (/ (float (fovy (camera self))) 2) pi) 180)) (float (eye-z (camera self))) 2) 0.0))
 
 
 (defmethod MOUSE-ENTERED ((Self opengl-view))
