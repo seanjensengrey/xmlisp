@@ -9,6 +9,7 @@
 
 (defclass VISUAL-AGENTALK-VIEW (agent-3d-view)
   ()
+  
   (:documentation "Contains Visual AgenTalk code"))
 
 
@@ -32,14 +33,29 @@
   ;; adjust camera
   (let ((X (/ (+ (object-coordinate-view-width Self) (* 16 *Spacing*)) 2.0d0)))
     (setf (eye-x (camera Self)) x)
-    (setf (center-x (camera Self)) x) ))
+    (setf (center-x (camera Self)) x)))
+
+
+(defmethod INITIALIZE-POSITION ((Self visual-agentalk-view))
+  (let* ((Scroller (view-named (window Self) (second (or (member (name Self) *View-Name-Scroller-Names*  :test #'string-equal)
+                                                         (return-from initialize-position)))))
+         (Scroll-Increment 0.001d0)  ;; this increment should depend on document size 
+         (New-Value (min (max (- (value Scroller) (* Scroll-Increment 0.0d0)) 0.0d0) 1.0d0))
+         (Camera-y (float (+ (* (- 1.0 New-Value) (height (or (first (agents Self))
+                                                              (return-from initialize-position))))
+                             0d0))))
+    ;; y adjust camera and update-
+    (setf (eye-y (camera Self)) Camera-y)
+    (setf (center-y (camera Self)) Camera-y)
+    (display Self)
+    ;; update scroller
+    (set-scroller-position Scroller (float New-Value 0.0))))
 
 
 ;;; Actions
 
 
 (defmethod SWITCH-TO-BEHAVIOR ((Window window) (Button bevel-button))
-  (print "SBC")
   (let ((Agent-Name 
          (show-string-popup 
           Window
