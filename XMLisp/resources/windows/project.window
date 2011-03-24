@@ -39,8 +39,9 @@
           <image-button name="zoom button" start-disabled="true" action="zoom-tool-action" image="zoom-button.png"/>    
         </image-button-row>
         <spacer width="8"/>
-        <bevel-button bezel-style="square" text="Switch to first-person camera" start-disabled="true" name="camera-button" action="switch-camera-action" width="200" height="24" />
-        <bevel-button bezel-style="square" text="Full Screen" start-disabled="true" name="full-screen-button" action="full-screen-action" width="80" height="24" />
+        <image-button  start-disabled="true" name="camera-button" action="switch-camera-action" image="camera.png"/>  
+
+        <image-button name="full-screen-button" start-disabled="true" action="full-screen-action" image="fullscreen.png"/>  
         <spacer width="8"/>
         <image-button name="reload button" start-disabled="true" action="reload-tool-action"  image="reload-button.png"/> 
         <bevel-button bezel-style="square" text="Clear" start-disabled="true" name="clear-button" action="clear-tool-action" width="65" height="24" />
@@ -50,22 +51,30 @@
       </row>
       <row align="stretch"  valign="stretch" flex="1" vflex="1">
         <column align="stretch" valign="stretch" flex="1" vflex="1">
-          <world flex="1" vflex="5" name="the world">
-             <camera/>
-             <text-3d text="Click on the '+' button" x="-3.0" y="0.2" size="5.0"/>
-             <text-3d text="above to add a world" x="-3.0" y="-0.5" size="5.0"/>
-          </world>
-         
+          <row align="stretch"   valign="stretch" vflex="5" flex="1">
+            <world flex="7" vflex="5" name="the world">
+              <camera/>
+              <text-3d text="Click on the '+' button" x="-3.0" y="0.2" size="5.0"/>
+              <text-3d text="above to add a world" x="-3.0" y="-0.5" size="5.0"/>
+            </world>
+            <column align="stretch" valign="stretch" flex="1" vflex="1" src="gradient-transparent.png" width="100">
+              <bevel-button bezel-style="square" text="Push Layer" start-disabled="true" name="push-layer-button" action="push-layer-action" width="90" height="24" />
+              <bevel-button bezel-style="square" text="Pop Layer" start-disabled="true" name="pop-layer-button" action="pop-layer-action" width="85" height="24" />
+              <bevel-button bezel-style="square" text="Toggle Grid" start-disabled="true" name="toggle-grid-button" action="toggle-grid-action" width="95" height="24" />
+              
+              <column align="center" valign="stretch" flex="1" vflex="1" >
+                <label width="85" text="Layer Height:"/>
+                <slider vflex="1" width="20" value="5.0" start-disabled="true" name="layer-height-slider" max-value="10.0" min-value="0.0"  action="layer-height-slider-action"/>
+              </column>
+            </column >
+          </row>
           <row align="stretch" minimize="vertical"  valign="bottom"  flex="1">
             <row align="stretch"  minimize="vertical" valign="bottom" flex="1">
               <status-bar align="stretch" flex="1" name="status-bar" text=""/>
             </row>
             <row align="stretch" padding="-1" minimize="vertical" valign="middle" flex="1" src="gradient-transparent.png">
-              <label width="85" text="Layer Height:"/>
-              <slider value="5.0" start-disabled="true" name="layer-height-slider" max-value="10.0" min-value="0.0" tick-marks="10" action="layer-height-slider-action"/>
-              <bevel-button bezel-style="square" text="Push Layer" start-disabled="true" name="push-layer-button" action="push-layer-action" width="90" height="24" />
-              <bevel-button bezel-style="square" text="Pop Layer" start-disabled="true" name="pop-layer-button" action="pop-layer-action" width="85" height="24" />
-              <bevel-button bezel-style="square" text="Toggle Grid" start-disabled="true" name="toggle-grid-button" action="toggle-grid-action" width="95" height="24" />
+
+
             </row>
           </row>
  
