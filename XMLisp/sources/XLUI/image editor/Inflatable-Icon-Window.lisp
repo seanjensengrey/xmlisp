@@ -49,7 +49,8 @@
    (transparent-ceiling-decrement-value :accessor transparent-ceiling-decrement-value :initform .02 :documentation "The amount the transparent ceiling's alpha will be decremented by each time the timer is due. ")
    (transparent-ceiling-update-frequency :accessor transparent-ceiling-update-frequency :initform .02 :documentation "How often in seconds the transparency value will be udpated")
    (transparent-ceiling-should-fade :accessor transparent-ceiling-should-fade :initform nil :documentation "Fade will not begin until this is set.")
-   (transparent-ceiling-update-process :accessor transparent-ceiling-update-process :initform nil :documentation "This process will update the transparency of the ceiling to cause a fade out when it is not used"))
+   (transparent-ceiling-update-process :accessor transparent-ceiling-update-process :initform nil :documentation "This process will update the transparency of the ceiling to cause a fade out when it is not used")
+   (command-manager :reader command-manager :initform (make-instance 'inflatable-icon-command-manager)))
   (:default-initargs
       :track-mouse t)
   (:documentation "Editor used to create inflatable icons"))
@@ -95,8 +96,14 @@
   (let ((Icon-Editor (view-named Self 'icon-editor))
         (Inflatable-Icon (inflatable-icon (or (view-named (window self) 'model-editor) (error "model editor missing")))))
   (cond
+   ((and (command-key-p) (shift-key-p))
+      (case (key-code Event)
+        (#.(key-name->code "Z")
+           (redo-command (command-manager self)))))
    ((command-key-p)
     (case (key-code Event)
+      (#.(key-name->code "Z")
+         (undo-command (command-manager self)))
       (#.(key-name->code "A")
          (select-all Icon-Editor))
       (#.(key-name->code "D")
@@ -214,7 +221,30 @@
                 (maximum-altitude Inflatable-Icon :inflate-pixel-p-fn #'pixel-selected-p-fn))
         |#
         ;; update 
-        (display Model-Editor)))))
+        (display-with-force Model-Editor))
+      ;(adjust-ceiling-action self (view-named self "ceiling_slider"))
+      (when (>= (maximum-altitude inflatable-icon) (ceiling-value Inflatable-Icon))
+        (setf (ceiling-transparency self) (transparent-ceiling-starting-alpha self))
+        (setf (transparent-ceiling-should-fade self) nil)
+        (unless (transparent-ceiling-update-process self)
+          (setf *ceiling-update-thread-should-stop* nil)
+          
+          (setf (transparent-ceiling-update-process self)
+                (lui::process-run-function
+                 '(:name "transparent ceiling update process")
+                 #'(lambda ()
+                     (loop
+                       (catch-errors-nicely 
+                        "OpenGL Animation"
+                        (when *Ceiling-Update-Thread-Should-Stop*  (return))
+                        (unless (or (transparent-ceiling-should-fade self)
+                                    (not (timer-due-p self (truncate (* 2.0 internal-time-units-per-second)))))
+                          (setf (transparent-ceiling-should-fade self) t))
+                        (when (transparent-ceiling-should-fade self)
+                          (ccl::with-lock-grabbed ((transparent-ceiling-update-lock))
+                            
+                            (update-ceiling-transparency self)))
+                        (sleep .04)))))))))))
 
 
 (defmethod LOAD-IMAGE-FROM-FILE ((Self inflatable-icon-editor-window) Pathname)
@@ -734,26 +764,65 @@
   (set-pen-color (view-named w "icon-editor") (get-red Color-Well) (get-green Color-Well) (get-blue Color-Well) (get-alpha Color-Well)))
 
 
+(defmethod GET-MIRROR-STATE ((self inflatable-icon-editor-window))
+  (let ((current-mirror-state nil)
+        (image-editor (view-named self 'icon-editor)))
+    (cond
+     ((and (equal (is-horizontal-line-on image-editor) t) (equal (is-vertical-line-on image-editor) t))
+      (setf current-mirror-state :both))
+     ((and (equal (is-horizontal-line-on image-editor) nil) (equal (is-vertical-line-on image-editor) nil))
+      (setf current-mirror-state :none))
+     ((and (equal (is-horizontal-line-on image-editor) t) (equal (is-vertical-line-on image-editor) nil))
+      (setf current-mirror-state :horizontal))
+     ((and (equal (is-horizontal-line-on image-editor) nil) (equal (is-vertical-line-on image-editor) t))
+      (setf current-mirror-state :vertical)))
+    current-mirror-state))
+
+
+(defmethod SET-MIRROR-STATE ((Window inflatable-icon-editor-window) state)
+  (case state
+    (:none
+     (change-cluster-selections (view-named window "mirror-cluster") (view-named window "mirror-none-button"))
+     (toggle-mirror-lines (view-named Window'icon-editor) nil nil))
+    (:both
+     (change-cluster-selections (view-named window "mirror-cluster") (view-named window "mirror-both-button"))
+     (toggle-mirror-lines (view-named Window'icon-editor) t t))
+    (:horizontal
+     (change-cluster-selections (view-named window "mirror-cluster") (view-named window "mirror-horizontally-button"))
+     (toggle-mirror-lines (view-named Window 'icon-editor) t nil))
+    (:vertical
+     (change-cluster-selections (view-named window "mirror-cluster") (view-named window "mirror-vertically-button"))
+     (toggle-mirror-lines (view-named Window 'icon-editor) nil t))))
+
+
 (defmethod MIRROR-NONE-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
+  (unless (and  (not (is-vertical-line-on (view-named window 'icon-editor))) (not (is-vertical-line-on (view-named window 'icon-editor))))
+    (execute-command (command-manager window) (make-instance 'mirror-changed-command :window window :mirror-state (get-mirror-state window) :image-editor (view-named window 'icon-editor) :image-snapeshot (create-image-array (view-named window 'icon-editor)))))
   (toggle-mirror-lines (view-named Window 'icon-editor) nil nil)
   (display (view-named Window 'model-editor)))
 
 
 (defmethod MIRROR-VERTICALLY-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
+  (unless (and (not (is-horizontal-line-on (view-named window 'icon-editor))) (is-vertical-line-on (view-named window 'icon-editor)))
+    (execute-command (command-manager window) (make-instance 'mirror-changed-command :window window :mirror-state (get-mirror-state window) :image-editor (view-named window 'icon-editor) :image-snapeshot (create-image-array (view-named window 'icon-editor)))))
   (toggle-mirror-lines (view-named Window'icon-editor) nil t)
   (display (view-named Window 'model-editor)))
 
 
 (defmethod MIRROR-HORIZONTALLY-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
+  (unless (and  (is-horizontal-line-on (view-named window 'icon-editor)) (not (is-vertical-line-on (view-named window 'icon-editor))))
+    (execute-command (command-manager window) (make-instance 'mirror-changed-command :window window :mirror-state (get-mirror-state window) :image-editor (view-named window 'icon-editor) :image-snapeshot (create-image-array (view-named window 'icon-editor)))))
   (toggle-mirror-lines (view-named Window 'icon-editor) t nil)
   (display (view-named Window 'model-editor)))
 
 
 (defmethod MIRROR-BOTH-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
+  (unless (and  (is-horizontal-line-on (view-named window 'icon-editor)) (is-vertical-line-on (view-named window 'icon-editor)))
+    (execute-command (command-manager window) (make-instance 'mirror-changed-command :window window :mirror-state (get-mirror-state window) :image-editor (view-named window 'icon-editor) :image-snapeshot (create-image-array (view-named window 'icon-editor)))))
   (toggle-mirror-lines (view-named Window 'icon-editor) t t)
   (display (view-named Window 'model-editor)))
 
@@ -802,6 +871,7 @@
     (setf (transparent-ceiling-should-fade window) nil)
     (unless (transparent-ceiling-update-process window)
       (setf *ceiling-update-thread-should-stop* nil)
+      
       (setf (transparent-ceiling-update-process window)
             (lui::process-run-function
              '(:name "transparent ceiling update process")
@@ -815,7 +885,8 @@
                       (setf (transparent-ceiling-should-fade window) t))
                     (when (transparent-ceiling-should-fade window)
                       (ccl::with-lock-grabbed ((transparent-ceiling-update-lock))
-                        (update-ceiling-transparency window)))
+                        
+                                       (update-ceiling-transparency window)))
                     (sleep .04))))))))
   (let ((Ceiling (value Slider)))
     (let ((Text-View (view-named Window 'ceilingtext)))
@@ -834,7 +905,8 @@
 (defmethod UPDATE-CEILING-TRANSPARENCY ((Self inflatable-icon-editor-window))
   (when (timer-due-p self (truncate (* (transparent-ceiling-update-frequency self) internal-time-units-per-second)))
     (setf (ceiling-transparency self)  (- (ceiling-transparency self) (transparent-ceiling-decrement-value self)))
-    (display (view-named self 'model-editor))
+    ;(display (view-named self 'model-editor))
+    (#/setNeedsDisplay: (lui::native-view (view-named self 'model-editor)) #$YES)
     ))
 
   
@@ -880,7 +952,7 @@
       (let* ((Model-Editor (view-named Window 'model-editor)))
         (setf (dz (inflatable-icon Model-Editor)) Offset)
         (adjust-ceiling-action window (view-named window "ceiling_slider"))
-        (display Model-Editor))))
+        (display-with-force Model-Editor))))
     ;;Wicked cocotron hack to get the inflated icon editor to update
   )
 
@@ -895,7 +967,7 @@
     (let ((Model-Editor (view-named Window 'model-editor)))
       (setf (distance (inflatable-icon Model-Editor)) Distance)
       (unless do-not-display
-        (display Model-Editor))))
+        (display-with-force Model-Editor))))
   ;;Wicked cocotron hack to get the inflated icon editor to update
   )
 
@@ -1019,6 +1091,7 @@
 
 
 (defmethod CLEAR-ACTION ((Window inflatable-icon-editor-window) (Button button))
+  (execute-command (command-manager window) (make-instance 'pixel-update-command :image-editor (view-named window 'icon-editor) :image-snapeshot (create-image-array (view-named window 'icon-editor))))
   (erase-all (view-named window 'icon-editor))
   (let* ((Model-Editor (or (view-named window 'model-editor) (error "model editor missing")))
          (Inflatable-Icon (inflatable-icon Model-Editor)))
