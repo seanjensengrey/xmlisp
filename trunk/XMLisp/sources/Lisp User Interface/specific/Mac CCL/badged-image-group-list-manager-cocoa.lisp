@@ -64,26 +64,17 @@
       (if (is-disclosed group)
         (incf height (+ (item-category-label-height self) (row-height self)  (* (row-height self) (length (group-items group)))))
         (incf height    (row-height self))))
-    ;(if (> height 200)
     (setf (height self) height)
-    ;)
     (unless (equal (#/superview (native-view self)) +null-ptr+)
-      (progn
-        (if call-set-size
-          (progn
-            (set-size (lui-view (#/superview (#/superview (native-view self))))   (width (lui-view (#/superview (#/superview (native-view self))))) (height (lui-view (#/superview (#/superview (native-view self))))))
-            (layout (lui-view (#/superview (#/superview (native-view self)))))))
-        (if (lui-view (#/superview (#/superview (native-view self))))
-          (progn
-            (when (> (height (lui-view (#/superview (#/superview (native-view self))))) (height self))
-              (setf (height self) (height (lui-view (#/superview (#/superview (native-view self)))))))))))))
+      (when call-set-size
+        (set-size (lui-view (#/superview (#/superview (native-view self))))   (width (lui-view (#/superview (#/superview (native-view self))))) (height (lui-view (#/superview (#/superview (native-view self))))))
+        (layout (lui-view (#/superview (#/superview (native-view self))))))
+      (when (and (lui-view (#/superview (#/superview (native-view self)))) (> (height (lui-view (#/superview (#/superview (native-view self))))) (height self)))
+        (setf (height self) (height (lui-view (#/superview (#/superview (native-view self))))))))))
 
 
 
 (defmethod SIZE-CHANGED ((Self badged-image-group-list-manager-view) )
-  ;(set-size (part-of self) (width (part-of self)) (height(part-of self)))
-  ;(set-size self (width self) (height self))
-  ;(layout (part-of self))
   (layout (native-view self)))
 
 
@@ -133,7 +124,7 @@
   (let ((y 0)) 
     (dolist (group (groups (lui-view self)))
       (let ((group-height  (row-height (lui-view self))))
-        (if (is-disclosed group)
+        (when (is-disclosed group)
           (incf group-height (+ (item-category-label-height (lui-view self)) (* (row-height (lui-view self)) (length (group-items group))))))
         (ns:with-ns-size (Size (width (lui-view self)) group-height)
           (#/setFrameSize:  (group-view group ) Size))
@@ -141,11 +132,9 @@
           (#/setFrameSize:  (item-view group ) Size))      
         (ns:with-ns-point (Point 0 y)
           (#/setFrameOrigin: (group-view group ) Point ))
-        (if (is-disclosed group)
-          (progn           
-            (#/setHidden: (item-view group) #$NO))
-          (progn
-            (#/setHidden: (item-view group) #$YES)))
+        (if (is-disclosed group)     
+          (#/setHidden: (item-view group) #$NO)
+          (#/setHidden: (item-view group) #$YES))
         (#/setNeedsDisplay: (item-view group) #$YES)
         (if (is-highlighted group)
           (#/setHidden: (selection-view group ) #$NO)
@@ -198,15 +187,15 @@
   ;(declare (ignore Event))
   (remove-background-and-end-editting-for-all-text-fields (native-view (container self)))
   (call-next-method Event)
-  (if (container self)
+  (when (container self)
     (set-selected (container self) (ccl::lisp-string-from-nsstring (#/stringValue (text-view self))))))
 
 
 (defmethod LAYOUT ((Self group-detection-view))
   (let ((group (get-group-with-name (container self) (group-name self))))
-    (if group
+    (when group
       (unless (selected-item-name group)
-        (if (item-selection-view group)
+        (when (item-selection-view group)
           (#/setHidden: (item-selection-view group) #$YES)))))
   (let ((subviews (gui::list-from-ns-array (#/subviews self))))
     (dolist (subview subviews)   
@@ -219,7 +208,6 @@
             (setf (group-name self) (ccl::lisp-string-from-nsstring (#/stringValue subview)))
             (setf (group-name (list-group self)) (ccl::lisp-string-from-nsstring (#/stringValue subview)))
             (#/setFrameOrigin: subview Point )))
-        
         (unless (or (equal (type-of subview) 'LUI::GROUP-ITEM-IMAGE-VIEW  ) (equal (type-of subview) 'LUI::ITEM-CONTAINER-VIEW ))
           (ns:with-ns-point (Point (NS:NS-RECT-X (#/frame subview)) 0)
             (#/setFrameOrigin: subview Point ))))
