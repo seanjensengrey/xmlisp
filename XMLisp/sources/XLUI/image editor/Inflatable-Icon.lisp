@@ -224,7 +224,15 @@
               ((is-upright Self)
                (float (/ (max-visible-pixel-row Self) (rows Self)) 0.0))
               (t  
-               (maximum-altitude Self))))))
+               (case (surfaces Self)
+                 (front-and-back 
+                     (+  (dz self)(distance self) (maximum-altitude Self)))
+                 (front-and-back-connected 
+                     (+  (dz self)(distance self) (maximum-altitude Self)))
+                 (cube
+                  (float (+ (dz self) (maximum-altitude Self) (distance self) ) 0.0))                                                                                                                     
+                 (t
+                  (+ (dz self) (maximum-altitude Self)))))))))
 #| need to take these into account
 
   (case (surfaces Self)
@@ -253,8 +261,7 @@
       (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_MAG_FILTER GL_NEAREST)
       (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_MIN_FILTER GL_LINEAR_MIPMAP_NEAREST)
       ;; need to update also the mipmaps to avoid mix of new and old image
-      (gluBuild2DMipmaps GL_TEXTURE_2D GL_RGBA8 (columns Self) (rows Self) GL_RGBA GL_UNSIGNED_BYTE Image)
-      )
+      (gluBuild2DMipmaps GL_TEXTURE_2D GL_RGBA8 (columns Self) (rows Self) GL_RGBA GL_UNSIGNED_BYTE Image))
      (t
       (warn "inflatable icon is not ready for update")))))
 
