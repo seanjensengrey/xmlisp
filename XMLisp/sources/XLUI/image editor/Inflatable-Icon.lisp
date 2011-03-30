@@ -222,7 +222,11 @@
              ;; this cond may not be needed, we need to take distance into account for both upright and non upright inflatable icons.
              (cond
               ((is-upright Self)
-               (float (/ (max-visible-pixel-row Self) (rows Self)) 0.0))
+               (case (surfaces Self)
+                 (cube
+                  (float (+ (dz self) (maximum-altitude Self) (distance self) ) 0.0))
+                 (t
+                  (+ (dz self) (float (/ (max-visible-pixel-row Self) (rows Self)) 0.0)))))
               (t  
                (case (surfaces Self)
                  (front-and-back 
@@ -233,6 +237,8 @@
                   (float (+ (dz self) (maximum-altitude Self) (distance self) ) 0.0))                                                                                                                     
                  (t
                   (+ (dz self) (maximum-altitude Self)))))))))
+
+
 #| need to take these into account
 
   (case (surfaces Self)
@@ -459,7 +465,7 @@
   ;; just in time while display is not elegant but works
   (glpushmatrix)
   (glTranslatef 0s0 0s0 (dz Self))  ;; keep from interfering with background
-  (when (is-upright Self)
+  (when (and (is-upright Self) (not (equal (surfaces self) 'cube)))
     (glRotatef +90s0 1.0s0 0.0s0 0.0s0)
     (glTranslatef (/ (- 1s0 (dx Self)) 2s0) +0.0s0 -0.5s0))
   ;; autocompile
