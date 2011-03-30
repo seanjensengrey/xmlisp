@@ -71,7 +71,7 @@
 (defparameter *Speech-Lock* nil "look preventing speech interupting each other")
 
 
-(defmethod SPEAK ((Text string) &optional Voice Synthesizer)
+(defmethod SPEAK ((Text string) &optional Voice Synthesizer )
   (unless *Speech-Lock* 
     (setq *Speech-Lock* (make-lock "Speech")))
   (process-run-function 
@@ -81,7 +81,9 @@
            (with-lock-grabbed (*Speech-Lock*)
              (unless Synthesizer
                (unless *Default-Synthesizer* 
-                 (setf *Default-Synthesizer* (make-instance 'synthesizer))
+                 (if synthesizer-type
+                   (setf *Default-Synthesizer* (make-instance synthesizer-type))
+                   (setf *Default-Synthesizer* (make-instance 'synthesizer)))
                  (setf (native-synthesizer *Default-Synthesizer*) (make-instance 'native-synthesizer :lui-synthesizer *Default-Synthesizer*)))
                (setq Synthesizer *Default-Synthesizer*))
              (cond
@@ -91,10 +93,11 @@
                    (error "Voice ~S is not one of ~S" Voice (available-voices)))))
               (t
                (#/setVoice: (native-synthesizer Synthesizer) (%null-ptr))))
-             (#/startSpeakingString: (native-synthesizer Synthesizer) (native-string Text))
-             (loop
-               (unless (#/isSpeaking (native-synthesizer Synthesizer)) (return))
-               (sleep 0.1)))))))
+             (when (should-start-speaking synthesizer)
+               (#/startSpeakingString: (native-synthesizer Synthesizer) (native-string Text))
+               (loop
+                 (unless (#/isSpeaking (native-synthesizer Synthesizer)) (return))
+                 (sleep 0.1))))))))
 
 
 (defun AVAILABLE-VOICES ()
@@ -110,6 +113,11 @@
   (declare (ignore Word))
   ;(format t "~%word:~S" Word)
   )
+
+
+(defmethod SHOULD-START-SPEAKING ((Self synthesizer))
+  t)
+
 
 
 (defmethod WILL-SPEAK-PHONEME ((Self synthesizer) Phoneme)
