@@ -986,6 +986,7 @@
 
 (defmethod FRONT-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up pop-up))
   (declare (ignore Pop-Up))
+  (enable (view-named window "upright"))
   (let ((Model-Editor (view-named Window 'model-editor)))
     (setf (value (view-named window "distance-slider")) 0.0)
     (adjust-distance-action window (view-named window "distance-slider") t)
@@ -997,6 +998,7 @@
 
 (defmethod FRONT-AND-BACK-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up pop-up))
   (declare (ignore Pop-Up))
+  (enable (view-named window "upright"))
   (let ((Model-Editor (view-named Window 'model-editor)))
     (enable (view-named window "distance-slider"))
     (setf (surfaces (inflatable-icon Model-Editor)) 'front-and-back)
@@ -1005,6 +1007,7 @@
 
 (defmethod FRONT-AND-BACK-CONNECTED-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up-Item pop-up))
   (declare (ignore Pop-Up-item))
+  (enable (view-named window "upright"))
   (let ((Model-Editor (view-named Window 'model-editor)))
     (enable (view-named window "distance-slider"))
     (setf (surfaces (inflatable-icon Model-Editor)) 'front-and-back-connected)
@@ -1014,6 +1017,9 @@
 (defmethod CUBE-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up-Item pop-up))
   (declare (ignore Pop-Up-item))
   (let ((Model-Editor (view-named Window 'model-editor)))
+    (setf (is-upright (inflatable-icon Model-Editor))  nil)
+    (turn-off (view-named window "upright"))
+    (disable (view-named window "upright"))
     (enable (view-named window "distance-slider"))
     (setf (value (view-named window "z_slider")) .5)
     (setf (value (view-named window "distance-slider")) .5)
@@ -1280,6 +1286,8 @@
   (setf (value (view-named self "z_slider")) (dz inflatable-icon))
   (unless (> (value (view-named self "noise_slider")) 0.0)
     (disable (view-named self "smooth_slider")))
+  (when (equal (surfaces inflatable-icon) 'cube)
+    (disable (view-named self "upright")))
   (let ((Text-View (view-named self 'distance-text)))
     ;; update label
     (setf (text Text-View) (format nil "~4,2F"(distance inflatable-icon)))
