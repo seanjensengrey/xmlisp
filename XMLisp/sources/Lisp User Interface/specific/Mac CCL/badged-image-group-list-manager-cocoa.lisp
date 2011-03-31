@@ -821,6 +821,7 @@
         (setf (selected-item-name group) nil) 
         (if (equal (String-capitalize group-name) (String-capitalize (group-name group)))
           (progn   
+            (group-selected self)
             (setf (selected-item-name group) nil )
             (if (item-selection-view group)
               (#/setHidden: (item-selection-view group) #$YES))
@@ -872,7 +873,8 @@
         (progn 
           (dolist (item (group-items group))
             (if (equal (String-capitalize item-name) (string-capitalize (item-name item)))
-              (progn               
+              (progn    
+                (group-selected self)
                 (let ((y-offset   (position item-name (group-items group) :key #'item-name :test #'equal)))
                   (setf (selected-item-name group) (item-name item))
                   (setf (is-selected group) "YES")
