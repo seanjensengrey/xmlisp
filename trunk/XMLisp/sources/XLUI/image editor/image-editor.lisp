@@ -133,8 +133,11 @@
 ;* Image-Editor                       *
 ;**************************************
 
-(defparameter *Default-Background-Texture* "lui:resources;textures;image-editor-bg.png")
+(defparameter *Default-Background-Texture* nil)
 
+(defun DEFAULT-BACKGROUND-TEXTURE ()
+  (or *Default-Background-Texture*
+      (setf *Default-Background-Texture* "lui:resources;textures;image-editor-bg.png")))
 
 (defclass IMAGE-EDITOR (opengl-dialog)
   ((image :accessor image :initform nil :documentation "filename")
@@ -203,17 +206,22 @@
 ; Implementation                |
 ;_______________________________/
 
-#|
-(defmethod INITIALIZE-INSTANCE :after ((Self image-editor) &rest Args)  
-  (print "INIT INSTANCE"))
-|#
-(defmethod CENTER-CANVAS ((Self image-editor))
+(defmethod CENTER-CANVAS ((Self image-editor) )
   (aim-camera 
    (camera Self) 
    :eye-x (* 0.5 (canvas-width Self)) :eye-y (* 0.5 (canvas-height Self)) 
    :center-x (* 0.5 (canvas-width Self)) :center-y (* 0.5 (canvas-height Self))
    :eye-z 0.87))
-  
+
+
+(defmethod SET-SIZE :after ((self image-editor) W H)
+  (declare (ignore w h))
+  ;; Make sure the canvas fits on the screen in both x y directions
+  (let* ((eye-z-for-height (/ .5d0 (tan (/ (* (/ (fovy (camera self)) 2) pi) 180))))
+         (eye-z-for-width  (/ eye-z-for-height (aspect (camera self)))))
+    ;; We want to pick the larger of the z options 
+    (aim-camera (camera self) :eye-z (max eye-z-for-height eye-z-for-width))))
+
 
 (defmethod PREPARE-OPENGL ((Self image-editor))
   "Called when the image-editor is initialized."
@@ -227,7 +235,7 @@
     (display Self)))
 
 
-(defmethod LOAD-BACKGROUND-TEXTURE ((Self image-editor) &optional (Pathname (truename *Default-Background-Texture*)))
+(defmethod LOAD-BACKGROUND-TEXTURE ((Self image-editor) &optional (Pathname (truename (default-background-texture))))
   (with-glcontext Self
     (setf (bg-texture Self) (create-texture-from-file Pathname :mag-filter GL_NEAREST :repeat t))))
 
@@ -383,8 +391,8 @@
   "Sets the color to be used in subsequent draw or fill."
   (dispose-vector (pen-color-vector Self))
   (setf (pen-color-vector Self) (make-byte-vector Red Green Blue Alpha)))
-
-
+          
+     
 (defmethod BG-COLOR ((Self image-editor))
   "Returns the color currently used to erase."
   (values
@@ -427,8 +435,8 @@
   "Paints the specified pixel with the current pen color."
   (multiple-value-bind (Red Green Blue Alpha) (pen-color Self)
     (if (selection-active-p Self)
-        (when (pixel-selected-p (selection-mask Self) Col Row)
-          (set-rgba-color-at Self Col Row Red Green Blue Alpha))
+      (when (pixel-selected-p (selection-mask Self) Col Row)
+        (set-rgba-color-at Self Col Row Red Green Blue Alpha))
       (set-rgba-color-at Self Col Row Red Green Blue Alpha)))
   ;; mirroring
   (mirror-pixel Self Col Row)
@@ -681,15 +689,25 @@
 (defmethod SCREEN->PIXEL-COORD ((Self image-editor) x y &key (return-max-value-for-outside-upward-bound nil))
   "Converts a point in screen coordinate into a pixel coordinate.
    If there is no valid pixel coordinate, i.e., outside of image then return nil nil"
-  (let ((Col (floor (/ (* (- x (truncate (- (width Self) (* (/ (height Self) (canvas-height Self)) (canvas-width Self))) 2))
-                          (img-width Self)) (* (/ (height Self) (canvas-height Self)) (canvas-width Self)))))
-        (Row (floor (* (img-height Self) (/ y (height Self))))))
+  (let ((Col nil)
+        (Row nil))
+    (cond 
+     ((>= (object-coordinate-view-width self) (object-coordinate-view-height self)) 
+      ;; If top of canvas is flush with top of view calculate col and row this way:
+          (setf col (floor (/ (* (- x (truncate (- (width Self) (* (/ (height Self) (canvas-height Self)) (canvas-width Self))) 2))
+                                 (img-width Self)) (* (/ (height Self) (canvas-height Self)) (canvas-width Self)))))
+          (setf row (floor (* (img-height Self) (/ y (height Self))))))
+     (t
+      ;; If side of canvas is flush with side of view calculate col and row this way:
+      (setf col (floor (* (img-width self) (/ x (width self)))))
+      (setf row (floor (/ (* (- y (truncate (- (height Self) (* (/ (width Self) (canvas-width Self)) (canvas-height Self))) 2))
+                                 (img-height Self)) (* (/ (width Self) (canvas-width Self)) (canvas-height Self)))))))
     (if (and return-max-value-for-outside-upward-bound (>= Col (1- (img-width Self))))
       (setf Col (1- (img-width Self))))
     (values
      (when (<= 0 Col (1- (img-width Self))) Col)
      (when (<= 0 Row (1- (img-height Self))) Row))))
-
+  
 
 (defmethod PIXEL->WORLD-COORD ((Self image-editor) Col Row)
   "Converts from pixel coordinate into OpenGL world coordinate."
@@ -698,6 +716,7 @@
    (- (canvas-height Self) (* (/ (canvas-height Self) (img-height Self)) Row))))
 
 
+(defparameter *temp* 0)
 (defmethod DRAW-SELECTION ((Self image-editor))
   "Displays the selection with marching ants effect."
   (flet ((draw-selection-outline ()
@@ -709,11 +728,20 @@
     (glEnable GL_LINE_STIPPLE)
     (glLogicOp GL_COPY)
     (glLineStipple 1 (stipple Self))
-    (glColor3f 0.0 0.0 0.0)
+    (if(equal *temp* 1)
+      (glColor3f 0.0 0.0 0.0)
+      (glColor3f 1.0 1.0 1.0))
     (draw-selection-outline)
     (glLineStipple 1 (logand #xFFFF (lognot (stipple Self))))
-    (glColor3f 1.0 1.0 1.0)
-    (draw-selection-outline)))
+    (if (equal *temp* 1)
+      
+      (glColor3f 1.0 1.0 1.0)
+      (glColor3f 0.0 0.0 0.0))
+    (if (equal *temp* 1)
+      (setf *temp* 0)
+      (setf *temp* 1))
+    (draw-selection-outline)
+    (glColor3f 1.0 1.0 1.0)))
 
 
 (defmethod DRAW-RECT-SELECTION-FEEDBACK ((Self image-editor) X1 Y1 X2 Y2)
@@ -803,7 +831,7 @@
 
 (defmethod DRAW ((Self image-editor))
   "Called when the image-editor needs to display its contents.
-   Specialized to draw texture image, selection, and feedback for selection in progress."
+  Specialized to draw texture image, selection, and feedback for selection in progress."
   (draw-background-texture Self)
   (draw-texture-image Self)
   (glDisable GL_TEXTURE_2D)
@@ -1089,9 +1117,15 @@
   (case (selected-tool (window Self))
     ;; DRAW
     (draw 
+     (unless dragged
+       (when (or (not (selection-active-p Self)) (pixel-selected-p (selection-mask Self) Col Row))
+         (execute-command (command-manager (window self)) (make-instance 'pixel-update-command :image-editor self :image-snapeshot (create-image-array self)))))
      (draw-pixel Self Col Row))
     ;; ERASE
     (erase
+     (unless dragged
+       (when (or (not (selection-active-p Self)) (pixel-selected-p (selection-mask Self) Col Row))
+         (execute-command (command-manager (window self)) (make-instance 'pixel-update-command :image-editor self :image-snapeshot (create-image-array self)))))
      (erase-pixel Self Col Row))
     ;; DROPPER
     (eye-dropper
@@ -1101,6 +1135,9 @@
                   :red (/ Red 255.0) :green (/ Green 255.0) :blue (/ Blue 255.0) :alpha (/ Alpha 255.0))))
     ;; FLOOD FILL
     (paint-bucket 
+     (unless dragged
+       (when (or (not (selection-active-p Self)) (pixel-selected-p (selection-mask Self) Col Row))
+         (execute-command (command-manager (window self)) (make-instance 'pixel-update-command :image-editor self :image-snapeshot (create-image-array self)))))
      (multiple-value-bind (New-Red New-Green New-Blue New-Alpha) (pen-color Self)
        (flood-fill Self Col Row New-Red New-Green New-Blue New-Alpha
                    :tolerance (tolerance Self) :tolerance-function #'absolute-color-difference-ignore-alpha)))
@@ -1162,6 +1199,13 @@
          (setf (selection-in-progress Self) (append (selection-in-progress Self) (list (list Col Row))))
          (display self))))))))
 
+
+(defmethod CREATE-IMAGE-ARRAY ((self image-editor))
+  (let ((image-array (make-array `(,(img-width Self) ,(img-height Self)))))
+    (dotimes (Row (img-height Self))
+      (dotimes (Col (img-width Self))
+        (setf (aref image-array col row) (get-color-at self col row)  )))
+    image-array))
 
 
 (defmethod VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER ((Self image-editor) x y)
