@@ -185,6 +185,11 @@
       (return-from selected-group-item (selected-item-name group)))))
 
 
+(defmethod GROUP-SELECTED ((Self badged-image-group-list-manager-view))
+  ;; do nothing
+  )
+
+
 (defmethod SELECT-GROUP ((Self badged-image-group-list-manager-view)group-name group-item-name)
   (if group-item-name
     (set-selected-item self group-name group-item-name)
