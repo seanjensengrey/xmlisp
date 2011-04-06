@@ -818,6 +818,8 @@
 ;;returns the order in which the windows are stacked on the mac version but in cocotron it return the order in which they were created.  It seems that this may not
 ;;be a good solution after all.  
 (defun ORDERED-WINDOW-INDEX (Window)
+  (#/orderedIndex Window))
+#|
   #-:cocotron 
   (#/orderedIndex Window)
   #+:cocotron
@@ -828,6 +830,7 @@
            (progn            
              (return-from ordered-window-index i)))))
      (return-from ordered-window-index nil)))
+|#
 #|
   #-:cocotron 
   (#/orderedIndex Window)
@@ -1213,7 +1216,7 @@
 
 
 (defmethod ENABLE ((self checkbox-control))
-  (#/setState: (Native-View self) #$NSOnState))
+  (#/setEnabled: (native-view self) #$YES))
 
 
 
@@ -1657,7 +1660,7 @@
           (#/setTitle: Native-Control (native-string (text Self)))))
       Native-Control)))
 
-
+#|
 (objc:defmethod (#/drawRect: :void) ((self native-button-image) (rect :<NSR>ect))
   (call-next-method rect)
   #+cocotron
@@ -1665,7 +1668,7 @@
     (progn
       (#/set (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color .2 .2 .2 .62))
       (#/fillRect: ns:ns-bezier-path rect))))
-
+|#
 
 (defmethod (setf text) :after (Text (Self image-button-control))
   (#/setTitle: (native-view Self) (native-string Text)))
@@ -1765,7 +1768,9 @@
 
 
 (defmethod VALUE ((self popup-button-control))
-  (ccl::lisp-string-from-nsstring (#/title (#/selectedItem (native-view self)))))
+  (if (%null-ptr-p (#/selectedItem (native-view self)))
+    nil
+    (ccl::lisp-string-from-nsstring (#/title (#/selectedItem (native-view self))))))
 
 
 (defmethod GET-SELECTED-ACTION ((Self popup-button-control))
@@ -2172,13 +2177,10 @@
 
 
 (objc:defmethod (#/textShouldEndEditing: :<BOOL>) ((self native-editable-text) Notification)
-  (print "TEXT SHOUYLD END EDITING")
   (let ((lui-view (lui-view self)))
-    (if (validate-final-text-value lui-view (value lui-view))
-      (print "OK")
+    (unless (validate-final-text-value lui-view (value lui-view)) 
       (setf (value lui-view) (text-before-edit self))))
-  (call-next-method Notification)
-  )
+  (call-next-method Notification))
 
 
 (defmethod (setf text) :after (Text (Self editable-text-control))
@@ -2619,6 +2621,15 @@
 (defun SET-ICON-OF-FILE-AT-PATH (path-to-image path-to-file)
   (#/setIcon:forFile:options: (#/sharedWorkspace ns:ns-workspace)  (#/initByReferencingFile: (#/alloc ns:ns-image) (native-string (namestring (truename path-to-image)))) (lui::native-string (namestring path-to-file)) 0  ))
 |#
+;__________________________________
+; OPEN-URL                         |
+;__________________________________/
+
+(defun OPEN-URL (url)
+  "IN: A URL in the form of a string
+  OUT: the user's default should open to the specified URL"
+  (#/openURL: (#/sharedWorkspace ns:ns-workspace) (#/URLWithString: ns:ns-url (native-string url))))
+
 ;__________________________________
 ; Show PopUp                       |
 ;__________________________________/
