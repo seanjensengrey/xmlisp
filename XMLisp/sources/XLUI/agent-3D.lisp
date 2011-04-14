@@ -147,7 +147,8 @@
     (declare (ignore Destination-View))
     (cond
      ;; drag into new agent
-     ((and Agent (not (eq Agent (source-agent Self))) (not (eq Agent (destination-agent Self))))
+     ((and Agent (not (eq Agent (source-agent Self)))  (not (eq Agent (destination-agent Self))))
+       
       (multiple-value-bind (Acceptable Need-To-Copy Explanation)
                            (could-receive-drop Agent (source-agent Self))
         (declare (ignore Explanation))
@@ -410,6 +411,8 @@
 
 
 (defmethod VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER ((Self agent-3d-view) X Y)
+  ;(grab-animation-lock)
+  ;(grab-conversation-lock)
   (let ((Agent (click-target (find-agent-at Self x y *Selection-Tolerance* *Selection-Tolerance*))))
     (cond
      ;; clicked agent
@@ -476,9 +479,12 @@
 (defmethod VIEW-LEFT-MOUSE-UP-EVENT-HANDLER ((Self agent-3d-view) X Y)
   (declare (ignore x y))
   ;; conclude drag and terminate hander
-  (when  (drag-and-drop-handler Self)
+  (when  (drag-and-drop-handler Self)  
     (conclude-drag (drag-and-drop-handler Self))
-    (setf (drag-and-drop-handler Self) nil)))
+    (setf (drag-and-drop-handler Self) nil))
+  ;(release-conversation-lock)
+  ;(release-animation-lock)
+  )
 
 
 ;; Hovering
@@ -486,6 +492,7 @@
   ;; add some delay here to avoid taxing CPU with high frequency picking
   ;; for instance: picking every 50ms would be plenty fast
   (declare (ignore dx dy))
+  
   (call-next-method)
   ;;(format t "~%hover: x=~A y=~A dx=~A dy=~A" x y dx dy)
   (let ((Agent (find-agent-at Self x y *Selection-Tolerance* *Selection-Tolerance*)))
@@ -539,8 +546,10 @@
    (is-visible :accessor is-visible :initform t :type boolean)
    (is-hovered :accessor is-hovered :initform nil :type boolean :documentation "is mouse hovering over me?")
    (is-selected :accessor is-selected :initform nil :type boolean :documentation "am I one of the selected agents?")
+   (is-annotated :accessor is-annotated :initform nil :documentation "either nil :true or :false")
    (is-drag-entered :accessor is-drag-entered :initform nil :type boolean :documentation "true if another agent is currently being dragged on my")
-   (agents :accessor agents :initform nil :initarg :agents))
+   (agents :accessor agents :initform nil :initarg :agents)
+   )
   (:documentation "Open Agent Engine agent base class"))
 
 ;_______________________________________
