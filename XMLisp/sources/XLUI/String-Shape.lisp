@@ -102,6 +102,23 @@
     (values Width Height)))
 
 
+(defun ADD-LINE-BREAKS-TO-STRING (String Font max-width)
+  "Returns the text box dimension for the given String and Font.
+   in: String {string}, Font {font}."
+  (setf String (remove #\newline string))
+  (let ( (X 0s0)(current-line-start 0)(temp-string ""))
+      (setq x 0s0)
+      (dotimes (I (length String))
+        (incf x (width (get-glyph Font (char String i))))
+        ;(format t "~% i = ~A max-width = ~A Width-thing = ~A" i max-width (+ x (width (get-glyph Font (char String (+ i 1))))))
+        (when (>= (if (> (+ i 1) (length string)) (+ x (width (get-glyph Font (char String (+ i 1))))) x) max-Width) 
+          (setf temp-string  (format nil "~A~A~%" temp-string (subseq string current-line-start I)));(concatenate 'string temp-string (subseq string current-line-start I) " NEWLINE ")) 
+          (setf current-line-start I)
+          (setf x 0s0))
+        (when (equal I (- (length String) 1))
+          (setf temp-string (concatenate 'string temp-string (subseq string current-line-start ) ))))
+    temp-string))
+
 
 ;;;---------------------
 ;;; String-Shape Class |
@@ -281,6 +298,8 @@
 ;__________________________
 
 (defmethod DISPLAY-VERTEX-ARRAYS ((Self string-shape))
+  (let ((newline-count (newlines-count (str self))))
+    (glTranslatef 0.0 (* newline-count .15) 0.0))
   (glEnable gl_texture_2d)
   (cond
    ;; Color!
