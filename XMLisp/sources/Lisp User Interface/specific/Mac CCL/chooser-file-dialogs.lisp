@@ -148,9 +148,6 @@
          ;(values (#/values dc))
 	 ;(key #@"cclDirectory")
          )
-    (print "WIDTH/HEIGHT")
-    (print (NS:NS-RECT-WIDTH (#/frame panel)))
-    (print (NS:NS-RECT-HEIGHT (#/frame panel)))
     ;; Kind of nasty code just to change the title of the cancel button, need to go through two layers of subviews to find the button and change its title.  
     (if cancel-button-string
       (let ((subviews (gui::list-from-ns-array (#/subviews (#/contentView panel)))))
@@ -210,9 +207,6 @@
                 (if (equal (type-of subview2) 'NS:NS-BUTTON )
                   (if (equal (#/title subview2) (native-string "Cancel"))
                     (#/setTitle: subview2 (native-string cancel-button-string))))))))))
-    ;    (print "WIDTH/HEIGHT")
-    ;    (print (NS:NS-RECT-WIDTH (#/frame panel)))
-    ;   (print (NS:NS-RECT-HEIGHT (#/frame panel)))
     (when button-string
       (setf button-string (ccl::%make-nsstring button-string))
       (#/setPrompt: panel button-string))
@@ -222,21 +216,31 @@
     (when prompt
       (setf prompt (ccl::%make-nsstring prompt))
       (#/setMessage: panel  prompt))
-    (#/setCanChooseDirectories: panel nil)
-    (#/setCanChooseFiles: panel nil)
+    #-cocotron
+    (#/setCanChooseDirectories: panel #$YES)
+    ;(#/setCanChooseFiles: panel nil)
     ;(#/setNameFieldLabel: panel (native-string "hello:"))
-    
+    (#/setDirectory: panel (native-string directory))
     (#/setFrameOrigin: panel window-position)
     ;#-cocotron (#/setAllowedFileTypes:  panel (#/arrayWithObject: ns:ns-array (native-string "lisp")))
     ; #-cocotron (#/makeKeyAndOrderFront: panel +null-ptr+)
     ;(#/makeKeyWindow panel)
     #-cocotron (#/orderFront: panel +null-ptr+)
+    #|
     (when (eql (#/runModalForDirectory:file:types: panel
 						   (native-string directory)
 						   +null-ptr+
 						   file-types)
 	       #$NSOKButton)
-      (make-pathname :directory (ccl::lisp-string-from-nsstring (#/objectAtIndex: (#/filenames Panel) 0))))))
+    |#
+    (#/runModal  panel)
+    (if (equal (#/filename Panel) +null-ptr+)
+      nil
+      (progn
+        #+cocotron
+        (concatenate 'string (ccl::lisp-string-from-nsstring (#/filename Panel)) "\\")
+        #-cocotron
+         (concatenate 'string (ccl::lisp-string-from-nsstring (#/filename Panel)) "/")))))
 
 
 #| Examples:
