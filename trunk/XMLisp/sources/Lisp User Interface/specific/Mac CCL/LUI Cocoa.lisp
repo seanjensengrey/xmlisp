@@ -897,9 +897,6 @@
 
 (objc:defmethod (#/rightMouseDown: :void) ((self native-window-view) event)
   (declare (ignore event))
-  (print "++RIGHT MOUSE DOWN"))
-
-#|
   (let ((mouse-loc (#/locationInWindow event)))
     (view-event-handler (lui-window Self) 
                         (make-instance 'mouse-event
@@ -907,7 +904,7 @@
                           :y (truncate (- (height (lui-window Self)) (pref mouse-loc :<NSP>oint.y)))
                           :event-type (native-to-lui-event-type (#/type event))
                           :native-event Event))))
-|#
+
 
 (objc:defmethod (#/mouseUp: :void) ((self native-window-view) event)
   (let ((mouse-loc (#/locationInWindow event)))
