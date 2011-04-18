@@ -121,24 +121,26 @@
         (let ((View-to-Share (or (and (use-global-glcontext Self) (shared-opengl-view))
                                  (share-glcontext-of Self))))
           (when View-to-Share
-            #-cocotron
             (let ((glContext 
                    (#/initWithFormat:shareContext: 
-                    (#/openGLContext Native-Control)
-                    Pixel-Format ;; redundant but should be OK
+                    (#/alloc ns:ns-opengl-context);(#/openGLContext Native-Control)
+                    (#/pixelFormat native-control) ;; redundant but should be OK
                     (#/openGLContext (native-view View-to-Share)))))
-              (unless glContext (error "cannot share OpenGLContext of view ~A" View-to-Share)))))
+              (unless glContext (error "cannot share OpenGLContext of view ~A" View-to-Share))
+              (#/setOpenGLContext: native-control glContext)
+              )))
         (#/release Pixel-Format)
         Native-Control))))
 
-
+#|
 #+cocotron  
 (defmethod SHARE-TEXTURE-FOR-WINDOWS ((Self opengl-view))
   ;; Nasty hack: for windows we need to access the win32 opengl context not the Cocotron one
+  (print "SHARE TEXTURE FOR WINDOWS")
   (let ((Native-GLContext-Offset 36))
     (#_wglShareLists (%get-ptr (#/CGLContextObj (#/openGLContext (native-view (shared-opengl-view)))) Native-GLContext-Offset)
                      (%get-ptr (#/CGLContextObj (#/openGLContext (native-view self))) Native-GLContext-Offset))))
-
+|#
 
 (defmethod DISPLAY ((Self opengl-view))  
   (with-glcontext Self
@@ -454,6 +456,13 @@
 
 
 (objc:defmethod (#/rightMouseDown: :void) ((self native-opengl-view) event)
+  (let ((mouse-loc (#/locationInWindow event)))
+    (view-event-handler (window (lui-view Self)) 
+                        (make-instance 'mouse-event
+                          :x (truncate (pref mouse-loc :<NSP>oint.x))
+                          :y (truncate (- (height (window (lui-view Self))) (pref mouse-loc :<NSP>oint.y)))
+                          :event-type (native-to-lui-event-type (#/type event))
+                          :native-event Event)))
   (when (#/isInFullScreenMode self)
     (when *full-screen-proxy-window*
       (#/release (native-window *full-screen-proxy-window*)))
