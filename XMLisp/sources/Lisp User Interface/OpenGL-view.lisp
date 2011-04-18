@@ -131,12 +131,12 @@
   (glVertex3f 0.2 -0.3 0.0)
   (glEnd))
 
-
+#|
 #+cocotron
 (defmethod PREPARE-OPENGL :after ((Self opengl-view))
   (when  (use-global-glcontext self)
     (share-texture-for-windows self)))
-
+|#
 
 
 (defmethod PREPARE-OPENGL ((Self opengl-view))
@@ -154,13 +154,14 @@
 
 
 (defmethod OBJECT-COORDINATE-VIEW-WIDTH ((Self opengl-view))
-  (float (* (/ (width Self) (height Self)) (object-coordinate-view-height self)) 0.0))
+  (float (* (aspect (camera self)) (object-coordinate-view-height self)) 0.0))
 
       
 (defmethod OBJECT-COORDINATE-VIEW-HEIGHT ((Self opengl-view))
-  (float (* (tan (/ (* (/ (float (fovy (camera self))) 2) pi) 180)) (float (eye-z (camera self))) 2) 0.0))
+  (float (* (tan (/ (* (/  (fovy (camera self)) 2) pi) 180)) (float (eye-z (camera self))) 2) 0.0))
 
 
+            
 (defmethod MOUSE-ENTERED ((Self opengl-view))
   ; do nothing
   )
