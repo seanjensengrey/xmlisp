@@ -1137,7 +1137,8 @@
       (setf (text Text-View) (format nil "~A" 0.0))
       (display Text-View))
     (clear-selection (view-named window 'icon-editor))
-    (display (view-named window 'model-editor))
+    (unless do-not-display
+        (display-with-force Model-Editor))
     ))
 
 
