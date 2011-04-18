@@ -374,7 +374,7 @@
      (if (full-screen (lui-view self)) *full-screen-proxy-window*  (window (lui-view Self))) 
      (make-instance 'mouse-event
        :x (truncate (pref mouse-loc :<NSP>oint.x))
-       :y (truncate (- (height   (if (#/isInFullScreenMode self) *full-screen-proxy-window* (window (lui-view Self)) )  ) (pref mouse-loc :<NSP>oint.y)))
+       :y (truncate (- (height   #-cocotron(if (#/isInFullScreenMode self) *full-screen-proxy-window* (window (lui-view Self)) ) #+cocotron (window (lui-view Self)) ) (pref mouse-loc :<NSP>oint.y)))
        :event-type (native-to-lui-event-type (#/type event))
        :native-event Event)))
   (set-cursor (view-cursor (lui-view self) 0 0)))
@@ -397,7 +397,7 @@
      (if (full-screen (lui-view self)) *full-screen-proxy-window*  (window (lui-view Self))) 
      (make-instance 'mouse-event
        :x (truncate (pref mouse-loc :<NSP>oint.x))
-       :y (truncate (- (height   (if (#/isInFullScreenMode self) *full-screen-proxy-window* (window (lui-view Self)) )  ) (pref mouse-loc :<NSP>oint.y)))
+       :y (truncate (- (height   #-cocotron (if (#/isInFullScreenMode self) *full-screen-proxy-window* (window (lui-view Self)) ) #+cocotron (window (lui-view Self)) ) (pref mouse-loc :<NSP>oint.y)))
        :event-type (native-to-lui-event-type (#/type event))
        :native-event Event))))
 
@@ -422,7 +422,7 @@
     (view-event-handler (if (full-screen (lui-view self)) *full-screen-proxy-window*  (window (lui-view Self))) 
                         (make-instance 'mouse-event
                           :x (truncate (pref mouse-loc :<NSP>oint.x))
-                          :y (truncate (- (height   (if (#/isInFullScreenMode self) *full-screen-proxy-window* (window (lui-view Self)) )  ) (pref mouse-loc :<NSP>oint.y)))
+                          :y (truncate (- (height   #-cocotron (if (#/isInFullScreenMode self) *full-screen-proxy-window* (window (lui-view Self)) ) #+cocotron (window (lui-view Self))  ) (pref mouse-loc :<NSP>oint.y)))
                           :dx (truncate (#/deltaX Event))
                           :dy (truncate (#/deltaY Event))
                           :event-type (native-to-lui-event-type (#/type event))
@@ -447,7 +447,7 @@
        (if (full-screen (lui-view self)) *full-screen-proxy-window*  (window (lui-view Self))) 
        (make-instance 'mouse-event
          :x (truncate (pref mouse-loc :<NSP>oint.x))
-         :y (truncate (- (height  (if (#/isInFullScreenMode self) *full-screen-proxy-window* (window (lui-view Self)) )  ) (pref mouse-loc :<NSP>oint.y)))
+         :y (truncate (- (height  #-cocotron (if (#/isInFullScreenMode self) *full-screen-proxy-window* (window (lui-view Self)) ) #+cocotron (window (lui-view Self))  ) (pref mouse-loc :<NSP>oint.y)))
          :event-type (native-to-lui-event-type (#/type event))
          :native-event Event))))
  
@@ -463,6 +463,7 @@
                           :y (truncate (- (height (window (lui-view Self))) (pref mouse-loc :<NSP>oint.y)))
                           :event-type (native-to-lui-event-type (#/type event))
                           :native-event Event)))
+  #-cocotron
   (when (#/isInFullScreenMode self)
     (when *full-screen-proxy-window*
       (#/release (native-window *full-screen-proxy-window*)))
