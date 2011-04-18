@@ -820,8 +820,9 @@
       (dolist (group (groups self))
         (setf (selected-item-name group) nil) 
         (if (equal (String-capitalize group-name) (String-capitalize (group-name group)))
-          (progn   
-            (group-selected self)
+          (progn  
+            
+            ;(group-selected self)
             (setf (selected-item-name group) nil )
             (if (item-selection-view group)
               (#/setHidden: (item-selection-view group) #$YES))
@@ -852,7 +853,9 @@
             (#/setHidden: (selection-view group) #$YES)
             (#/setNeedsDisplay: (selection-view group) #$YES)))))
     (unless (equal (string-capitalize previously-selected-group-name)  (string-capitalize (selected-group self)))
-      (selected-group-changed self )))
+      
+      (selected-group-changed self )
+      (group-selected self)))
   (layout-changed self))
 
 
