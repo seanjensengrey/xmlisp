@@ -230,6 +230,7 @@
   Expand <Formula> by subsituting 
   - attribute names with attibute access forms
   - array accesses with agent accesses."
+
   (cond
    ((symbolp Formula)
     (if (is-global-variable Formula)
@@ -249,9 +250,12 @@
    ((and (symbolp (first Formula)) (eq (first Formula) 'aref))
     `(or ,(expand-vat-formula-aref Formula) 0))
    (t 
-    (cons 
-     (first Formula)
-     (mapcar #'expand-vat-formula (rest Formula))))))
+    (if (fboundp (first formula))
+      ;; If the function does not exist just return 0.0
+      (cons 
+       (first Formula)
+       (mapcar #'expand-vat-formula (rest Formula)))
+      0.0))))
 
 
 (defmethod EXPAND ((Self string))
