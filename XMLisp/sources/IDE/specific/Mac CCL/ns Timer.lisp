@@ -51,9 +51,54 @@
        ((> E -9) (format S "~6,2F ns" (* Time 1e9)))
        (t (format S "~E seconds" Time))))))
 
+(defparameter *animation-time* nil)
+(defun GET-ANIMATION-TIME ()
+  (or *animation-time*
+      (setf *animation-time* 0.0)))
 
-;;; Hemlock Binding
+(defun DELTA-TIME2 () "
+  Return time in seconds passed since last animation."
+  #+:X8632-target (declare (optimize (safety 2))) ;; avoid 2^32 nano second time warps in CCL 32bit
+  #-windows-target
+  (let ((Time (#_mach_absolute_time)))
+    (prog1
+        (if (zerop (get-animation-time))
+          0.0                           ;First time through
+          (float (* 0.000000001
+                    (- Time (get-animation-time))
+                    #.(ccl::rlet ((info #>mach_timebase_info))
+                        (#_mach_timebase_info info)
+                        (/ (ccl::pref info #>mach_timebase_info.numer)
+                           (ccl::pref info #>mach_timebase_info.denom))))))
+      (setf *animation-time* Time)
+      ))
+  #+windows-target
+  (let ((Time (rlet ((now #>FILETIME))
+                ;; this Win32 timer function is no good: typically 10ms or worse resolution!
+                ;; consider using QueryPerformanceCounterrad http://www.devsource.com/c/a/Techniques/High-Performance-Timing-under-Windows/1/
+		(#_GetSystemTimeAsFileTime now)
+		(dpb (pref now #>FILETIME.dwHighDateTime)
+		     (byte 32 32)
+		     (pref now #>FILETIME.dwLowDateTime)))))
+    (prog1
+	(if (zerop (get-animation-time))
+          0.0                           ;First time through
+          (float (* 0.0000001 (- Time (get-animation-time)))))
+      (setf *animation-time* Time)
+      )))
 
+(defmacro TIME-TO-RUN2 (&body Form)
+;;; Hemlock Bindings
+  `(locally (declare (optimize (speed 3) (safety 0)))
+     (ccl::without-interrupts
+      (let ((t1 (delta-time2))
+            (t2 nil))
+        ,@Form
+        (setf t2 (delta-time2))
+        (* 1000000000 (max t2 0))
+        )
+      )))
+     
 (defun benchmark-region (region)
   (message 
    (let ((*Package* (buffer-package (current-buffer))))  ;; not implemented yet
