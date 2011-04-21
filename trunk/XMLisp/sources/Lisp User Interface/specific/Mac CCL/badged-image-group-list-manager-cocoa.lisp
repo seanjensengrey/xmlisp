@@ -865,14 +865,17 @@
 
 (defmethod SET-SELECTED-ITEM ((Self badged-image-group-list-manager-view) group-name item-name)
   (setf item-name (string-capitalize item-name))
+  (when (and group-name (not (get-group-with-name self group-name)))
+    (progn       
+      (group-deselected self)))
   (let ((i 1)
         (previously-selected-group-name  (selected-group self)))
     (unless (equal (selected-group self) group-name)
-      (selected-group-changed self ))
+      (selected-group-changed self ))   
     (dolist (group (groups self))    
       (setf (is-selected group) nil)
       (setf (is-highlighted group) nil)
-      (if (equal group-name (group-name group))
+      (if (equal (String-capitalize group-name) (string-capitalize (group-name group)))
         (progn 
           (dolist (item (group-items group))
             (if (equal (String-capitalize item-name) (string-capitalize (item-name item)))
@@ -899,7 +902,8 @@
               (#/setNeedsDisplay: (item-selection-view group) #$YES)))))
       (incf i))
     (unless (equal previously-selected-group-name  (selected-group self))
-      (selected-group-changed self )))
+      (selected-group-changed self )
+      (group-selected self)))
   (layout-changed self)
   (layout (native-view self)))
 
