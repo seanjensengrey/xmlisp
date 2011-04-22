@@ -24,6 +24,7 @@
     <play-sound/>
     <stop-all-sounds/>
     <say/>
+    <print/>
   </category>
   <category title="attributes" disclosed="true">
     <set/>
