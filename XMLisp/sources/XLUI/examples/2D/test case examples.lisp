@@ -414,19 +414,7 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
   </canvas>
 </application-window>
 
-
-
-
-;;********************************************
-;;*  Attribute Editor                         *
-;;********************************************
-
-<application-window title="scrolling" margin="0">
-  <attribute-editor text="1" attribute-changed-action="attribute-changed"/>
-</application-window> 
-
-(defmethod attribute-changed ((Self window) (window window) )
-  (print "ATRIBUTE CHANGED!!!!!!"))
+attribute-editor
 
  ;;********************************************
 ;;*          SCROLLER                        *
