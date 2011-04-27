@@ -329,7 +329,7 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
 
 (defmethod POP-UP-IMAGE-MENU-AND-DISPLAY ((Window application-window) (Button button))
   (setf (text (view-named Window "direction"))
-        (display-pop-up-menu (make-instance 'direction-pop-up-image-menu))))
+        (display-pop-up-menu (make-instance 'direction-pop-up-image-menu) :x (+ (/ (width button) 2) (x window) (x button)) :y (+ (y window) (y button)))))
                        
 
 <application-window title="DIRECTION-POP-UP-IMAGE-MENU" width="300" height="100">
