@@ -493,7 +493,7 @@ Call with most important parameters. Make other paramters accessible through *Cu
    (do-show-immediately :accessor do-show-immediately :initarg :do-show-immediately :initform t :documentation "if true will show window when creating instance")
    (native-window :accessor native-window :initform nil :documentation "native OS window object")
    (native-view :accessor native-view :initform nil :documentation "native OS view object")
-   (min-height :allocation :class :accessor min-height :initarg :min-height :initform 300 :documentation "The minimum height allowed for this class of window")
+   (min-height :allocation :class :accessor min-height :initarg :min-height :initform 100 :documentation "The minimum height allowed for this class of window")
    (min-width :allocation :class :accessor min-width   :initarg :min-width :initform 100 :documentation "The minimum width allowed for this class of window"))
   (:documentation "a window that can contain views, coordinate system: topleft = 0, 0")
   (:default-initargs 
@@ -854,8 +854,8 @@ after any of the window controls calls stop-modal close window and return value.
 (defmethod WINDOW-WILL-CLOSE ((Self window) Notification)
   (declare (ignore Notification))
   (when (and (subviews self) (first (subviews self)) )
-  (dolist (subview (subviews (first (subviews self))))
-    (window-of-view-will-close subview)))
+    (dolist (subview (subviews (first (subviews self))))
+      (window-of-view-will-close subview)))
   
   ;;Do nothing, override this method if you need to do any cleanup when the window closes.
   )
@@ -921,7 +921,8 @@ after any of the window controls calls stop-modal close window and return value.
 
 
 (defmethod control-default-action ((Window window) (Target Control))
-  (format t "~%control default action: window=~A, target=~A" Window Target))
+  ;(format t "~%control default action: window=~A, target=~A" Window Target)
+  )
 
 
 (defmethod control-default-action ((Window null) (Target Control))
