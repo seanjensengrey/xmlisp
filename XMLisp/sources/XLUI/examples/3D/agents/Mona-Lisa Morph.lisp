@@ -35,7 +35,8 @@
 
 (defmethod ADJUST-EMOTION-ACTION ((Window morph-window) (Slider slider))
   (setf (text (view-named Window "happy label")) (format nil "~,1F [haha]" (value Slider)))
-  (set-morph-variable-value Window 'happiness (value Slider)))
+  (set-morph-variable-value Window 'happiness (value Slider))
+  (display (view-named Window "mona lisa")))
 
 ;; GUI: notice, some vertex definitions of the morph include equations, e.g. "0.520 + 0.0003 * happiness"
 
