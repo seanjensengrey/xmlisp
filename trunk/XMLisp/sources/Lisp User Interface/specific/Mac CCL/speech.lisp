@@ -169,3 +169,6 @@
 
 |#
 )
+#+cocotron
+(defmethod SPEAK ((Text string) &optional Voice Synthesizer )
+  (print Text))
