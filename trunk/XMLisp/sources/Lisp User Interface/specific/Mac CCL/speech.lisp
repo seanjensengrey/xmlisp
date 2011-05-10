@@ -81,9 +81,7 @@
            (with-lock-grabbed (*Speech-Lock*)
              (unless Synthesizer
                (unless *Default-Synthesizer* 
-                 (if synthesizer-type
-                   (setf *Default-Synthesizer* (make-instance synthesizer-type))
-                   (setf *Default-Synthesizer* (make-instance 'synthesizer)))
+                 (setf *Default-Synthesizer* (make-instance 'synthesizer))
                  (setf (native-synthesizer *Default-Synthesizer*) (make-instance 'native-synthesizer :lui-synthesizer *Default-Synthesizer*)))
                (setq Synthesizer *Default-Synthesizer*))
              (cond
