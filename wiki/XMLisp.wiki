@@ -1,4 +1,3 @@
-#labels Featured
 =Windows Issues: =
   ==Example Specific Issues:==
     ===Game of Life:===
@@ -18,3 +17,5 @@
     Resizing windows can be very problematic on the Windows version of XMLISP.  There are still some threading issues with Cocotron that can cause XMLISP to crash when you resize any of the Windows.  
     ===Exit Errors:===
     Sometimes when you close the listener the console will report an error.  Most of the time the console will just instruct you to press any ket to exit, but sometimes you will get a hard  crash and a register dump.  If the hard crash occurs you can try to type :q to quit but you may have to execute an "End Task" on the XMLISP process.  
+    ===File Chooser Can Cause Crash:===
+    Sometimes XMLISP Windows will crash after trying to open a file with the file chooser.  This normally only happens after the user has executed an example (this has a similar cause to the window resizing issue and is also related to some operations that are not thread safe in Cocotron).  
