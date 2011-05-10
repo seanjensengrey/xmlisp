@@ -1,13 +1,11 @@
-#XMLisp is a rich media Common Lisp environment.
-
-= Introduction =
-
-Add your content here.
-
-
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+#labels Featured
+=Windows Issues: =
+  ==Example Specific Issues:==
+    ===Game of Life:===
+    In this example we get some drawing artifacts the second time the example is opened.  When you first load the example everything, is fine, but if you were to execute all the code a second time, the example will load with strange horizontal grey lines.
+    ===Circle:===
+    In this example we get some drawing artifacts the second time the example is opened.  When you first load the example everything, is fine, but if you were to execute all the code a second time, the example will load with strange horizontal grey lines.
+    ===GLSL OpenGL Blue Shader:===
+    In this example we get some drawing artifacts the second time the example is opened.  When you first load the example everything, is fine, but if you were to execute all the code a second time, the example will load with strange horizontal grey lines.
+    ===Who is Talking:===
+    Cocoa's speach synthesis is not supported on the PC so instead of the objects speaking with voice synthesis their speech is forwarded to the console.  
