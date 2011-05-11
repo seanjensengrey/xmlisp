@@ -498,6 +498,7 @@
 #| 
 
 (build-xmlisp)
+(xlui::project-chooser)
 
 |#
 
