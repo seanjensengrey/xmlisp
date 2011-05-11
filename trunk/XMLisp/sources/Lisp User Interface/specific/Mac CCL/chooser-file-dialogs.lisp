@@ -27,7 +27,8 @@
 	 ;(dc (#/sharedUserDefaultsController ns:ns-user-defaults-controller))
          ;(values (#/values dc))
 	 ;(key #@"cclDirectory")
-         (file-types +null-ptr+))
+         (file-types +null-ptr+)
+         )
     ;; Kind of nasty code just to change the title of the cancel button, need to go through two layers of subviews to find the button and change its title.  
     (if cancel-button-string
       (let ((subviews (gui::list-from-ns-array (#/subviews (#/contentView panel)))))
@@ -196,7 +197,8 @@
 	 ;(dc (#/sharedUserDefaultsController ns:ns-user-defaults-controller))
          ;(values (#/values dc))
 	 ;(key #@"cclDirectory")
-         (file-types +null-ptr+))
+         ;(file-types +null-ptr+)
+         )
     ;; Kind of nasty code just to change the title of the cancel button, need to go through two layers of subviews to find the button and change its title.  
     (if cancel-button-string
       (let ((subviews (gui::list-from-ns-array (#/subviews (#/contentView panel)))))
