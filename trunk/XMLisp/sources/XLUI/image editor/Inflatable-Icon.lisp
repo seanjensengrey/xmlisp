@@ -55,6 +55,7 @@
    (image :accessor image :initform nil :initarg image :documentation "RGBA image")
    (noise-map :accessor noise-map :initform nil :documentation "a 2d map with noise values")
    (altitudes :accessor altitudes :type array)
+   (colors :accessor colors  :type string)
    (distance :accessor distance :initform 0.0 :initarg :distance :documentation "distance between mirrored surfaces")
    (connectors :accessor connectors :initform nil :documentation "connectors are polygons connecting inner and outer edges of the symetric sides")
    (visible-alpha-threshold :accessor visible-alpha-threshold :initform 64 :allocation :class :documentation "8 bit alpha value used as visible/invisible threshold")
@@ -87,7 +88,7 @@
 ;********************************************************
 
 (defmethod PRINT-SLOTS ((Self inflatable-icon))  
-  `(icon rows columns depth pressure ceiling-value smooth steps noise max-value is-upright surfaces altitudes distance dz is-flat ))
+  `(icon rows columns depth pressure ceiling-value smooth steps noise max-value is-upright surfaces altitudes  #| colors |#  distance dz is-flat ))
 
 
 (defmethod FINISHED-READING :after ((Self inflatable-icon) Stream)
