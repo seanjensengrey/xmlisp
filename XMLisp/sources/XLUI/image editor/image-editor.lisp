@@ -1114,6 +1114,7 @@
 ;_______________________________/
 
 (defmethod CLICK-OR-DRAG-PIXEL ((Self image-editor) Col Row Dragged)
+  (declare (ftype function command-manager execute-command))
   (case (selected-tool (window Self))
     ;; DRAW
     (draw 
