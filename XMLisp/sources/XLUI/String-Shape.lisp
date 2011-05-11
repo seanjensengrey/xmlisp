@@ -298,13 +298,12 @@
 ;__________________________
 
 (defmethod DISPLAY-VERTEX-ARRAYS ((Self string-shape))
-  (let ((newline-count (newlines-count (str self))))
-    (glTranslatef 0.0 (* newline-count .15) 0.0))
-  (glEnable gl_texture_2d)
+  (glTranslatef 0.0 (* (newlines-count (str self)) .15) 0.0)
+  (glEnable GL_TEXTURE_2D)
   (cond
    ;; Color!
    ((color-vector Self)
-    (glcolor3ubv (color-vector Self))
+    (glColor3ubv (color-vector Self))
     (gltexenvi gl_texture_env gl_texture_env_mode gl_blend))
    ;; Black
    (t 
