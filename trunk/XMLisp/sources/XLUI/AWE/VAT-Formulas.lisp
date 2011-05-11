@@ -62,10 +62,11 @@
   (let ((Name-String (format nil "~A" (string-capitalize Name))))
     (if (property-exists-p Name)
       (set-property-value (simulation-properties *Project-Manager*) Name-String Value)
-      (cond ((standard-alert-dialog (format nil "The simulation property '~A' does not exist. Do you want to add it to the Simulation Properties?" Name)
+      (cond (t
+             #|(standard-alert-dialog (format nil "The simulation property '~A' does not exist. Do you want to add it to the Simulation Properties?" Name)
                                     :yes-text "Yes"
                                     :no-text "No"
-                                    :cancel-text nil)
+                                    :cancel-text nil)|#
              ;; first time ever a simulation property gets created and no simulation property editor exists yet => create one
              (unless (simulation-properties *Project-Manager*)
                (setf (simulation-properties *Project-Manager*) (make-instance 'simulation-properties)))
@@ -76,7 +77,7 @@
                            :type "number" 
                            :interface "editable-number")
              (set-property-value (simulation-properties *Project-Manager*) Name-String Value))
-            (t (stop-simulation (project-window *Project-Manager*)))))))
+            (nil (stop-simulation (project-window *Project-Manager*)))))))
 
 
 (defun PROPERTY-EXISTS-P (Name) "
@@ -116,7 +117,7 @@
     (string 
      (ignore-errors
       (values (read-from-string (concatenate 'string "#{" Object "$")))))
-    (t (error "Cannot understand Ò~AÓ in Visual AgenTalk formula" Object))))
+    (t (error "Cannot understand ~A in Visual AgenTalk formula" Object))))
 
 ;_________________________________________
 ;  Validation                             |
