@@ -93,6 +93,7 @@
 
 
 (defmethod KEY-EVENT-HANDLER ((Self inflatable-icon-editor-window) Event)
+  (declare (ftype function redo-command undo-command))
   (let ((Icon-Editor (view-named Self 'icon-editor))
         (Inflatable-Icon (inflatable-icon (or (view-named (window self) 'model-editor) (error "model editor missing")))))
   (cond
@@ -612,7 +613,7 @@
         (glEnable GL_DEPTH_TEST) 
         (glColor4f 1.0 1.0 1.0 1.0)))))
 
-  
+
 (defun DRAW-CEILING-QUAD (ceiling-transparency ceiling-height)
   (glColor4f .5 .7 1.0 ceiling-transparency )
   (glbegin gl_quads)
@@ -657,6 +658,7 @@
      ;(unless (is-animated Self) (display Self))
      )
     (t
+     
      (track-mouse-3d (camera Self) Self dx dy)))
   (unless (is-animated Self) (display Self)))
 
@@ -797,6 +799,7 @@
 
 (defmethod MIRROR-NONE-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
+  (declare (ftype function execute-command))
   (unless (and  (not (is-vertical-line-on (view-named window 'icon-editor))) (not (is-vertical-line-on (view-named window 'icon-editor))))
     (execute-command (command-manager window) (make-instance 'mirror-changed-command :window window :mirror-state (get-mirror-state window) :image-editor (view-named window 'icon-editor) :image-snapeshot (create-image-array (view-named window 'icon-editor)))))
   (toggle-mirror-lines (view-named Window 'icon-editor) nil nil)
@@ -805,6 +808,7 @@
 
 (defmethod MIRROR-VERTICALLY-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
+  (declare (ftype function execute-command))
   (unless (and (not (is-horizontal-line-on (view-named window 'icon-editor))) (is-vertical-line-on (view-named window 'icon-editor)))
     (execute-command (command-manager window) (make-instance 'mirror-changed-command :window window :mirror-state (get-mirror-state window) :image-editor (view-named window 'icon-editor) :image-snapeshot (create-image-array (view-named window 'icon-editor)))))
   (toggle-mirror-lines (view-named Window'icon-editor) nil t)
@@ -813,6 +817,7 @@
 
 (defmethod MIRROR-HORIZONTALLY-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
+  (declare (ftype function execute-command))
   (unless (and  (is-horizontal-line-on (view-named window 'icon-editor)) (not (is-vertical-line-on (view-named window 'icon-editor))))
     (execute-command (command-manager window) (make-instance 'mirror-changed-command :window window :mirror-state (get-mirror-state window) :image-editor (view-named window 'icon-editor) :image-snapeshot (create-image-array (view-named window 'icon-editor)))))
   (toggle-mirror-lines (view-named Window 'icon-editor) t nil)
@@ -821,6 +826,7 @@
 
 (defmethod MIRROR-BOTH-ACTION ((Window inflatable-icon-editor-window) Button)
   (declare (ignore Button))
+  (declare (ftype function execute-command))
   (unless (and  (is-horizontal-line-on (view-named window 'icon-editor)) (is-vertical-line-on (view-named window 'icon-editor)))
     (execute-command (command-manager window) (make-instance 'mirror-changed-command :window window :mirror-state (get-mirror-state window) :image-editor (view-named window 'icon-editor) :image-snapeshot (create-image-array (view-named window 'icon-editor)))))
   (toggle-mirror-lines (view-named Window 'icon-editor) t t)
@@ -1076,8 +1082,11 @@
                                            (3 GL_RGB)
                                            (4 GL_RGBA))
                          GL_UNSIGNED_BYTE &image)
+          #|
           (lui::apply-button-pressed (container window) Window :applied-image (print (lui::get-image-as-data &image 
-                               (img-width icon-editor) (img-height icon-editor) :depth (truncate (img-depth icon-editor) 8)))))))
+                               (img-width icon-editor) (img-height icon-editor) :depth (truncate (img-depth icon-editor) 8))))
+          |#
+          )))
     ;; save
     (when (destination-inflatable-icon Window)
       ;; (format t "~%copy into icon")
@@ -1097,6 +1106,7 @@
 
 
 (defmethod CLEAR-ACTION ((Window inflatable-icon-editor-window) (Button button))
+  (declare (ftype function execute-command))
   (execute-command (command-manager window) (make-instance 'pixel-update-command :image-editor (view-named window 'icon-editor) :image-snapeshot (create-image-array (view-named window 'icon-editor))))
   (erase-all (view-named window 'icon-editor))
   (let* ((Model-Editor (or (view-named window 'model-editor) (error "model editor missing")))
@@ -1137,18 +1147,45 @@
       (setf (text Text-View) (format nil "~A" 0.0))
       (display Text-View))
     (clear-selection (view-named window 'icon-editor))
-    (unless do-not-display
-        (display-with-force Model-Editor))
+    (display-with-force Model-Editor)
     ))
 
 
 (defmethod EDIT-ICON-SAVE-ACTION ((Window inflatable-icon-editor-window) (Button button))
-  (declare (ftype function project-window display-world project-manager-reference save shape lui::save-button-pressed lui::apply-button-pressed))  ;; this file is in the wrong place: should move into AgentCubes
+  (declare (ftype function shape project-window display-world project-manager-reference save shape lui::save-button-pressed lui::apply-button-pressed))  ;; this file is in the wrong place: should move into AgentCubes
   ;; finalize geometry
   (compute-depth (inflatable-icon (view-named Window 'model-editor)))
+
   (window-save Window)
   (let ((shape-manager (load-object (make-pathname :name "index" :type "shape"  :directory (pathname-directory (file window))):package (find-package :xlui)))
         (Model-Editor (view-named Window 'model-editor)))
+    
+    (let ((image-editor (view-named window 'icon-editor))
+          (colors #|(make-array (list (Rows (inflatable-icon Model-Editor)) (Columns (inflatable-icon Model-Editor))) 
+                              ;:element-type 'short-float
+                              :initial-element 00)|#""
+                  ))
+      
+      (dotimes (Column  (Columns (inflatable-icon Model-Editor)))
+        (dotimes (Row  (Rows (inflatable-icon Model-Editor)))
+          (multiple-value-bind (red green blue alpha)
+                               (get-rgba-color-at  image-editor  (- 31 column) row)                   
+            
+            
+            (setf colors (concatenate 'string colors (if (equal red 0) "00" (write-to-string red :base 16))))
+            (setf colors (concatenate 'string colors (if (equal green 0) "00" (write-to-string green :base 16))))
+            (setf colors (concatenate 'string colors (if (equal blue 0) "00" (write-to-string blue :base 16))))
+            (setf colors (concatenate 'string colors (if (equal alpha 0) "00" (write-to-string alpha :base 16))))
+            ;(setf colors (concatenate 'string colors " "))
+            
+          )
+          )
+        ;(setf colors (concatenate 'string colors (string #\newline)))
+        )
+        ;(print colors)
+      (setf (colors (inflatable-icon Model-Editor)) colors))
+    (window-save Window)
+    
     (setf (shape shape-manager) (inflatable-icon Model-Editor)) 
     (save shape-manager))
   (let ((Model-Editor (view-named Window 'model-editor)))
