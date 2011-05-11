@@ -950,6 +950,7 @@
   (catch :mouse-info-access-error
     (handler-bind
         ((condition #'(lambda (Condition)
+                        (declare (ignore Condition))
                         ;; could be an NS-ERROR caused by the mouse not supporting the creation of an event with a deviceDeltaX
                         (throw :mouse-info-access-error (* (objc:objc-message-send Event "deltaX" #>CGFloat) 10)))))
       (objc:objc-message-send Event "deviceDeltaX" #>CGFloat))))
@@ -960,6 +961,7 @@
   (catch :mouse-info-access-error
     (handler-bind
         ((condition #'(lambda (Condition)
+                        (declare (ignore Condition))
                         ;; could be an NS-ERROR caused by the mouse not supporting the creation of an event with a deviceDeltaY
                         (throw :mouse-info-access-error (* (objc:objc-message-send Event "deltaY" #>CGFloat) 10)))))
       (objc:objc-message-send Event "deviceDeltaY" #>CGFloat))))
