@@ -168,7 +168,7 @@
 
 
 (defmethod SET-SIZE :after ((Self opengl-view) Width Height)
-  (in-main-thread ()
+  (in-main-thread ()           
     ;; Avoid drawing under Cocotron if the window isn't visible as that tends
     ;; to fix the positions of the window's views.  (This behavior is noted in
     ;; Cocotron issue 405.  It's not clear if this is the same issue or not.)
@@ -256,16 +256,16 @@
                              (hemlock::time-to-run (animate Self (delta-time Self)))))
          (Rendering-Time (hemlock::time-to-run (display Self)))
          (Total-Time (+ Animation-Time Rendering-Time)))
-    (declare (ignore total-time))
+    ;(declare (ignore total-time))
     ;;remember to remove the above declare if you are going to use the following frame rate test.
-    #|
+    (when (shift-key-p)
     (format t "~%animate: ~4,1F ms, ~4D %   render: ~4,1,F ms, ~4D %   Framerate: ~4D fps"
             (* 1.0e-6 Animation-Time)
             (truncate (/ (* 100 Animation-Time) Total-Time))
             (* 1.0e-6 Rendering-Time)
             (- 100 (truncate (/ (* 100 Animation-Time) Total-Time)))
-            (truncate (/ 1.0e9 Total-Time)))
-    |#
+            (truncate (/ 1.0e9 Total-Time))))
+    
     ;;(sleep 0.01)
     ))
 
@@ -358,6 +358,7 @@
 ;; Without it the window view does not appear to receive mouse events such as the mouse moved event
 
 (objc:defmethod (#/mouseDown: :void) ((self native-opengl-view) event)
+  (declare (ftype function set-cursor))
   (let* ((mouse-loc (#/locationInWindow event)))
     (unless (or *full-screen-proxy-window* (not (full-screen (lui-view self))))
       (let* ((full-screen-window (#/window self))
@@ -403,6 +404,7 @@
 
 
 (objc:defmethod (#/acceptsFirstMouse: :<BOOL>) ((self native-opengl-view) event)
+  (declare (ignore event))
   #$YES)
 
 
