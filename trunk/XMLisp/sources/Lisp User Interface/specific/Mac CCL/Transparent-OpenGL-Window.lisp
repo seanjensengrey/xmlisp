@@ -171,6 +171,7 @@
 
 
 (defmethod WINDOW-WILL-CLOSE ((Self transparent-opengl-window) Notification)
+  (declare (ignore Notification))
   ;;do nothing
 )
 
