@@ -105,23 +105,28 @@
 
 (defmethod COMMAND-KEY-P ()
   (let ((current-event (#/currentEvent (#/sharedApplication ns:ns-application))))
-    (not (zerop (logand (#/modifierFlags current-event) #$NSCommandKeyMask)))))
+    (unless (%null-ptr-p current-event)
+      (not (zerop (logand (#/modifierFlags current-event) #$NSCommandKeyMask))))))
 
 
 
 (defmethod ALT-KEY-P ()
   (let ((current-event (#/currentEvent (#/sharedApplication ns:ns-application))))
-    (not (zerop (logand (#/modifierFlags current-event) #$NSAlternateKeyMask)))))
+    (unless (%null-ptr-p current-event)
+      (not (zerop (logand (#/modifierFlags current-event) #$NSAlternateKeyMask))))))
 
 
 (defmethod SHIFT-KEY-P ()
   (let ((current-event (#/currentEvent (#/sharedApplication ns:ns-application))))
-    (not (zerop (logand (#/modifierFlags current-event) #$NSShiftKeyMask)))))
+    (unless (%null-ptr-p current-event)
+      (not (zerop (logand (#/modifierFlags current-event) #$NSShiftKeyMask)))))
+  )
     
 
 (defmethod CONTROL-KEY-P ()
   (let ((current-event (#/currentEvent (#/sharedApplication ns:ns-application))))
-    (not (zerop (logand (#/modifierFlags current-event) #$NSControlKeyMask)))))
+    (unless (%null-ptr-p current-event)
+      (not (zerop (logand (#/modifierFlags current-event) #$NSControlKeyMask))))))
 
 
 
@@ -160,6 +165,7 @@
   
 
 (defmethod ADD-SUBVIEWS ((Self subview-manager-interface) &rest Subviews)
+
   (dolist (Subview Subviews)
     (add-subview Self Subview)))
 
@@ -263,6 +269,7 @@
 
 
 (defmethod ENTER-FULL-SCREEN ((Self view) &key (full-screen-window nil))
+  ;(xlui::grab-conversation-lock)
   (setf (full-screen-height-storage self) (height self))
   (setf (full-screen-width-storage self) (width self))
   (Setf (full-screen self) t)
@@ -271,10 +278,14 @@
   (#/makeFirstResponder: (#/window (native-view self)) (native-view self))
   (#/makeKeyAndOrderFront: (#/window (native-view self)) nil)
   (set-size self (truncate (ns:ns-rect-width (#/frame (#/mainScreen ns:ns-screen)))) (truncate (ns:ns-rect-height (#/frame (#/mainScreen ns:ns-screen)))))
-  (display self))
+  (display self)
+  ;(xlui::release-conversation-lock)
+  )
 
 
 (defmethod EXIT-FULL-SCREEN ((Self view))
+  (declare (special *full-screen-proxy-window* ))
+  (declare (ftype function set-cursor))
   (Setf (full-screen self) nil)
   (setf (full-screen-window self) nil)
   (setf *full-screen-view* nil)
@@ -283,6 +294,13 @@
   (set-size self (full-screen-width-storage self) (full-screen-height-storage self))
   (set-cursor "arrowCursor")
   (display self))
+
+
+(defmethod FULL-SCREEN-P ((self view))
+  #-cocotron
+  (#/isInFullScreenMode (native-view self))
+  #+cocotron
+  nil)
 
 
 (defmethod DISPLAY ((Self view))
@@ -612,9 +630,7 @@
 
 
 (objc:defmethod (#/windowWillClose: :void) ((self window-delegate) Notification)
-  ;; HACK: This should not be needed and will not be if christopher fixes the cocotron problem where windowWillClose gets called on windows that have already been closed
-  (when (#/isVisible (native-window (lui-window self)))
-    (window-will-close (lui-window self) Notification)))
+  (window-will-close (lui-window self) Notification))
 
 
 (objc:defmethod (#/windowShouldClose: :<BOOL>) ((self window-delegate) Sender)
@@ -653,6 +669,7 @@
 
 
 (defmethod MAKE-NATIVE-OBJECT ((Self window))
+  (declare (ftype function window-controller))
   (in-main-thread ()
     (ccl::with-autorelease-pool
       (let ((Window (make-instance 'native-window
@@ -896,7 +913,6 @@
 
 
 (objc:defmethod (#/rightMouseDown: :void) ((self native-window-view) event)
-  (declare (ignore event))
   (let ((mouse-loc (#/locationInWindow event)))
     (view-event-handler (lui-window Self) 
                         (make-instance 'mouse-event
@@ -2663,6 +2679,7 @@
     (#/performClick:  (native-view Pop-up) +null-ptr+)
     ;(#/setState: (native-view Pop-up) #$NSOnState)
     (#/removeFromSuperview (native-view Pop-up))
-    (ccl::lisp-string-from-nsstring  (#/titleOfSelectedItem (native-view Pop-Up)))))
+    (unless (%null-ptr-p (#/titleOfSelectedItem (native-view Pop-Up)))
+      (ccl::lisp-string-from-nsstring  (#/titleOfSelectedItem (native-view Pop-Up))))))
 
 
