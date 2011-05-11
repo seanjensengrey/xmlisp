@@ -929,6 +929,26 @@
                           :native-event Event))))
 
 
+(defun GET-MOUSE-EVENT-DELTA-X-SAVELY (Event)
+  ;; Apple has still (OS X 10.6.5) not provided public interfaces for these accessors: http://lists.apple.com/archives/cocoa-dev/2007/Feb/msg00050.html
+  (catch :mouse-info-access-error
+    (handler-bind
+        ((condition #'(lambda (Condition)
+                        ;; could be an NS-ERROR caused by the mouse not supporting the creation of an event with a deviceDeltaX
+                        (throw :mouse-info-access-error (* (objc:objc-message-send Event "deltaX" #>CGFloat) 10)))))
+      (objc:objc-message-send Event "deviceDeltaX" #>CGFloat))))
+
+
+(defun GET-MOUSE-EVENT-DELTA-Y-SAVELY (Event)
+  ;; Apple has still (OS X 10.6.5) not provided public interfaces for these accessors: http://lists.apple.com/archives/cocoa-dev/2007/Feb/msg00050.html
+  (catch :mouse-info-access-error
+    (handler-bind
+        ((condition #'(lambda (Condition)
+                        ;; could be an NS-ERROR caused by the mouse not supporting the creation of an event with a deviceDeltaY
+                        (throw :mouse-info-access-error (* (objc:objc-message-send Event "deltaY" #>CGFloat) 10)))))
+      (objc:objc-message-send Event "deviceDeltaY" #>CGFloat))))
+
+
 (objc:defmethod (#/scrollWheel: :void) ((self native-window-view) Event)
   (let ((mouse-loc (#/locationInWindow event)))
     ;;(format t "~%dragged to ~A, ~A," (pref mouse-loc :<NSP>oint.x) (- (height (lui-window Self)) (pref mouse-loc :<NSP>oint.y)))
@@ -937,9 +957,8 @@
      (make-instance 'mouse-event
        :x (truncate (pref mouse-loc :<NSP>oint.x))
        :y (truncate (- (height (lui-window Self)) (pref mouse-loc :<NSP>oint.y)))
-       ;; Apple has still (OS X 10.6.5) not provided public interfaces for these accessors: http://lists.apple.com/archives/cocoa-dev/2007/Feb/msg00050.html
-       :dx (* (objc:objc-message-send Event "deltaX" #>CGFloat) 10) ;(objc:objc-message-send Event "deviceDeltaX" #>CGFloat)
-       :dy (* (objc:objc-message-send Event "deltaY" #>CGFloat) 10) ;(objc:objc-message-send Event "deviceDeltaY" #>CGFloat)
+       :dx (get-mouse-event-delta-x-savely Event)
+       :dy (get-mouse-event-delta-y-savely Event)
        :event-type (native-to-lui-event-type (#/type event))
        :native-event Event))))
 
