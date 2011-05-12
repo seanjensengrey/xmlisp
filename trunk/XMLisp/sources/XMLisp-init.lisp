@@ -287,15 +287,16 @@
 
 
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;memory")
-(load "lui:sources;Lisp User Interface;error-handling")
 (load "lui:sources;Lisp User Interface;LUI")
 (load "lui:sources;Lisp User Interface;Camera")
 (load "lui:sources;Lisp User Interface;OpenGL-view")
 (load "lui:sources;Lisp User Interface;browser-view")
 (load "lui:sources;Lisp User Interface;table-view")
 (load "lui:sources;Lisp User Interface;plot-view")
-(load "lui:sources;Lisp User Interface;specific;Mac CCL;LUI Cocoa")
+(load "lui:sources;Lisp User Interface;specific;Mac CCL;native-strings")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;standard-alert-dialog")
+(load "lui:sources;Lisp User Interface;error-handling")
+(load "lui:sources;Lisp User Interface;specific;Mac CCL;LUI Cocoa")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;image-import")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;image-export")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;OpenGL-view Cocoa")
