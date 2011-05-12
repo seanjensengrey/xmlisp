@@ -24,7 +24,7 @@
 
 
 (defun PRINT-CONDITION-UNDERSTANDABLY (Condition &optional (Message "") (Stream t))
-  (format Stream "~%~A~A: " Message (type-of Condition))
+  (format Stream "~%~A " Message)
   (ccl::report-condition Condition Stream))
 
 
@@ -41,6 +41,11 @@
                          ;; produce a basic stack trace
                          (format t "~% ______________Exception in thread \"~A\"___(backtrace)___" (slot-value *Current-Process* 'ccl::name))
                          (ccl:print-call-history :start-frame-number 1 :detailed-p nil)
+                         (standard-alert-dialog 
+                          (with-output-to-string (Out)
+                            (print-condition-understandably Condition "Error: " Out))
+                          :is-critical t
+                          :explanation-text (format nil "While ~A (in process: \"~A\")" ,Situation (slot-value *Current-Process* 'ccl::name)))
                          (throw :wicked-error Condition))))
        ,@Forms))))
 
@@ -52,6 +57,10 @@
 (print (/ 3.4 (sin 0.0)))
 
 (catch-errors-nicely "trying to divide" (print (/ 3.4 (sin 0.0))))
+
+(process-run-function 
+  "doing crazy stuff" 
+   #'(lambda () (catch-errors-nicely "trying to divide" (print (/ 3.4 (sin 0.0))))))
 
 |#
   
