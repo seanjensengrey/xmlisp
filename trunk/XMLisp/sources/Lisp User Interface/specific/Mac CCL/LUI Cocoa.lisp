@@ -91,13 +91,6 @@
    x
    (truncate (- (pref (#/frame (#/mainScreen ns:ns-screen)) <NSR>ect.size.height) y)))) 
 
-;;*********************************
-;; Native Strings                 *
-;;*********************************
-
-(defun NATIVE-STRING (String) "
-  Return a native string"
-  (#/autorelease (ccl::%make-nsstring String)))
 
 ;**********************************
 ;* EVENT                          *
@@ -1044,27 +1037,11 @@
   (:documentation "receives action events and forwards them to lui control"))
 
 
-(defun PRINT-CONDITION-UNDERSTANDABLY (Condition &optional (Message "") (Stream t))
-  (format Stream "~%~A~A: " Message (type-of Condition))
-  (ccl::report-condition Condition Stream))
-
-
 (objc:defmethod (#/activateAction :void) ((self native-target))
   ;; dispatch action to window + target
-  ;; catch errors to avoid total crash of CCL
-  (catch :activate-action-error
-    (handler-bind
-        ((warning #'(lambda (Condition) 
-                      (print-condition-understandably Condition "activate action warning, ")
-                      (muffle-warning)))
-         (condition #'(lambda (Condition)
-                        ;; no way to continue
-                        (print-condition-understandably Condition "activate action error, ")
-                        ;; produce a basic stack trace
-                        (format t "~% ______________Exception in thread \"~A\"___(backtrace)___" (slot-value *Current-Process* 'ccl::name))
-                        (ccl:print-call-history :start-frame-number 1 :detailed-p nil)
-                        (throw :activate-action-error Condition))))
-      (invoke-action (lui-control Self)))))
+  (catch-errors-nicely 
+   "executing control action"
+   (invoke-action (lui-control Self))))
 
 
 (defmethod INITIALIZE-EVENT-HANDLING ((Self control))
@@ -1552,7 +1529,7 @@
      #'(lambda ()
          (loop
            (catch-errors-nicely 
-            "OpenGL Animation"
+            "animating attributes in attribute editor"
             (reset-color-of-items self)
             (sleep .01)))))))
 
@@ -1580,6 +1557,7 @@
        (display self))
       (t 
        (setf (list-items self) (append (list-items self) (list item)))))))
+
   
 (defmethod ADD-ITEM-BY-MAKING-NEW-LIST  ((Self attribute-value-list-view-control) string value &key (action nil) (owner nil)) 
   (declare (ignore action owner))
