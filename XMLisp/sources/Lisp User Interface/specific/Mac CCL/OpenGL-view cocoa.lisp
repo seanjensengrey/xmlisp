@@ -285,6 +285,7 @@
   (dolist (View (animated-views Self))
     (animate-opengl-view-once View)))
 
+
 (defmethod START-ANIMATION ((Self opengl-view))
   ;; add myself to list
   (pushnew Self (animated-views Self))
@@ -296,7 +297,7 @@
            #'(lambda ()
                (loop
                  (catch-errors-nicely 
-                  "OpenGL Animation"
+                  "running simulation"
                   (cond
                    ;; at least one view to be animated
                    ((animated-views Self)
