@@ -18,10 +18,13 @@
 
 (objc:defmethod #/tableView:objectValueForTableColumn:row: ((self table-view-data-source) table-view table-column (row :<NSI>nteger))
   (when (columns (lui-view table-view))
-    (let ((value (elt (elt (columns (lui-view table-view)) (read-from-string (ccl::lisp-string-from-nsstring  (#/identifier table-column)))) row)))
-      (if (subtypep (type-of value) 'string)
-        (native-string value)
-        (native-string (write-to-string value))))))
+    (if (elt (columns (lui-view table-view)) (read-from-string (ccl::lisp-string-from-nsstring  (#/identifier table-column))))
+      (let ((value (elt (elt (columns (lui-view table-view)) (read-from-string (ccl::lisp-string-from-nsstring  (#/identifier table-column)))) row)))
+        
+        (if (subtypep (type-of value) 'string)
+          (native-string value)
+          (native-string (write-to-string value))))
+      (native-string "."))))
 
 ;**********************************
 ;* Table-View                     *

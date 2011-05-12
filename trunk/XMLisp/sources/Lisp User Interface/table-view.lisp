@@ -62,6 +62,14 @@
  (recalculate-rows self))
 
 
+(defmethod CLEAR-COLUMNS ((self table-view))
+  (dotimes (i (length (columns self)))
+    (when (columns self)
+      (Setf (elt (columns self) i) '())
+      (setf (rows-in-table self) 0)))
+  (recalculate-rows self))
+    
+
 (defmethod MAP-SUBVIEWS ((Self table-view) Function &rest Args)
   (declare (ignore Function Args))
   ;; no Cocoa digging
