@@ -229,14 +229,12 @@
         (setf (transparent-ceiling-should-fade self) nil)
         (unless (transparent-ceiling-update-process self)
           (setf *ceiling-update-thread-should-stop* nil)
-          
           (setf (transparent-ceiling-update-process self)
                 (lui::process-run-function
                  '(:name "transparent ceiling update process")
                  #'(lambda ()
                      (loop
-                       (catch-errors-nicely 
-                        "OpenGL Animation"
+                       (catch-errors-nicely ("inflatable ceilling is animating")
                         (when *Ceiling-Update-Thread-Should-Stop*  (return))
                         (unless (or (transparent-ceiling-should-fade self)
                                     (not (timer-due-p self (truncate (* 2.0 internal-time-units-per-second)))))
@@ -877,21 +875,18 @@
     (setf (transparent-ceiling-should-fade window) nil)
     (unless (transparent-ceiling-update-process window)
       (setf *ceiling-update-thread-should-stop* nil)
-      
       (setf (transparent-ceiling-update-process window)
             (lui::process-run-function
              '(:name "transparent ceiling update process")
              #'(lambda ()
                  (loop
-                   (catch-errors-nicely 
-                    "OpenGL Animation"
+                   (catch-errors-nicely ("inflatable ceilling is animating")
                     (when *Ceiling-Update-Thread-Should-Stop*  (return))
                     (unless (or (transparent-ceiling-should-fade window)
                                 (not (timer-due-p window (truncate (* 2.0 internal-time-units-per-second)))))
                       (setf (transparent-ceiling-should-fade window) t))
                     (when (transparent-ceiling-should-fade window)
                       (ccl::with-lock-grabbed ((transparent-ceiling-update-lock))
-                        
                                        (update-ceiling-transparency window)))
                     (sleep .04))))))))
   (let ((Ceiling (value Slider)))
