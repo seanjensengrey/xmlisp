@@ -29,7 +29,7 @@
 
 
 (eval-when (:execute :load-toplevel :compile-toplevel)
-(defmacro CATCH-ERRORS-NICELY (Situation &body Forms) "Catch errors at high level. Also works in gui threads and Cocoa call backs"
+(defmacro CATCH-ERRORS-NICELY ((Situation &key Cleanup-Form) &body Forms) "Catch errors at high level. Also works in gui threads and Cocoa call backs"
   `(catch :wicked-error
      (handler-bind
          ((warning #'(lambda (Condition) 
@@ -41,11 +41,14 @@
                          ;; produce a basic stack trace
                          (format t "~% ______________Exception in thread \"~A\"___(backtrace)___" (slot-value *Current-Process* 'ccl::name))
                          (ccl:print-call-history :start-frame-number 1 :detailed-p nil)
-                         (standard-alert-dialog 
-                          (with-output-to-string (Out)
-                            (print-condition-understandably Condition "Error: " Out))
-                          :is-critical t
-                          :explanation-text (format nil "While ~A (in process: \"~A\")" ,Situation (slot-value *Current-Process* 'ccl::name)))
+                         ;; show minmalist message to end-user
+                         (ccl::with-autorelease-pool
+                             (standard-alert-dialog 
+                              (with-output-to-string (Out)
+                                (print-condition-understandably Condition "Error: " Out))
+                              :is-critical t
+                              :explanation-text (format nil "While ~A" ,Situation)))
+                         ,Cleanup-Form
                          (throw :wicked-error Condition))))
        ,@Forms))))
 
@@ -56,11 +59,20 @@
 
 (print (/ 3.4 (sin 0.0)))
 
-(catch-errors-nicely "trying to divide" (print (/ 3.4 (sin 0.0))))
+(catch-errors-nicely
+  ("trying to divide")
+  (print (/ 3.4 (sin 0.0))))
+
+
+(catch-errors-nicely ("trying to divide" :cleanup-form (print :sandman))
+  (print (/ 3.4 (sin 0.0))))
+
 
 (process-run-function 
   "doing crazy stuff" 
-   #'(lambda () (catch-errors-nicely "trying to divide" (print (/ 3.4 (sin 0.0))))))
+   #'(lambda () (catch-errors-nicely 
+                  ("trying to divide") 
+                  (print (/ 3.4 (sin 0.0))))))
 
 |#
   
