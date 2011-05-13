@@ -1039,8 +1039,7 @@
 
 (objc:defmethod (#/activateAction :void) ((self native-target))
   ;; dispatch action to window + target
-  (catch-errors-nicely 
-   "executing control action"
+  (catch-errors-nicely ("executing control action")
    (invoke-action (lui-control Self))))
 
 
@@ -1528,8 +1527,7 @@
      '(:name "Attribute Window Thread" )
      #'(lambda ()
          (loop
-           (catch-errors-nicely 
-            "animating attributes in attribute editor"
+           (catch-errors-nicely ("animating attributes in attribute editor")
             (reset-color-of-items self)
             (sleep .01)))))))
 
@@ -2104,8 +2102,7 @@
          ;; as long as mouse is down keep running control action at interval frequency
          (loop
            (unless (is-jog-active (lui-view Self))   (return))
-           (catch-errors-nicely
-            "Jog Dial Thread"
+           (catch-errors-nicely ("user is moving jog dial")
             ;; better to activate the action in the main thread!!
             (in-main-thread ()
               (#/activateAction (#/target Self)))
