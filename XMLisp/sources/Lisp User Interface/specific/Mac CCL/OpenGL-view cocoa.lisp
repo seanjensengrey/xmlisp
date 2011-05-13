@@ -296,8 +296,7 @@
            '(:name "OpenGL Animations" :priority 0)
            #'(lambda ()
                (loop
-                 (catch-errors-nicely 
-                  "running simulation"
+                 (catch-errors-nicely ("running simulation")
                   (cond
                    ;; at least one view to be animated
                    ((animated-views Self)
