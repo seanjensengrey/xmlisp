@@ -81,6 +81,9 @@
 (defgeneric STOP-ANIMATION (opengl-view)
   (:documentation "Stop the animation of the view"))
 
+(defgeneric ANIMATION-ABORTED (opengl-view)
+  (:documentation "Called when animation code got aborted via (throw :animation-abort)"))
+
 (defgeneric FRAME-RATE (opengl-view)
   (:documentation "How many frames per second"))
 
@@ -102,7 +105,6 @@
 ;**************************
 ;* default implementation *
 ;**************************
-
 
 (defmethod INITIALIZE-INSTANCE :after ((Self opengl-view) &rest Args)
   (declare (ignore Args))
@@ -131,13 +133,6 @@
   (glVertex3f 0.2 -0.3 0.0)
   (glEnd))
 
-#|
-#+cocotron
-(defmethod PREPARE-OPENGL :after ((Self opengl-view))
-  (when  (use-global-glcontext self)
-    (share-texture-for-windows self)))
-|#
-
 
 (defmethod PREPARE-OPENGL ((Self opengl-view))
   ;; nothing
@@ -146,6 +141,10 @@
 
 (defmethod IS-ANIMATED ((Self opengl-view))
   (member Self (animated-views Self)))
+
+
+(defmethod ANIMATION-ABORTED ((Self opengl-view))
+  (print :ANIMATION-ABORTED))
 
 
 (defmethod VIEW ((Self opengl-view))
