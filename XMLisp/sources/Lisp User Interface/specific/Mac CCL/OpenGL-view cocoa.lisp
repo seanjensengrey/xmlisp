@@ -70,19 +70,9 @@
   (prepare-opengl (lui-view Self)))
 
 
-
-
-
-
-
-
-
 (objc:defmethod (#/viewDidMoveToWindow :void) ((self native-opengl-view))
   (call-next-method)
   (view-did-move-to-window (lui-view self)))
-
-
-
   
 
 (defmethod MAKE-NATIVE-OBJECT ((Self opengl-view))
@@ -132,15 +122,6 @@
         (#/release Pixel-Format)
         Native-Control))))
 
-#|
-#+cocotron  
-(defmethod SHARE-TEXTURE-FOR-WINDOWS ((Self opengl-view))
-  ;; Nasty hack: for windows we need to access the win32 opengl context not the Cocotron one
-  (print "SHARE TEXTURE FOR WINDOWS")
-  (let ((Native-GLContext-Offset 36))
-    (#_wglShareLists (%get-ptr (#/CGLContextObj (#/openGLContext (native-view (shared-opengl-view)))) Native-GLContext-Offset)
-                     (%get-ptr (#/CGLContextObj (#/openGLContext (native-view self))) Native-GLContext-Offset))))
-|#
 
 (defmethod DISPLAY ((Self opengl-view))  
   (with-glcontext Self
@@ -152,6 +133,7 @@
   #+cocotron
   (#/setNeedsDisplay: (native-view self) #$YES)
   (display self))
+
 
 (defmethod FRAME-RATE ((Self opengl-view))
   (with-glcontext Self
@@ -187,6 +169,7 @@
 ;------------------------------
 ; Animation                    |
 ;______________________________
+
 
 (defparameter *Animation-Process* nil "the process running all OpenGL animations")
 
@@ -249,6 +232,10 @@
   "Release animation lock. Wait if necesary"
   (ccl::release-lock (animation-lock)))
        
+
+(defvar *Framerate-Ceilling* 60 "max frame rate; simulation not exceed to save CPU")
+
+
 #-cocotron       
 (defmethod ANIMATE-OPENGL-VIEW-ONCE ((Self opengl-view))
   ;; version with performance tracking
@@ -259,24 +246,25 @@
     ;(declare (ignore total-time))
     ;;remember to remove the above declare if you are going to use the following frame rate test.
     (when (shift-key-p)
-    (format t "~%animate: ~4,1F ms, ~4D %   render: ~4,1,F ms, ~4D %   Framerate: ~4D fps"
-            (* 1.0e-6 Animation-Time)
-            (truncate (/ (* 100 Animation-Time) Total-Time))
-            (* 1.0e-6 Rendering-Time)
-            (- 100 (truncate (/ (* 100 Animation-Time) Total-Time)))
-            (truncate (/ 1.0e9 Total-Time))))
-    
-    (sleep 0.02)  ;; ease off CPU time, need to compute this time 
-    ))
+      (format t "~%animate: ~4,1F ms, ~4D %   render: ~4,1,F ms, ~4D %   Framerate: ~4D fps"
+              (* 1.0e-6 Animation-Time)
+              (truncate (/ (* 100 Animation-Time) Total-Time))
+              (* 1.0e-6 Rendering-Time)
+              (- 100 (truncate (/ (* 100 Animation-Time) Total-Time)))
+              (truncate (/ 1.0e9 Total-Time))))
+    ;; Cap framerate 
+    (let ((Sleep-Time (- #.(/ 1.0 *Framerate-Ceilling*) (* Total-Time 1.0e-9))))
+      (when (> Sleep-Time 0.0) 
+        (sleep Sleep-Time)
+        (format t "~%sleep time: ~A" Sleep-Time)))))
+
 
 #+cocotron
 (defmethod ANIMATE-OPENGL-VIEW-ONCE ((Self opengl-view))
-
   (with-animation-locked
-      (animate Self (delta-time Self))
-    )
+      (animate Self (delta-time Self)))
   (display Self)
-  (sleep 0.02)  ;; ease off CPU time, need to compute this time 
+  (sleep 0.01)  ;; ease off CPU time, need to compute this time 
   )
 
 
@@ -295,16 +283,21 @@
           (process-run-function
            '(:name "OpenGL Animations" :priority 0)
            #'(lambda ()
-               (loop
-                 (catch-errors-nicely ("running simulation")
-                  (cond
-                   ;; at least one view to be animated
-                   ((animated-views Self)
-                    (ccl::with-autorelease-pool
-                        (animate-opengl-views-once Self)))
-                   ;; nothing to animate: keep process but use little CPU
-                   (t
-                    (sleep 0.5))))))))))
+               (ccl::with-autorelease-pool
+                   (case (catch :animation-abort
+                           (loop
+                             (catch-errors-nicely 
+                              ("running simulation")
+                              (cond
+                               ;; at least one view to be animated
+                               ((animated-views Self)
+                                (animate-opengl-views-once Self))
+                               ;; nothing to animate: keep process but use little CPU
+                               (t
+                                (sleep 0.5))))))
+                     ;; call animation-aborted still in OpenGL Animations, good idea???
+                     (:stop-animation (animation-aborted Self))
+                     (t nil))))))))
 
 
 (defmethod STOP-ANIMATION ((Self opengl-view))
