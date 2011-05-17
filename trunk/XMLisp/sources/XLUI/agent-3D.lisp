@@ -210,7 +210,7 @@
    (is-visible :accessor is-visible :initform t :type boolean)
    (drag-and-drop-handler :accessor drag-and-drop-handler :initform nil :documentation "drag and drop handler")
    (agent-hovered :accessor agent-hovered :initform nil :documentation "the agent currently hovered over")
-   (agents-selected :accessor agents-selected :initform nil :documentation "list of agents currenly selected")
+   (agents-selected :accessor agents-selected :initform nil :documentation "list of agents currently selected")
    (render-mode :accessor render-mode :initform gl_render :documentation "value: gl_render gl_select or gl_feedback")
    (content-changed-action :accessor content-changed-action :initform 'content-changed-default-action :initarg :content-changed-action-action :type symbol :documentation "method by this name will be called on the window containing control and the target of the control when the content of this view changed"))
   (:documentation "View containing agents"))
@@ -230,6 +230,10 @@
 
 (defgeneric AGENT-SELECTED (agent-3d-view agent)
   (:documentation "Invoke after <agent> has been selected"))
+
+
+(defgeneric SELECT-AGENTS (agent-3d-view &rest Agents)
+  (:documentation "Deselect currently selected agents and then select <Agents>")) 
 
 ;________________________________
 ; implementations                |
@@ -286,6 +290,22 @@
   ;;(compose-scene Self)
   )
 
+;; Selection
+
+(defmethod SELECT-AGENTS ((Self agent-3d-view) &rest Agents)
+  ;; unselect old
+  (setf (selection (first (matrices Self))) nil)
+  (setq *Selected-Matrix-Agent* nil)
+  (dolist (Agent (agents-selected Self))
+    (setf (is-selected Agent) nil))
+  ;; select new
+  (setf (agents-selected Self) Agents)
+  (dolist (Agent (agents-selected Self))
+    (setf (is-selected Agent) t))
+  ;; assume there is one agent only
+  (let ((Agent (first Agents)))
+    (setq *Selected-Matrix-Agent* Agent)
+    (setf (selection (first (matrices Self))) (list (layer Agent) (row Agent) (col Agent) Agent))))
 
 
 ;; Content Changed events
@@ -492,7 +512,6 @@
   ;; add some delay here to avoid taxing CPU with high frequency picking
   ;; for instance: picking every 50ms would be plenty fast
   (declare (ignore dx dy))
-  
   (call-next-method)
   ;;(format t "~%hover: x=~A y=~A dx=~A dy=~A" x y dx dy)
   (let ((Agent (find-agent-at Self x y *Selection-Tolerance* *Selection-Tolerance*)))
