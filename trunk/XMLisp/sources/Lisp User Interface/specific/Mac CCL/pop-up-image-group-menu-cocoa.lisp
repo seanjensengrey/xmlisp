@@ -223,6 +223,7 @@
                         (if (image-views label)
                           (setf (image-views label) (append (image-views label) (list indexed-view)))
                           (setf (image-views label) (list indexed-view)))
+                        (setf (name indexed-view) (string-capitalize (first item)))
                         (#/addSubview: (native-view self) indexed-view)))
                     (incf i)
                     (incf current-col))
