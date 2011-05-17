@@ -78,7 +78,6 @@
 
 ;; Proxy Icon Methods
 
-
 (defmethod DRAW-PROXY-ICON-BACKGROUND ((Self shape))
   (glBegin GL_QUADS)
   (glColor3f 1.0 1.0 1.0)
@@ -89,16 +88,28 @@
   (glEnd))
   
 
+(defmethod PROXY-ICON-SIZE ((Self shape))
+  0.15)
+
+
 (defmethod DRAW-AS-PROXY-ICON ((Self shape)) 
-  (glPushMatrix)
-  (glScalef (proxy-icon-scale Self) (proxy-icon-scale Self) (proxy-icon-scale Self))
-  (glDisable GL_LIGHTING)
-  (glTranslatef 0.0 0.0 -0.01) ;; hack: avoid depth fight
-  (draw-proxy-icon-background Self)
-  (glTranslatef 0.0 0.0 +0.01)
-  (draw Self)
-  (glDisable GL_LIGHTING) ;; some shapes are enabling lighting again!!
-  (glPopMatrix))
+  ;; draw shape as a square with flat texture
+  (let ((Height (proxy-icon-size Self))
+        (Width (proxy-icon-size Self)))
+    (glEnable GL_TEXTURE_2D) 
+    (glTexEnvi GL_TEXTURE_ENV GL_TEXTURE_ENV_MODE GL_MODULATE)
+    (use-texture Self (icon self))
+    (glPushMatrix)
+    (glTranslatef 0.0 0.0 0.01)  ;; sligthly towards the viewer
+    (glBegin GL_QUADS)
+    (glnormal3f 0.0 0.0 1.0)
+    (glTexCoord2i 0 0) (glVertex2f 0.0 0.0)
+    (glTexCoord2i 0 1) (glVertex2f 0.0 Height)
+    (glTexCoord2i 1 1) (glVertex2f Width Height)
+    (glTexCoord2i 1 0) (glVertex2f Width 0.0)
+    (glEnd)
+    (glPopMatrix))
+  )
 
 
 (defmethod PROXY-ICON-SCALE ((Self shape))
