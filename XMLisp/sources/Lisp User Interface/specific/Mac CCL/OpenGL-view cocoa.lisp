@@ -266,7 +266,7 @@
             (- 100 (truncate (/ (* 100 Animation-Time) Total-Time)))
             (truncate (/ 1.0e9 Total-Time))))
     
-    ;;(sleep 0.01)
+    (sleep 0.02)  ;; ease off CPU time, need to compute this time 
     ))
 
 #+cocotron
@@ -276,7 +276,7 @@
       (animate Self (delta-time Self))
     )
   (display Self)
-  ;; (sleep 0.01)  ;; ease off CPU time, need to compute this time 
+  (sleep 0.02)  ;; ease off CPU time, need to compute this time 
   )
 
 
