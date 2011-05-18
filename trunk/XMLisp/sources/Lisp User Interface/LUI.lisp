@@ -194,7 +194,9 @@ Call with most important parameters. Make other paramters accessible through *Cu
    (full-screen-window :accessor full-screen-window :initform nil :documentation "this view's full screen window")
    (full-screen-height-storage :accessor full-screen-height-storage :initform nil :documentation "When we enter full screen mode we need to store the height so that it can be restored when we leave full screen mode")
    (full-screen-width-storage :accessor full-screen-width-storage :initform nil :documentation "When we enter full screen mode we need to store the width so that it can be restored when we leave full screen mode")
-   (current-cursor :accessor current-cursor :initform nil :initarg :current-cursor :documentation "the name of the current cursor of this view"))
+   (current-cursor :accessor current-cursor :initform nil :initarg :current-cursor :documentation "the name of the current cursor of this view")
+   (tooltip :accessor tooltip :initform nil :initarg :tooltip :documentation "If this accessor is set it will display this for the tool instead of the documentation")
+   )
   (:documentation "a view, control or window with position and size"))
 
 ;;_______________________________
@@ -252,6 +254,10 @@ Call with most important parameters. Make other paramters accessible through *Cu
 (defgeneric WINDOW-OF-VIEW-WILL-CLOSE (view)
   (:documentation "Notify the view that its window is closing so it may do any cleanup it needs done. "))
 
+
+(defgeneric VIEW-DID-END-RESIZE (view)
+  (:documentation "Notify the view that has just completed a resize"))
+
 ;;_______________________________
 ;; Default implementation        |
 ;;_______________________________
@@ -260,6 +266,12 @@ Call with most important parameters. Make other paramters accessible through *Cu
   (setf (width Self) Width)
   (setf (height Self) Height))
 
+#|
+(defmethod SET-SIZE  :after ((Self view) Width Height)
+  (print "SET SIZE AFTER VIEW")
+  (enable-tooltips self)
+  )
+|#
 
 (defmethod SET-POSITION ((Self view) X Y)
   (setf (x Self) X)
@@ -298,8 +310,11 @@ Call with most important parameters. Make other paramters accessible through *Cu
   (declare (ignore Args))
   (call-next-method)
   (setf (native-view Self) (make-native-object Self))
-  (enable-tooltips self))
+  )
 
+(defmethod INITIALIZE-INSTANCE :after ((Self view) &rest Args)
+  (declare (ignore Args))
+  (enable-tooltips self))
 
 (defmethod DRAW ((Self view))
   ;; nothing
@@ -409,13 +424,21 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 (defmethod GET-TOOLTIP ((Self view) x y)
   (declare (ignore x y))
+  (tooltip self))
+
+#|
+(defmethod GET-TOOLTIP ((Self view) x y)
+  (declare (ignore x y))
   (documentation (type-of self) 'type))
-
-
+|#
 (defmethod GET-TOOLTIP ((Self null) x y)
   (declare (ignore x y))
   nil)
 
+
+(defmethod VIEW-DID-END-RESIZE ((self view))
+  (map-subviews self #'(lambda (View) (view-did-end-resize View )))
+  )
 
 ;**********************************
 ;* SCROLL-VIEW                    *
@@ -430,7 +453,6 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 (defmethod LAYOUT ((Self scroll-view))
   (set-size Self (width Self) (height Self)))
-
 
 ;**********************************
 ;* SCROLL-VIEW-ADJUSTING-CONTENTS *
@@ -494,7 +516,8 @@ Call with most important parameters. Make other paramters accessible through *Cu
    (native-window :accessor native-window :initform nil :documentation "native OS window object")
    (native-view :accessor native-view :initform nil :documentation "native OS view object")
    (min-height :allocation :class :accessor min-height :initarg :min-height :initform 100 :documentation "The minimum height allowed for this class of window")
-   (min-width :allocation :class :accessor min-width   :initarg :min-width :initform 100 :documentation "The minimum width allowed for this class of window"))
+   (min-width :allocation :class :accessor min-width   :initarg :min-width :initform 100 :documentation "The minimum width allowed for this class of window")
+   (tooltip :accessor tooltip :initform nil :initarg :tooltip :documentation "If this accessor is set it will display this for the tool instead of the documentation"))
   (:documentation "a window that can contain views, coordinate system: topleft = 0, 0")
   (:default-initargs 
       :x 100
@@ -575,6 +598,12 @@ after any of the window controls calls stop-modal close window and return value.
   (when (do-show-immediately Self)
     (show Self)))
 
+#|
+(defmethod INITIALIZE-INSTANCE :after ((Self window) &rest Args)
+  (declare (ignore args))
+  (print "INIT AFTER WINDOW")
+  (map-subviews self #'(lambda (View) (view-did-end-resize View ))))
+|#
 
 (defmethod DISPLAY ((Self Window)) 
   ;; nada
@@ -868,7 +897,7 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defmethod GET-TOOLTIP ((Self window) x y)
   (declare (ignore x y))
-  (documentation (type-of self) 'type))
+  (tooltip self))
 
 
 
