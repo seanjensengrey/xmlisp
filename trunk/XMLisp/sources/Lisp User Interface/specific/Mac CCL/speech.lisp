@@ -41,7 +41,8 @@
 ;;___________________________________
 
 (defclass SYNTHESIZER ()
-  ((native-synthesizer :accessor native-synthesizer :initarg :native-synthesizer))
+  ((native-synthesizer :accessor native-synthesizer :initarg :native-synthesizer)
+   (synthesizer-thread-kill-flag :accessor synthesizer-thread-kill-flag :initform nil))
   (:documentation "Speech Synthesizer"))
 
 
@@ -70,6 +71,8 @@
 
 (defparameter *Speech-Lock* nil "look preventing speech interupting each other")
 
+(Defparameter *synthesizer-thread-kill-flag* nil)
+
 
 (defmethod SPEAK ((Text string) &optional Voice Synthesizer )
   (unless *Speech-Lock* 
@@ -91,11 +94,31 @@
                    (error "Voice ~S is not one of ~S" Voice (available-voices)))))
               (t
                (#/setVoice: (native-synthesizer Synthesizer) (%null-ptr))))
-             (when (should-start-speaking synthesizer)
+             (when (should-start-speaking synthesizer) 
                (#/startSpeakingString: (native-synthesizer Synthesizer) (native-string Text))
-               (loop
+               (loop                 
                  (unless (#/isSpeaking (native-synthesizer Synthesizer)) (return))
                  (sleep 0.1))))))))
+
+(defmethod SPEAK-SYNCHRONOUSLY ((Text string) &optional Voice Synthesizer )
+  (ccl::with-autorelease-pool
+      (unless Synthesizer
+        (unless *Default-Synthesizer* 
+          (setf *Default-Synthesizer* (make-instance 'synthesizer))
+          (setf (native-synthesizer *Default-Synthesizer*) (make-instance 'native-synthesizer :lui-synthesizer *Default-Synthesizer*)))
+        (setq Synthesizer *Default-Synthesizer*))
+    (cond
+     (Voice
+      (unless (#/setVoice: (native-synthesizer Synthesizer) (apple-voice Voice))
+        (unless (member Voice (available-voices) :test #'string=)
+          (error "Voice ~S is not one of ~S" Voice (available-voices)))))
+     (t
+      (#/setVoice: (native-synthesizer Synthesizer) (%null-ptr))))
+    (#/startSpeakingString: (native-synthesizer Synthesizer) (native-string Text))
+    (loop                 
+      (unless (#/isSpeaking (native-synthesizer Synthesizer)) (return))
+      (sleep 0.1))))
+    
 
 
 (defun AVAILABLE-VOICES ()
