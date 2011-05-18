@@ -320,13 +320,13 @@
 
 
 (objc:defmethod (#/description :id) ((self tooltip-delegate) )
-  ;(native-string (get-tooltip (lui-view Self) (ns:ns-point-x (#/mouseLocationOutsideOfEventStream (native-window (window (lui-view self)))))(- (height (window (lui-view self))) (ns:ns-point-y (#/mouseLocationOutsideOfEventStream (native-window (window (lui-view self))))))))
-  (native-string (get-tooltip-of-view-at-screen-position (lui-view Self) (ns:ns-point-x (#/mouseLocation ns:ns-event )) (ns:ns-point-y (#/mouseLocation ns:ns-event ))))
-  )
+  (native-string (get-tooltip-of-view-at-screen-position (lui-view Self) (ns:ns-point-x (#/mouseLocation ns:ns-event )) (ns:ns-point-y (#/mouseLocation ns:ns-event )))))
 
 
 (defmethod ENABLE-TOOLTIPS ((Self view))
-  (#/addToolTipRect:owner:userData: (native-view self) (#/frame (native-view self)) (make-instance 'tooltip-delegate :lui-view self) lui::+null-ptr+))
+  (when  (get-tooltip self (x self) (y self))
+    (#/removeAllToolTips (native-view self))
+    (#/addToolTipRect:owner:userData: (native-view self) (#/frame (native-view self)) (make-instance 'tooltip-delegate :lui-view self) lui::+null-ptr+)))
 
 
 (defmethod CONVERT-FROM-WINDOW-COORDINATES-TO-VIEW-COORDINATES ((Self view) x y)
@@ -361,7 +361,6 @@
 (objc:defmethod (#/isFlipped :<BOOL>) ((self native-view))
   ;; Flip to coordinate system to 0, 0 = upper left corner
   #$YES)
-
 
 
 ;**********************************
@@ -401,6 +400,18 @@
   (#/setDocumentView: (native-view View) (native-view (first Subviews)))
   ;(warn "You are adding multiple views to a scroll-view. Only the first one will be visible.")
   )
+
+
+(defmethod GET-SCROLLABLE-CONTENTS ((self scroll-view))
+  (unless (%null-ptr-p (#/documentView (native-view self)))  
+    (lui-view (#/documentView (native-view self)))))
+
+
+(defmethod GET-TOOLTIP ((Self scroll-view) x y)
+  (let ((subview (get-scrollable-contents self)))
+    (if (and subview (get-tooltip subview x y))
+      (get-tooltip subview x y)
+      (call-next-method))))
 
 
 (defmethod ADD-SUBVIEW ((view scroll-view)  Subview)
@@ -936,6 +947,10 @@
                           :dy (truncate (#/deltaY Event))
                           :event-type (native-to-lui-event-type (#/type event))
                           :native-event Event))))
+
+
+(objc:defmethod (#/viewDidEndLiveResize :void) ((self native-window-view))
+  (map-subviews (lui-window Self) #'(lambda (View) (view-did-end-resize View ))))
 
 
 (defun GET-MOUSE-EVENT-DELTA-X-SAVELY (Event)
