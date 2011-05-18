@@ -1,123 +1,122 @@
 <?xml version="1.0"?>
-<project-window title="" track-mouse="true" x="100" y="50" width="1200" height="600" margin="0">
+<project-window title="" track-mouse="true" x="100" y="50" width="1200" height="600" margin="0" min-width="1000">
   <row align="stretch" valign="stretch" >
     <column align="stretch" valign="stretch" vflex="1" flex="1"  width="250">
       <row valign="middle" align="center" height="32" src="gradient-transparent.png">
-        <label text="Agents" width="120" align="center"/>
+        <label text="Agents" tooltip="Agent Gallery" width="120" align="center"/>
       </row>
       <img src="gallery-directions.png" name="gallery directions"/>
-      <scroll-box vflex="1"  name="agent-scroll-box" color="D6DDE5">
-        <agent-gallery name="agent-gallery" selected-group-changed-action="SWITCH-TO-BEHAVIOR" vflex="1" width="100"/>
+      <scroll-box has-horizontal-scroller="false" vflex="1"  name="agent-scroll-box" color="D6DDE5">
+        <agent-gallery tooltip="Agent Gallery" name="agent-gallery" selected-group-changed-action="SWITCH-TO-BEHAVIOR" vflex="1" width="100"/>
       </scroll-box>
       <row align="center" padding="-1" valign="stretch" height="24" src="gradient-transparent.png">
-        <bevel-button bezel-style="square" text="+ Agent" name="new-agent-button" action="add-agent-action" width="75" height="24" />
-        <bevel-button bezel-style="square" text="+ Shape" name="new-shape-button" action="add-shape-action" width="75" height="24" />
-        <bevel-button bezel-style="square" start-disabled="true" name="delete agent button" text="-" width="30" height="24" action="delete-selected-agent" />
+        <bevel-button bezel-style="square" tooltip="Add a new agent" text="+ Agent" name="new-agent-button" action="add-agent-action" width="75" height="24" />
+        <bevel-button bezel-style="square" tooltip="Add a new shape" text="+ Shape" start-disabled="true"  name="new-shape-button" action="add-shape-action" width="75" height="24" />
+        <bevel-button bezel-style="square" tooltip="Delete selected agent or shape" start-disabled="true" name="delete agent button" text="-" width="30" height="24" action="delete-selected-agent" />
       </row>
     </column>
     <column align="stretch" valign="stretch" flex="4" vflex="1">
       <row valign="middle"  padding="-1" align="center" height="32" src="gradient-transparent.png">
-        <label text="World:" width="45" />
-        <image-button name="add world button"  action="add-new-world-action"  image="plus-button.png"/>
-        <pop-up start-disabled="true" name="world-name" width="150" height="26" /> 
-        <bevel-button bezel-style="square" start-disabled="true" text="Save" name="save-button" action="save-the-world-action" width="65" height="24" />
+        <label text="World:" tooltip="Worlds" width="45" />
+        <image-button name="add world button" tooltip="Add a new world" action="add-new-world-action"  image="plus-button.png"/>
+        <pop-up start-disabled="true" tooltip="Select a world" name="world-name" width="150" height="26" /> 
+        <bevel-button bezel-style="square" tooltip="Save the world!" start-disabled="true" text="Save" name="save-button" action="save-the-world-action" width="65" height="24" />
         <spacer width="10"/>
         <image-button-row>
-          <image-button name="run button" start-disabled="true" action="run-action"  image="run-button.png"/> 
-          <image-button name="stop button" start-disabled="true" action="stop-action" image="stop-button.png"/> 
-          <image-button name="step button" start-disabled="true" action="step-action" image="step-button.png"/>
+          <image-button name="run button"  tooltip="Run your simulation" start-disabled="true" action="run-action"  image="run-button.png"/> 
+          <image-button name="stop button" tooltip="Stop your simulation" start-disabled="true" action="stop-action" image="stop-button.png"/> 
+          <image-button name="step button" tooltip="Step your simulation" start-disabled="true" action="step-action" image="step-button.png"/>
         </image-button-row>
         <spacer width="10"/>
         <image-button-row>
-          <image-button name="arrow button" start-disabled="true" action="arrow-tool-action" image="arrow-button.png"/>
-          <image-button name="draw button" start-disabled="true" action="draw-tool-action" image="draw-button.png"/>
-          <image-button name="volume insert button" start-disabled="true" action="volume-insert-tool-action" image="select-rect-button.png"/>
-          <image-button name="erase button" start-disabled="true" action="erase-tool-action" image="erase-button.png"/> 
+          <image-button name="arrow button" tooltip="Arrow/selection tool" start-disabled="true" action="arrow-tool-action" image="arrow-button.png"/>
+          <image-button name="draw button"  tooltip="Draw agent tool" start-disabled="true" action="draw-tool-action" image="draw-button.png"/>
+          <image-button name="volume insert button" tooltip="Multi agent insert" start-disabled="true" action="volume-insert-tool-action" image="select-rect-button.png"/>
+          <image-button name="erase button" tooltip="Erase agent tool" start-disabled="true" action="erase-tool-action" image="erase-button.png"/> 
           <spacer width="10"/>
-          <image-button name="rotate button" start-disabled="true" action="rotate-tool-action" image="rotate-button.png"/>
-          <image-button name="pan button" start-disabled="true" action="pan-tool-action" image="pan-button.png"/>
-          <image-button name="zoom button" start-disabled="true" action="zoom-tool-action" image="zoom-button.png"/>    
+          <image-button name="rotate button" tooltip="Rotate" start-disabled="true" action="rotate-tool-action" image="rotate-button.png"/>
+          <image-button name="pan button"    tooltip="Pan" start-disabled="true" action="pan-tool-action" image="pan-button.png"/>
+          <image-button name="zoom button"   tooltip="Zoom" start-disabled="true" action="zoom-tool-action" image="zoom-button.png"/>    
         </image-button-row>
         <spacer width="8"/>
+        <image-button  start-disabled="true" tooltip="Switch between first and third person camera" name="camera-button" action="switch-camera-action" image="camera.png"/>  
+        <image-button name="full-screen-button" tooltip="Switch to full screen (escape will exit full screen)" start-disabled="true" action="full-screen-action" image="fullscreen.png"/>  
         <image-button  start-disabled="true" name="camera-button" action="switch-camera-action" image="camera.png"/>
         <image-button name="full-screen-button" start-disabled="true" action="full-screen-action" image="fullscreen.png"/>  
         <spacer width="8"/>
-        <image-button name="reload button" start-disabled="true" action="reload-tool-action"  image="reload-button.png"/> 
-        <bevel-button bezel-style="square" text="Clear" start-disabled="true" name="clear-button" action="clear-tool-action" width="65" height="24" />
-        <label width="35" text="slow"/>
-        <slider value="3.9" start-disabled="true" name="speed-slider" max-value="4.0" min-value="0.0" action="speed-slider-action"/>
-        <label width="35" text="fast"/>
+        <image-button name="reload button" tooltip="Reload the world" start-disabled="true" action="reload-tool-action"  image="reload-button.png"/> 
+        <bevel-button bezel-style="square" tooltip="Clear the world" text="Clear" start-disabled="true" name="clear-button" action="clear-tool-action" width="65" height="24" />
+        <label width="35" tooltip="Slow animation speed" text="slow"/>
+        <slider value="3.9" tooltip="Adjust animation speed" start-disabled="true" name="speed-slider" max-value="4.0" min-value="0.0" action="speed-slider-action"/>
+        <label width="35" tooltip="Fast animation speed" text="fast"/>
         <spacer width="8"/>
         <bevel-button bezel-style="square" name="design-button" start-disabled="true" text="Project Design" action="design-button-action" width="125" height="24" />
       </row>
       <row align="stretch"  valign="stretch" flex="1" vflex="1">
         <column align="stretch" valign="stretch" flex="1" vflex="1">
           <row align="stretch"   valign="stretch" vflex="5" flex="1">
-            <world flex="7" vflex="5" name="the world">
+            <world flex="7" vflex="5" tooltip="The world" name="the world">
               <camera/>
-              <text-3d text="Click on the '+' button" x="-3.0" y="0.2" size="5.0"/>
-              <text-3d text="above to add a world" x="-3.0" y="-0.5" size="5.0"/>
+              <text-3d tooltip="Click on the '+' button" text="Click on the '+' button" x="-3.0" y="0.2" size="5.0"/>
+              <text-3d tooltip="Click on the '+' button" text="above to add a world" x="-3.0" y="-0.5" size="5.0"/>
             </world>
-            <column align="stretch" valign="stretch" flex="1" vflex="1" src="gradient-transparent.png" width="100">
-              <bevel-button bezel-style="square" text="Push Layer" start-disabled="true" name="push-layer-button" action="push-layer-action" width="90" height="24" />
-              <bevel-button bezel-style="square" text="Pop Layer" start-disabled="true" name="pop-layer-button" action="pop-layer-action" width="85" height="24" />
-              <bevel-button bezel-style="square" text="Toggle Grid" start-disabled="true" name="toggle-grid-button" action="toggle-grid-action" width="95" height="24" />
+            <column tooltip="Layer controls" align="stretch" valign="stretch" flex="1" vflex="1" src="gradient-transparent.png" width="100">
+              <bevel-button tooltip="Add a new layer to your world" bezel-style="square" text="Push Layer" start-disabled="true" name="push-layer-button" action="push-layer-action" width="90" height="24" />
+              <bevel-button tooltip="Remove the top layer from your world" bezel-style="square" text="Pop Layer" start-disabled="true" name="pop-layer-button" action="pop-layer-action" width="85" height="24" />
+              <bevel-button tooltip="Hide or show the grid" bezel-style="square" text="Toggle Grid" start-disabled="true" name="toggle-grid-button" action="toggle-grid-action" width="95" height="24" />
               
-              <column align="center" valign="stretch" flex="1" vflex="1" >
-                <label width="85" text="Layer Height:"/>
-                <slider vflex="1" width="20" value="5.0" start-disabled="true" name="layer-height-slider" max-value="10.0" min-value="0.0"  action="layer-height-slider-action"/>
+              <column  tooltip="Layer controls" align="center" valign="stretch" flex="1" vflex="1" >
+                <label tooltip="Height of each layer in your world" width="85" text="Layer Height:"/>
+                <slider tooltip="Adjust the layer height of this world" vflex="1" width="20" value="5.0" start-disabled="true" name="layer-height-slider" max-value="10.0" min-value="0.0"  action="layer-height-slider-action"/>
               </column>
             </column >
           </row>
           <row align="stretch" minimize="vertical"  valign="bottom"  flex="1">
             <row align="stretch"  minimize="vertical" valign="bottom" flex="1">
-              <status-bar align="stretch" flex="1" name="status-bar" text=""/>
+              <status-bar tooltip="Status Bar" align="stretch" flex="1" name="status-bar" text=""/>
             </row>
             <row align="stretch" padding="-1" minimize="vertical" valign="middle" flex="1" src="gradient-transparent.png">
-
-
             </row>
           </row>
- 
         </column>
       </row>
       <row vflex="1" valign="stretch" align="stretch">
         <column vflex="1" width="250" valign="stretch" align="stretch">
           <row src="gradient-transparent.png" height="24" valign="middle" align="center"  >
-             <label text="Conditions" width="100" align="center"/>
+             <label text="Conditions" tooltip="Condition Palette" width="100" align="center"/>
           </row>
           <row vflex="1" valign="stretch" align="stretch">
-            <visual-agentalk-view name="conditions" flex="1" vflex="1"  />
+            <behavior-palette-view tooltip="Condition palette view" name="conditions" flex="1" vflex="1"  />
             <scroller name="conditions scroller" small-scroller-size="true" action="scroll-conditions"/>
           </row>
          </column>
         <column vflex="1" flex="1" valign="stretch" align="stretch">
           <row src="gradient-transparent.png" height="24" valign="middle" align="center" flex="1" >
              <img src="missing_image.png" name="agent image"/>
-             <label text="Behavior: <select an agent>" name="agent name" width="200"/>
+             <label tooltip="Agent behaviors" text="Behavior: <select an agent>" name="agent name" width="200"/>
           </row>
           <row vflex="1" valign="stretch" align="stretch">
-            <behavior-view name="behavior" content-changed-action="behavior-changed" flex="3" vflex="1"/>
+            <behavior-view name="behavior" tooltip="Agent behavior view" content-changed-action="behavior-changed" flex="3" vflex="1"/>
             <scroller name="behavior scroller" small-scroller-size="true" action="scroll-behavior"/>
           </row>
         </column>
         <column vflex="1" width="250" valign="stretch" align="stretch">
           <row src="gradient-transparent.png" height="24" valign="middle" align="center" >
-             <label text="Actions" width="100" align="center"/>
+             <label text="Actions" width="100" tooltip="Action Palette" align="center"/>
           </row>
           <row vflex="1" valign="stretch" align="stretch">
-            <visual-agentalk-view name="actions" flex="1" vflex="1"/>
+            <behavior-palette-view name="actions" tooltip="Action palette view" flex="1" vflex="1"/>
             <scroller name="actions scroller" small-scroller-size="true" action="scroll-actions"/>
           </row>
         </column>
       </row>
       <row align="center" padding="-1" valign="stretch" height="24" src="gradient-transparent.png">
-        <bevel-button bezel-style="square" start-disabled="true" name="new-rule-button" text="+ Rule" action="add-rule-action" height="24"/>
-        <bevel-button bezel-style="square" start-disabled="true" name="new-method-button" text="+ Method" action="add-method-action" width="80" height="24"/>
-        <bevel-button bezel-style="square" start-disabled="true" name="delete-vat-button" text="-" action="delete-selected-command" width="30" height="24"/>
-        <bevel-button bezel-style="square" text="Duplicate" name="duplicate-button" action="duplicate-action" start-disabled="true" width="80" height="24" />
-        <bevel-button bezel-style="square" start-disabled="true" name="test-button" text="Test" action="test-action" height="24"/>
-        <bevel-button bezel-style="square" start-disabled="true" name="not-button" text="NOT" action="negate-action" height="24"/>
+        <bevel-button tooltip="Add new rule" bezel-style="square" start-disabled="true" name="new-rule-button" text="+ Rule" action="add-rule-action" height="24"/>
+        <bevel-button tooltip="Add new method" bezel-style="square" start-disabled="true" name="new-method-button" text="+ Method" action="add-method-action" width="80" height="24"/>
+        <bevel-button tooltip="Delete selected instruction" bezel-style="square" start-disabled="true" name="delete-vat-button" text="-" action="delete-selected-command" width="30" height="24"/>
+        <bevel-button tooltip="Duplicate selected instruction" bezel-style="square" text="Duplicate" name="duplicate-button" action="duplicate-action" start-disabled="true" width="80" height="24" />
+        <bevel-button tooltip="Test selected instruciton with selected agent" bezel-style="square" start-disabled="true" name="test-button" text="Test" action="test-action" height="24"/>
+        <bevel-button tooltip="Negate selected condition" bezel-style="square" start-disabled="true" name="not-button" text="NOT" action="negate-action" height="24"/>
         <spacer width="10"/>
         <bevel-button bezel-style="square" start-disabled="false" name="wiki-button" text="Wiki" action="wiki-action" height="24"/>
       </row>
