@@ -174,6 +174,12 @@
   ; do nothing
   )
 
+
+(defmethod VIEW-DID-END-RESIZE ((Self opengl-view))
+  (enable-tooltips self)
+  (map-subviews self #'(lambda (View) (view-did-end-resize View ))))
+
+
 ;_______________________________
 ; Events                        |
 ;_______________________________
