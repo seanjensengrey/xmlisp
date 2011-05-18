@@ -39,8 +39,7 @@
           <image-button name="zoom button" start-disabled="true" action="zoom-tool-action" image="zoom-button.png"/>    
         </image-button-row>
         <spacer width="8"/>
-        <image-button  start-disabled="true" name="camera-button" action="switch-camera-action" image="camera.png"/>  
-
+        <image-button  start-disabled="true" name="camera-button" action="switch-camera-action" image="camera.png"/>
         <image-button name="full-screen-button" start-disabled="true" action="full-screen-action" image="fullscreen.png"/>  
         <spacer width="8"/>
         <image-button name="reload button" start-disabled="true" action="reload-tool-action"  image="reload-button.png"/> 
@@ -48,6 +47,8 @@
         <label width="35" text="slow"/>
         <slider value="3.9" start-disabled="true" name="speed-slider" max-value="4.0" min-value="0.0" action="speed-slider-action"/>
         <label width="35" text="fast"/>
+        <spacer width="8"/>
+        <bevel-button bezel-style="square" name="design-button" start-disabled="true" text="Project Design" action="design-button-action" width="125" height="24" />
       </row>
       <row align="stretch"  valign="stretch" flex="1" vflex="1">
         <column align="stretch" valign="stretch" flex="1" vflex="1">
@@ -117,6 +118,8 @@
         <bevel-button bezel-style="square" text="Duplicate" name="duplicate-button" action="duplicate-action" start-disabled="true" width="80" height="24" />
         <bevel-button bezel-style="square" start-disabled="true" name="test-button" text="Test" action="test-action" height="24"/>
         <bevel-button bezel-style="square" start-disabled="true" name="not-button" text="NOT" action="negate-action" height="24"/>
+        <spacer width="10"/>
+        <bevel-button bezel-style="square" start-disabled="false" name="wiki-button" text="Wiki" action="wiki-action" height="24"/>
       </row>
    </column>
   </row>
