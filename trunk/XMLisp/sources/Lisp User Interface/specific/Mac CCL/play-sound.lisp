@@ -40,6 +40,7 @@
                      (unless (%null-ptr-p New-Sound)
                        (setf (gethash Name *Sounds*) New-Sound))))))
     (unless Sound (return-from play-sound (warn "sound \"~A\" is missing" Name)))
+    #-cocotron
     (#/setLoops: Sound (if Loops #$YES #$NO))
     (#/play Sound)))
 
