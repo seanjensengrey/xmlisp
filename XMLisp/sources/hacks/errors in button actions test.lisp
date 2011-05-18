@@ -83,3 +83,5 @@
   (print "This is my action!!"))
 
 (make-window-with-button)
+
+(defparameter *Button* (make-instance 'ns::ns-button))
