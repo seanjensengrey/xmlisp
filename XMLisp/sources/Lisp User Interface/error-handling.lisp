@@ -86,5 +86,24 @@
 (hemlock::time-to-run (+ 3 4))
 
 
+(defmacro with-standard-fpu-mode (&body body)
+ (let ((saved-mode (gensym)))
+   `(let ((,saved-mode (get-fpu-mode)))
+      (set-fpu-mode :rounding-mode :nearest :overflow t
+		     :underflow nil :division-by-zero t
+		     :invalid t :inexact nil)
+      (unwind-protect
+	    (progn
+	      ,@body)
+	 (apply #'set-fpu-mode ,saved-mode)))))
+
+
+(in-main-thread () 
+  (catch-errors-nicely
+    ("trying to divide")
+    (with-standard-fpu-mode
+      (/ 3.4 (sin 0.0)))))
+
+
 |#
   
