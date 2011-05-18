@@ -568,6 +568,7 @@
    (is-annotated :accessor is-annotated :initform nil :documentation "either nil :true or :false")
    (is-drag-entered :accessor is-drag-entered :initform nil :type boolean :documentation "true if another agent is currently being dragged on my")
    (agents :accessor agents :initform nil :initarg :agents)
+   (tooltip :accessor tooltip :initform nil :initarg :tooltip :documentation "If this accessor is set it will display this for the tool instead of the documentation")
    )
   (:documentation "Open Agent Engine agent base class"))
 
@@ -1208,22 +1209,37 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
   ;; just replace current camera
   (setf (camera View) Camera))
 
-
+#|
 (defmethod GET-TOOLTIP ((Self agent-3d-view) x y)
   (let ((agent (find-agent-at-screen-position x y)))
     (if agent
       (progn
         (tooltip-event-handler agent)
         (get-tooltip agent x y))
-      (documentation (type-of self) 'type))))
+      (or (tooltip self) (documentation (type-of self) 'type))))
+
+(defmethod GET-TOOLTIP ((Self agent-3d) x y)
+  (declare (ignore x y))
+  (print "GET TOOLTIP AGENT 3d")
+  (if (tooltip-text self)
+    (tooltip-text self)
+    (or (tooltip self) (documentation (type-of self) 'type))))
+
+|#
+(defmethod GET-TOOLTIP ((Self agent-3d-view) x y)
+  (let ((agent (find-agent-at-screen-position x y)))
+    (if agent
+      (progn
+        (tooltip-event-handler agent)
+        (get-tooltip agent x y))
+      (tooltip self))))
 
 
 (defmethod GET-TOOLTIP ((Self agent-3d) x y)
   (declare (ignore x y))
   (if (tooltip-text self)
     (tooltip-text self)
-    (documentation (type-of self) 'type)))
-
+    (or (tooltip self) (documentation (type-of self) 'type))))
 
 #| Examples:
 
