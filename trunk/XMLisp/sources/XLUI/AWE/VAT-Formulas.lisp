@@ -231,7 +231,6 @@
   Expand <Formula> by subsituting 
   - attribute names with attibute access forms
   - array accesses with agent accesses."
-
   (cond
    ((symbolp Formula)
     (if (is-global-variable Formula)
