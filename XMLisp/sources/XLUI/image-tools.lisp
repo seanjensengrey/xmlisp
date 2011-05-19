@@ -1,9 +1,8 @@
 (in-package :xlui)
 
 
-(defun CONVERT-IMAGE-FILE (Source Destination &key (Width 32) (Height 32) (Depth 32) 
-                                     (image-format :png)
-                                     ) "
+(defun CONVERT-IMAGE-FILE (Source Destination
+                           &key (Width 32) (Height 32) (Depth 32) (image-format :png)) "
   in:  Source Destination Pathname; 
        &key Width fixnum default 32; Height fixnum default 32; Depth fixnum default 32; 
        Image-Format can be :png :bmp :jpg :tiff
@@ -14,7 +13,7 @@
     (error "Cannot covnert image file because ~A does not exist." source)
     (return-from convert-image-file))
   (ns:with-ns-size (Size Width Height)
-    (let* ((source-image (#/initWithContentsOfFile: (#/alloc ns:ns-image) (lui::native-string (ccl::native-translated-namestring Source))))
+    (let* ((source-image (#/initWithContentsOfFile: (#/alloc ns:ns-image) (lui::native-string (ccl::native-untranslated-namestring Source))))
            (resized-image (#/initWithSize: (#/alloc ns:ns-image) size))
            (original-size (#/size source-image)))
       (unless (and (equal width (NS:NS-SIZE-WIDTH original-size)) (equal height (NS:NS-SIZE-HEIGHT original-size)))
@@ -38,7 +37,7 @@
             (:bmp #$NSBMPFileType)
             (:tiff #$NSTIFFFileType))
           ccl::+null-ptr+)
-         (lui::native-string (ccl::native-translated-namestring Destination))
+         (lui::native-string (ccl::native-untranslated-namestring Destination))
          #$YES)))))
 
 
