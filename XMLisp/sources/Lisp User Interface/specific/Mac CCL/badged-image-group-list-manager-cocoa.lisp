@@ -904,8 +904,7 @@
     (unless (equal previously-selected-group-name  (selected-group self))
       (selected-group-changed self )
       (group-selected self)))
-  (layout-changed self)
-  (layout (native-view self)))
+  (layout-changed self))
 
 
 (defmethod INCREMENT-ITEM-COUNTER ((Self badged-image-group-list-manager-view) group-name item-name &key (number-of-agents 1))
