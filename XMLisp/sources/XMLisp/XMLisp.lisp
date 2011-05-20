@@ -6,9 +6,9 @@
 ;*********************************************************************
 ;* Author       : Alexander Repenning, alexander@agentsheets.com     *
 ;*                http://www.agentsheets.com                         *
-;* Copyright    : (c) 1996-2010, AgentSheets Inc.                    *
+;* Copyright    : (c) 1996-2011, AgentSheets Inc.                    *
 ;* Filename     : XMLisp.lisp                                        *
-;* Last Update  : 05/06/10                                           *
+;* Last Update  : 05/19/11                                           *
 ;* Version      :                                                    *
 ;*    1.0       : 09/19/04                                           *
 ;*    1.1       : 09/30/04 encode/decode strings in XML              *
@@ -86,6 +86,7 @@
 ;*                         no matching class BLA                     *
 ;*    3.7       : 03/09/10 have file slot and set ASAP               *
 ;*    3.8       : 05/06/10 SBLC compatibility by John Morrison       *
+;*    3.9       : 05/19/11 *XMLisp-Print-Synoptic* option            *
 ;* Systems      : G4, OS X 10.6.2                                    *
 ;* Lisps        : MCL 5.0, MCL 5.2, LispWorks 4.3.7, CCL 1.4         *
 ;*                CLISP 2.33.83, CMUCL, AGL                          *
@@ -147,6 +148,7 @@
           print-typed-attribute-value print-typed-subelement-value
           print-default-value-attributes-p
           slot-name->attribute-name
+          synoptic-xml-object-indentity-clues
           ;; reading
           load-object save-object finished-reading finished-reading-attributes read-typed-attribute-value
           read-return-value without-xml-reader
@@ -167,6 +169,7 @@
           ;; variables
           *xmlisp-packages*
           *fallback-class-name-for-element-name-hook*
+          *XMLisp-Print-Synoptic*
           ;; types
           path string-or-null integer-or-null
           ))
@@ -175,6 +178,8 @@
 (defvar *XMLiSP-Element-Class-Names* (make-hash-table :test #'eq) "table mapping element names to class names")
 
 (defvar *XMLisp-Print-Verbose* nil "Variable for printing debugging messages. If true, then the messages are printed. If nil, then the messages are not printed.")
+
+(defvar *XMLisp-Print-Synoptic* nil "If non nil use an abreviated, but non readable, version of XML serialization")
 
 (defparameter *Fallback-Class-Name-For-Element-Name-Hook* nil "Function to call to get element name if there is no class to match")
 
@@ -675,6 +680,10 @@
 
 (defgeneric PRINT-DEFAULT-VALUE-ATTRIBUTES-P (Xml-Serializer)
   (:documentation "If true print attributes that have same value as :initform. Good idea for large sets with highly redundant information. Bad idea if value if :initform changes later"))
+
+
+(defgeneric SYNOPTIC-XML-OBJECT-INDENTITY-CLUES (Xml-Serializer)
+  (:documentation "String that could reveal the identity of an XML object"))
 
 
 (defgeneric FINISHED-READING (Xml-Serializer Stream)
@@ -1630,7 +1639,6 @@
            :file (pathname-from-stream Stream))))))))
 
 
-
 (defun READ-WHITE-SPACE (Stream)
   (let ((Char nil))
     (loop 
@@ -1805,8 +1813,8 @@
 ; Set & Aggregation Handlers  |
 ;_____________________________
 
-
 (defvar *Plural-Name-Table* (make-hash-table :test #'eq) "cached plural forms of symbols, e.g., bla -> blas")
+
 
 (defun PLURAL-NAME (Name) "
   in: name symbol.
@@ -2007,7 +2015,21 @@
            (print-object Object Stream)))))
 
 
+(defmethod SYNOPTIC-XML-OBJECT-INDENTITY-CLUES ((Self xml-serializer))
+  "..." ;; default: no real clue really
+  )
+
+
+(defmethod PRINT-OBJECT-SYNOPTIC ((Self xml-serializer) Stream)
+  (format Stream "<~A ~A/>" (xml-tag-name-string Self) (synoptic-xml-object-indentity-clues Self)))
+
+
 (defmethod PRINT-OBJECT ((Self xml-serializer) Stream)
+  ;; perhaps we just print synoptic?
+  (when *XMLisp-Print-Synoptic*
+    (print-object-synoptic Self Stream)
+    (return-from print-object))
+  ;; nope: we are going for the full Monty
   ;; start tag
   (print-xml-indent Stream)
   (format Stream "<~A" (xml-tag-name-string Self))
