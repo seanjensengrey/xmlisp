@@ -28,6 +28,22 @@
   (ccl::report-condition Condition Stream))
 
 
+(defun PRINT-DATE-AND-TIME-STAMP (&optional (Stream t))
+  (multiple-value-bind (second minute hour date month year day-of-week dst-p tz)
+                       (get-decoded-time)
+    (declare (ignore DST-P))
+    (format Stream "~2,'0d:~2,'0d:~2,'0d of ~a, ~d/~2,'0d/~d (GMT~@d)"
+            hour
+            minute
+            second
+            (nth day-of-week '("Monday" "Tuesday" "Wednesday" "Thursday" "Friday" "Saturday" "Sunday"))
+            month
+            date
+            year
+            (- tz))))
+  
+
+
 (eval-when (:execute :load-toplevel :compile-toplevel)
 (defmacro CATCH-ERRORS-NICELY ((Situation &key Before-Message After-Message) &body Forms) "Catch errors at high level. Also works in gui threads and Cocoa call backs"
   `(catch :wicked-error
@@ -40,7 +56,11 @@
                            ;; no way to continue
                            ,Before-Message
                            ;; What is the error
-                           (print-condition-understandably Condition (format nil "~%~%~A error, " ,Situation))
+                           (format t "~%~%##############################################~%")
+                           (print-condition-understandably Condition "Error: ")
+                           (format t "~%While ~A~%~%" ,Situation)
+                           (print-date-and-time-stamp)
+                           (format t "~%##############################################~%")
                            ;; produce a basic stack trace
                            (format t "~% ______________Exception in thread \"~A\"___(backtrace)___" (slot-value *Current-Process* 'ccl::name))
                            (ccl:print-call-history :start-frame-number 1 :detailed-p nil)
