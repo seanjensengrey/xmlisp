@@ -290,23 +290,6 @@
   ;;(compose-scene Self)
   )
 
-;; Selection
-
-(defmethod SELECT-AGENTS ((Self agent-3d-view) &rest Agents)
-  ;; unselect old
-  (setf (selection (first (matrices Self))) nil)
-  (setq *Selected-Matrix-Agent* nil)
-  (dolist (Agent (agents-selected Self))
-    (setf (is-selected Agent) nil))
-  ;; select new
-  (setf (agents-selected Self) Agents)
-  (dolist (Agent (agents-selected Self))
-    (setf (is-selected Agent) t))
-  ;; assume there is one agent only
-  (let ((Agent (first Agents)))
-    (setq *Selected-Matrix-Agent* Agent)
-    (setf (selection (first (matrices Self))) (list (layer Agent) (row Agent) (col Agent) Agent))))
-
 
 ;; Content Changed events
 
