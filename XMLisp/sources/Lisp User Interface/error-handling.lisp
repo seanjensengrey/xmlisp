@@ -24,7 +24,7 @@
 
 
 (defun PRINT-CONDITION-UNDERSTANDABLY (Condition &optional (Message "") (Stream t))
-  (format Stream "~%~A " Message)
+  (format Stream "~A " Message)
   (ccl::report-condition Condition Stream))
 
 
