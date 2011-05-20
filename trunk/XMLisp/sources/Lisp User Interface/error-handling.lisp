@@ -36,22 +36,24 @@
                        (print-condition-understandably Condition (format nil "~A warning, " ,Situation))
                        (muffle-warning)))
           (condition #'(lambda (Condition)
-                         ;; no way to continue
-                         ,Before-Message
-                         ;; dump stack trace
-                         (print-condition-understandably Condition (format nil "~A error, " ,Situation))
-                         ;; produce a basic stack trace
-                         (format t "~% ______________Exception in thread \"~A\"___(backtrace)___" (slot-value *Current-Process* 'ccl::name))
-                         (ccl:print-call-history :start-frame-number 1 :detailed-p nil)
-                         ;; show minmalist message to end-user
-                         (ccl::with-autorelease-pool
-                             (standard-alert-dialog 
-                              (with-output-to-string (Out)
-                                (print-condition-understandably Condition "Error: " Out))
-                              :is-critical t
-                              :explanation-text (format nil "While ~A" ,Situation)))
-                         ,After-Message
-                         (throw :wicked-error Condition))))
+                         (let ((*XMLisp-Print-Synoptic* t))
+                           ;; no way to continue
+                           ,Before-Message
+                           ;; What is the error
+                           (print-condition-understandably Condition (format nil "~%~%~A error, " ,Situation))
+                           ;; produce a basic stack trace
+                           (format t "~% ______________Exception in thread \"~A\"___(backtrace)___" (slot-value *Current-Process* 'ccl::name))
+                           (ccl:print-call-history :start-frame-number 1 :detailed-p nil)
+                           (format t "~%~%~%")
+                           ;; show minmalist message to end-user
+                           (ccl::with-autorelease-pool
+                               (standard-alert-dialog 
+                                (with-output-to-string (Out)
+                                  (print-condition-understandably Condition "Error: " Out))
+                                :is-critical t
+                                :explanation-text (format nil "While ~A" ,Situation)))
+                           ,After-Message
+                           (throw :wicked-error Condition)))))
        ,@Forms))))
 
 
