@@ -223,7 +223,7 @@
    "FULL-SCREEN" "ENTER-FULL-SCREEN" "EXIT-FULL-SCREEN"
    )
   (:import-from "XML"
-                "FILE"))
+                "FILE" "*XMLISP-PRINT-SYNOPTIC*"))
 
 
 (defun LUI::NATIVE-PATH (Directory-Name File-Name) "
