@@ -993,7 +993,6 @@
     (adjust-distance-action window (view-named window "distance-slider") t)
     (disable (view-named window "distance-slider"))
     (setf (surfaces (inflatable-icon Model-Editor)) 'front)
-    (update-inflation window)
     (display Model-Editor)))
 
 
