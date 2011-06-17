@@ -61,22 +61,22 @@
            (ftype function project-window stop-simulation simulation-properties set-property-value add-property))
   (let ((Name-String (format nil "~A" (string-capitalize Name))))
     (if (property-exists-p Name)
-      (set-property-value (simulation-properties *Project-Manager*) Name-String Value)
+      (set-property-value (simulation-properties-window *Project-Manager*) Name-String Value)
       (cond (t
              #|(standard-alert-dialog (format nil "The simulation property '~A' does not exist. Do you want to add it to the Simulation Properties?" Name)
                                     :yes-text "Yes"
                                     :no-text "No"
                                     :cancel-text nil)|#
              ;; first time ever a simulation property gets created and no simulation property editor exists yet => create one
-             (unless (simulation-properties *Project-Manager*)
-               (setf (simulation-properties *Project-Manager*) (make-instance 'simulation-properties)))
-             (add-property (simulation-properties *Project-Manager*)
+             (unless (simulation-properties-window *Project-Manager*)
+               (setf (simulation-properties-window *Project-Manager*) (make-instance 'simulation-properties-window)))
+             (add-property (simulation-properties-window *Project-Manager*)
                            :name Name-String
                            :input t
                            :output t
                            :type "number" 
                            :interface "editable-number")
-             (set-property-value (simulation-properties *Project-Manager*) Name-String Value))
+             (set-property-value (simulation-properties-window *Project-Manager*) Name-String Value))
             (nil (stop-simulation (project-window *Project-Manager*)))))))
 
 
