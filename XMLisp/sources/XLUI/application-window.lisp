@@ -9,7 +9,8 @@
 
 (defclass APPLICATION-WINDOW (window xml-serializer)
   ((named-views :accessor named-views :initarg :named-views :initform (make-hash-table :test #'equal) :documentation "hashtable of all the named views contained in window")
-   (margin :accessor margin :initarg :margin :initform *Layout-Border* :type integer :documentation "top, right, left, bottom"))
+   (margin :accessor margin :initarg :margin :initform *Layout-Border* :type integer :documentation "top, right, left, bottom")
+   (do-show-app-window-immediately :accessor do-show-app-window-immediately :initarg :do-show-app-window-immediately :initform t :documentation "if true will show window when creating instance"))
   (:documentation "Window containing xml-serializable views.")
   (:default-initargs 
       :do-show-immediately nil))
@@ -52,7 +53,8 @@
                (set-size Subview (- (width Self) (margin Self) (margin Self)) (- (height Self) (margin Self) (margin Self)))
     (set-position Subview (margin Self) (margin Self)))
   (register-named-views Self)
-  (show Self))
+  (when (do-show-app-window-immediately self)
+    (show Self)))
 
 
 (defmethod PRINT-SLOTS ((Self application-window))
@@ -66,7 +68,8 @@
 (defmethod SIZE-CHANGED-EVENT-HANDLER ((Self application-window) Width Height)
   (do-subviews (Subview Self)
     (set-size Subview (- Width (margin Self) (margin Self)) (- Height (margin Self) (margin Self)))
-    (set-position Subview (margin Self) (margin Self))))
+    (set-position Subview (margin Self) (margin Self)))
+  (display self))
 
 
 (defmethod FORCE-REDRAW ((Self Application-Window))
