@@ -20,10 +20,15 @@
   (when (columns (lui-view table-view))
     (if (elt (columns (lui-view table-view)) (read-from-string (ccl::lisp-string-from-nsstring  (#/identifier table-column))))
       (let ((value (elt (elt (columns (lui-view table-view)) (read-from-string (ccl::lisp-string-from-nsstring  (#/identifier table-column)))) row)))
-        
-        (if (subtypep (type-of value) 'string)
-          (native-string value)
-          (native-string (write-to-string value))))
+        (etypecase value
+          (String
+           (native-string value))
+          (Symbol 
+           (native-string (symbol-name value)))
+          (t
+           (native-string (write-to-string value))))
+           
+        )
       (native-string "."))))
 
 ;**********************************
@@ -72,8 +77,11 @@
 
 
 (defmethod GET-STRING-VALUE-OF-CELL-AT-ROW-COLUMN ((self table-view) row column)
-  (ccl::lisp-string-from-nsstring (#/stringValue (#/preparedCellAtColumn:row: (native-view self) column row))))
+  (elt (elt (columns self) column) row))
+;(ccl::lisp-string-from-nsstring (#/stringValue (#/preparedCellAtColumn:row: (native-view self) column row))))
 
+(defmethod GET-SELECTED-ROW ((self table-view))
+  (#/selectedRow (native-view self)))
 
 (defmethod GET-ROW-OF-CELL-BEING-EDITED ((self table-view))
   (#/editedRow (native-view self)))
