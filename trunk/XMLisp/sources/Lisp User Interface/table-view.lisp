@@ -54,12 +54,18 @@
     (reload-data self)))
 
 
-(defmethod ADD-ROW ((self table-view) &key (data-list nil))
+(defmethod ADD-ROW ((self table-view)  &key (data-list nil))
   (dotimes (i (length (columns self)))
     (if (> (length data-list) i)
       (Setf (elt (columns self) i) (append  (elt (columns self) i) (list (elt data-list i))))
       (setf (elt (columns self) i) (append (elt (columns self) i) (list ".")))))
  (recalculate-rows self))
+
+
+(defmethod REMOVE-ROW ((self table-view) row)
+  (dotimes (i (length (columns self)))
+    (setf (elt (columns self) i) (remove (elt (elt (columns self) i) row) (elt (columns self) i) )))
+  (recalculate-rows self))
 
 
 (defmethod CLEAR-COLUMNS ((self table-view))
