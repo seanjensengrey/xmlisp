@@ -54,14 +54,14 @@
   (gethash Name *Simulation-Properties* 0))
         
 
-(defun SET-THE-PROPERTY-VALUE (Name Value) "
+(defun SET-THE-PROPERTY-VALUE (Name Value &key (update-window t)) "
   in: Name {symbol}, Value {number}.
   Set the simulation property <Name> to <Value>." 
   (declare (special *Project-Manager*)
            (ftype function project-window stop-simulation simulation-properties set-property-value add-property))
   (let ((Name-String (format nil "~A" (string-capitalize Name))))
     (if (property-exists-p Name)
-      (set-property-value (simulation-properties-window *Project-Manager*) Name-String Value)
+      (set-property-value (simulation-properties-window *Project-Manager*) Name-String Value :update-window update-window)
       (cond (t
              #|(standard-alert-dialog (format nil "The simulation property '~A' does not exist. Do you want to add it to the Simulation Properties?" Name)
                                     :yes-text "Yes"
@@ -76,7 +76,7 @@
                            :output t
                            :type "number" 
                            :interface "editable-number")
-             (set-property-value (simulation-properties-window *Project-Manager*) Name-String Value))
+             (set-property-value (simulation-properties-window *Project-Manager*) Name-String Value :update-window update-window))
             (nil (stop-simulation (project-window *Project-Manager*)))))))
 
 
