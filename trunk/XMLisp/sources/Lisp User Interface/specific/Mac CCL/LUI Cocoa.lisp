@@ -747,6 +747,10 @@
                                (#/mainScreen ns:ns-screen))) 
                   <NSR>ect.size.height)))
 
+(defmethod VISIBLE-P ((Self window))
+  (when (#/isVisible (native-window Self))
+    t))
+
 
 (defmethod SCREEN-HEIGHT ((Self null))
   (truncate (pref (#/frame (#/mainScreen ns:ns-screen))
@@ -795,7 +799,7 @@
 
 (defmethod SWITCH-TO-FULL-SCREEN-MODE ((Self window))
   (setf (gethash Self *Window-Full-Screen-Restore-Sizes*) (#/frame (native-window Self)))
-  #-cocotron (#_SetSystemUIMode #$kUIModeAllSuppressed #$kUIOptionAutoShowMenuBar)
+  ;#-cocotron (#_SetSystemUIMode #$kUIModeAllSuppressed #$kUIOptionAutoShowMenuBar)
   (setf (full-screen Self) t)
   ;;; random sizing to trigger #/constrainFrameRect:toScreen
   ;;; (set-size Self 100 100)
