@@ -58,7 +58,8 @@
   in: Name {symbol}, Value {number}.
   Set the simulation property <Name> to <Value>." 
   (declare (special *Project-Manager*)
-           (ftype function project-window stop-simulation simulation-properties set-property-value add-property))
+           
+           (ftype function project-window stop-simulation simulation-properties-window simulation-properties set-property-value add-property))
   (let ((Name-String (format nil "~A" (string-capitalize Name))))
     (if (property-exists-p Name)
       (set-property-value (simulation-properties-window *Project-Manager*) Name-String Value :update-window update-window)
