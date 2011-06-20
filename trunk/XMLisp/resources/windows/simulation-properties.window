@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<simulation-properties-window title="scrolling" margin="0" min-width="206">
+<simulation-properties-window title="Simulation Properties" margin="0" min-width="206">
     <column valign="stretch" align="stretch">
       <scroll-box  flex="1" vflex="1">
-        <attribute-window-table flex="1" name="table"/>
+        <property-window-table flex="1" name="table"/>
       </scroll-box>
       <row src="gradient-transparent.png" minimize="vertical"   align="center" valign="bottom">
         <bevel-button height="24" width="20" bezel-style="square" text="+" action="add-property-to-editor-action"/>
