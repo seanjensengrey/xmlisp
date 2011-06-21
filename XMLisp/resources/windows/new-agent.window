@@ -22,9 +22,7 @@
           <node node-name="Sphere" node-path="lui:resources;textures;" allowed-file-types="(png)">
             <node node-name="Custom Texture..."/>
           </node>
-          <node node-name="Inflatable Icon" node-path="lui:resources;templates;;shapes;inflatable icons;" allowed-file-types="directories">
-
-          </node>
+          <node node-name="Inflatable Icon" node-path="lui:resources;templates;;shapes;inflatable icons;" allowed-file-types="directories"/>
         </browser>
       </column>
  
