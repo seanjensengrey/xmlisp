@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <palette>
-  <category title="basic conditions" disclosed="true">
+  <category tooltip="Basic conditions" title="basic conditions" disclosed="true">
     <see shape="bla"> <direction dcol="1"/>  </see>
     <see-a> <direction dcol="-1"/> </see-a> 
     <next-to/>
@@ -12,24 +12,20 @@
     <percent-chance/>
     <current-world/>
   </category>
-  <category title="keyboard" disclosed="true">
+  <category tooltip="Keyboard conditions" title="keyboard" disclosed="true">
     <key/>
     <shift-key-down/>
-    <command-key-down/>
     <control-key-down/>
   </category>
-  <category title="attributes" disclosed="true">
+  <category tooltip="Attribute conditions" title="attributes" disclosed="true">
     <test expression1="age" operator="&lt;" expression2="21"/>
     <has-attribute/>
   </category>
-  <category title="camera control" disclosed="true">
+  <category tooltip="Camera conditions" title="camera control" disclosed="true">
     <first-person-view/>
     <camera-attached/>
   </category>
-  <category title="Control Stucture" disclosed="true">
-    <not/>
-  </category>
-  <category title="Testing" disclosed="true">
+  <category tooltip="Testing conditions" title="Testing" disclosed="true">
     <true/> 
     <false/>
   </category>
