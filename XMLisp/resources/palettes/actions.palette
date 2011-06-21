@@ -1,10 +1,11 @@
 <?xml version="1.0"?>
 <palette>
-  <category title="basic actions" disclosed="true">
+  <category tooltip="Basic actions" title="basic actions" disclosed="true">
     <move/>
     <transport/> 
     <move-random/>
     <move-random-on/>
+    <move-random-on-a/>
     <change/>
     <new/>
     <erase/>
@@ -12,42 +13,42 @@
     <rotate-to/>
     <tooltip/>
   </category>
-  <category title="time" disclosed="true">
+  <category tooltip="Time actions" title="time" disclosed="true">
     <wait/>
     <finish-animations/>
   </category>
-  <category title="messages" disclosed="true">
+  <category tooltip="Message actions" title="messages" disclosed="true">
     <message/>
     <broadcast/>
   </category>
-  <category title="sound and speech" disclosed="true">
+  <category tooltip="Sound and speech actions" title="sound and speech" disclosed="true">
     <play-sound/>
     <stop-all-sounds/>
     <say/>
     <print/>
   </category>
-  <category title="attributes" disclosed="true">
+  <category tooltip="Attribute actions" title="attributes" disclosed="true">
     <set/>
   </category>
-  <category title="visualization" disclosed="true">
+  <category tooltip="Visualization actions" title="visualization" disclosed="true">
     <set-color-to/>
     <set-rgba-color/>
     <map/>
     <plot-to-window/>
     <plot-agents-attribute/> 
    </category>
-   <category title="camera control" disclosed="true">
+   <category tooltip="Camera actions" title="camera control" disclosed="true">
     <rotate-first-person-camera/>
    </category>
-   <category title="dialog" disclosed="true">
+   <category tooltip="Dialog actions" title="dialog" disclosed="true">
      <show-message text="Make it so!" subtext="The spaceship is ready to go"/>
    </category>
-   <category title="simulation control" disclosed="true">
+   <category tooltip="Simulation control actions" title="simulation control" disclosed="true">
      <run-simulation/>
      <step-simulation/>
      <stop-simulation/>
    </category>
-   <category title="World Control" disclosed="true">
+   <category tooltip="World control actions" title="World Control" disclosed="true">
      <switch-to-world/>
      <reload-world/> 
    </category>
