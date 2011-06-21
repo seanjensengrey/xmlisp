@@ -68,6 +68,10 @@
   (#/selectedColumn (native-view self)))
 
 
+(defmethod SELECT-ROW-IN-COLUMN ((Self browser-view) row col)
+  (#/selectRow:inColumn: (native-view self) row col))
+
+
 (defmethod SET-TITLE-OF-COLUMN ((self browser-view) column title)
   (#/setTitled: (native-view self) #$YES)
   (#/setTitle:ofColumn: (native-view self) (native-string title) column)
@@ -75,6 +79,7 @@
   #-cocotron
   (#/displayAllColumns (native-view self))
   )
+
 
 
 (defmethod MAP-SUBVIEWS ((Self browser-view) Function &rest Args)
