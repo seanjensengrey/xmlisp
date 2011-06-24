@@ -402,7 +402,7 @@
               )
           ;; search buffer, get rid of buffer and switch mode back
           (let ((Hit-Number (glRenderMode GL_RENDER)))
-            (when (= Hit-Number -1) (error "Selection hit record overflow"))
+            (when (= Hit-Number -1) (error "Too many objects to select close to the cursor (selection hit record overflow). Please zoom in or rotate your camera so that your cursor does not overlap with so many objects at once."))
             (setq Agent (unless (= Hit-Number 0) (find-closest-agent-in-hit-record Self Hit-Number &Selection-Array Agent-Type Layer))))
           ;; (glFinish) ;; flush causes big overhead ;; make sure this is done before we leave this section
           (setf (render-mode Self) GL_RENDER))
