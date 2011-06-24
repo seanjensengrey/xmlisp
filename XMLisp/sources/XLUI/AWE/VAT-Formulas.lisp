@@ -42,7 +42,7 @@
 ;; working non-GUI Simulation Property interface stubs 
 ;; for extensions such as Property-Editor.lisp
 
-(defvar *Simulation-Properties* (make-hash-table :test #'eq)
+(defvar *Simulation-Properties* (make-hash-table :test #'equal)
   "Table containing simulation properties and values")
 
 
@@ -70,7 +70,7 @@
                                     :cancel-text nil)|#
              ;; first time ever a simulation property gets created and no simulation property editor exists yet => create one
              (unless (simulation-properties-window *Project-Manager*)
-               (setf (simulation-properties-window *Project-Manager*) (make-instance 'simulation-properties-window)))
+               (setf (simulation-properties-window *Project-Manager*) (show-property-window)))
              (add-property (simulation-properties-window *Project-Manager*)
                            :name Name-String
                            :input t
@@ -85,7 +85,7 @@
   in:  Name {symbol}.
   out: Exists {boolean}.
   True if the property <Name> exists."
-  (when (gethash Name *Simulation-Properties*) t))
+  (when (gethash Name *Simulation-Properties* ) t))
 
 
 (defun REMOVE-PROPERTY (Name) "
@@ -240,7 +240,7 @@
    ((atom Formula) Formula)
    ;; (- 7) -> -7
    ((and (listp Formula) (eq (first Formula) '-) (= (length Formula) 2) (atom (second Formula)) (numberp (second Formula)))
-    (- (second Formula)))
+        (- (second Formula)))
    ;; macros but don't process parameters
    ((and (listp Formula) 
          (macro-function (first Formula))  
@@ -257,6 +257,25 @@
        (first Formula)
        (mapcar #'expand-vat-formula (rest Formula)))
       0.0))))
+
+
+(defun AGENTS_OF_TYPE (type)
+  (let ((agent-symbol (agentcubes::agentcubes-class-symbol type))
+        (agents-of-type 0))
+    (dolist (agent (active-agents (first (Agents (first (worlds *project-manager*))))))
+      (when (equal (type-of agent) agent-symbol)
+        (incf agents-of-type)))
+    agents-of-type))
+
+
+(defun AGENTS_WITH_SHAPE (shape)
+  (let ((shape-symbol (agentcubes::agentcubes-symbol shape))
+        (agents-with-shape 0))
+    (dolist (agent (active-agents (first (Agents (first (worlds *project-manager*))))))
+      (when (equal (shape-name agent) shape-symbol)
+        (print (shape-name agent))
+        (incf agents-with-shape)))
+    agents-with-shape))
 
 
 (defmethod EXPAND ((Self string))
