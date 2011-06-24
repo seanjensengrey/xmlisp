@@ -685,11 +685,15 @@ after any of the window controls calls stop-modal close window and return value.
 
 
 (defparameter *full-screen-view* nil)
+
+
+
 ;; Events
 (defmethod MOUSE-EVENT-HANDLER ((Self window) Window-x Window-y DX DY Event)
   (declare (ftype function get-x-y-offset-for-window-origin))
   (declare (ftype function convert-from-window-coordinates-to-view-coordinates))
 
+  (catch-errors-nicely ("handling mouse event")
   (multiple-value-bind (View x y)
                        (most-specific-view-containing-point Self Window-x Window-y)
     (when *full-screen-view* 
@@ -777,7 +781,7 @@ after any of the window controls calls stop-modal close window and return value.
       (:rotate-gesture
        (gesture-rotate-event-handler view x y (rotation Event)))
       (t
-       (format t "~%not handling ~A event yet, ~A" (event-type Event) (native-event Event))))))
+       (format t "~%not handling ~A event yet, ~A" (event-type Event) (native-event Event)))))))
 
 
 (defmethod KEY-EVENT-HANDLER ((Self window) Event)
