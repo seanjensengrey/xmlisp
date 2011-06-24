@@ -70,7 +70,7 @@
                                     :cancel-text nil)|#
              ;; first time ever a simulation property gets created and no simulation property editor exists yet => create one
              (unless (simulation-properties-window *Project-Manager*)
-               (setf (simulation-properties-window *Project-Manager*) (show-property-window)))
+               (setf (simulation-properties-window *Project-Manager*) (make-property-window)))
              (add-property (simulation-properties-window *Project-Manager*)
                            :name Name-String
                            :input t
@@ -257,25 +257,6 @@
        (first Formula)
        (mapcar #'expand-vat-formula (rest Formula)))
       0.0))))
-
-
-(defun AGENTS_OF_TYPE (type)
-  (let ((agent-symbol (agentcubes::agentcubes-class-symbol type))
-        (agents-of-type 0))
-    (dolist (agent (active-agents (first (Agents (first (worlds *project-manager*))))))
-      (when (equal (type-of agent) agent-symbol)
-        (incf agents-of-type)))
-    agents-of-type))
-
-
-(defun AGENTS_WITH_SHAPE (shape)
-  (let ((shape-symbol (agentcubes::agentcubes-symbol shape))
-        (agents-with-shape 0))
-    (dolist (agent (active-agents (first (Agents (first (worlds *project-manager*))))))
-      (when (equal (shape-name agent) shape-symbol)
-        (print (shape-name agent))
-        (incf agents-with-shape)))
-    agents-with-shape))
 
 
 (defmethod EXPAND ((Self string))
