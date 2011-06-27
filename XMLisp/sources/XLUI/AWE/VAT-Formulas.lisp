@@ -70,7 +70,9 @@
                                     :cancel-text nil)|#
              ;; first time ever a simulation property gets created and no simulation property editor exists yet => create one
              (unless (simulation-properties-window *Project-Manager*)
-               (setf (simulation-properties-window *Project-Manager*) (make-property-window)))
+               (setf (simulation-properties-window *Project-Manager*) (make-property-window))
+               ;; should we show the simulation property window if it's the first time a property is being created from within the simulation?
+               (show (simulation-properties-window *Project-Manager*)))
              (add-property (simulation-properties-window *Project-Manager*)
                            :name Name-String
                            :input t
