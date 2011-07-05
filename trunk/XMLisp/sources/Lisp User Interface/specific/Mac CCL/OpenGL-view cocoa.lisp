@@ -286,15 +286,19 @@
                (ccl::with-autorelease-pool
                    (case (catch :animation-abort
                            (loop
-                             (catch-errors-nicely 
-                              ("running simulation")
-                              (cond
-                               ;; at least one view to be animated
-                               ((animated-views Self)
-                                (animate-opengl-views-once Self))
-                               ;; nothing to animate: keep process but use little CPU
-                               (t
-                                (sleep 0.5))))))
+                             ;; allow the current animation cycle to be aborted but keep the thread running
+                             (case (catch :animation-abort-cycle
+                                     (catch-errors-nicely 
+                                      ("running simulation")
+                                      (cond
+                                       ;; at least one view to be animated
+                                       ((animated-views Self)
+                                        (animate-opengl-views-once Self))
+                                       ;; nothing to animate: keep process but use little CPU
+                                       (t
+                                        (sleep 0.5)))))
+                               (:animation-abort-cycle-cleanup (animation-cycle-aborted Self))
+                               (t nil))))
                      ;; call animation-aborted still in OpenGL Animations, good idea???
                      (:stop-animation (animation-aborted Self))
                      (t nil))))))))
