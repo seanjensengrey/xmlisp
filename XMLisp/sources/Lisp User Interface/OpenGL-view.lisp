@@ -84,6 +84,9 @@
 (defgeneric ANIMATION-ABORTED (opengl-view)
   (:documentation "Called when animation code got aborted via (throw :animation-abort)"))
 
+(defgeneric ANIMATION-CYCLE-ABORTED (opengl-view)
+  (:documentation "Called when animation code got aborted via (throw :animation-cycle-abort). No other agent will be dispatched in same cycle"))
+
 (defgeneric FRAME-RATE (opengl-view)
   (:documentation "How many frames per second"))
 
@@ -145,6 +148,10 @@
 
 (defmethod ANIMATION-ABORTED ((Self opengl-view))
   (print :ANIMATION-ABORTED))
+
+
+(defmethod ANIMATION-CYCLE-ABORTED ((Self opengl-view))
+  (print :ANIMATION-CYCLE-ABORTED))
 
 
 (defmethod VIEW ((Self opengl-view))
