@@ -504,14 +504,14 @@
                    (let ((Matrix-Background-Agent-Type 'matrix-background-agent)) ;; shut up the compiler warnings
                      (subtypep (type-of Agent) Matrix-Background-Agent-Type))))  ;; hack! matrix-background-agent are shared
       (when (and agent (is-visible agent))
-        (with-animation-locked
+        ;;(with-animation-locked
             (when (agent-hovered Self)
               (setf (is-hovered (agent-hovered Self)) nil)
               (mouse-hover-leave-event-handler (agent-hovered Self)))
           (when Agent
             (setf (is-hovered Agent) t)
             (mouse-hover-enter-event-handler Agent))
-          (setf (agent-hovered Self) Agent))))))
+          (setf (agent-hovered Self) Agent)))));;)
 
 
 ;****************************************
