@@ -281,6 +281,15 @@
 (export '(lui::Mac-OS-X-10.5-and-later lui::Mac-OS-X-10.6-and-later LUI::*OS-Name* lui::*OS-VERSION-MAJOR* lui::*OS-VERSION-MINOR* lui::*OS-VERSION-MAINTENANCE*) :lui)
 
 
+;; Helper function to avoid copying SVN folders in application, project, agent, shape, or world folders
+(defun ccl::recursive-copy-directory-without-svn (source-path dest-path &key test (if-exists :error))
+  (ccl::recursive-copy-directory source-path dest-path 
+                                 :test #'(lambda (File)
+                                           (and (or (null test) (funcall test File))
+                                                (not (string= (first (last (pathname-directory File))) ".svn"))))
+                                 :if-exists if-exists))
+
+
 ;;___________________________________________
 ;;  Load LUI                                 |
 ;;___________________________________________
@@ -413,39 +422,39 @@
 
 (defun FINISH-XMLISP ()
   (format t "~%- copy image resources")
-  (ccl::recursive-copy-directory
+  (ccl::recursive-copy-directory-without-svn
    (truename "lui:resources;images;")
    (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/images/" (user-homedir-pathname)))
   (format t "~%- copy sounds resources")
-  (ccl::recursive-copy-directory
+  (ccl::recursive-copy-directory-without-svn
    (truename "lui:resources;sounds;")
    (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/sounds/" (user-homedir-pathname)))
   (format t "~%- copy texture resources")
-  (ccl::recursive-copy-directory
+  (ccl::recursive-copy-directory-without-svn
    (truename "lui:resources;textures;")
    (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/textures/" (user-homedir-pathname)))
   (format t "~%- copy font resources")
-  (ccl::recursive-copy-directory
+  (ccl::recursive-copy-directory-without-svn
    (truename "lui:resources;fonts;")
    (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/fonts/" (user-homedir-pathname)))
   (format t "~%- copy cursor resources")
-  (ccl::recursive-copy-directory
+  (ccl::recursive-copy-directory-without-svn
    (truename "lui:resources;cursors;")
    (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/cursors/" (user-homedir-pathname)))
   (format t "~%- copy window resources")
-  (ccl::recursive-copy-directory
+  (ccl::recursive-copy-directory-without-svn
    (truename "lui:resources;windows;")
    (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/windows/" (user-homedir-pathname)))
   (format t "~%- copy button resources")
-  (ccl::recursive-copy-directory
+  (ccl::recursive-copy-directory-without-svn
    (truename "lui:resources;buttons;")
    (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/buttons/" (user-homedir-pathname)))
   (format t "~%- copy template resources")
-  (ccl::recursive-copy-directory
+  (ccl::recursive-copy-directory-without-svn
    (truename "lui:resources;templates;")
    (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/templates/" (user-homedir-pathname)))
   (format t "~%- copy shaders")
-  (ccl::recursive-copy-directory
+  (ccl::recursive-copy-directory-without-svn
    (truename "lui:resources;shaders;")
    (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/shaders/" (user-homedir-pathname)))
   #-cocotron 
@@ -471,7 +480,7 @@
     (unless Exists
       (error "XMLisp folder on desktop already exists")))
   (format t "~%- copy examples")
-  (ccl::recursive-copy-directory
+  (ccl::recursive-copy-directory-without-svn
    (truename "lui:sources;XLUI;examples;")
    (format nil "~ADesktop/XMLisp/examples/" (user-homedir-pathname)))
   (finish-xmlisp)
