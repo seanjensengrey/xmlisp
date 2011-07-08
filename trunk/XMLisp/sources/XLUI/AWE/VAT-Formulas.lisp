@@ -42,27 +42,25 @@
 ;; working non-GUI Simulation Property interface stubs 
 ;; for extensions such as Property-Editor.lisp
 
-(defvar *Simulation-Properties* (make-hash-table :test #'equal)
-  "Table containing simulation properties and values")
-
 
 (defun GET-THE-PROPERTY-VALUE (Name) "
   in:  Name {symbol}.
   out: Value {number}.
   Return the simulation property <Name>.
   If <Name> does not exist then return 0."
-  (gethash Name *Simulation-Properties* 0))
+  (gethash Name (property-hash (simulation-properties *project-manager*)) 0))
         
 
 (defun SET-THE-PROPERTY-VALUE (Name Value &key (update-window t)) "
   in: Name {symbol}, Value {number}.
   Set the simulation property <Name> to <Value>." 
+
   (declare (special *Project-Manager*)
            
            (ftype function project-window stop-simulation simulation-properties-window simulation-properties set-property-value add-property))
   (let ((Name-String (format nil "~A" (string-capitalize Name))))
     (if (property-exists-p Name)
-      (set-property-value (simulation-properties-window *Project-Manager*) Name-String Value :update-window update-window)
+      (set-property-value (simulation-properties *Project-Manager*) Name-String Value :update-window update-window)
       (cond (t
              #|(standard-alert-dialog (format nil "The simulation property '~A' does not exist. Do you want to add it to the Simulation Properties?" Name)
                                     :yes-text "Yes"
@@ -73,13 +71,9 @@
                (setf (simulation-properties-window *Project-Manager*) (make-property-window))
                ;; should we show the simulation property window if it's the first time a property is being created from within the simulation?
                (show (simulation-properties-window *Project-Manager*)))
-             (add-property (simulation-properties-window *Project-Manager*)
-                           :name Name-String
-                           :input t
-                           :output t
-                           :type "number" 
-                           :interface "editable-number")
-             (set-property-value (simulation-properties-window *Project-Manager*) Name-String Value :update-window update-window))
+             (add-property (simulation-properties *Project-Manager*)
+                           :name Name-String)
+             (set-property-value (simulation-properties *Project-Manager*) Name-String Value :update-window update-window))
             (nil (stop-simulation (project-window *Project-Manager*)))))))
 
 
@@ -87,18 +81,19 @@
   in:  Name {symbol}.
   out: Exists {boolean}.
   True if the property <Name> exists."
-  (when (gethash Name *Simulation-Properties* ) t))
+  (when (and (simulation-properties *project-manager*) (gethash Name (property-hash (simulation-properties *project-manager*)) )) t))
 
 
 (defun REMOVE-PROPERTY (Name) "
   in: Name {symbol}.
   Remove property <Name>."
-  (remhash Name *Simulation-Properties*))
+  (remhash Name (property-hash (simulation-properties *project-manager*))))
 
 
 (defun CLEAR-PROPERTIES () "
   Clear all properties: they will no longer exist"
- (clrhash *Simulation-Properties*))
+  (when (simulation-properties *project-manager*)
+    (clrhash (property-hash (simulation-properties *project-manager*)))))
   
 
 ;_________________________________________
