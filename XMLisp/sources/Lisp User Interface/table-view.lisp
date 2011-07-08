@@ -64,7 +64,7 @@
 
 (defmethod REMOVE-ROW ((self table-view) row)
   (dotimes (i (length (columns self)))
-    (setf (elt (columns self) i) (remove (elt (elt (columns self) i) row) (elt (columns self) i) )))
+    (setf (elt (columns self) i) (append (subseq (elt (columns self) i) 0 i) (subseq (elt (columns self) i) (+ i 1)))   ))
   (recalculate-rows self))
 
 
