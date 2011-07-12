@@ -1470,6 +1470,8 @@
       (when (char= Char (read-char Stream)) (return)))))
 
 
+#| NOT WORKING!!
+
 (defun DECODE-XML-STRING (String) "
   in:  String string.
   out: Decoded-String string.
@@ -1477,6 +1479,22 @@
   e.g., \"a &gt; b\" turns into \"a > \"b"
  (with-input-from-string (stream (if (stringp String) String (write-to-string String)))
    (read-until-token Stream nil :escape-char #\& :decode-function #'decode-xml-entity-reference)))
+|#
+
+(defun DECODE-XML-STRING (Input-String)
+  (when (stringp Input-String)
+    (with-input-from-string (string Input-String)
+      (let ((Output-String (make-array 40 :fill-pointer 0 :element-type 'character :adjustable t)))
+        (loop
+          (let ((Char (read-char String nil nil)))
+            (cond
+             ;; end of stream
+             ((null Char) (return Output-String))
+             ;; found &
+             ((char= Char #\&)
+              (vector-push-extend (print (decode-xml-entity-reference String)) Output-String))
+             (t
+              (vector-push-extend Char Output-String)))))))))
 
 
 (defun ENCODE-XML-STRING (String) "
