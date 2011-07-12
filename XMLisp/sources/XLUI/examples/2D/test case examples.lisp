@@ -259,6 +259,15 @@ NOT RECOMMENDED: if you load the entire buffer at once then you just get a mess 
   </row>
 </labled-color-picker-window>
 
+;;********************************************
+;;*           Tool Tips                      *
+;;********************************************
+
+<application-window title="Mouse over the rectangle to see its tooltip">
+  <column align="stretch" valign="stretch" >
+     <rectangle flex="1" vflex="1"  tooltip="I am a black rectangle"/>
+  </column>
+</application-window> 
 
 ;;********************************************
 ;;*           Text                           *
