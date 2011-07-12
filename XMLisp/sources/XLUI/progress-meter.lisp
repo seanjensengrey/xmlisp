@@ -82,6 +82,10 @@
   (declare (ignore return-value))
   (hide (progress-window self)))
 
+(defmethod SHOW-PROGRESS-WINDOW ((Self determinate-progress-meter) Return-Val)
+  (declare (ignore return-val))
+  (show (progress-window self)))
+
 
 (defmethod UPDATE-STATUS-BAR ((self determinate-progress-meter) text)
   (setf (value (view-named (progress-window self) "status-bar")) (format nil "Loading: ~A" text))
