@@ -994,9 +994,9 @@
         (when (if (and Tolerance-Function
                        (not (and (= New-Red Cur-Red) (= New-Green Cur-Green)
                                  (= New-Blue Cur-Blue) (= New-Alpha Cur-Alpha))))
-                  (funcall Tolerance-Function Tolerance
-                           Orig-Red Orig-Green Orig-Blue Orig-Alpha
-                           Cur-Red Cur-Green Cur-Blue Cur-Alpha)
+                (funcall Tolerance-Function Tolerance
+                         Orig-Red Orig-Green Orig-Blue Orig-Alpha
+                         Cur-Red Cur-Green Cur-Blue Cur-Alpha)
                 (and (= Cur-Red Orig-Red) (= Cur-Green Orig-Green)
                      (= Cur-Blue Orig-Blue) (= Cur-Alpha Orig-Alpha)))
           (set-rgba-color-at Self Col Row New-Red New-Green New-Blue New-Alpha)
