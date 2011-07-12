@@ -116,7 +116,7 @@
         <bevel-button tooltip="Test selected instruciton with selected agent" bezel-style="square" start-disabled="true" name="test-button" text="Test" action="test-action" height="24"/>
         <bevel-button tooltip="Negate selected condition" bezel-style="square" start-disabled="true" name="not-button" text="NOT" action="negate-action" height="24"/>
         <spacer width="10"/>
-        <bevel-button bezel-style="square" start-disabled="false" name="wiki-button" text="Wiki" action="wiki-action" height="24"/>
+        <bevel-button bezel-style="square" start-disabled="false" name="wiki-button" text="Help" action="wiki-action" height="24"/>
       </row>
    </column>
   </row>
