@@ -98,7 +98,7 @@
     (let ((increment-value 1))
       (setf increment-value 1)
       (dotimes (i (round (length (third plot-sublist)) increment-value))
-        (glVertex2f (+ (fourth plot-sublist) (* i  1.0)) (aref (third plot-sublist) (* increment-value i))))      
+        (glVertex2f (+ (fourth plot-sublist) (* i  1.0)) (* 1.0 (aref (third plot-sublist) (* increment-value i)))))      
       (glEnd))))
 
 
