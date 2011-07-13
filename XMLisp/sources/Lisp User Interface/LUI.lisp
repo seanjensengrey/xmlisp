@@ -521,7 +521,8 @@ Call with most important parameters. Make other paramters accessible through *Cu
    (native-view :accessor native-view :initform nil :documentation "native OS view object")
    (min-height :allocation :class :accessor min-height :initarg :min-height :initform 100 :documentation "The minimum height allowed for this class of window")
    (min-width :allocation :class :accessor min-width   :initarg :min-width :initform 100 :documentation "The minimum width allowed for this class of window")
-   (tooltip :accessor tooltip :initform nil :initarg :tooltip :documentation "If this accessor is set it will display this for the tool instead of the documentation"))
+   (tooltip :accessor tooltip :initform nil :initarg :tooltip :documentation "If this accessor is set it will display this for the tool instead of the documentation")
+   (hidden-p :accessor hidden-p :initform nil :documentation "This predicate will tell you if the view is currently hidden or not, should only be set by set-hidden"))
   (:documentation "a window that can contain views, coordinate system: topleft = 0, 0")
   (:default-initargs 
       :x 100
