@@ -264,25 +264,30 @@
 
 
 (defmethod SWITCH-TO-FULL-SCREEN-MODE ((Self view))
-  (setf (full-screen-p self) t)
-  (setf (gethash Self *view-Full-Screen-Restore-Sizes*) (frame self))
-  (switch-to-full-screen-mode (window self))
-  (hide-all-other-views (window self) self)
-  ;(set-position self 0 0)
-  ;(set-size self (width (window self)) (height (window self)))
-  (display self)
-  (display (window self)))
+  (ccl::with-autorelease-pool
+    (setf (full-screen-p self) t)
+    (setf (gethash Self *view-Full-Screen-Restore-Sizes*) (frame self))
+    (#_NSDisableScreenUpdates)
+    (switch-to-full-screen-mode (window self))
+    
+    (hide-all-other-views (window self) self)
+    (#_NSEnableScreenUpdates)
+    ;(set-position self 0 0)
+    ;(set-size self (width (window self)) (height (window self)))
+    (display self)
+    (display (window self))))
 
 
 (defmethod EXIT-FULL-SCREEN ((Self view))
-  (setf (full-screen-p self) nil)
-  (switch-to-window-mode (window self))
-  (let ((Frame (gethash Self *view-Full-Screen-Restore-Sizes*)))
-    (set-frame-with-frame self frame))
-  (show-all-views (window self))
-  (display self)
-  ;(layout (window self))
-  (display (window self)))
+  (ccl::with-autorelease-pool
+    (setf (full-screen-p self) nil)
+    (switch-to-window-mode (window self))
+    (let ((Frame (gethash Self *view-Full-Screen-Restore-Sizes*)))
+      (set-frame-with-frame self frame))
+    (show-all-views (window self))
+    (display self)
+    ;(layout (window self))
+    (display (window self))))
 
 
 (defmethod RECURSIVELY-MAXIMIZE-SUPERVIEWS ((self view))
