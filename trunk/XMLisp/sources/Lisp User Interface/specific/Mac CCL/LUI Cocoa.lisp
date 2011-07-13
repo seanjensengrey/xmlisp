@@ -260,6 +260,35 @@
         (return-from WINDOW nil)
         (lui-window ns-window)))))
 
+(defmethod SWITCH-TO-FULL-SCREEN-MODE ((Self view))
+  (switch-to-full-screen-mode (window self))
+  (set-size self (width (window self)) (height (window self)))
+  (set-position self 0 0)
+  (print (width self))
+  (print (height self))
+  (print (#/frame (native-view self)))
+  #|
+  (dolist (subview (gui::list-from-ns-array (#/subviews (#/contentView (native-window  (window self))))))
+    (print (equal (lui-view subview) self))
+    (unless (equal (lui-view subview) self)
+      (#/setHidden: subview #$"YES")))
+  |#
+  
+  ;(#/setHidden: (#/superview (#/superview (native-view self))) #$"NO")
+  ;(#/setHidden: (#/superview (native-view self)) #$"NO")
+  ;(#/setHidden: (native-view self) #$"NO")
+  ;(inspect (native-view self))
+  ;(set-hidden (xlui::view-named (window self) "rect") t)
+  (display self)
+  (display (window self))
+  )
+
+
+(defmethod SET-HIDDEN ((self view) hidden-p)
+  (setf (hidden-p self) hidden-p)
+  (if hidden-p
+    (#/setHidden: (native-view self) #$YES)
+    (#/setHidden: (native-view self) #$NO)))
 
 (defmethod ENTER-FULL-SCREEN ((Self view) &key (full-screen-window nil))
   ;(xlui::grab-conversation-lock)
@@ -758,8 +787,12 @@
 
 
 (defmethod (setf TITLE) :after (Title (self window))
-  (#/setTitle: (native-window Self) (native-string Title)))
-
+  (when (visible-p self)
+    (#/setTitle: (native-window Self) (native-string Title))))
+  #|
+  (when (visible-p self)
+    (#/setTitle: (native-window Self) (native-string Title))))
+|#
 
 (defvar *Run-Modal-Return-Value* nil "shared valued used to return the run modal values")
 
