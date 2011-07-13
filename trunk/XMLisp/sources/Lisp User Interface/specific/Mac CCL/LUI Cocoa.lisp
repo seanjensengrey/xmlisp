@@ -260,69 +260,90 @@
         (return-from WINDOW nil)
         (lui-window ns-window)))))
 
+(defvar *View-Full-Screen-Restore-Sizes* (make-hash-table))
+
+
 (defmethod SWITCH-TO-FULL-SCREEN-MODE ((Self view))
+  (setf (full-screen-p self) t)
+  (setf (gethash Self *view-Full-Screen-Restore-Sizes*) (frame self))
   (switch-to-full-screen-mode (window self))
-  (set-size self (width (window self)) (height (window self)))
-  (set-position self 0 0)
-  (print (width self))
-  (print (height self))
-  (print (#/frame (native-view self)))
-  #|
-  (dolist (subview (gui::list-from-ns-array (#/subviews (#/contentView (native-window  (window self))))))
-    (print (equal (lui-view subview) self))
-    (unless (equal (lui-view subview) self)
-      (#/setHidden: subview #$"YES")))
-  |#
-  
-  ;(#/setHidden: (#/superview (#/superview (native-view self))) #$"NO")
-  ;(#/setHidden: (#/superview (native-view self)) #$"NO")
-  ;(#/setHidden: (native-view self) #$"NO")
-  ;(inspect (native-view self))
-  ;(set-hidden (xlui::view-named (window self) "rect") t)
+  (hide-all-other-views (window self) self)
+  ;(set-position self 0 0)
+  ;(set-size self (width (window self)) (height (window self)))
   (display self)
-  (display (window self))
-  )
-
-
-(defmethod SET-HIDDEN ((self view) hidden-p)
-  (setf (hidden-p self) hidden-p)
-  (if hidden-p
-    (#/setHidden: (native-view self) #$YES)
-    (#/setHidden: (native-view self) #$NO)))
-
-(defmethod ENTER-FULL-SCREEN ((Self view) &key (full-screen-window nil))
-  ;(xlui::grab-conversation-lock)
-  (setf (full-screen-height-storage self) (height self))
-  (setf (full-screen-width-storage self) (width self))
-  (Setf (full-screen self) t)
-  (setf (full-screen-window self) full-screen-window)
-  (#/enterFullScreenMode:withOptions:  (native-view self) (#/mainScreen ns:ns-screen) nil)
-  (#/makeFirstResponder: (#/window (native-view self)) (native-view self))
-  (#/makeKeyAndOrderFront: (#/window (native-view self)) nil)
-  (set-size self (truncate (ns:ns-rect-width (#/frame (#/mainScreen ns:ns-screen)))) (truncate (ns:ns-rect-height (#/frame (#/mainScreen ns:ns-screen)))))
-  (display self)
-  ;(xlui::release-conversation-lock)
-  )
+  (display (window self)))
 
 
 (defmethod EXIT-FULL-SCREEN ((Self view))
-  (declare (special *full-screen-proxy-window* ))
-  (declare (ftype function set-cursor))
-  (Setf (full-screen self) nil)
-  (setf (full-screen-window self) nil)
-  (setf *full-screen-view* nil)
-  (setf *full-screen-proxy-window* nil)
-  (#/exitFullScreenModeWithOptions:  (native-view self)  nil)
-  (set-size self (full-screen-width-storage self) (full-screen-height-storage self))
-  (set-cursor "arrowCursor")
-  (display self))
+  (setf (full-screen-p self) nil)
+  (switch-to-window-mode (window self))
+  (let ((Frame (gethash Self *view-Full-Screen-Restore-Sizes*)))
+    (set-frame-with-frame self frame))
+  (show-all-views (window self))
+  (display self)
+  ;(layout (window self))
+  (display (window self)))
 
 
-(defmethod FULL-SCREEN-P ((self view))
-  #-cocotron
-  (#/isInFullScreenMode (native-view self))
-  #+cocotron
-  nil)
+(defmethod RECURSIVELY-MAXIMIZE-SUPERVIEWS ((self view))
+  (set-position self 0 0)
+  (set-size self (width (window self)) (height (window self)))
+  (when (and (superview self) (not (equal (type-of (native-view (superview self))) 'native-window-view)))
+    (print (type-of (native-view (superview self))))
+    (recursively-maximize-superviews (superview self))))
+
+;;RENAME ALL THESE METHODS BELOW!!!
+;; Move to window code, its conveniant to have this here for now but it belong with window methods
+(defmethod HIDE-ALL-OTHER-VIEWS ((self window) view-not-to-hide)
+  "Will hide all of the views in the window except for view and its superviews and subviews"
+  (dolist (subview (subviews self))
+    (hide-views-recursively subview :view-not-to-hide view-not-to-hide)))
+
+
+(defmethod SHOW-ALL-VIEWS ((self window))
+  "Show all hidden views"
+  (dolist (subview (subviews self))
+    (show-views-recursively subview)))
+
+(defmethod HIDE-VIEWS-RECURSIVELY  ((Self view) &key (view-not-to-hide nil))
+  (dolist (subview (subviews self))
+    (hide-views-recursively subview :view-not-to-hide view-not-to-hide))
+  (let ((subview-list (find-subview self view-not-to-hide)))
+    (when (and view-not-to-hide subview-list)
+      (dolist (subview (reverse subview-list))
+        (set-position subview 0 0)
+        (set-size subview  (width (window self)) (height (window self))))
+      (return-from hide-views-recursively t)))
+  (hide self))
+
+
+(defmethod SHOW-VIEWS-RECURSIVELY  ((Self view))
+  (dolist (subview (subviews self))
+    (show-views-recursively subview))
+  (show self))
+
+
+(defmethod FIND-SUBVIEW ((self view) view-to-find &key (subview-list nil)) 
+  "Returns true if view-to-find is anywhere in the subview hiearchy of view"
+  (when (Equal view-to-find self)
+    (setf subview-list (append subview-list (list self)))
+    (return-from find-subview subview-list))
+  (dolist (subview (subviews self))
+    (let ((return-val  (find-subview subview view-to-find)))
+      (when return-val
+        (unless (equal subview view-to-find)
+          (setf return-val (append return-val (list subview))))
+        (return-from find-subview return-val)))))
+
+
+(defmethod SHOW ((self view))
+  (setf (hidden-p self) nil)
+  (#/setHidden: (native-view self) #$NO))
+
+
+(defmethod HIDE ((self view))
+  (setf (hidden-p self) t)
+  (#/setHidden: (native-view self) #$YES))
 
 
 (defmethod DISPLAY ((Self view))
@@ -607,7 +628,7 @@
   (call-next-method)
   (has-become-main-window (lui-window Self)))
 
-
+#-cocotron
 (objc:defmethod (#/constrainFrameRect:toScreen: :<NSR>ect) ((Self native-window) (Rect :<NSR>ect) Screen)
   (declare (ignore Screen))
   ;; a nasty hack to be able move windows above the menu bar
@@ -832,7 +853,10 @@
 
 (defmethod SWITCH-TO-FULL-SCREEN-MODE ((Self window))
   (setf (gethash Self *Window-Full-Screen-Restore-Sizes*) (#/frame (native-window Self)))
-  ;#-cocotron (#_SetSystemUIMode #$kUIModeAllSuppressed #$kUIOptionAutoShowMenuBar)
+  #-cocotron (#_SetSystemUIMode #$kUIModeAllSuppressed #$kUIOptionAutoShowMenuBar)
+  #+cocotron
+  (let ((Window-Title-Bar-Height 22))
+    (set-size self (pref (#/frame (#/screen Self)) <NSR>ect.size.width) (+ (pref (#/frame (#/screen Self)) <NSR>ect.size.height) Window-Title-Bar-Height)))
   (setf (full-screen Self) t)
   ;;; random sizing to trigger #/constrainFrameRect:toScreen
   ;;; (set-size Self 100 100)
