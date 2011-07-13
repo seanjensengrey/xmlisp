@@ -178,6 +178,16 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 (defgeneric GESTURE-END-EVENT-HANDLER (event-listener-interface x y)
   (:documentation "A swipe, rotate, or magnify gesture has ended"))
+;**********************************
+;* LUI-FRAME                      *
+;**********************************
+
+(defclass LUI-FRAME()
+  ((x :accessor x :initform 0 :initarg :x :documentation "relative x-position to container, pixels")
+   (y :accessor y :initform 0 :initarg :y :documentation "relative y-position to container, pixels")
+   (width :accessor width :initform 170 :initarg :width :documentation "width in pixels")
+   (height :accessor height :initform 90 :initarg :height :documentation "height in pixels"))
+  (:documentation "This struct represents the frame of a lui-view or lui-window"))
 
 ;**********************************
 ;* VIEW                           *
@@ -191,6 +201,7 @@ Call with most important parameters. Make other paramters accessible through *Cu
    (part-of :accessor part-of :initform nil :initarg :part-of :documentation "link to container view or window")
    (native-view :accessor native-view :initform nil :documentation "native OS view object")
    (full-screen :accessor full-screen :initform nil :initarg :full-screen :type boolean :documentation "is in full screen mode")
+   (full-screen-p :accessor full-screen-p :initform nil :initarg :full-screen-p :type boolean :documentation "is the view in full screen mode")
    (full-screen-window :accessor full-screen-window :initform nil :documentation "this view's full screen window")
    (full-screen-height-storage :accessor full-screen-height-storage :initform nil :documentation "When we enter full screen mode we need to store the height so that it can be restored when we leave full screen mode")
    (full-screen-width-storage :accessor full-screen-width-storage :initform nil :documentation "When we enter full screen mode we need to store the width so that it can be restored when we leave full screen mode")
@@ -264,6 +275,16 @@ Call with most important parameters. Make other paramters accessible through *Cu
   (:documentation "Sets the hidden-p of the view to the value of the parameter hidden-p also hides the view if hidden-p is true and unhides it if hidden-p is false"))
 
 
+(defgeneric HIDE (view)
+  (:documentation "Hides this view and sets hidden to t"))
+
+
+(defgeneric SHOW (view)
+  (:documentation "Un hides this view and sets hidden to nil"))
+
+
+(defgeneric FRAME (view)
+  (:documentation "returns a frame representing this view"))
 ;;_______________________________
 ;; Default implementation        |
 ;;_______________________________
@@ -272,6 +293,9 @@ Call with most important parameters. Make other paramters accessible through *Cu
   (setf (width Self) Width)
   (setf (height Self) Height))
 
+(Defmethod SET-FRAME-WITH-FRAME ((self view) frame)
+  (set-size self (width frame) (height frame))
+  (set-position self (x frame) (y frame))) 
 #|
 (defmethod SET-SIZE  :after ((Self view) Width Height)
   (print "SET SIZE AFTER VIEW")
@@ -444,6 +468,11 @@ Call with most important parameters. Make other paramters accessible through *Cu
 (defmethod VIEW-DID-END-RESIZE ((self view))
   (map-subviews self #'(lambda (View) (view-did-end-resize View )))
   )
+
+
+(defmethod FRAME ((self view))
+  (make-instance 'lui-frame :x (x self)  :y (y self) :width (width self) :height (height self)))
+
 
 ;**********************************
 ;* SCROLL-VIEW                    *
