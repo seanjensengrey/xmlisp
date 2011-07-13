@@ -196,6 +196,7 @@ Call with most important parameters. Make other paramters accessible through *Cu
    (full-screen-width-storage :accessor full-screen-width-storage :initform nil :documentation "When we enter full screen mode we need to store the width so that it can be restored when we leave full screen mode")
    (current-cursor :accessor current-cursor :initform nil :initarg :current-cursor :documentation "the name of the current cursor of this view")
    (tooltip :accessor tooltip :initform nil :initarg :tooltip :documentation "If this accessor is set it will display this for the tool instead of the documentation")
+   (hidden-p :accessor hidden-p :initform nil :documentation "This predicate will tell you if the view is currently hidden or not, should only be set by set-hidden")
    )
   (:documentation "a view, control or window with position and size"))
 
@@ -257,6 +258,11 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 (defgeneric VIEW-DID-END-RESIZE (view)
   (:documentation "Notify the view that has just completed a resize"))
+
+
+(defgeneric SET-HIDDEN (view hidden-p)
+  (:documentation "Sets the hidden-p of the view to the value of the parameter hidden-p also hides the view if hidden-p is true and unhides it if hidden-p is false"))
+
 
 ;;_______________________________
 ;; Default implementation        |
@@ -348,7 +354,6 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 (defmethod VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER ((Self view) X Y)
   (declare (ignore X Y))
-  
   ;; nada
   )
 
@@ -668,11 +673,13 @@ after any of the window controls calls stop-modal close window and return value.
   (declare (ftype function get-x-y-offset-for-window-origin))
   (labels ((view-containing-point (View x y)
              (do-subviews (Subview View)
+                          
                (when (and (<= (x Subview) x (+ (x Subview) (width Subview)))
                           (<= (y Subview) y (+ (y Subview) (height Subview))))
                  (view-containing-point Subview (- x (x Subview)) (- y (y Subview)))))
              ;; no subviews (if any) matched. I am the ONE!
-             (return-from most-specific-view-containing-point (values View x y))))
+             (unless (hidden-p View)
+               (return-from most-specific-view-containing-point (values View x y)))))
     (when (and (<= x (width Self)) (<= y (height Self)))
       (let ((x-offset 0)(y-offset 0))
         (when (subtypep (type-of self) 'window)
