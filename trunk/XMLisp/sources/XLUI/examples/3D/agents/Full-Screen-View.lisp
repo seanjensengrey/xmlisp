@@ -24,6 +24,7 @@
     (switch-to-full-screen-mode (view-named window "3D View"))
     (setf (text (view-named Window "mode switch button")) "switch to window"))))
 
+#| Examples:
 
 <full-screen-window title="Windows can be boring!" margin="0">
  <column align="stretch" valign="stretch">
@@ -39,3 +40,42 @@
     </row>
   </column>
 </full-screen-window>
+
+
+<full-screen-window title="Windows can be boring!" margin="0">
+ <column align="stretch" valign="stretch">
+    <rectangle name="rect" vflex="1"/>
+    <agent-3d-view name="3D View"  full-scene-anti-aliasing="false" vflex="1">
+      <camera eye-z="2.0"/>
+      <cube texture="metal2.png"/>
+      <cylinder draggable="true" top-radius="0.2" texture="metal2.png"/>
+      <cube x="-1" y="-1" texture="metal2.png"/>
+    </agent-3d-view>
+    <rectangle color="FF0000" vflex="1" />
+    <row minimize="vertical" align="center" >
+      <bevel-button name="mode switch button" text="switch to full screen" action="switch-window-mode-action" width="140"/>
+    </row>
+  </column>
+</full-screen-window>
+
+
+<full-screen-window title="Windows can be boring!" margin="0">
+ <column align="stretch" valign="stretch">
+    <rectangle name="rect" vflex="1"/>
+    <row>
+    <rectangle color="0000FF" vflex="1" />
+    <agent-3d-view name="3D View"  full-scene-anti-aliasing="false" vflex="1">
+      <camera eye-z="2.0"/>
+      <cube texture="metal2.png"/>
+      <cylinder draggable="true" top-radius="0.2" texture="metal2.png"/>
+      <cube x="-1" y="-1" texture="metal2.png"/>
+    </agent-3d-view>
+     <rectangle color="00FF00" vflex="1" />
+    </row>
+    <rectangle color="FF0000" vflex="1" />
+    <row minimize="vertical" align="center" >
+      <bevel-button name="mode switch button" text="switch to full screen" action="switch-window-mode-action" width="140"/>
+    </row>
+  </column>
+</full-screen-window>
+|#
