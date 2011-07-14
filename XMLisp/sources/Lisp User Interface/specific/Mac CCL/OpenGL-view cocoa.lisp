@@ -261,7 +261,8 @@
     (let ((Sleep-Time (- #.(/ 1.0 *Framerate-Ceilling*) (* Total-Time 1.0e-9))))
       (when (> Sleep-Time 0.0) 
         (sleep Sleep-Time)
-        (format t "~%sleep time: ~A" Sleep-Time)))))
+        ;(format t "~%sleep time: ~A" Sleep-Time)
+        ))))
 
 
 #+cocotron
