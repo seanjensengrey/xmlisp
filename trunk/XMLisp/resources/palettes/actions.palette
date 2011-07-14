@@ -52,4 +52,7 @@
      <switch-to-world/>
      <reload-world/> 
    </category>
+   <category tooltip="Developer actions" title="Developer only" disclosed="true">
+     <lisp/>
+   </category>
 </palette>
