@@ -262,15 +262,12 @@
 (defvar *View-Full-Screen-Restore-Sizes* (make-hash-table))
 
 
-(defmethod SWITCH-TO-FULL-SCREEN-MODE ((Self view))
+(defmethod ENTER-FULL-SCREEN-MODE ((Self view))
   (ccl::with-autorelease-pool
     (setf (full-screen-p self) t)
     (setf (gethash Self *view-Full-Screen-Restore-Sizes*) (frame self))
     ;; switching can be messy: prevent screen updates
     (#_NSDisableScreenUpdates)
-    ;; multisample would be too costly
-    (with-glcontext Self
-      (glDisable GL_MULTISAMPLE))
     (hide (window self))
     (switch-to-full-screen-mode (window self))
     (hide-all-other-views (window self) self)
@@ -282,15 +279,13 @@
     (display (window self))))
 
 
-(defmethod EXIT-FULL-SCREEN ((Self view))
+(defmethod EXIT-FULL-SCREEN-MODE ((Self view))
   (ccl::with-autorelease-pool
     (setf (full-screen-p self) nil)
     (switch-to-window-mode (window self))
     (let ((Frame (gethash Self *view-Full-Screen-Restore-Sizes*)))
       (set-frame-with-frame self frame))
     (show-all-views (window self))
-    (with-glcontext Self
-      (glEnable GL_MULTISAMPLE))
     (display self)
     ;(layout (window self))
     (display (window self))))
