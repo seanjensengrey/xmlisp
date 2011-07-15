@@ -10,7 +10,7 @@
     (#/setColor: 
      (#/sharedColorPanel ns:ns-color-panel)
      (#/colorWithCalibratedRed:green:blue:alpha: ns:ns-color Red Green Blue Alpha))
-    (let ((Color (easygui::user-pick-color)))
+    (let ((Color (#/colorUsingColorSpaceName: (easygui::user-pick-color) #$NSCalibratedRGBColorSpace)))
       (rlet ((r #>CGFloat)
              (g #>CGFloat)
              (b #>CGFloat)
