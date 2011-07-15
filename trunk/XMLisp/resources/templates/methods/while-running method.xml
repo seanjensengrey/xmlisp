@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<method disclosed="true">
+  <while-running/>
+  <rule>
+    <if/>
+    <then>
+    </then>
+  </rule>
+</method>
