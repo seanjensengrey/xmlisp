@@ -21,7 +21,7 @@
     (switch-to-window-mode Window)
     (setf (text (view-named Window "mode switch button")) "switch to full screen"))
    (t
-    (switch-to-full-screen-mode (view-named window "3D View"))
+    (enter-full-screen-mode (view-named window "3D View"))
     (setf (text (view-named Window "mode switch button")) "switch to window"))))
 
 #| Examples:
