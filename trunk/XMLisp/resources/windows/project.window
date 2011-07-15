@@ -54,6 +54,7 @@
         <column align="stretch" valign="stretch" flex="1" vflex="1">
           <row align="stretch"   valign="stretch" vflex="5" flex="1">
             <world flex="7" vflex="5" tooltip="The world" name="the world">
+              <background-color red="0.5" green="0.5" blue="0.5"/>
               <camera/>
               <text-3d tooltip="Click on the '+' button" text="Click on the '+' button" x="-3.0" y="0.2" size="5.0"/>
               <text-3d tooltip="Click on the '+' button" text="above to add a world" x="-3.0" y="-0.5" size="5.0"/>
