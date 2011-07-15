@@ -244,8 +244,6 @@
 
 (defmacro WITH-ANIMATION-LOCKED (&rest Body) "Make sure only one animation thread is active at a time"
   `(progn
-     ;; debugging hack: warn user if main thread is trying to grab lock
-     (when (string-equal (slot-value ccl::*current-process* 'ccl::name) "Initial") (warn "trying to grab animation lock in Main thread~%"))
      (with-lock-grabbed ((animation-lock))
        ,@Body)))
 
@@ -270,8 +268,6 @@
 
 (defun GRAB-ANIMATION-LOCK ()
   "Grab animation lock. Wait if necesary"
-  ;; debugging hack: warn user if main thread is trying to grab lock
-  (when (string-equal (slot-value ccl::*current-process* 'ccl::name) "Initial") (warn "trying to grab animation lock in Main thread~%"))
   (ccl::grab-lock (animation-lock)))
 
 
