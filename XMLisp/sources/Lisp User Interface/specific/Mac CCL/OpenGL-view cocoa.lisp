@@ -355,6 +355,22 @@
 (defmethod STOP-ANIMATION ((Self opengl-view))
   (setf (animated-views Self) (remove Self (animated-views Self))))
 
+
+;------------------------------
+; Full Screen Support          |
+;______________________________
+
+(defmethod ENTER-FULL-SCREEN-MODE :before ((Self opengl-view))
+  ;; multisample would be too costly
+  (with-glcontext Self
+    (glDisable GL_MULTISAMPLE)))
+
+
+(defmethod EXIT-FULL-SCREEN-MODE :before ((Self opengl-view))
+  (with-glcontext Self
+    (glEnable GL_MULTISAMPLE)))
+
+
 ;------------------------------
 ; Query functions              |
 ;______________________________
