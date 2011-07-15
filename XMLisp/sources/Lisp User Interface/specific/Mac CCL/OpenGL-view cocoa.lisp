@@ -70,6 +70,30 @@
   (prepare-opengl (lui-view Self)))
 
 
+;; BIG MISTERY: not clear why this method needs to be here. 
+;; Without it the window view does not appear to receive mouse events such as the mouse moved event
+
+(objc:defmethod (#/mouseDown: :void) ((self native-opengl-view) event)
+  (let ((mouse-loc (#/locationInWindow event)))
+    (view-event-handler (window (lui-view Self)) 
+                        (make-instance 'mouse-event
+                          :x (truncate (pref mouse-loc :<NSP>oint.x))
+                          :y (truncate (- (height (window (lui-view Self))) (pref mouse-loc :<NSP>oint.y)))
+                          :event-type (native-to-lui-event-type (#/type event))
+                          :native-event Event))))
+
+
+(objc:defmethod (#/rightMouseDown: :void) ((self native-opengl-view) event)
+  (let ((mouse-loc (#/locationInWindow event)))
+    (view-event-handler (window (lui-view Self)) 
+                        (make-instance 'mouse-event
+                          :x (truncate (pref mouse-loc :<NSP>oint.x))
+                          :y (truncate (- (height (window (lui-view Self))) (pref mouse-loc :<NSP>oint.y)))
+                          :event-type (native-to-lui-event-type (#/type event))
+                          :native-event Event))))
+
+
+
 (objc:defmethod (#/viewDidMoveToWindow :void) ((self native-opengl-view))
   (call-next-method)
   (view-did-move-to-window (lui-view self)))
@@ -334,153 +358,6 @@
 (objc:defmethod (#/mouseExited: :void) ((self native-opengl-view) Event)
   (call-next-method event)
   (mouse-exited (lui-view self)))
-
-
-;______________________________
-; Full Screen Support         |
-;______________________________
-
-(defparameter *full-screen-proxy-window* nil)
-
-(defclass FULL-SCREEN-PROXY-WINDOW (window)
-  ((full-screen-view :accessor full-screen-view :initform nil :initarg :full-screen-view :documentation "This proxy window's full screen view")))
-
-
-(defmethod KEY-EVENT-HANDLER ((Self full-screen-proxy-window) Event)
-  (setf *current-event* event)
-  (view-event-handler (window (full-screen-view self))
-                      event))
-
-
-(defmethod RELEASE-FULL-SCREEN-PROXY-WINDOW ((self opengl-view))
-  (when *full-screen-proxy-window*
-    (#/release (native-window *full-screen-proxy-window*))))
-
-
-;; BIG MISTERY: not clear why this method needs to be here. 
-;; Without it the window view does not appear to receive mouse events such as the mouse moved event
-
-(objc:defmethod (#/mouseDown: :void) ((self native-opengl-view) event)
-  (declare (ftype function set-cursor))
-  (let* ((mouse-loc (#/locationInWindow event)))
-    (unless (or *full-screen-proxy-window* (not (full-screen (lui-view self))))
-      (let* ((full-screen-window (#/window self))
-             (frame (#/frame full-screen-window)))
-        (setf *full-screen-proxy-window* (make-instance 'full-screen-proxy-window 
-                                           :x (ns:ns-rect-x frame)
-                                           :y (ns:ns-rect-y frame)
-                                           :width (ns:ns-rect-width frame)
-                                           :height (ns:ns-rect-height frame)
-                                           :full-screen-view (lui-view self)))))
-    (when (full-screen (lui-view self))
-      (setf lui::*full-screen-view* (lui-view self)))
-    (view-event-handler  
-     (if (full-screen (lui-view self)) *full-screen-proxy-window*  (window (lui-view Self))) 
-     (make-instance 'mouse-event
-       :x (truncate (pref mouse-loc :<NSP>oint.x))
-       :y (truncate (- (height   #-cocotron(if (#/isInFullScreenMode self) *full-screen-proxy-window* (window (lui-view Self)) ) #+cocotron (window (lui-view Self)) ) (pref mouse-loc :<NSP>oint.y)))
-       :event-type (native-to-lui-event-type (#/type event))
-       :native-event Event)))
-  (set-cursor (view-cursor (lui-view self) 0 0)))
-
-
-(objc:defmethod (#/mouseUp: :void) ((self native-opengl-view) event)
-  (let* ((mouse-loc (#/locationInWindow event)))
-    (unless (or *full-screen-proxy-window* (not (full-screen (lui-view self))))
-      (let* ((full-screen-window (#/window self))
-             (frame (#/frame full-screen-window)))
-        (setf *full-screen-proxy-window* (make-instance 'full-screen-proxy-window 
-                                           :x (ns:ns-rect-x frame)
-                                           :y (ns:ns-rect-y frame)
-                                           :width (ns:ns-rect-width frame)
-                                           :height (ns:ns-rect-height frame)
-                                           :full-screen-view (lui-view self)))))
-    (when (full-screen (lui-view self))
-      (setf lui::*full-screen-view* (lui-view self)))
-    (view-event-handler  
-     (if (full-screen (lui-view self)) *full-screen-proxy-window*  (window (lui-view Self))) 
-     (make-instance 'mouse-event
-       :x (truncate (pref mouse-loc :<NSP>oint.x))
-       :y (truncate (- (height   #-cocotron (if (#/isInFullScreenMode self) *full-screen-proxy-window* (window (lui-view Self)) ) #+cocotron (window (lui-view Self)) ) (pref mouse-loc :<NSP>oint.y)))
-       :event-type (native-to-lui-event-type (#/type event))
-       :native-event Event))))
-
-
-(objc:defmethod (#/acceptsFirstMouse: :<BOOL>) ((self native-opengl-view) event)
-  (declare (ignore event))
-  #$YES)
-
-
-(objc:defmethod (#/mouseDragged: :void) ((self native-opengl-view) event)
-  (let ((mouse-loc (#/locationInWindow event)))
-    (unless (or *full-screen-proxy-window* (not (full-screen (lui-view self))))
-      (let* ((full-screen-window (#/window self))
-             (frame (#/frame full-screen-window)))
-        (setf *full-screen-proxy-window* (make-instance 'full-screen-proxy-window 
-                                           :x (ns:ns-rect-x frame)
-                                           :y (ns:ns-rect-y frame)
-                                           :width (ns:ns-rect-width frame)
-                                           :height (ns:ns-rect-height frame)
-                                           :full-screen-view (lui-view self)))))
-    (when (full-screen (lui-view self))
-      (setf lui::*full-screen-view* (lui-view self)))
-    (view-event-handler (if (full-screen (lui-view self)) *full-screen-proxy-window*  (window (lui-view Self))) 
-                        (make-instance 'mouse-event
-                          :x (truncate (pref mouse-loc :<NSP>oint.x))
-                          :y (truncate (- (height   #-cocotron (if (#/isInFullScreenMode self) *full-screen-proxy-window* (window (lui-view Self)) ) #+cocotron (window (lui-view Self))  ) (pref mouse-loc :<NSP>oint.y)))
-                          :dx (truncate (#/deltaX Event))
-                          :dy (truncate (#/deltaY Event))
-                          :event-type (native-to-lui-event-type (#/type event))
-                          :native-event Event))))
-
-  
-(objc:defmethod (#/mouseMoved: :void) ((self native-opengl-view) Event)
-  (let* ((mouse-loc (#/locationInWindow event)))
-    (unless  (or *full-screen-proxy-window* (not (full-screen (lui-view self))))
-      (let* ((full-screen-window (#/window self))
-             (frame  (#/frame full-screen-window)))
-        (setf *full-screen-proxy-window* (make-instance 'full-screen-proxy-window 
-                                           :x (ns:ns-rect-x frame)
-                                           :y (ns:ns-rect-y frame)
-                                           :width (ns:ns-rect-width frame)
-                                           :height (ns:ns-rect-height frame)
-                                           :full-screen-view (lui-view self)))))
-      
-    (when (full-screen (lui-view self))
-      (setf lui::*full-screen-view* (lui-view self)))
-      (view-event-handler 
-       (if (full-screen (lui-view self)) *full-screen-proxy-window*  (window (lui-view Self))) 
-       (make-instance 'mouse-event
-         :x (truncate (pref mouse-loc :<NSP>oint.x))
-         :y (truncate (- (height  #-cocotron (if (#/isInFullScreenMode self) *full-screen-proxy-window* (window (lui-view Self)) ) #+cocotron (window (lui-view Self))  ) (pref mouse-loc :<NSP>oint.y)))
-         :event-type (native-to-lui-event-type (#/type event))
-         :native-event Event))))
- 
-
-
-
-
-(objc:defmethod (#/rightMouseDown: :void) ((self native-opengl-view) event)
-  (let ((mouse-loc (#/locationInWindow event)))
-    (view-event-handler (window (lui-view Self)) 
-                        (make-instance 'mouse-event
-                          :x (truncate (pref mouse-loc :<NSP>oint.x))
-                          :y (truncate (- (height (window (lui-view Self))) (pref mouse-loc :<NSP>oint.y)))
-                          :event-type (native-to-lui-event-type (#/type event))
-                          :native-event Event)))
-  #-cocotron
-  (when (#/isInFullScreenMode self)
-    (when *full-screen-proxy-window*
-      (#/release (native-window *full-screen-proxy-window*)))
-    (exit-full-screen (lui-view self))))
-
-
-(objc:defmethod (#/keyDown: :void) ((self native-opengl-view) event)
-  (view-event-handler (window (lui-view self))
-                      (make-instance 'key-event 
-                        :key-code (#/keyCode Event)
-                        :event-type (native-to-lui-event-type (#/type event))
-                        :native-event Event)))
 
 ;______________________________
 ; Shader Support               |
