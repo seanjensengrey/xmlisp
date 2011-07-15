@@ -200,11 +200,7 @@ Call with most important parameters. Make other paramters accessible through *Cu
    (height :accessor height :initform 90 :initarg :height :documentation "height in pixels")
    (part-of :accessor part-of :initform nil :initarg :part-of :documentation "link to container view or window")
    (native-view :accessor native-view :initform nil :documentation "native OS view object")
-   (full-screen :accessor full-screen :initform nil :initarg :full-screen :type boolean :documentation "is in full screen mode")
    (full-screen-p :accessor full-screen-p :initform nil :initarg :full-screen-p :type boolean :documentation "is the view in full screen mode")
-   (full-screen-window :accessor full-screen-window :initform nil :documentation "this view's full screen window")
-   (full-screen-height-storage :accessor full-screen-height-storage :initform nil :documentation "When we enter full screen mode we need to store the height so that it can be restored when we leave full screen mode")
-   (full-screen-width-storage :accessor full-screen-width-storage :initform nil :documentation "When we enter full screen mode we need to store the width so that it can be restored when we leave full screen mode")
    (current-cursor :accessor current-cursor :initform nil :initarg :current-cursor :documentation "the name of the current cursor of this view")
    (tooltip :accessor tooltip :initform nil :initarg :tooltip :documentation "If this accessor is set it will display this for the tool instead of the documentation")
    (hidden-p :accessor hidden-p :initform nil :documentation "This predicate will tell you if the view is currently hidden or not, should only be set by set-hidden")
@@ -720,7 +716,7 @@ after any of the window controls calls stop-modal close window and return value.
       (view-containing-point Self (- x x-offset) (+ y y-offset))))))
 
 
-(defparameter *full-screen-view* nil)
+
 
 
 
@@ -732,8 +728,7 @@ after any of the window controls calls stop-modal close window and return value.
   (catch-errors-nicely ("handling mouse event")
   (multiple-value-bind (View x y)
                        (most-specific-view-containing-point Self Window-x Window-y)
-    (when *full-screen-view* 
-      (setf view *full-screen-view*))
+    
     (when view
       (unless (subtypep (type-of view) 'window)
         (multiple-value-bind (test-x test-y)
@@ -778,12 +773,8 @@ after any of the window controls calls stop-modal close window and return value.
                (setf y-offset new-y)))
          (view-left-mouse-dragged-event-handler 
           *Mouse-Down-View*
-          (if (full-screen *Mouse-Down-View*)
-          window-x
-            (- Window-x (window-x *Mouse-Down-View*) x-offset)) 
-          (if (full-screen *Mouse-Down-View*)
-            window-y
-            (+ (- Window-Y (window-y *Mouse-Down-View*)) y-offset))
+          (- Window-x (window-x *Mouse-Down-View*) x-offset) 
+          (+ (- Window-Y (window-y *Mouse-Down-View*)) y-offset)
           dx
           dy))))
       ;; UP: use view set by down
@@ -798,12 +789,8 @@ after any of the window controls calls stop-modal close window and return value.
          ;; coordinates relative to mouse Down view
          (view-left-mouse-up-event-handler 
           *Mouse-Down-View*
-          (if (full-screen *Mouse-Down-View*)
-            x
-            (- Window-x (window-x *Mouse-Down-View*) x-offset))
-          (if (full-screen *Mouse-Down-View*)
-            y
-            (+ (- Window-Y (window-y *Mouse-Down-View*)) y-offset)))
+          (- Window-x (window-x *Mouse-Down-View*) x-offset)
+          (+ (- Window-Y (window-y *Mouse-Down-View*)) y-offset))
          ;; cleanup time: nobody should use refer to the mouse down view anymore
          ;; the down/drag/up cycle is officially over
          (setq *Mouse-Down-View* nil))))
