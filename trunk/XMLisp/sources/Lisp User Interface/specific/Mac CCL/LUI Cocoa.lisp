@@ -253,12 +253,10 @@
 
 
 (defmethod WINDOW ((Self view)) 
-  (if (full-screen self)
-    (full-screen-window self)
-    (let ((ns-window (#/window (native-view Self))))
+  (let ((ns-window (#/window (native-view Self))))
       (if (%null-ptr-p ns-window)
         (return-from WINDOW nil)
-        (lui-window ns-window)))))
+        (lui-window ns-window))))
 
 (defvar *View-Full-Screen-Restore-Sizes* (make-hash-table))
 
@@ -268,12 +266,14 @@
     (setf (full-screen-p self) t)
     (setf (gethash Self *view-Full-Screen-Restore-Sizes*) (frame self))
     (#_NSDisableScreenUpdates)
+    (hide (window self))
     (switch-to-full-screen-mode (window self))
     
     (hide-all-other-views (window self) self)
     (#_NSEnableScreenUpdates)
     ;(set-position self 0 0)
     ;(set-size self (width (window self)) (height (window self)))
+    (show (window self))
     (display self)
     (display (window self))))
 
