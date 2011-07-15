@@ -281,6 +281,16 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 (defgeneric FRAME (view)
   (:documentation "returns a frame representing this view"))
+
+
+(defgeneric ENTER-FULL-SCREEN-MODE (view)
+  (:documentation "switch to full screen mode"))
+
+
+(defgeneric EXIT-FULL-SCREEN-MODE (view)
+  (:documentation "exit from full screen mode"))
+
+
 ;;_______________________________
 ;; Default implementation        |
 ;;_______________________________
