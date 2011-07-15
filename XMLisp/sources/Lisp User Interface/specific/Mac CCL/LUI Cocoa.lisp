@@ -254,9 +254,10 @@
 
 (defmethod WINDOW ((Self view)) 
   (let ((ns-window (#/window (native-view Self))))
-      (if (%null-ptr-p ns-window)
-        (return-from WINDOW nil)
-        (lui-window ns-window))))
+    (if (%null-ptr-p ns-window)
+      (return-from WINDOW nil)
+      (lui-window ns-window))))
+
 
 (defvar *View-Full-Screen-Restore-Sizes* (make-hash-table))
 
@@ -265,10 +266,13 @@
   (ccl::with-autorelease-pool
     (setf (full-screen-p self) t)
     (setf (gethash Self *view-Full-Screen-Restore-Sizes*) (frame self))
+    ;; switching can be messy: prevent screen updates
     (#_NSDisableScreenUpdates)
+    ;; multisample would be too costly
+    (with-glcontext Self
+      (glDisable GL_MULTISAMPLE))
     (hide (window self))
     (switch-to-full-screen-mode (window self))
-    
     (hide-all-other-views (window self) self)
     (#_NSEnableScreenUpdates)
     ;(set-position self 0 0)
@@ -285,6 +289,8 @@
     (let ((Frame (gethash Self *view-Full-Screen-Restore-Sizes*)))
       (set-frame-with-frame self frame))
     (show-all-views (window self))
+    (with-glcontext Self
+      (glEnable GL_MULTISAMPLE))
     (display self)
     ;(layout (window self))
     (display (window self))))
@@ -296,6 +302,7 @@
   (when (and (superview self) (not (equal (type-of (native-view (superview self))) 'native-window-view)))
     (print (type-of (native-view (superview self))))
     (recursively-maximize-superviews (superview self))))
+
 
 ;;RENAME ALL THESE METHODS BELOW!!!
 ;; Move to window code, its conveniant to have this here for now but it belong with window methods
@@ -309,6 +316,7 @@
   "Show all hidden views"
   (dolist (subview (subviews self))
     (show-views-recursively subview)))
+
 
 (defmethod HIDE-VIEWS-RECURSIVELY  ((Self view) &key (view-not-to-hide nil))
   (dolist (subview (subviews self))
