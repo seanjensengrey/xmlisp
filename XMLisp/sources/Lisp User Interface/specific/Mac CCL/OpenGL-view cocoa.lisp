@@ -250,6 +250,24 @@
        ,@Body)))
 
 
+(defun POSSIBLE-RECURSIVE-LOCK-OWNER (lock)
+ (let* ((tcr (ccl::%get-object (ccl::recursive-lock-ptr lock) target::lockptr.owner)))
+   (unless (eql 0 tcr) (ccl::tcr->process tcr))))
+
+
+(defmacro WITH-ANIMATION-UNLOCKED (&rest Body) "Make sure to release animation lock if running in animation thread"
+  `(progn
+     (let* ((Lock-Owner (possible-recursive-lock-owner (animation-lock)))
+            (Releasable (and Lock-Owner
+                             (string-equal (slot-value ccl::*current-process* 'ccl::name) (slot-value Lock-Owner 'ccl::name)))))
+       (when Releasable
+         (release-animation-lock))
+       ,@Body
+       (when Releasable
+         (grab-animation-lock)))))
+       
+
+
 (defun GRAB-ANIMATION-LOCK ()
   "Grab animation lock. Wait if necesary"
   ;; debugging hack: warn user if main thread is trying to grab lock
