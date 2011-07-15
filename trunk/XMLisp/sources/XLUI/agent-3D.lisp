@@ -416,6 +416,7 @@
 (defmethod VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER ((Self agent-3d-view) X Y)
   ;(grab-animation-lock)
   ;(grab-conversation-lock)
+
   (let ((Agent (click-target (find-agent-at Self x y *Selection-Tolerance* *Selection-Tolerance*))))
     (cond
      ;; clicked agent
@@ -457,7 +458,7 @@
    ((drag-and-drop-handler Self)
     ;; JIT proxy window
     ;; *HACK* This doesn't really work for dragging but at least it doesn't crash when we are dragging in full screen mode, I need to fix this up and handle this differently. 
-    (unless (or (full-screen self) (drag-proxy-window (drag-and-drop-handler Self)))
+    (unless  (drag-proxy-window (drag-and-drop-handler Self))
       (when (or (>= (abs (- x (x-start (drag-and-drop-handler Self)))) *Drag-Beging-Distance*)
                 (>= (abs (- y (y-start (drag-and-drop-handler Self)))) *Drag-Beging-Distance*))
         (setf (drag-proxy-window (drag-and-drop-handler Self))
@@ -469,7 +470,7 @@
                 :use-global-glcontext t
                 :drag-and-drop-handler (drag-and-drop-handler Self)))))
     
-    (when (or (full-screen self) (drag-proxy-window (drag-and-drop-handler Self)))
+    (when  (drag-proxy-window (drag-and-drop-handler Self))
       (dragged-to
        (drag-and-drop-handler Self)
        (+ x (window-x Self) (x (window Self)))
