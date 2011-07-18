@@ -249,8 +249,9 @@
 
 
 (defun POSSIBLE-RECURSIVE-LOCK-OWNER (lock)
- (let* ((tcr (ccl::%get-object (ccl::recursive-lock-ptr lock) target::lockptr.owner)))
-   (unless (eql 0 tcr) (ccl::tcr->process tcr))))
+  ;; written by Gary Byers <gb@clozure.com>
+  (let* ((tcr (ccl::%get-object (ccl::recursive-lock-ptr lock) target::lockptr.owner)))
+    (unless (eql 0 tcr) (ccl::tcr->process tcr))))
 
 
 (defmacro WITH-ANIMATION-UNLOCKED (&rest Body) "Make sure to release animation lock if running in animation thread"
@@ -388,6 +389,18 @@
 (objc:defmethod (#/mouseExited: :void) ((self native-opengl-view) Event)
   (call-next-method event)
   (mouse-exited (lui-view self)))
+
+;______________________________
+; Events                       |
+;______________________________
+
+(defmethod VIEW-LEFT-MOUSE-DRAGGED-EVENT-HANDLER ((Self opengl-view) X Y DX DY)
+  (declare (ignore X Y))
+  ;; this is pretty save: do not need to lock 
+  (with-animation-unlocked
+      (track-mouse-3d (camera Self) Self dx dy))
+  (unless (is-animated Self) (display Self)))
+
 
 ;______________________________
 ; Shader Support               |
