@@ -59,15 +59,17 @@
               <text-3d tooltip="Click on the '+' button" text="Click on the '+' button" x="-3.0" y="0.2" size="5.0"/>
               <text-3d tooltip="Click on the '+' button" text="above to add a world" x="-3.0" y="-0.5" size="5.0"/>
             </world>
-            <column tooltip="Layer controls" align="stretch" valign="stretch" flex="1" vflex="1" src="gradient-transparent.png" width="100">
-              <bevel-button tooltip="Add a new layer to your world" bezel-style="square" text="Push Layer" start-disabled="true" name="push-layer-button" action="push-layer-action" width="90" height="24" />
-              <bevel-button tooltip="Remove the top layer from your world" bezel-style="square" text="Pop Layer" start-disabled="true" name="pop-layer-button" action="pop-layer-action" width="85" height="24" />
-              <bevel-button tooltip="Hide or show the grid" bezel-style="square" text="Toggle Grid" start-disabled="true" name="toggle-grid-button" action="toggle-grid-action" width="95" height="24" />
-              
+            <column tooltip="Layer controls" align="center" valign="stretch"  vflex="1" src="gradient-transparent.png" width="60">
+              <label width="47" text="Layer" tooltip="Layers"  align="center"/>
+              <row align="center" height="24">
+                <bevel-button tooltip="Add a new layer to your world" bezel-style="square" text="+" start-disabled="true" name="push-layer-button" action="push-layer-action" width="24" height="24" />
+                <bevel-button tooltip="Remove the top layer from your world" bezel-style="square" text="-" start-disabled="true" name="pop-layer-button" action="pop-layer-action" width="24" height="24" />
+              </row>
               <column  tooltip="Layer controls" align="center" valign="stretch" flex="1" vflex="1" >
-                <label tooltip="Height of each layer in your world" width="85" text="Layer Height:"/>
+                <label tooltip="Height of each layer in your world" width="46" text="Height"/>
                 <slider tooltip="Adjust the layer height of this world" vflex="1" width="20" value="5.0" start-disabled="true" name="layer-height-slider" max-value="10.0" min-value="0.0"  action="layer-height-slider-action"/>
               </column>
+              <check-box   text="Grid" start-disabled="true" name="toggle-grid-button" action="toggle-grid-action" width="46" height="24" />
             </column >
           </row>
           <row align="stretch" minimize="vertical"  valign="bottom"  flex="1">
