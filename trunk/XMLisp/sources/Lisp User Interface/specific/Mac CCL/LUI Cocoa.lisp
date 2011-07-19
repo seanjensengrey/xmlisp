@@ -124,7 +124,7 @@
 
 
 (defmethod DOUBLE-CLICK-P ()
-  (when *Current-Event*
+  (when *Current-Event* 
     (= (#/clickCount (native-event *Current-Event*)) 2)))
 
 
@@ -287,7 +287,6 @@
       (set-frame-with-frame self frame))
     (show-all-views (window self))
     (display self)
-    ;(layout (window self))
     (display (window self))))
 
 
@@ -1168,11 +1167,11 @@
   (#/setTitle: (native-view Self) (native-string Text)))
 
 
-(defmethod TURN-ON ((self checkbox-control))
+(defmethod TURN-ON ((self button-control))
   (#/setState: (Native-View self) #$NSOnState))
 
 
-(defmethod TURN-OFF ((self checkbox-control))
+(defmethod TURN-OFF ((self button-control))
   (#/setState: (Native-View self) #$NSOffState))
 ;__________________________________
 ; BEVEL BUTTON                      |
@@ -1208,6 +1207,12 @@
   (#/setTitle: (native-view Self) (native-string Text)))
 
 
+(defmethod TURN-ON ((self bevel-button-control))
+  (#/setState: (Native-View self) #$NSOnState))
+
+
+(defmethod TURN-OFF ((self bevel-button-control))
+  (#/setState: (Native-View self) #$NSOffState))
 
 #|
 
@@ -1313,7 +1318,12 @@
   (#/setEnabled: (native-view self) #$YES))
 
 
+(defmethod TURN-ON ((self checkbox-control))
+  (#/setState: (Native-View self) #$NSOnState))
 
+
+(defmethod TURN-OFF ((self checkbox-control))
+  (#/setState: (Native-View self) #$NSOffState))
 ;__________________________________
 ; STRING-LIST-TEXT-VIEW            |
 ;__________________________________/
@@ -1775,6 +1785,18 @@
 (defmethod SET-BUTTON-ON ((Self image-button-control))
   (#/setState: (native-view self) #$NSOnState))
 
+
+(defmethod TURN-ON ((self image-button-control))
+  (#/setState: (Native-View self) #$NSOnState))
+
+
+(defmethod TURN-OFF ((self image-button-control))
+  (#/setState: (Native-View self) #$NSOffState))
+
+
+(defmethod IS-ON-P ((self image-button-control))
+  (when (equal (#/state (native-view self)) #$NSOnState)
+    t))
 ;__________________________________
 ; RADIO BUTTON                     |
 ;__________________________________/
