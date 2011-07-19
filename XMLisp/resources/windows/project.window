@@ -22,13 +22,13 @@
         <pop-up start-disabled="true" tooltip="Select a world" name="world-name" width="150" height="26" /> 
         <bevel-button bezel-style="square" tooltip="Save the world!" start-disabled="true" text="Save" name="save-button" action="save-the-world-action" width="65" height="24" />
         <spacer width="10"/>
-        <image-button-row>
+        <image-button-row name="simulation tools">
           <image-button name="run button"  tooltip="Run your simulation" start-disabled="true" action="run-action"  image="run-button.png"/> 
           <image-button name="stop button" tooltip="Stop your simulation" start-disabled="true" action="stop-action" image="stop-button.png"/> 
           <image-button name="step button" tooltip="Step your simulation" start-disabled="true" action="step-action" image="step-button.png"/>
         </image-button-row>
         <spacer width="10"/>
-        <image-button-row>
+        <image-button-row name="tool-row">
           <image-button name="arrow button" tooltip="Arrow/selection tool" start-disabled="true" action="arrow-tool-action" image="arrow-button.png"/>
           <image-button name="draw button"  tooltip="Draw agent tool" start-disabled="true" action="draw-tool-action" image="draw-button.png"/>
           <image-button name="volume insert button" tooltip="Multi agent insert" start-disabled="true" action="volume-insert-tool-action" image="select-rect-button.png"/>
@@ -50,7 +50,7 @@
         <spacer width="8"/>
         <bevel-button bezel-style="square" name="design-button" start-disabled="true" text="Project Design" action="design-button-action" width="125" height="24" />
       </row>
-      <row align="stretch"  valign="stretch" flex="1" vflex="1">
+      <row name="world-row" align="stretch"  valign="stretch" flex="1" vflex="1">
         <column align="stretch" valign="stretch" flex="1" vflex="1">
           <row align="stretch"   valign="stretch" vflex="5" flex="1">
             <world flex="7" vflex="5" tooltip="The world" name="the world">
