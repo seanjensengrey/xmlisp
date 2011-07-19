@@ -2756,8 +2756,12 @@
     (if item-addition-action-string-list
       (add-item Pop-Up (first item-addition-action-string-list) (second item-addition-action-string-list)))
     (add-subviews window Pop-up)
-    (when selected-item
-      (#/selectItemWithTitle: (native-view pop-up) (native-string selected-item)))
+    
+    (if selected-item
+      (#/selectItemWithTitle: (native-view pop-up) (native-string selected-item))
+      (#/selectItemWithTitle: (native-view pop-up) nil))
+    
+    
     (#/setTransparent: (native-view Pop-Up) #$YES)
     (#/performClick:  (native-view Pop-up) +null-ptr+)
     ;(#/setState: (native-view Pop-up) #$NSOnState)
