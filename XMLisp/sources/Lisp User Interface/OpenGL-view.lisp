@@ -203,12 +203,6 @@
   )
 
 
-(defmethod VIEW-LEFT-MOUSE-DRAGGED-EVENT-HANDLER ((Self opengl-view) X Y DX DY)
-  (declare (ignore X Y))
-  (track-mouse-3d (camera Self) Self dx dy)
-  (unless (is-animated Self) (display Self)))
-
-
 ;_______________________________
 ; Textures                      |
 ;_______________________________
