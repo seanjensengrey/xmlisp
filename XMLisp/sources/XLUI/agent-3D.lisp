@@ -684,8 +684,8 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
   (:documentation "Make me selected"))
 
 
-(defgeneric UNSELECT (agent-3d)
-  (:documentation "Unselect me"))
+(defgeneric DESELECT (agent-3d)
+  (:documentation "Deselect me"))
 
 ;_______________________________________
 ; Implementation                        |
@@ -1050,7 +1050,7 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
   (setf (is-selected Self) t))
 
 
-(defmethod UNSELECT ((Self agent-3d))
+(defmethod DESELECT ((Self agent-3d))
   (setf (is-selected Self) nil))
 
 
