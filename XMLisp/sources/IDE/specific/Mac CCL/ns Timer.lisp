@@ -10,7 +10,7 @@
 (in-package :hemlock)
 
 (export '(time-to-run time-to-run-milli))
-
+#-cocotro
 (defvar *mach-time-unit-ratio*
  (ccl::rlet ((info #>mach_timebase_info))
    (#_mach_timebase_info info)
@@ -23,6 +23,7 @@
   in: &body Form {t}.
   Measure the time is takes to run <Form> in Nano seconds.
   Form will run only ONCE."
+  #-cocotron
   `(locally (declare (optimize (speed 3) (safety 0)))
      (ccl::without-interrupts
        (let (t2 t3 t4)
@@ -31,11 +32,21 @@
          ,@Form
          (setq t3 (#_mach_absolute_time))
          (setq t4 (#_mach_absolute_time))
-         (values (round (* (max (- t3 t2 (- t4 t3)) 0)  *mach-time-unit-ratio*))))))))
+         (values (round (* (max (- t3 t2 (- t4 t3)) 0)  *mach-time-unit-ratio*))))))
+  #+cocotron
+  `(locally (declare (optimize (speed 3) (safety 0)))
+     (ccl::without-interrupts
+      (let ((t1 (delta-time2))
+            (t2 nil))
+        ,@Form
+        (setf t2 (delta-time2))
+        (* 1000000000 (max t2 0))
+        )
+      ))))
 
 (defmacro TIME-TO-RUN-MILLI (&body Form)
   (/ (TIME-TO-RUN Form) 1000000.0))
-
+#-cocotron
 (defun PRINT-TIME (Time &optional (S t))
   "
   in:  Time {float} time in seconds,
@@ -98,7 +109,7 @@
         (* 1000000000 (max t2 0))
         )
       )))
-     
+#-cocotron     
 (defun benchmark-region (region)
   (message 
    (let ((*Package* (buffer-package (current-buffer))))  ;; not implemented yet
@@ -107,7 +118,7 @@
 	 (format String "  Time: ")
 	 (print-time (/ Time 1000000000.0) String))))))
 
-
+#-cocotron
 (defcommand "Editor Benchmark Region" (p)
   "Benchmark lisp forms between the point and the mark in the editor Lisp."
   "Benchmark lisp forms between the point and the mark in the editor Lisp."
@@ -126,7 +137,7 @@
                  (if (list-offset m -1)
                    (benchmark-region (region m point))))))))))
 
-
+#-cocotron
 (bind-key "Editor Benchmark Region" #k"control-x control-t")
 
 
