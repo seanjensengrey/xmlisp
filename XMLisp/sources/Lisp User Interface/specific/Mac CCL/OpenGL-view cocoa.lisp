@@ -228,6 +228,37 @@
       (setf (animation-time Self) Time))))
 
 
+;(defparameter *Animation-Time* nil)
+(defmethod DELTA-TIME2 () "
+  Return time in seconds passed since last animation."
+  #+:X8632-target (declare (optimize (safety 2))) ;; avoid 2^32 nano second time warps in CCL 32bit
+  #-windows-target
+  (let ((Time (#_mach_absolute_time)))
+    (prog1
+        (if (zerop (animation-time Self))
+          0.0                           ;First time through
+          (float (* 0.000000001
+                    (- Time (animation-time Self))
+                    #.(ccl::rlet ((info #>mach_timebase_info))
+                        (#_mach_timebase_info info)
+                        (/ (ccl::pref info #>mach_timebase_info.numer)
+                           (ccl::pref info #>mach_timebase_info.denom))))))
+      (setf (animation-time Self) Time)))
+  #+windows-target
+  (let ((Time (rlet ((now #>FILETIME))
+                ;; this Win32 timer function is no good: typically 10ms or worse resolution!
+                ;; consider using QueryPerformanceCounterrad http://www.devsource.com/c/a/Techniques/High-Performance-Timing-under-Windows/1/
+		(#_GetSystemTimeAsFileTime now)
+		(dpb (pref now #>FILETIME.dwHighDateTime)
+		     (byte 32 32)
+		     (pref now #>FILETIME.dwLowDateTime)))))
+    (prog1
+	(if (zerop (animation-time Self))
+          0.0                           ;First time through
+          (float (* 0.0000001 (- Time (animation-time Self)))))
+      (setf (animation-time Self) Time))))
+
+
 (defmethod ANIMATE ((Self opengl-view) Time)
   (declare (ignore Time))
   ;; nada
