@@ -472,8 +472,7 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 
 (defmethod VIEW-DID-END-RESIZE ((self view))
-  (map-subviews self #'(lambda (View) (view-did-end-resize View )))
-  )
+  (map-subviews self #'(lambda (View) (view-did-end-resize View ))))
 
 
 (defmethod FRAME ((self view))
@@ -557,7 +556,9 @@ Call with most important parameters. Make other paramters accessible through *Cu
    (min-height :allocation :class :accessor min-height :initarg :min-height :initform 100 :documentation "The minimum height allowed for this class of window")
    (min-width :allocation :class :accessor min-width   :initarg :min-width :initform 100 :documentation "The minimum width allowed for this class of window")
    (tooltip :accessor tooltip :initform nil :initarg :tooltip :documentation "If this accessor is set it will display this for the tool instead of the documentation")
-   (hidden-p :accessor hidden-p :initform nil :documentation "This predicate will tell you if the view is currently hidden or not, should only be set by set-hidden"))
+   (hidden-p :accessor hidden-p :initform nil :documentation "This predicate will tell you if the view is currently hidden or not, should only be set by set-hidden")
+   (use-custom-window-controller :accessor use-custom-window-controller :initform nil :initarg :use-custom-window-controller :documentation "Tells the window creating whether or not it should use a custom window controller or the default ccl controller")
+   )
   (:documentation "a window that can contain views, coordinate system: topleft = 0, 0")
   (:default-initargs 
       :x 100
@@ -623,6 +624,9 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defgeneric WINDOW-SHOULD-CLOSE (Window)
   (:documentation "This method will be called by the window delegate when the user clicks the close button or a perfomClose action is issued. Return non-nil value to have window closed"))
+
+(defgeneric WINDOW-DID-FINISH-RESIZE (Window)
+  (:documentation "This method will be called when the window has finished a resize."))
 
 (defgeneric MOST-SPECIFIC-VIEW-CONTAINING-POINT (Window window-x window-y)
   (:documentation "in: window, window-x, window-y; out: view, x, y; return the most specific, i.e., view that contains x, y but does not have subviews containing x, y"))
@@ -929,6 +933,11 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defmethod WINDOW-SHOULD-CLOSE ((Self window))
   t ;; should be closed by default
+  )
+
+
+(defmethod WINDOW-DID-FINISH-RESIZE ((Self window))
+  ;;Do nothing
   )
 
 
