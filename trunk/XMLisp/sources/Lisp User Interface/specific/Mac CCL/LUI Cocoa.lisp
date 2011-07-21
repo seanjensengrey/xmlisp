@@ -886,7 +886,9 @@
   (setf (full-screen Self) nil)
   (let ((Frame (gethash Self *Window-Full-Screen-Restore-Sizes*)))
     (when Frame
-      (#/setFrame:display:animate: (native-window Self) Frame #$YES #$NO))))
+      (#/setFrame:display:animate: (native-window Self) Frame #$YES #$NO)
+      #+cocotron
+      (size-changed-event-handler self (width self) (height self)))))
 
 
 (defmethod MAKE-KEY-WINDOW ((Self window))
