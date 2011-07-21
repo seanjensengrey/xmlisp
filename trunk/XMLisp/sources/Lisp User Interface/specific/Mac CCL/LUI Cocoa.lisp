@@ -722,7 +722,6 @@
 ;__________________________________
 ; window methods                   |
 ;__________________________________/
-(defparameter *use-custom-window-controller* nil)
 
 (defmacro IN-MAIN-THREAD (() &body body)
   (let ((thunk (gensym))
@@ -762,7 +761,7 @@
         ;; content view
         (#/setContentView: Window (#/autorelease (native-view Self)))
         (#/setTitle: Window (native-string (title Self)))
-        (if *use-custom-window-controller* 
+        (if (use-custom-window-controller self)
        
           (#/setWindowController: Window (window-controller)))
         (ns:with-ns-size (minSize (min-width self) (min-height self))
