@@ -595,6 +595,12 @@
   ;; (print (native-to-lui-event-type (#/type Event)))
   (call-next-method Event))
 |#
+(objc:defmethod (#/validateMenuItem: #>BOOL) 
+                ((self native-window) (item :id))
+  (print "VALIDATE NATIVE WINDOW")
+  (print item)
+  #$YES)
+
 
 (objc:defmethod (#/zoom: :void) ((self native-window) sender)
   (call-next-method sender)
@@ -687,7 +693,10 @@
             (- (screen-height (lui-window Self)) 
                (height (lui-window Self))
                (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.y)))))    (screen-height nil)
-    (size-changed-event-handler (lui-window Self) (width (lui-window Self)) (height (lui-window Self)))))
+    ;; On window we are ging to save this resize for the end
+    #-cocotron
+    (size-changed-event-handler (lui-window Self) (width (lui-window Self)) (height (lui-window Self)))
+    ))
 
 
 (objc:defmethod (#/windowWillClose: :void) ((self window-delegate) Notification)
@@ -754,6 +763,7 @@
         (#/setContentView: Window (#/autorelease (native-view Self)))
         (#/setTitle: Window (native-string (title Self)))
         (if *use-custom-window-controller* 
+       
           (#/setWindowController: Window (window-controller)))
         (ns:with-ns-size (minSize (min-width self) (min-height self))
           (#/setMinSize: Window minSize))
@@ -1017,7 +1027,12 @@
                           :native-event Event))))
 
 
+
 (objc:defmethod (#/viewDidEndLiveResize :void) ((self native-window-view))
+  (window-did-finish-resize (lui-window self))
+  ;;On cocotron do the resize at the end
+  #+cocotron
+  (size-changed-event-handler (lui-window Self) (width (lui-window Self)) (height (lui-window Self)))
   (map-subviews (lui-window Self) #'(lambda (View) (view-did-end-resize View ))))
 
 
