@@ -907,41 +907,14 @@
 ; Window query functions            |
 ;__________________________________/
 
-;;This method still has lots of issues:
-;;First, I have to add one to i.  This seems to cause the return value to to match up with orderedIndex but also seems very dangerous, and unlikely
-;;to be a universal solution.  This was tested by making four different application windows and commenting the first three lines of this method so 
-;;that it always returned the cocotron value.  I tried arranging the windows in many different ways and comparing the return value of this method 
-;;to the value return by (#/orderedIndex Window), and it was always the same.  Another issue is that it seems that the method 
-;;(#/sharedApplication ns::ns-application) works differently in cocotron.  Used the method ordered-test I determined that (#/sharedApplication ns::ns-application)
-;;returns the order in which the windows are stacked on the mac version but in cocotron it return the order in which they were created.  It seems that this may not
-;;be a good solution after all.  
-(defun ORDERED-WINDOW-INDEX (Window)
-  (#/orderedIndex Window))
-#|
-  #-:cocotron 
-  (#/orderedIndex Window)
-  #+:cocotron
-   (let ((window-array  (#/orderedWindows (#/sharedApplication ns::ns-application)))) 
-     (dotimes (i (#/count window-array))
-       (let ((array-window (#/objectAtIndex: window-array i)))         
-         (if (equal window array-window)
-           (progn            
-             (return-from ordered-window-index i)))))
-     (return-from ordered-window-index nil)))
-|#
-#|
-  #-:cocotron 
-  (#/orderedIndex Window)
-  #+:cocotron
-   (let ((window-array  (#/orderedWindows (#/sharedApplication ns::ns-application)))) 
-     (dotimes (i (#/count window-array))
-       (let ((array-window (#/objectAtIndex: window-array i)))         
-         (if (equal window array-window)
-           (progn            
-             (return-from ordered-window-index i)))))
-     (return-from ordered-window-index nil)))
 
-|#
+(defun ORDERED-WINDOW-INDEX (Window)
+  #-cocotron
+  (#/orderedIndex Window)
+  #+cocotron
+  (objc:objc-message-send window "orderedIndex" :int))
+
+
 (defun ORDERED-TEST ()
   (let ((window-array  (#/orderedWindows (#/sharedApplication ns::ns-application)))) 
     (dotimes (i (#/count window-array))
