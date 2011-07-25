@@ -717,6 +717,14 @@
   (:documentation "This class is a text field whose contents must be a number with no more then one."))
 
 
+(defclass INTEGER-TYPE (integer-type-control xml-layout-interface)
+  ()
+  (:default-initargs
+    :width 100 
+    :height 20)
+  (:documentation "This class is a text field whose contents must be an integer"))
+
+
 (defclass FORMULA-TYPE (formula-type-control xml-layout-interface)
   ()
   (:default-initargs
