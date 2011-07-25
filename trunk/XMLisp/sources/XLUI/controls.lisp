@@ -725,6 +725,18 @@
   (:documentation "This class is a text field whose contents must be an integer"))
 
 
+(defmethod VALUE ((Self integer-type-control))
+  (let ((String-Value (call-next-method)))
+    (when String-Value
+      (let ((Value (read-from-string String-Value)))
+        (when (numberp Value)
+          Value)))))
+
+
+(defmethod (setf VALUE)  (Number (Self integer-type-control))
+  (when (numberp Number)
+    (call-next-method (write-to-string Number) Self)))
+
 (defclass FORMULA-TYPE (formula-type-control xml-layout-interface)
   ()
   (:default-initargs
