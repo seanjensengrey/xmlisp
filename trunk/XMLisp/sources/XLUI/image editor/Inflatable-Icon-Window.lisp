@@ -1249,65 +1249,67 @@
   If folder contains .shape file matching image file name then load shape file."
   (declare (ignore Close-Action Destination-Inflatable-Icon)
            (ftype function shape))
-  (let* ((Window #-cocotron (load-object "lui:resources;windows;inflatable-icon-editor.window" :package (find-package :xlui)) #+cocotron (load-object "lui:resources;windows;inflatable-icon-editor-windows.window" :package (find-package :xlui)))
-         (Icon-Editor (view-named Window "icon-editor"))
-         (Inflated-Icon-Editor (view-named Window "model-editor")))
-    
+  (catch-errors-nicely 
+   ("Editting Inflatable Icon")
+   (let* ((Window #-cocotron (load-object "lui:resources;windows;inflatable-icon-editor.window" :package (find-package :xlui)) #+cocotron (load-object "lui:resources;windows;inflatable-icon-editor-windows.window" :package (find-package :xlui)))
+          (Icon-Editor (view-named Window "icon-editor"))
+          (Inflated-Icon-Editor (view-named Window "model-editor")))
+     
     (if shape-name
       (setf (title window) (format nil "Inflatable Icon: ~A" (String-capitalize shape-name)))
       (setf (title window) (format nil "Inflatable Icon: ~A" (pathname-name Pathname))))
-    (if alert-close-action
-      (setf (alert-close-action window) alert-close-action))
-    (if alert-close-target 
-      (setf (alert-close-target window) alert-close-target))
-    ;; 2D
-    (load-image Icon-Editor Pathname)
-    (center-canvas Icon-Editor)
-    (get-rgba-color-at Icon-Editor 0 0) ;;; HACK!! make sure buffer is allocated 
-    ;; 3D
-    (let ((Shape-Pathname (make-pathname
-                           :directory (pathname-directory Pathname)
-                           :name (or Shape-Filename (pathname-name Pathname))
-                           :type "shape"
-                           :host (pathname-host Pathname)
-                           :defaults Pathname)))
-     ;; make shape 
-      (cond
-       ;; make shape from shape file
-       ((probe-file Shape-Pathname)
-        
-        
-        (let ((shape (load-object Shape-Pathname :package (find-package :xlui))))
+     (if alert-close-action
+       (setf (alert-close-action window) alert-close-action))
+     (if alert-close-target 
+       (setf (alert-close-target window) alert-close-target))
+     ;; 2D
+     (load-image Icon-Editor Pathname)
+     (center-canvas Icon-Editor)
+     (get-rgba-color-at Icon-Editor 0 0) ;;; HACK!! make sure buffer is allocated 
+     ;; 3D
+     (let ((Shape-Pathname (make-pathname
+                            :directory (pathname-directory Pathname)
+                            :name (or Shape-Filename (pathname-name Pathname))
+                            :type "shape"
+                            :host (pathname-host Pathname)
+                            :defaults Pathname)))
+       ;; make shape 
+       (cond
+        ;; make shape from shape file
+        ((probe-file Shape-Pathname)
+         
+         
+         (let ((shape (load-object Shape-Pathname :package (find-package :xlui))))
           (if (equal (type-of shape) 'xlui::inflatable-icon)
             (setf (inflatable-icon Inflated-Icon-Editor) shape)
             (setf (inflatable-icon Inflated-Icon-Editor) 
                   (shape shape))))
-        
-        (setf (view (inflatable-icon Inflated-Icon-Editor)) Inflated-Icon-Editor))
-       ;; make new one
-       (t
-        (setf (inflatable-icon Inflated-Icon-Editor) 
-              (make-instance 'inflatable-icon 
-                :columns (img-width Icon-Editor)
-                :rows (img-height Icon-Editor)
-                :view Inflated-Icon-Editor))
-        (setf (altitudes (inflatable-icon Inflated-Icon-Editor))
-              (make-array (list (img-height Icon-Editor) (img-width Icon-Editor))
-                          :element-type 'short-float
-                          :initial-element 0.0))))
-     ; (initialize-gui-components Window (inflatable-icon Inflated-Icon-Editor))
-      (setf (auto-compile (inflatable-icon Inflated-Icon-Editor)) nil))  ;; keep editable
-    ;; use the icon editor image, not the new inflatable icon editor one
-    (setf (image (inflatable-icon Inflated-Icon-Editor))
-          (pixel-buffer Icon-Editor))
-    ;; proxy icons
-    ;;; some day (add-window-proxy-icon Window Shape-Pathname)
-    ;; wrap up
-    (setf (file window) pathname)
-    (display Window)
-    (make-key-window Window )
-    (initialize-gui-components Window (inflatable-icon Inflated-Icon-Editor))
-    Window))
+         
+         (setf (view (inflatable-icon Inflated-Icon-Editor)) Inflated-Icon-Editor))
+        ;; make new one
+        (t
+         (setf (inflatable-icon Inflated-Icon-Editor) 
+               (make-instance 'inflatable-icon 
+                 :columns (img-width Icon-Editor)
+                 :rows (img-height Icon-Editor)
+                 :view Inflated-Icon-Editor))
+         (setf (altitudes (inflatable-icon Inflated-Icon-Editor))
+               (make-array (list (img-height Icon-Editor) (img-width Icon-Editor))
+                           :element-type 'short-float
+                           :initial-element 0.0))))
+       ; (initialize-gui-components Window (inflatable-icon Inflated-Icon-Editor))
+       (setf (auto-compile (inflatable-icon Inflated-Icon-Editor)) nil))  ;; keep editable
+     ;; use the icon editor image, not the new inflatable icon editor one
+     (setf (image (inflatable-icon Inflated-Icon-Editor))
+           (pixel-buffer Icon-Editor))
+     ;; proxy icons
+     ;;; some day (add-window-proxy-icon Window Shape-Pathname)
+     ;; wrap up
+     (setf (file window) pathname)
+     (display Window)
+     (make-key-window Window )
+     (initialize-gui-components Window (inflatable-icon Inflated-Icon-Editor))
+     Window)))
 
 
 (defmethod INITIALIZE-GUI-COMPONENTS ((Self inflatable-icon-editor-window) Inflatable-Icon)
