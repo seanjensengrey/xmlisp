@@ -158,7 +158,6 @@
   
 
 (defmethod ADD-SUBVIEWS ((Self subview-manager-interface) &rest Subviews)
-
   (dolist (Subview Subviews)
     (add-subview Self Subview)))
 
@@ -595,12 +594,13 @@
   ;; (print (native-to-lui-event-type (#/type Event)))
   (call-next-method Event))
 |#
+#|
 (objc:defmethod (#/validateMenuItem: #>BOOL) 
                 ((self native-window) (item :id))
   (print "VALIDATE NATIVE WINDOW")
   (print item)
   #$YES)
-
+|#
 
 (objc:defmethod (#/zoom: :void) ((self native-window) sender)
   (call-next-method sender)
@@ -809,7 +809,7 @@
 
 
 (defmethod SCREEN-HEIGHT ((Self window))
-  (truncate (pref (#/frame (or (#/screen (native-window Self))
+  (truncate (pref (#/frame (or (and (not (%null-ptr-p (#/screen (native-window Self)))) (#/screen (native-window Self)))
                                (#/mainScreen ns:ns-screen))) 
                   <NSR>ect.size.height)))
 
