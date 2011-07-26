@@ -698,16 +698,19 @@
     (size-changed-event-handler (lui-window Self) (width (lui-window Self)) (height (lui-window Self)))
     ))
 
-
+#|
 (objc:defmethod (#/windowWillClose: :void) ((self window-delegate) Notification)
   (window-will-close (lui-window self) Notification))
-
+|#
 
 (objc:defmethod (#/windowShouldClose: :<BOOL>) ((self window-delegate) Sender)
   (declare (ignore Sender))
-  (if (window-should-close (lui-window self))
-    #$YES
-    #$NO))
+  (cond 
+    ((window-should-close (lui-window self)) 
+     (window-will-close (lui-window self) sender)
+     #$YES)
+    (t
+     #$NO)))
 
 
 (objc:defmethod (#/windowDidMove: :void) ((self window-delegate) Notification)
