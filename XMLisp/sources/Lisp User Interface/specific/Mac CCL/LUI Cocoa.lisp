@@ -704,13 +704,14 @@
 |#
 
 (objc:defmethod (#/windowShouldClose: :<BOOL>) ((self window-delegate) Sender)
-  (declare (ignore Sender))
+  ;; Hack:  For now call the window-will-close code inside a positive response from window-should-close, this is needed for now because calling subviews (which is caused when we call window-will-close) 
+  ;; Sometimes causes problems if the window is already in the process of being closed.  
   (cond 
-    ((window-should-close (lui-window self)) 
-     (window-will-close (lui-window self) sender)
-     #$YES)
-    (t
-     #$NO)))
+   ((window-should-close (lui-window self)) 
+    (window-will-close (lui-window self) sender)
+    #$YES)
+   (t
+    #$NO)))
 
 
 (objc:defmethod (#/windowDidMove: :void) ((self window-delegate) Notification)
