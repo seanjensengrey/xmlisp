@@ -1,39 +1,43 @@
 <?xml version="1.0"?>
-<new-shape-window title="get string" width="700" height="330">
-  <column align="stretch" valign="distribute">
-    <row align="stretch" valign="top" height="20" > 
-      <label  align="left" width="90" text="Agent Name:"/>
-      <agent-name-type flex="1" name="text"/>
-    </row>
-    <spacer height="15"/>
-    <row align="stretch" valign="stretch" height="230" > 
-      <label align="left" width="60" text="Shape:"/>
-     <column flex="4" align="stretch" height="230">
-        <label align="center" width="100" text="Type"/>
-        <browser flex="4" height="230" action="change-shape-action" name="browser">
-          <node node-name="Cube" node-path="lui:resources;textures;" allowed-file-types="(png)">
-            <node node-name="Crate.png"/>
-            <node node-name="concrete.png"/>
-            <node node-name="Custom Texture..."/>
-          </node>
-          <node node-name="Tile" node-path="lui:resources;textures;" allowed-file-types="(png)">
-            <node node-name="Custom Texture..."/>
-          </node>
-          <node node-name="Sphere" node-path="lui:resources;textures;" allowed-file-types="(png)">
-            <node node-name="Custom Texture..."/>
-          </node>
-          <node node-name="Inflatable Icon" node-path="lui:resources;templates;;shapes;inflatable icons;" allowed-file-types="directories"/>
-        </browser>
+<new-shape-window title="New Agent" width="700" height="360">
+  <column align="stretch" valign="stretch">
+    <row align="stretch" valign="stretch" vflex="1">
+      <column width="90" vflex="1" align="stretch" valign="stretch" > 
+        <spacer height="18"/>
+        <label  align="right" width="90" text="Agent Name:"/>
+        <spacer height="25"/>
+        <label align="right" width="60" y="100" text="Shape:"/>
       </column>
- 
+      <column flex="1" vflex="1" align="stretch" valign="stretch"> 
+        <spacer height="14"/>
+        <agent-name-type flex="1" name="text"/>
+        <column flex="4" align="stretch" valign="stretch">
+          <spacer/>
+          <browser height="240" flex="4"  action="change-shape-action" name="browser">
+            <node node-name="Cube" node-path="lui:resources;textures;" allowed-file-types="(png)">
+              <node node-name="Crate.png"/>
+              <node node-name="concrete.png"/>
+              <node node-name="Custom Texture..."/>
+            </node>
+            <node node-name="Tile" node-path="lui:resources;textures;" allowed-file-types="(png)">
+              <node node-name="Custom Texture..."/>
+            </node>
+            <node node-name="Sphere" node-path="lui:resources;textures;" allowed-file-types="(png)">
+              <node node-name="Custom Texture..."/>
+            </node>
+            <node node-name="Inflatable Icon" node-path="lui:resources;templates;;shapes;inflatable icons;" allowed-file-types="directories"/>
+          </browser>
+        </column>
+      </column>
       <spacer/>
-      <column flex="4" align="stretch" height="230">
+      <column flex="1" vflex="1" align="stretch" valign="stretch" >
         <label align="center" width="100" name="Shape Preview" text="Preview"/>
-        <3d-agent-preview-view height="230"  name="shape-preview">
+        <3d-agent-preview-view vflex="1"  name="shape-preview">
           <cube texture="crate.png"/>
         </3d-agent-preview-view>
       </column>
     </row>
+    <spacer height="10"/>
     <row align="right" minimize="vertical">
       <button text="Cancel" action="cancel-action"/>
       <button text="OK" action="OK-action" default-button="true" start-disabled="true" name="ok-button"/>
