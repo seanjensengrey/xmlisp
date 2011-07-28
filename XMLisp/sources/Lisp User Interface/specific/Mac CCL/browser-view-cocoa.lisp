@@ -13,7 +13,7 @@
 
 
 (objc:defmethod (#/browser:numberOfRowsInColumn: :<NSI>nteger) ((self my-browser-delegate) browser (column :<NSI>nteger))
-  (#/setTitle:ofColumn: browser (native-string "HELLO") column)
+  ;(#/setTitle:ofColumn: browser (native-string "HELLO") column)
   (if (equal column 0) 
     (length (nodes (lui-view browser)))
     (length (nodes (find (ccl::lisp-string-from-nsstring (#/stringValue (#/selectedCellInColumn: browser (- column 1)))) (nodes (lui-view browser)) :key 'node-name :test 'equal)))))
@@ -49,7 +49,7 @@
       (#/initWithFrame: Native-Control Frame)
       (#/setMaxVisibleColumns: Native-Control 2)
       (#/setDelegate: native-control (make-instance 'my-browser-delegate))
-      (#/setTitled: native-control #$YES)
+      (#/setTitled: native-control #$NO)
       ;(#/setHasHorizontalScroller: Native-Control #$YES)
       (#/takesTitleFromPreviousColumn native-control)
     Native-Control)))
