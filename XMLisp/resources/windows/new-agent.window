@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<new-shape-window title="New Agent" width="700" height="360">
+<new-shape-window title="Define Agent Name and Shape" width="700" height="360">
   <column align="stretch" valign="stretch">
     <row align="stretch" valign="stretch" vflex="1">
       <column width="90" vflex="1" align="stretch" valign="stretch" > 
