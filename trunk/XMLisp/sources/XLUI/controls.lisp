@@ -727,7 +727,7 @@
 
 (defmethod VALUE ((Self integer-type-control))
   (let ((String-Value (call-next-method)))
-    (when String-Value
+    (when (and String-Value (not (equal string-value "")))
       (let ((Value (read-from-string String-Value)))
         (when (numberp Value)
           Value)))))
