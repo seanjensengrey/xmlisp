@@ -18,7 +18,6 @@
 
 
 (defmethod PRINT-SLOTS ((Self globe-view))
- 
    '())
 
 
