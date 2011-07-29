@@ -282,6 +282,9 @@
 (defvar *Framerate-Ceilling* 60 "max frame rate; simulation not exceed to save CPU")
 
 
+(defvar *Print-Frame-Rate-Info* t "if true print run time information including frame rate to console")
+
+
 (defmethod ANIMATE-OPENGL-VIEW-ONCE ((Self opengl-view))
   ;; version with performance tracking
   (let* ((Animation-Time (with-animation-locked
@@ -292,13 +295,14 @@
     ;;remember to remove the above declare if you are going to use the following frame rate test.
     (when (equal total-time 0)
       (setf total-time 0.01))
+    (when *Print-Frame-Rate-Info*
       (format t "~%animate: ~4,1F ms, ~4D %   render: ~4,1,F ms, ~4D %   Framerate: ~4D fps"
               (* 1.0e-6 Animation-Time)
               (truncate (/ (* 100 Animation-Time) Total-Time))
               (* 1.0e-6 Rendering-Time)
               (- 100 (truncate (/ (* 100 Animation-Time) Total-Time)))
-              (truncate (/ 1.0e9 Total-Time)))
-    ;; Cap framerate 
+              (truncate (/ 1.0e9 Total-Time))))
+      ;; Cap framerate 
     (let ((Sleep-Time (- #.(/ 1.0 *Framerate-Ceilling*) (* Total-Time 1.0e-9))))
       (when (> Sleep-Time 0.0) 
         (sleep Sleep-Time)
