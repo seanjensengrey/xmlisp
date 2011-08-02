@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<new-shape-window title="Define Agent Name and Shape" width="700" height="360">
+<new-shape-window title="Define Agent Name and Shape" width="1000" height="360">
   <column align="stretch" valign="stretch">
     <row align="stretch" valign="stretch" vflex="1">
       <column width="90" vflex="1" align="stretch" valign="stretch" > 
@@ -13,19 +13,17 @@
         <agent-name-type flex="1" name="text"/>
         <column flex="4" align="stretch" valign="stretch">
           <spacer/>
-          <browser height="240" flex="4"  action="change-shape-action" name="browser">
-            <node node-name="Cube" node-path="lui:resources;textures;" allowed-file-types="(png)">
-              <node node-name="Crate.png"/>
-              <node node-name="concrete.png"/>
+          <browser height="240" flex="4"  action="change-shape-action" name="browser" column-limit="3">
+            <node node-name="Cube" node-path="lui:resources;Shape Textures;" allowed-file-types="directories">
               <node node-name="Custom Texture..."/>
             </node>
-            <node node-name="Tile" node-path="lui:resources;textures;" allowed-file-types="(png)">
+            <node node-name="Sphere" node-path="lui:resources;Shape Textures;" allowed-file-types="directories">
               <node node-name="Custom Texture..."/>
             </node>
-            <node node-name="Sphere" node-path="lui:resources;textures;" allowed-file-types="(png)">
+            <node node-name="Tile" node-path="lui:resources;Shape Textures;" allowed-file-types="directories">
               <node node-name="Custom Texture..."/>
-            </node>
-            <node node-name="Inflatable Icon" node-path="lui:resources;templates;;shapes;inflatable icons;" allowed-file-types="directories"/>
+            </node>         
+            <node node-name="Inflatable Icon" node-path="lui:resources;templates;shapes;inflatable icons;" allowed-file-types="directories"/>
           </browser>
         </column>
       </column>
