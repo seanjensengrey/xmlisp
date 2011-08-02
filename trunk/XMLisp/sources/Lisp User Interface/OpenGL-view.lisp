@@ -207,7 +207,11 @@
 ; Textures                      |
 ;_______________________________
 
-(defun CREATE-TEXTURE-FROM-FILE (Filename &key Verbose (Build-Mipmaps t) Repeat (Mag-Filter GL_LINEAR) Forced-Depth) "
+
+(defvar *Default-OpenGL-Texture-Magnification-Filter* GL_LINEAR "Used then loading textures from files")
+
+
+(defun CREATE-TEXTURE-FROM-FILE (Filename &key Verbose (Build-Mipmaps t) Repeat (Mag-Filter *Default-OpenGL-Texture-Magnification-Filter*) Forced-Depth) "
   in:  Filename {string}, 
     &key Verbose {boolean}, Repeat
   out: OpenGL-Texture-Name {int}, width, height, depth
