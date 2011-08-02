@@ -6,7 +6,9 @@
 
 (defclass BROWSER-VIEW (control)
   ((text :accessor text :initform "untitled" :initarg :text :type string :documentation "text associated with control")
-   (columns :accessor columns :initform () :type list :documentation "A list of rows which in turn is a list of values for the row"))
+   (columns :accessor columns :initform () :type list :documentation "A list of rows which in turn is a list of values for the row")
+   (column-limit :accessor column-limit :type integer :initform 10 :initarg :column-limit :documentation "If this limit is set, the browser will not allow more columns then this limit")
+   )
   (:documentation "colored rectangle and if it has transparency it is shown in one half of the view")
   (:default-initargs 
       :action 'default-browser-action
