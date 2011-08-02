@@ -26,7 +26,10 @@
    (window :accessor window :initform nil)
    (left-margin :accessor left-margin :initform 0)
    (item-category-label :accessor item-category-label :initarg :item-category-label :initform "items:")
-   (item-category-label-height :accessor item-category-label-height :initarg :item-category-label-height :initform 15))
+   (item-category-label-height :accessor item-category-label-height :initarg :item-category-label-height :initform 15)
+   (group-font-size :accessor group-font-size :initarg :group-font-size :initform 12.0 :documentation "This accessor controls at which font point size the text of groups will be rendered")
+   (item-font-size :accessor item-font-size :initarg :item-font-size :initform 12.0 :documentation "This accessor controls at which font point size the text of items will be rendered")
+   )
   (:documentation "This class will is a view that contains groups of items that are identified by a badge image."))
 
 
