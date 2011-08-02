@@ -185,6 +185,7 @@
 
 (objc:defmethod (#/mouseDown: :void) ((self group-detection-view) Event)
   ;(declare (ignore Event))
+
   (remove-background-and-end-editting-for-all-text-fields (native-view (container self)))
   (call-next-method Event)
   (when (container self)
@@ -253,7 +254,8 @@
 
 
 (objc:defmethod (#/mouseDown: :void) ((self item-detection-view) Event)
- ;(declare (ignore Event))
+  (when (> ( #/clickCount Event) 1)
+    (edit-group-item (container self) (selected-group (container self)) (selected-group-item (container self))))
   (remove-background-and-end-editting-for-all-text-fields (native-view (container self)))
   (call-next-method Event)
   (when (container self)
@@ -340,9 +342,7 @@
 (objc:defmethod (#/mouseDown: :void) ((self mouse-detecting-image-view) Event)
   (remove-background-and-end-editting-for-all-text-fields (native-view (container (#/superview (#/superview  self)))))
   (call-next-method Event)
-  (select (#/superview self)) 
-  (if (> ( #/clickCount Event) 1)
-    (double-clicked (#/superview self))))
+  (select (#/superview self)))
 
 
 (defmethod LAYOUT ((Self mouse-detecting-image-view))
@@ -425,6 +425,7 @@
    (item :accessor item :initform nil :initarg :item)
    (item-name :accessor item-name :initform nil :initarg :item-name)
    (name-storage :accessor name-storage :initform nil)
+   (font-size :accessor font-size :initform 1.0 :initarg :font-size)
    )
   (:metaclass ns:+ns-object
               :documentation "A text field that detects mouse events.  "))
@@ -435,6 +436,10 @@
     (if (< width 50)
       (setf width 50))
     width))
+
+
+(defmethod INITIALIZE-INSTANCE :after  ((self mouse-detection-text-field) &rest Initargs)
+  (#/setFont: self (#/fontWithName:size: ns:ns-font (native-string "Times-Roman") 5.0)))
 
 
 (objc:defmethod (#/isFlipped :<BOOL>) ((self mouse-detection-text-field))
@@ -680,6 +685,7 @@
             (ns:with-ns-size (Size  width (NS:NS-RECT-HEIGHT (#/frame text)))
               (#/setFrameSize: text Size )))
           (#/addSubview: detection-view-item  text)
+          (#/setFont: text (#/fontWithName:size: ns:ns-font (native-string "LucidaGrande") (item-font-size self)))
           (case (item-detection-views group)
             (nil (setf (item-text-views group) (list text)))
             (t (setf (item-text-views group) (append (item-text-views group) (list text))))))))
@@ -742,6 +748,7 @@
               (ns:with-ns-size (Size  width (NS:NS-RECT-HEIGHT (#/frame text)))
                 (#/setFrameSize: text Size )))
             (#/addSubview: detection-view  text)
+            (#/setFont: text (#/fontWithName:size: ns:ns-font (native-string "LucidaGrande") (item-font-size self)))
             (setf (text-view detection-view) text)
             (setf (text-view image) text)))))    
       (setf X (left-margin self))      
