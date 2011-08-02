@@ -13,21 +13,25 @@
 
 
 (objc:defmethod (#/browser:numberOfRowsInColumn: :<NSI>nteger) ((self my-browser-delegate) browser (column :<NSI>nteger))
-  ;(#/setTitle:ofColumn: browser (native-string "HELLO") column)
-  (if (equal column 0) 
-    (length (nodes (lui-view browser)))
-    (length (nodes (find (ccl::lisp-string-from-nsstring (#/stringValue (#/selectedCellInColumn: browser (- column 1)))) (nodes (lui-view browser)) :key 'node-name :test 'equal)))))
+  (let ((selected-node-item (lui-view self)))
+    (dotimes (i column)
+      (when (get-selected-row-in-column (lui-view self) i)
+        (setf selected-node-item (elt (nodes selected-node-item) (get-selected-row-in-column (lui-view self) i)))))
+    (length (nodes selected-node-item))))
 
 
 (objc:defmethod (#/browser:willDisplayCell:atRow:column: :void) ((self my-browser-delegate) browser cell (row :<NSI>nteger) (column :<NSI>nteger))
-  (let ((node nil))
-    (if (equal column 0)
-      (setf node (elt (nodes (lui-view browser)) row))
-      (setf node (elt (nodes (find (ccl::lisp-string-from-nsstring (#/stringValue (#/selectedCellInColumn: browser (- column 1)))) (nodes (lui-view browser)) :key 'node-name :test 'equal)) row)))
+  (let ((node nil)
+        (selected-node-item (lui-view browser)))
+    (dotimes (i column)
+      (when (get-selected-row-in-column (lui-view browser) i)
+        (setf selected-node-item (elt (nodes selected-node-item) (get-selected-row-in-column (lui-view browser) i)))))
+    (setf node (elt (nodes selected-node-item) row))
     (cond 
      ((subtypep (type-of node) 'node-item)
       (#/setStringValue: cell (native-string (node-name node)))
-      (unless (nodes node)
+      (print (column-limit (lui-view browser)))
+      (when (and (column-limit (lui-view browser)) (>= (+  1 column)(column-limit (lui-view browser)) ))
         (#/setLeaf: cell #$YES)))
      (t 
       (#/setStringValue: cell (native-string node))
@@ -47,12 +51,19 @@
   (let ((Native-Control (make-instance 'native-browser-view :lui-view Self)))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
       (#/initWithFrame: Native-Control Frame)
-      (#/setMaxVisibleColumns: Native-Control 2)
-      (#/setDelegate: native-control (make-instance 'my-browser-delegate))
+      (#/setMaxVisibleColumns: Native-Control 3)
+      (#/setDelegate: native-control (make-instance 'my-browser-delegate :lui-view self))
       (#/setTitled: native-control #$NO)
-      ;(#/setHasHorizontalScroller: Native-Control #$YES)
       (#/takesTitleFromPreviousColumn native-control)
     Native-Control)))
+
+
+(defmethod GET-SELECTED-NODE-IN-COLUMN ((self browser-view) column)
+  (let ((selected-node-item self))
+    (dotimes (i column)
+      (when (get-selected-row-in-column self i)
+        (setf selected-node-item (elt (nodes selected-node-item) (get-selected-row-in-column self i)))))
+    selected-node-item))
 
 
 (defmethod GET-VALUE-OF-SELECTED-CELL ((Self browser-view))
@@ -67,6 +78,9 @@
 (defmethod GET-SELECTED-COLUMN ((Self browser-view))
   (#/selectedColumn (native-view self)))
 
+
+(defmethod GET-SELECTED-ROW-IN-COLUMN ((Self browser-view) row)
+  (#/selectedRowInColumn: (native-view self) row))
 
 (defmethod SELECT-ROW-IN-COLUMN ((Self browser-view) row col)
   (#/selectRow:inColumn: (native-view self) row col))
