@@ -236,6 +236,8 @@
       (if Build-Mipmaps
         (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_MIN_FILTER GL_LINEAR_MIPMAP_NEAREST)
         (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_MIN_FILTER GL_LINEAR))
+      ;; Experimental: anisotropic filtering to make textures less blurry at angle
+      #-:cocotron  (glTexParameterf GL_TEXTURE_2D GL_TEXTURE_MAX_ANISOTROPY_EXT 16.0)
       (let ((PixelFormat (ecase Depth (32 GL_RGBA) (24 GL_RGB)))
             (InternalFormat (ecase Depth (32 GL_RGBA8) (24 GL_RGB8))))
         (glTexImage2D GL_TEXTURE_2D 0 InternalFormat width height 0 PixelFormat GL_UNSIGNED_BYTE &Image)
