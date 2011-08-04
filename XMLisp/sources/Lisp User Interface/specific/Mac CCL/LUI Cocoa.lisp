@@ -830,10 +830,13 @@
 (defmethod (setf TITLE) :after (Title (self window))
   (when (visible-p self)
     (#/setTitle: (native-window Self) (native-string Title))))
-  #|
-  (when (visible-p self)
-    (#/setTitle: (native-window Self) (native-string Title))))
-|#
+
+
+(defmethod SET-DOCUMENT-EDITTED ((self window) &key (mark-as-editted t))
+  (if mark-as-editted
+    (#/setDocumentEdited: (native-window self) #$YES)
+    (#/setDocumentEdited: (native-window self) #$NO)))
+
 
 (defvar *Run-Modal-Return-Value* nil "shared valued used to return the run modal values")
 
