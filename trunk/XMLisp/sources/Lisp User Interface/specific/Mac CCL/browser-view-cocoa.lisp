@@ -30,7 +30,6 @@
     (cond 
      ((subtypep (type-of node) 'node-item)
       (#/setStringValue: cell (native-string (node-name node)))
-      (print (column-limit (lui-view browser)))
       (when (and (column-limit (lui-view browser)) (>= (+  1 column)(column-limit (lui-view browser)) ))
         (#/setLeaf: cell #$YES)))
      (t 
