@@ -258,8 +258,10 @@
     (edit-group-item (container self) (selected-group (container self)) (selected-group-item (container self))))
   (remove-background-and-end-editting-for-all-text-fields (native-view (container self)))
   (call-next-method Event)
+  
   (when (container self)
-    (set-selected-item (container self) (group-name (#/superview (#/superview self))) (item-name self) )))
+    (set-selected-item (container self) (group-name (#/superview (#/superview self))) (item-name self) ))
+  )
 
 
 ;;*********************************
@@ -342,7 +344,8 @@
 (objc:defmethod (#/mouseDown: :void) ((self mouse-detecting-image-view) Event)
   (remove-background-and-end-editting-for-all-text-fields (native-view (container (#/superview (#/superview  self)))))
   (call-next-method Event)
-  (select (#/superview self)))
+  (unless (%null-ptr-p (#/superview self))
+    (select (#/superview self))))
 
 
 (defmethod LAYOUT ((Self mouse-detecting-image-view))
