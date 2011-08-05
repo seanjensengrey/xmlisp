@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<inflatable-icon-editor-window title="Shape Editor:" width="1020" height="400">
+<inflatable-icon-editor-window title="Shape Editor:" width="1020" height="400" min-width="771">
   <column align="stretch" valign="stretch">
   <row align="stretch" valign="stretch" vflex="1">
     <image-button-cluster>
@@ -17,11 +17,11 @@
     <spacer width="5"/>
     <icon-editor name="icon-editor" flex="1" action="change-icon-action"/>
     <spacer width="5"/>
-    <image-button-cluster>
-     <image-button name="draw button" action="mirror-none-action" image="mirror-none-button.png"/> 
-     <image-button name="draw button" action="mirror-horizontally-action" image="mirror-horizontally-button.png"/> 
-     <image-button name="draw button" action="mirror-vertically-action" image="mirror-vertically-button.png"/> 
-     <image-button name="draw button" action="mirror-both-action" image="mirror-both-button.png"/> 
+    <image-button-cluster name="mirror-cluster">
+     <image-button name="mirror-none-button" action="mirror-none-action" image="mirror-none-button.png"/> 
+     <image-button name="mirror-horizontally-button" action="mirror-horizontally-action" image="mirror-horizontally-button.png"/> 
+     <image-button name="mirror-vertically-button" action="mirror-vertically-action" image="mirror-vertically-button.png"/> 
+     <image-button name="mirror-both-button" action="mirror-both-action" image="mirror-both-button.png"/> 
     </image-button-cluster>
     <column width="250" valign="top" align="stretch">
       <label width="65" text="Inflation" align="center"/>
@@ -86,7 +86,6 @@
   <row minimize="vertical" align="right">
     <button text="Clear" width="70" action="CLEAR-ACTION" />
     <button text="Save" width="70" action="EDIT-ICON-SAVE-ACTION" default-button="true"/>
-    <button text="Apply" width="70" action="EDIT-ICON-APPLY-ACTION" />
   </row>
   </column>
 </inflatable-icon-editor-window>
