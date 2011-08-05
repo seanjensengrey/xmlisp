@@ -7,7 +7,7 @@
       </row>
       <img src="gallery-directions.png" name="gallery directions"/>
       <scroll-box has-horizontal-scroller="false" vflex="1"  name="agent-scroll-box" color="D6DDE5">
-        <agent-gallery tooltip="Agent Gallery" name="agent-gallery" selected-group-changed-action="SWITCH-TO-BEHAVIOR" vflex="1" width="100"/>
+        <agent-gallery tooltip="Agents" name="agent-gallery" selected-group-changed-action="SWITCH-TO-BEHAVIOR" vflex="1" width="100"/>
       </scroll-box>
       <row align="center" padding="-1" valign="stretch" height="24" src="gradient-transparent.png">
         <bevel-button bezel-style="square" tooltip="Add a new agent" text="+ Agent" name="new-agent-button" action="add-agent-action" width="75" height="24" />
