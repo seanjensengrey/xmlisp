@@ -59,7 +59,8 @@
   `(catch :wicked-error
      (handler-bind
          ((warning #'(lambda (Condition)
-                       (print-to-log
+                       (print-to-log 
+                        "~A"
                         (with-output-to-string (Out)
                           (print-condition-understandably Condition (format nil "~A warning, " ,Situation) Out)))
                        (muffle-warning)))
@@ -70,8 +71,9 @@
                            ;; What is the error
                            (ccl::with-autorelease-pool
                                (print-to-log
+                                "~A"
                                 (with-output-to-string (Log)
-                                  (format Log "~%~%##############################################~%")
+                                  (format Log "##############################################~%")
                                   (print-condition-understandably Condition "Error: " Log)
                                   (format Log "~%While ~A~%~%" ,Situation)
                                   (print-date-and-time-stamp Log)
