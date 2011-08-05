@@ -20,8 +20,19 @@
 
 (in-package :lui)
 
+
 (export '(catch-errors-nicely))
 
+
+(defvar *Output-to-Alt-Console-p* nil "If true output error info into Alt Console on Mac and Windows")
+
+
+(defun PRINT-TO-LOG (Control-String &rest Format-Arguments) "
+  Print to platform specific log file. On Mac access output via Console.app"
+  (let ((NSString (#/retain (ccl::%make-nsstring (apply #'format nil Control-String Format-Arguments)))))
+    (#_NSLog NSString)
+    (#/release NSString)))
+             
 
 (defun PRINT-CONDITION-UNDERSTANDABLY (Condition &optional (Message "") (Stream t))
   (format Stream "~A " Message)
@@ -43,35 +54,38 @@
             (- tz))))
   
 
-
 (eval-when (:execute :load-toplevel :compile-toplevel)
 (defmacro CATCH-ERRORS-NICELY ((Situation &key Before-Message After-Message) &body Forms) "Catch errors at high level. Also works in gui threads and Cocoa call backs"
   `(catch :wicked-error
      (handler-bind
-         ((warning #'(lambda (Condition) 
-                       (print-condition-understandably Condition (format nil "~A warning, " ,Situation))
+         ((warning #'(lambda (Condition)
+                       (print-to-log
+                        (with-output-to-string (Out)
+                          (print-condition-understandably Condition (format nil "~A warning, " ,Situation) Out)))
                        (muffle-warning)))
           (condition #'(lambda (Condition)
                          (let ((*XMLisp-Print-Synoptic* t))
                            ;; no way to continue
                            ,Before-Message
                            ;; What is the error
-                           (format t "~%~%##############################################~%")
-                           (print-condition-understandably Condition "Error: ")
-                           (format t "~%While ~A~%~%" ,Situation)
-                           (print-date-and-time-stamp)
-                           (format t "~%##############################################~%")
-                           ;; produce a basic stack trace
-                           (format t "~% ______________Exception in thread \"~A\"___(backtrace)___" (slot-value *Current-Process* 'ccl::name))
-                           (ccl:print-call-history :start-frame-number 1 :detailed-p nil)
-                           (format t "~%~%~%")
-                           ;; show minmalist message to end-user
                            (ccl::with-autorelease-pool
-                               (standard-alert-dialog 
-                                (with-output-to-string (Out)
-                                  (print-condition-understandably Condition "Error: " Out))
-                                :is-critical t
-                                :explanation-text (format nil "While ~A" ,Situation)))
+                               (print-to-log
+                                (with-output-to-string (Log)
+                                  (format Log "~%~%##############################################~%")
+                                  (print-condition-understandably Condition "Error: " Log)
+                                  (format Log "~%While ~A~%~%" ,Situation)
+                                  (print-date-and-time-stamp Log)
+                                  (format Log "~%##############################################~%")
+                                  ;; produce a basic stack trace
+                                  (format Log "~% ______________Exception in thread \"~A\"___(backtrace)___" (slot-value *Current-Process* 'ccl::name))
+                                  (ccl:print-call-history :start-frame-number 1 :detailed-p nil :stream Log)
+                                  (format Log "~%~%~%")))
+                             ;; show minmalist message to end-user
+                             (standard-alert-dialog 
+                              (with-output-to-string (Out)
+                                (print-condition-understandably Condition "Error: " Out))
+                              :is-critical t
+                              :explanation-text (format nil "While ~A" ,Situation)))
                            ,After-Message
                            (throw :wicked-error Condition)))))
        ,@Forms))))
@@ -103,10 +117,15 @@
     ("trying to divide")
     (/ 3.4 (sin 0.0))))
 
+
+(catch-errors-nicely
+  ("running simulation")
+  (warn "bad agent action"))
+
+
 (hemlock::time-to-run (catch-errors-nicely ("no problem") nil))
 
 (hemlock::time-to-run (+ 3 4))
-
 
 (defmacro with-standard-fpu-mode (&body body)
  (let ((saved-mode (gensym)))
@@ -125,6 +144,11 @@
     ("trying to divide")
     (with-standard-fpu-mode
       (/ 3.4 (sin 0.0)))))
+
+
+(print-to-log "~%this and that")
+
+(print-to-log "only ~A bottles of beer" 69)
 
 
 |#
