@@ -17,10 +17,13 @@
     (when Cancel-Text (#/addButtonWithTitle: Alert (native-string Cancel-Text)))
     (when Explanation-Text (#/setInformativeText: Alert (native-string Explanation-Text)))
     (#/setAlertStyle: Alert (if Is-Critical #$NSCriticalAlertStyle #$NSWarningAlertStyle))
+    
     (case (#/runModal Alert)
       (#.#$NSAlertFirstButtonReturn t)
       (#.#$NSAlertSecondButtonReturn nil)
       (#.#$NSAlertThirdButtonReturn (throw :cancel nil)))))
+
+
 
 
 #| Why does this require NSstring parameters and does not automatically convert Lisp strings or deal with nil??
@@ -33,7 +36,7 @@
   (#/runModal
    (#/alertWithMessageText:defaultButton:alternateButton:otherButton:informativeTextWithFormat:
     ns:ns-alert 
-    Message
+    (native-string Message)
     yes-text
     no-text
     cancel-text
