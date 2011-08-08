@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<shape-manager name="WELCOME">
-  <tile texture="redLobster.png"/>
-</shape-manager>
