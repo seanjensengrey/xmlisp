@@ -298,7 +298,8 @@
 
 
 (defmethod CONTENT-CHANGED-DEFAULT-ACTION ((Window window) (View agent-3d-view))
-  (format t "~%Content of view: ~A in window of type: ~A changed" View (type-of Window)))
+  ;; (format t "~%Content of view: ~A in window of type: ~A changed" View (type-of Window))
+  )
 
 
 ;; accessing Agents
