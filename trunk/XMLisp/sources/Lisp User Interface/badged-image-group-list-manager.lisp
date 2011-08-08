@@ -28,7 +28,8 @@
    (item-category-label :accessor item-category-label :initarg :item-category-label :initform "items:")
    (item-category-label-height :accessor item-category-label-height :initarg :item-category-label-height :initform 15)
    (group-font-size :accessor group-font-size :initarg :group-font-size :initform 12.0 :documentation "This accessor controls at which font point size the text of groups will be rendered")
-   (item-font-size :accessor item-font-size :initarg :item-font-size :initform 12.0 :documentation "This accessor controls at which font point size the text of items will be rendered")
+   (item-font-size :accessor item-font-size :initarg :item-font-size :initform 10.0 :documentation "This accessor controls at which font point size the text of items will be rendered")
+   (disclosed-item-list-margin :accessor disclosed-item-list-margin :initform 5.0 :initarg :disclosed-item-list-margin :documentation "The margin for a set of disclosed items")
    )
   (:documentation "This class will is a view that contains groups of items that are identified by a badge image."))
 
@@ -56,8 +57,20 @@
    (item-selection-view :accessor item-selection-view :initform nil :documentation "A reference to the view that annotates which item is selected.")
    (item-detection-views :accessor item-detection-views :initform nil :documentation "A list of the groups item detection views")
    (item-text-views :accessor item-text-views :initform nil :documentation "A list of the groups item text views")
-   (selected-item-name :accessor selected-item-name :initform nil))
+   (selected-item-name :accessor selected-item-name :initform nil)
+   (key-item :accessor key-item :initform nil :initarg :key-item :documentation "If this accessor is set, we will return this item when get-main-item is called")
+   )
    (:documentation "A group consists of a name an image and a list of group items."))
+
+
+(Defmethod GET-MAIN-ITEM ((self list-group))
+  (cond 
+   ((key-item self)
+    (key-item self))
+   ((find (group-name self) (group-items self) :test 'equal :key 'item-name)
+    (find (group-name self) (group-items self) :test 'equal :key 'item-name))
+   (t
+    (first (group-items self)))))
 
 
 ;;*********************************
@@ -75,6 +88,9 @@
    (:documentation "A group consists of a name an image and a list of group items."))
 
 
+
+  
+
 ;---------------------------------
 ; Specification                  |
 ;________________________________
@@ -85,7 +101,7 @@
                   and finally a list of group items.  This method will return the group of it was sucesfully added or nil if it could not be added.  "))
 
 
-(defgeneric add-group-item (badged-image-group-list-manager-view group-name group-item &key image-path )
+(defgeneric add-group-item (badged-image-group-list-manager-view group-name group-item &key image-path force-disclosure)
   (:documentation "Adds a new group item to the group defined by group-name.  This method will return sucess if the item was added corectly or nil if it was not. "))
 
 
