@@ -324,7 +324,7 @@
       (if (equal (type-of subview) 'lui::mouse-detecting-image-view)
         (progn
           (#/removeFromSuperviewWithoutNeedingDisplay subview)
-          (let ((image (make-instance 'image-control  :image-path (image-path self)  :src (image-name self) :x 0 :y 0 :width (image-size self) :height (image-size self)))) 
+          (let ((image (make-instance 'image-control  :image-path (image-path (get-group-item-with-name (container self) (selected-group (container self)) (selected-group-item (container self))))  :src (image-name self) :x 0 :y 0 :width (image-size self) :height (image-size self)))) 
             (let ((image-view (#/alloc mouse-detecting-image-view)))
               (ns:with-ns-rect (Frame 0 0 (image-size self) (image-size self))
                 (#/initWithFrame: image-view Frame )  
@@ -513,8 +513,7 @@
         (if (item-name-changed (container self) (group-name (group self)) (item-name (item self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
           (progn
             (#/setEditable: self #$NO)
-            (#/setDrawsBackground:  self #$NO)
-            )
+            (#/setDrawsBackground:  self #$NO))
           (#/setStringValue: self (native-string (name-storage self))))
         (setf (item-name (item self)) (String-capitalize (ccl::lisp-string-from-nsstring (#/stringValue self)))))
       (progn
