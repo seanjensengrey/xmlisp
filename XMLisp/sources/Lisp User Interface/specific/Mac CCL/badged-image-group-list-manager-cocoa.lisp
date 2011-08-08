@@ -125,7 +125,7 @@
     (dolist (group (groups (lui-view self)))
       (let ((group-height  (row-height (lui-view self))))
         (when (is-disclosed group)
-          (incf group-height (+ (item-category-label-height (lui-view self)) (* (row-height (lui-view self)) (length (group-items group))))))
+          (incf group-height (+ (disclosed-item-list-margin (lui-view self)) (item-category-label-height (lui-view self)) (* (row-height (lui-view self)) (length (group-items group))))))
         (ns:with-ns-size (Size (width (lui-view self)) group-height)
           (#/setFrameSize:  (group-view group ) Size))
         (ns:with-ns-size (Size (width (lui-view self)) (NS:NS-RECT-HEIGHT (#/frame (item-view group))))
@@ -185,7 +185,8 @@
 
 (objc:defmethod (#/mouseDown: :void) ((self group-detection-view) Event)
   ;(declare (ignore Event))
-
+  (when (and (> ( #/clickCount Event) 1) (list-group self))    
+    (edit-group-item (container self) (selected-group (container self)) (item-name (get-main-item (get-group-with-name (container self) (selected-group (container self)))))))
   (remove-background-and-end-editting-for-all-text-fields (native-view (container self)))
   (call-next-method Event)
   (when (container self)
@@ -257,11 +258,8 @@
   (when (> ( #/clickCount Event) 1)
     (edit-group-item (container self) (selected-group (container self)) (selected-group-item (container self))))
   (remove-background-and-end-editting-for-all-text-fields (native-view (container self)))
-  (call-next-method Event)
-  
   (when (container self)
-    (set-selected-item (container self) (group-name (#/superview (#/superview self))) (item-name self) ))
-  )
+    (set-selected-item (container self) (group-name (#/superview (#/superview self))) (item-name self) )))
 
 
 ;;*********************************
@@ -369,7 +367,7 @@
               :documentation "A view that will be composed of two images one for the head-image and one for the badge"))
 
 ;;This method  should be totally retooled/removed when this class is reworked.  
-(defmethod CREATE-BADGED-IMAGE ((self badged-image-view) &key (image-data nil))
+ (defmethod CREATE-BADGED-IMAGE ((self badged-image-view) &key (image-data nil))
   (ns:with-ns-point (Point (x self) (y self))
     (#/setFrameOrigin: Self Point))
   (ns:with-ns-size (Size (head-image-size self) (head-image-size self))
@@ -384,7 +382,7 @@
                (group-items (list-group (#/superview self)))
                (elt (group-items (list-group (#/superview self))) 0))
             (progn
-              (let ((image (make-instance 'image-control :image-path (image-path (elt (group-items (list-group (#/superview self))) 0)) :src (image-name (elt (group-items (list-group (#/superview self))) 0)) :x 0 :y 0 :width (badge-image-size self) :height (badge-image-size self)))) 
+              (let ((image (make-instance 'image-control :image-path (image-path (get-main-item (list-group (#/superview self)))) #| (image-path (elt (group-items (list-group (#/superview self))) 0)) |#  :src #| (image-name (elt (group-items (list-group (#/superview self))) 0))|# (image-name (get-main-item (list-group (#/superview self)))) :x 0 :y 0 :width (badge-image-size self) :height (badge-image-size self)))) 
                 (if image-data
                   (#/setImage: badge-image-view image-data)
                   (#/setImage: badge-image-view (#/image (native-view image))))))
@@ -560,7 +558,7 @@
   (#/setAction: (native-view Self) (objc::@selector #/activateAction)))
 
 
-(defmethod DISCLOSURE-ACTION((self badged-image-group-list-manager-view) (button group-disclosure-button) &key (set-state nil))
+(defmethod DISCLOSURE-ACTION((self badged-image-group-list-manager-view) (button group-disclosure-button) &key (set-state nil)) 
   (when set-state 
     (#/setState: (native-view button) #$NSOnState))
   (if (is-disclosed (group button))
@@ -695,6 +693,7 @@
       (setf x (+ (left-margin self)(group-item-offset self)))
       (setf (list-item detection-view-item) group-item)
       (setf (item-detection-view group-item) detection-view-item)))
+  
   (update-image (group-view group))
   (remove-background-from-text-fields (native-view self)))
 
@@ -721,6 +720,7 @@
           (#/initWithFrame: detection-view detection-frame)
           (#/setFrame: detection-view detection-frame)
           (#/addSubview: (native-view self) detection-view))
+        ;;HERE HERE (item-name (get-main-item group))
         (let ((button (make-instance 'group-disclosure-button :container self :group group :x x :y 0 :width (row-height self) :height (row-height self) :action 'disclosure-action))); (#/alloc ns:ns-button)))
           (ns:with-ns-rect (button-frame x (- group-height (row-height self)) (row-height self) (row-height self))
             (incf x (row-height self))
@@ -750,7 +750,7 @@
               (ns:with-ns-size (Size  width (NS:NS-RECT-HEIGHT (#/frame text)))
                 (#/setFrameSize: text Size )))
             (#/addSubview: detection-view  text)
-            (#/setFont: text (#/fontWithName:size: ns:ns-font (native-string "LucidaGrande") (item-font-size self)))
+            (#/setFont: text (#/fontWithName:size: ns:ns-font (native-string "LucidaGrande") (group-font-size self)))
             (setf (text-view detection-view) text)
             (setf (text-view image) text)))))    
       (setf X (left-margin self))      
@@ -779,10 +779,10 @@
         (print "Cannot add group, a group with this name already exists")
         ;(warn "Cannot add group, a group with this name already exists")
         (return-from add-group nil))))                                                                                             ;need to do a dolist for the following
-  (let ((list-group (make-instance 'list-group :is-disclosed t :group-name (first group) :group-image (second group) :group-items (create-list-of-items-from-list-of-strings (third group))))); (third group)))) ;(make-instance 'list-group-item :item-name (first (third group)) :image-name (second (third group))))))
+  (let ((list-group (make-instance 'list-group :is-disclosed nil :group-name (first group) :group-image (second group) :group-items (create-list-of-items-from-list-of-strings (third group))))); (third group)))) ;(make-instance 'list-group-item :item-name (first (third group)) :image-name (second (third group))))))
     (case (groups self)
       (nil (setf (groups self) (list list-group)))
-      (t (setf (groups self) (append (groups self) (list (make-instance 'list-group :is-disclosed t  :group-name (first group) :group-image (second group) :group-items (create-list-of-items-from-list-of-strings (third group))))))))
+      (t (setf (groups self) (append (groups self) (list (make-instance 'list-group :is-disclosed nil  :group-name (first group) :group-image (second group) :group-items (create-list-of-items-from-list-of-strings (third group))))))))
     (if (native-view self)
       (progn
         (if (< (width self) (width (lui-view (#/superview (#/superview (native-view self))))))
@@ -793,12 +793,14 @@
     list-group))
 
 
-(defmethod ADD-GROUP-ITEM ((Self badged-image-group-list-manager-view) group-name item &key (image-path "lui:resources;images;"))
+(defmethod ADD-GROUP-ITEM ((Self badged-image-group-list-manager-view) group-name item &key (image-path "lui:resources;images;") (force-disclosure nil))
   (setf (first item) (string-capitalize (first item)))
   (let ((list-item (make-instance 'list-group-item :item-name (first item) :image-path image-path :image-name (second item))))
     (let ((group (get-group-with-name self (String-capitalize group-name))))
-      (unless (is-disclosed group)
+      
+      (when (and force-disclosure (not (is-disclosed group)))
         (disclosure-action self (lui-view (Button-view group))  :set-state t))
+      
       (if (group-items group)
         (dolist (group-item (group-items group))
           (if (equal (first item) (item-name group-item))
