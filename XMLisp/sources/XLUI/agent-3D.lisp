@@ -235,6 +235,15 @@
 (defgeneric SELECT-AGENTS (agent-3d-view &rest Agents)
   (:documentation "Deselect currently selected agents and then select <Agents>")) 
 
+
+(defgeneric SELECT-AGENT (agent-3d-view Agent)
+  (:documentation "Deselect currently selected agent and then select <Agent>"))
+
+
+(defgeneric DESELECT-AGENT (agent-3d-view)
+  (:documentation "Deselect currently selected agent"))
+
+
 ;________________________________
 ; implementations                |
 ;________________________________
@@ -414,20 +423,26 @@
 (defparameter *Selection-Tolerance* 5 "pixels")
 
 
-(defmethod VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER ((Self agent-3d-view) X Y)
-  ;(grab-animation-lock)
-  ;(grab-conversation-lock)
+(defmethod SELECT-AGENT ((Self agent-3d-view) Agent)
+  (broadcast-to-agents Self #'(lambda (Agent) (deselect Agent)))
+  (select Agent)
+  ;; for now selection is a sigleton set
+  (setf (agents-selected Self) (list Agent))
+  (agent-selected Self Agent))
 
+
+(defmethod DESELECT-AGENT ((Self agent-3d-view))
+  (broadcast-to-agents Self #'(lambda (Agent) (deselect Agent)))
+  (setf (agents-selected Self) nil))
+
+
+(defmethod VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER ((Self agent-3d-view) X Y)
   (let ((Agent (click-target (find-agent-at Self x y *Selection-Tolerance* *Selection-Tolerance*))))
     (cond
      ;; clicked agent
      (Agent
       ;; adjust selection
-      (broadcast-to-agents Self #'(lambda (Agent) (setf (is-selected Agent) nil)))
-      (setf (is-selected Agent) t)
-      ;; for now selection is a sigleton set
-      (setf (agents-selected Self) (list Agent))
-      (agent-selected Self Agent)
+      (select-agent Self Agent)
       ;; trigger event
       (mouse-click-event-handler Agent)
       ;; setup potential drag and drop
@@ -439,9 +454,7 @@
                 :x-start x
                 :y-start y))))
      ;; click into void
-     (t
-      (broadcast-to-agents Self #'(lambda (Agent) (setf (is-selected Agent) nil)))
-      (setf (agents-selected Self) nil)))))
+     (t (deselect-agent Self)))))
 
 
 (defmethod VIEW-RIGHT-MOUSE-DOWN-EVENT-HANDLER ((Self agent-3d-view) X Y)
