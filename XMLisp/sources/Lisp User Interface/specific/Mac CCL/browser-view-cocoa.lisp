@@ -21,6 +21,8 @@
 
 
 (objc:defmethod (#/browser:willDisplayCell:atRow:column: :void) ((self my-browser-delegate) browser cell (row :<NSI>nteger) (column :<NSI>nteger))
+  (let ((image (#/initByReferencingFile: (#/alloc ns:ns-image) (native-string (namestring (truename "lui:resources;images;draw-button.png"))))))
+    (#/setImage: cell image))
   (let ((node nil)
         (selected-node-item (lui-view browser)))
     (dotimes (i column)
@@ -90,8 +92,7 @@
   (#/setTitle:ofColumn: (native-view self) (native-string title) column)
   (#/setNeedsDisplay: (native-view self) #$YES)
   #-cocotron
-  (#/displayAllColumns (native-view self))
-  )
+  (#/displayAllColumns (native-view self)))
 
 
 
