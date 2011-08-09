@@ -158,8 +158,7 @@
 
 (objc:defmethod (#/mouseDown: :void) ((self native-badged-image-group-list-manager-view) Event)
   (declare (ignore Event))
-  ;(group-deselected (lui-view self))
-  )
+  (group-deselected (lui-view self)))
 
 
 ;;*********************************
@@ -189,7 +188,6 @@
   (when (and (> ( #/clickCount Event) 1) (list-group self))    
     (edit-group-item (container self) (selected-group (container self)) (item-name (get-main-item (get-group-with-name (container self) (selected-group (container self)))))))
   (remove-background-and-end-editting-for-all-text-fields (native-view (container self)))
-  (call-next-method Event)
   (when (container self)
     (set-selected (container self) (ccl::lisp-string-from-nsstring (#/stringValue (text-view self))))))
 
