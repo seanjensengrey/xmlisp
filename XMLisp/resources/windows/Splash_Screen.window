@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <agentcubes-splash-window title="Welcome to AgentCubes" margin="0" width="480" height="360" zoomable="false" resizable="false" minimizable="false">
   <column align="stretch" valign="stretch">>
-    <agentcube-view name="cubes" vflex="1">
+    <agentcube-view name="cubes" full-scene-anti-aliasing="true" vflex="1">
       <agent-hyper-cube segments="8"/>
     </agentcube-view>
     <row minimize="vertical" align="center">
