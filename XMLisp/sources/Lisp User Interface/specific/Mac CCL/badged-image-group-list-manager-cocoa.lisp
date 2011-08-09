@@ -44,7 +44,7 @@
 
 (defmethod GET-GROUP-WITH-NAME ((self badged-image-group-list-manager-view) group-name)
   (dolist (group (groups self))
-    (when (equal (group-name group) group-name)
+    (when (string-equal (group-name group) group-name)
       (return-from get-group-with-name group)))
   nil)
 
@@ -158,7 +158,8 @@
 
 (objc:defmethod (#/mouseDown: :void) ((self native-badged-image-group-list-manager-view) Event)
   (declare (ignore Event))
-  (group-deselected (lui-view self)))
+  ;(group-deselected (lui-view self))
+  )
 
 
 ;;*********************************
@@ -823,7 +824,7 @@
 
 
 (defmethod SET-SELECTED ((Self badged-image-group-list-manager-view) group-name &key (highlight t) (resign "YES"))
-  (when (string-equal group-name (selected-group self))
+  (when (and (not (selected-group-item self)) (string-equal group-name (selected-group self)))
     (return-from set-selected))
   (when (and group-name (not (get-group-with-name self group-name)))
     (group-deselected self))
@@ -879,8 +880,11 @@
     (group-deselected self))
   (let ((i 1)
         (previously-selected-group-name  (selected-group self)))
+    #|
     (unless (equal (selected-group self) group-name)
+      (print ".5")
       (selected-group-changed self ))   
+    |#
     (dolist (group (groups self))    
       (setf (is-selected group) nil)
       (setf (is-highlighted group) nil)
@@ -910,7 +914,7 @@
               (#/setHidden: (item-selection-view group) #$YES)
               (#/setNeedsDisplay: (item-selection-view group) #$YES)))))
       (incf i))
-    (unless (equal previously-selected-group-name  (selected-group self))
+    (unless (string-equal previously-selected-group-name  (selected-group self))
       (selected-group-changed self )
       (group-selected self)))
   (layout-changed self))
