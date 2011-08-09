@@ -823,6 +823,8 @@
 
 
 (defmethod SET-SELECTED ((Self badged-image-group-list-manager-view) group-name &key (highlight t) (resign "YES"))
+  (when (string-equal group-name (selected-group self))
+    (return-from set-selected))
   (when (and group-name (not (get-group-with-name self group-name)))
     (group-deselected self))
   (let ((previously-selected-group-name  (selected-group self)))
@@ -870,6 +872,8 @@
 
 
 (defmethod SET-SELECTED-ITEM ((Self badged-image-group-list-manager-view) group-name item-name)
+  (when (and (string-equal group-name (selected-group self)) (string-equal item-name (selected-group-item self)))
+    (return-from set-selected-item))
   (setf item-name (string-capitalize item-name))
   (when (and group-name (not (get-group-with-name self group-name)))
     (group-deselected self))
