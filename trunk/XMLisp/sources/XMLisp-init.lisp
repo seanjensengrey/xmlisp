@@ -17,6 +17,9 @@
 
 (setq ccl::*objc-error-return-condition* 'error)
 
+;; this should make output show up earlier on the console
+(ccl:add-auto-flush-stream ccl::*stdout*)
+
 
 (objc:defmethod (#/invokeLispFunction: :void) ((self ns:ns-application) id)
   (gui::invoke-lisp-function self id))
