@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<agentcubes-splash-window title="Welcome to AgentCubes" margin="0" width="480" height="360" zoomable="false" resizable="false" minimizable="false">
+  <column align="stretch" valign="stretch">>
+    <agentcube-view name="cubes" vflex="1">
+      <agent-hyper-cube segments="8"/>
+    </agentcube-view>
+    <row minimize="vertical" align="center">
+      <label text="AgentCubes" width="120"/>/>
+    </row>
+    <spacer height="50"/>
+    <row minimize="vertical" align="left">
+      <label text="Frame Rate: " width="120" align="right"/>
+      <label name="frame rate" text="0" width="40" />
+      <label name="FPS" text="[FPS] HyperAgentCube x8 benchmark" width="300"/>
+    </row>
+    <row minimize="vertical" align="left">
+       <label text="OpenGL Version: " width="120" align="right"/> 
+       <label name="version" text="" width="120"/>
+    </row>
+    <row minimize="vertical" align="left">
+       <label text="Vendor: " width="120" align="right"/> 
+       <label name="vendor" text="0" width="120"/>
+    </row>
+    <row minimize="vertical" align="left">
+       <label text="Renderer: " width="120" align="right"/> 
+       <label name="renderer" text="0" width="120"/>
+    </row>
+  </column>
+</agentcubes-splash-window>
