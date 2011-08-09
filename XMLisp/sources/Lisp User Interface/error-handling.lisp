@@ -24,15 +24,17 @@
 (export '(catch-errors-nicely))
 
 
-(defvar *Output-to-Alt-Console-p* nil "If true output error info into Alt Console on Mac and Windows")
+(defvar *Output-to-Alt-Console-p* t "If true output error info into Alt Console on Mac and Windows")
 
 
 (defun PRINT-TO-LOG (Control-String &rest Format-Arguments) "
   Print to platform specific log file. On Mac access output via Console.app"
-  (let ((NSString (#/retain (ccl::%make-nsstring (apply #'format nil Control-String Format-Arguments)))))
-    (#_NSLog NSString)
-    (#/release NSString)))
-             
+  (if *Output-To-Alt-Console-P*
+    (apply #'format t Control-String Format-Arguments)
+    (let ((NSString (#/retain (ccl::%make-nsstring (apply #'format nil Control-String Format-Arguments)))))
+      (#_NSLog NSString)
+      (#/release NSString))))
+    
 
 (defun PRINT-CONDITION-UNDERSTANDABLY (Condition &optional (Message "") (Stream t))
   (format Stream "~A " Message)
