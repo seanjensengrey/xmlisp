@@ -49,7 +49,8 @@
 ;**********************************
 
 (defclass NODE-ITEM ()
-  ((node-name :accessor node-name :initform "Name" :initarg :node-name :documentation "the name of this node item"))
+  ((node-name :accessor node-name :initform "Name" :initarg :node-name :documentation "the name of this node item")
+   (image-path :accessor image-path :initform nil :initarg :image-path :documentation "The path to this node's images, if it has one"))
   (:documentation "A node item represents a node in a browser tree"))
   
 
