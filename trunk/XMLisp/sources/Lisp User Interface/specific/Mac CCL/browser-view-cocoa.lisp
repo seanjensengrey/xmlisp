@@ -21,8 +21,8 @@
 
 
 (objc:defmethod (#/browser:willDisplayCell:atRow:column: :void) ((self my-browser-delegate) browser cell (row :<NSI>nteger) (column :<NSI>nteger))
-  (let ((image (#/initByReferencingFile: (#/alloc ns:ns-image) (native-string (namestring (truename "lui:resources;images;draw-button.png"))))))
-    (#/setImage: cell image))
+  
+  
   (let ((node nil)
         (selected-node-item (lui-view browser)))
     (dotimes (i column)
@@ -31,6 +31,9 @@
     (setf node (elt (nodes selected-node-item) row))
     (cond 
      ((subtypep (type-of node) 'node-item)
+      (when (image-path node)
+        (let ((image (#/initByReferencingFile: (#/alloc ns:ns-image) (native-string (namestring (truename (image-path node)))))))
+          (#/setImage: cell image)))
       (#/setStringValue: cell (native-string (node-name node)))
       (when (and (column-limit (lui-view browser)) (>= (+  1 column)(column-limit (lui-view browser)) ))
         (#/setLeaf: cell #$YES)))
