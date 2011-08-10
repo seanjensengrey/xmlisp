@@ -342,7 +342,9 @@
   (remove-background-and-end-editting-for-all-text-fields (native-view (container (#/superview (#/superview  self)))))
   (call-next-method Event)
   (unless (%null-ptr-p (#/superview self))
-    (select (#/superview self))))
+    (select (#/superview self)))
+  (if (> ( #/clickCount Event) 1)
+    (double-clicked (#/superview self))))
 
 
 (defmethod LAYOUT ((Self mouse-detecting-image-view))
