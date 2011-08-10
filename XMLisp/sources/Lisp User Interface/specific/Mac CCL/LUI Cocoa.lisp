@@ -577,7 +577,8 @@
 ;;************************************
 
 (defmethod WINDOW-CLOSE ((Self Window))
-  (#/close (native-window Self)))
+  (when (window-should-close self)
+    (#/close (native-window Self))))
 
 ;__________________________________
 ; NATIVE-WINDOW                     |
