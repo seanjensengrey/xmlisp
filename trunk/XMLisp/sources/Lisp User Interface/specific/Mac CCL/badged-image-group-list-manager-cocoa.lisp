@@ -321,7 +321,7 @@
       (if (equal (type-of subview) 'lui::mouse-detecting-image-view)
         (progn
           (#/removeFromSuperviewWithoutNeedingDisplay subview)
-          (let ((image (make-instance 'image-control  :image-path (image-path (get-group-item-with-name (container self) (selected-group (container self)) (selected-group-item (container self))))  :src (image-name self) :x 0 :y 0 :width (image-size self) :height (image-size self)))) 
+          (let ((image (make-instance 'image-control  :image-path (image-path (get-group-item-with-name (container self) (selected-group (container self)) (if (selected-group-item (container self)) (selected-group-item (container self)) (item-name (get-main-item (get-group-with-name (container self) (selected-group (container self))))) )))  :src (image-name self) :x 0 :y 0 :width (image-size self) :height (image-size self)))) 
             (let ((image-view (#/alloc mouse-detecting-image-view)))
               (ns:with-ns-rect (Frame 0 0 (image-size self) (image-size self))
                 (#/initWithFrame: image-view Frame )  
@@ -796,10 +796,8 @@
   (setf (first item) (string-capitalize (first item)))
   (let ((list-item (make-instance 'list-group-item :item-name (first item) :image-path image-path :image-name (second item))))
     (let ((group (get-group-with-name self (String-capitalize group-name))))
-      
       (when (and force-disclosure (not (is-disclosed group)))
         (disclosure-action self (lui-view (Button-view group))  :set-state t))
-      
       (if (group-items group)
         (dolist (group-item (group-items group))
           (if (equal (first item) (item-name group-item))
