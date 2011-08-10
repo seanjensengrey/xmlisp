@@ -13,6 +13,9 @@
             <node node-name="Cube" node-path="lui:resources;Shape Textures;" allowed-file-types="directories">
               <node node-name="Custom Texture..."/>
             </node>
+            <node node-name="Cylinder" node-path="lui:resources;Shape Textures;" allowed-file-types="directories">
+              <node node-name="Custom Texture..."/>
+            </node>
             <node node-name="Sphere" node-path="lui:resources;Shape Textures;" allowed-file-types="directories">
               <node node-name="Custom Texture..."/>
             </node>

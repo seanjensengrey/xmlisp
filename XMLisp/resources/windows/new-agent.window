@@ -14,16 +14,19 @@
         <column flex="4" align="stretch" valign="stretch">
           <spacer/>
           <browser height="240" flex="4"  action="change-shape-action" name="browser" column-limit="3">
-            <node node-name="Cube" node-path="lui:resources;Shape Textures;" allowed-file-types="directories">
+            <node node-name="Cube" node-path="lui:resources;Shape Textures;" image-path="lui:resources;images;cube.gif" allowed-file-types="directories">
               <node node-name="Custom Texture..."/>
             </node>
-            <node node-name="Sphere" node-path="lui:resources;Shape Textures;" allowed-file-types="directories">
+           <node node-name="Cylinder" node-path="lui:resources;Shape Textures;" image-path="lui:resources;images;cylinder.png" allowed-file-types="directories">
               <node node-name="Custom Texture..."/>
             </node>
-            <node node-name="Tile" node-path="lui:resources;Shape Textures;" allowed-file-types="directories">
+            <node node-name="Sphere" node-path="lui:resources;Shape Textures;" image-path="lui:resources;images;sphere.gif" allowed-file-types="directories">
+              <node node-name="Custom Texture..."/>
+            </node>
+            <node node-name="Tile" node-path="lui:resources;Shape Textures;"   image-path="lui:resources;images;tile.gif" allowed-file-types="directories">
               <node node-name="Custom Texture..."/>
             </node>         
-            <node node-name="Inflatable Icon" node-path="lui:resources;templates;shapes;inflatable icons;" allowed-file-types="directories"/>
+            <node node-name="Inflatable Icon" node-path="lui:resources;templates;shapes;inflatable icons;"   image-path="lui:resources;images;ladybug.gif"allowed-file-types="directories"/>
           </browser>
         </column>
       </column>
