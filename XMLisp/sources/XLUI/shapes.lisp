@@ -427,7 +427,7 @@
 
 (defclass CYLINDER (shape)
   ((base-radius :accessor base-radius :initform 1.0d0 :type double-float :documentation "The radius of the cylinder at z = 0")
-   (top-radius :accessor top-radius :initform 0.0d0 :type double-float :documentation "The radius of the cylinder at z = depth")
+   (top-radius :accessor top-radius :initform 0.0d0 :type double-float :initarg :top-radius :documentation "The radius of the cylinder at z = depth")
    (texture :accessor texture :initform nil :initarg :texture :documentation "texture file name")
    (quadric :accessor quadric :initform nil))
   (:default-initargs 
@@ -483,7 +483,57 @@
   (gluDeleteQuadric (quadric Self))
   (setf (quadric Self) nil))
 
+;_______________________________________
+; Capped Cylinder                       |
+;_______________________________________
 
+(defclass CAPPED-CYLINDER (shape)
+  ((base-radius :accessor base-radius :initform 0.5d0 :type double-float :documentation "The radius of the cylinder at z = 0")
+   (top-radius :accessor top-radius :initform 0.5d0 :type double-float :initarg :top-radius :documentation "The radius of the cylinder at z = depth")
+   (texture :accessor texture :initform nil :initarg :texture :documentation "texture file name")
+   (quadric :accessor quadric :initform nil))
+  (:default-initargs 
+      :depth 1.0)
+  (:documentation "Cylinder"))
+
+
+(defmethod PRINT-SLOTS ((Self capped-cylinder))
+  `(x y z roll pitch heading base-radius top-radius depth texture))
+
+
+(defmethod DRAW ((Self capped-cylinder))
+  (unless (is-visible Self) (return-from draw))
+  ;; setup
+  (unless (quadric Self) 
+    (setf (quadric Self) (gluNewQuadric))
+    (gluQuadricOrientation (quadric Self) glu_outside)
+    (gluQuadricNormals (quadric Self) glu_smooth)
+    (gluQuadricTexture (quadric Self) gl_true)
+    (gluQuadricDrawstyle (quadric Self) glu_fill))
+  (call-next-method)
+  ;; texture
+  (cond
+   ((texture Self)
+    (glenable gl_texture_2d)
+    (gltexenvi gl_texture_env gl_texture_env_mode gl_modulate)
+    (use-texture Self (texture Self)))
+   (t
+    (glDisable gl_texture_2d)))
+  (glPushMatrix)
+  (glTranslatef 0.5 0.5 0.0)
+  ;; render cylinder
+  (gluCylinder (quadric Self) (base-radius Self) (top-radius Self) (coerce (depth Self) 'double-float) 40 4)
+  (gluDisk (quadric Self) 0.0d0 (top-radius self) 40 2)
+  
+  (glTranslatef 0.0 0.0 (depth self))
+  (gluDisk (quadric Self) 0.0d0 (top-radius self) 40 2)
+  (glPopMatrix)
+  (gluDeleteQuadric (quadric Self))
+  (setf (quadric Self) nil))
+
+
+(defmethod ICON ((Self capped-cylinder))
+  (texture Self))
 ;_______________________________________
 ;  Disk                                 |
 ;_______________________________________
@@ -554,7 +604,7 @@
    (height :accessor height :initform 1.0 :type float :initarg :height :documentation "height")
    (texture :accessor texture :initform nil :initarg :texture :documentation "texture file name"))
   (:default-initargs 
-      :depth 0.05)
+      :depth 0.01)
   (:documentation "Tile"))
 
 
@@ -581,13 +631,16 @@
    (t
     (glDisable GL_TEXTURE_2D)))
   ;; slow immediate mode to render
+  (glPushMatrix)
+  (glTranslatef 0.0 0.0 (depth self))
   (glBegin GL_QUADS)
   (glNormal3f 0.0 0.0 1.0)
   (glTexCoord2f 0.0 0.0) (glVertex2f 0.0 0.0)
   (glTexCoord2f 0.0 1.0) (glVertex2f 0.0 (height Self))
   (glTexCoord2f 1.0 1.0) (glVertex2f (width Self) (height Self))
   (glTexCoord2f 1.0 0.0) (glVertex2f (width Self) 0.0)
-  (glEnd))
+  (glEnd)
+  (glPopMatrix))
 
 
 (defmethod PRINT-SLOTS ((Self tile))
