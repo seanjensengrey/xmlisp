@@ -39,7 +39,7 @@
           <image-button name="zoom button"   tooltip="Zoom" start-disabled="true" action="zoom-tool-action" image="zoom-button.png"/>    
         </image-button-row>
         <spacer width="8"/>
-        <image-button  start-disabled="true" tooltip="Switch between first and third person camera" name="camera-button" action="switch-camera-action" image="camera.png"/>  
+        <image-button  start-disabled="true" tooltip="Switch between first person and bird's eye camera view" name="camera-button" action="switch-camera-action" image="camera.png"/>  
         <image-button name="full-screen-button" tooltip="Switch to full screen (escape will exit full screen)" start-disabled="true" action="full-screen-action" image="fullscreen.png"/>  
         <spacer width="8"/>
         <image-button name="reload button" tooltip="Reload the world" start-disabled="true" action="reload-tool-action"  image="reload-button.png"/> 
