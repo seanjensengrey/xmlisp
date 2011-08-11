@@ -1868,16 +1868,20 @@
 ; Popup Button                     |
 ;__________________________________/
 
-(defclass native-popup-button (ns:ns-pop-up-button)
+(defclass NATIVE-POPUP-BUTTON (ns:ns-pop-up-button)
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
 
 
-(defmethod make-native-object ((Self popup-button-control))
+(defmethod MAKE-NATIVE-OBJECT ((Self popup-button-control))
   (let ((Native-Control (make-instance 'native-popup-button :lui-view Self)))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
       (#/initWithFrame:pullsDown: Native-Control Frame #$NO)
-      ;(#/setControlSize: (#/cell native-control)  #$NSMiniControlSize)
+      ;; mini controls
+      (#/setControlSize: (#/cell native-control)  #$NSSmallControlSize)
+      (#/setFont: native-control (#/systemFontOfSize: ns:ns-font (#/systemFontSizeForControlSize: ns:ns-font #$NSSmallControlSize)))
+      ;; (#/setControlSize: (#/cell native-control)  #$NSMiniControlSize)
+      ;; (#/setFont: native-control (#/systemFontOfSize: ns:ns-font (#/systemFontSizeForControlSize: ns:ns-font #$NSMiniControlSize)))
     Native-Control)))
 
 
