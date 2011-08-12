@@ -577,6 +577,9 @@ Call with most important parameters. Make other paramters accessible through *Cu
 (defgeneric SHOW (Window)
   (:documentation "Make visible on screen"))
 
+(defgeneric CENTER (Window)
+  (:documentation "Put window into the center of the screen"))
+
 (defgeneric HIDE (Window)
   (:documentation "Hide on screen"))
 
