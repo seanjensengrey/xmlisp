@@ -48,13 +48,32 @@
   (unless (probe-file Pathname)
     (error "File ~A does not exist." Pathname)
     (return-from image-file-information))
-  (let* ((Image (#/initWithContentsOfFile: (#/alloc ns:ns-image) (lui::native-string (namestring Pathname))))
-         (Image-Size (#/size Image)))
-    (values (NS:NS-SIZE-WIDTH image-size)
-            (NS:NS-SIZE-HEIGHT image-size)
-            )))
+  (let* ((Image (#/imageRepWithContentsOfFile: ns:ns-image-rep (lui::native-string (namestring Pathname)))))
+    (values 
+     (#/pixelsHigh image)
+     (#/pixelsWide image))))
 
 
+(defun VALIDATE-OPENGL-COMPLIANCE (Pathname) "
+  in: Pathname pathname.
+  out: t if the pathname will comply with openGL requirements I.E. power of 2
+       nil with a dialog explaining the situation if it will not"
+  (multiple-value-bind (width height) (image-file-information Pathname)
+    (if (and (power-of-2-p width) (power-of-2-p height))
+      (return-from validate-opengl-compliance t)
+      (standard-alert-dialog "I am sorry the image file you have selected can not be used."  :explanation-text "Both the width and height of the image must be a power 2, please select a different file or convert this image."))
+    nil))
+
+
+(defun POWER-OF-2-P (number)
+  (let ((i 1))
+    (loop
+      while
+      (< i number)
+      do
+      (setf i (* i 2))
+      (when (equal i number)
+        (return-from power-of-2-p t)))))
 
 #| Example:
 
