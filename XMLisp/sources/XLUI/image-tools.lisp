@@ -61,19 +61,14 @@
   (multiple-value-bind (width height) (image-file-information Pathname)
     (if (and (power-of-2-p width) (power-of-2-p height))
       (return-from validate-opengl-compliance t)
-      (standard-alert-dialog "I am sorry the image file you have selected can not be used."  :explanation-text "Both the width and height of the image must be a power 2, please select a different file or convert this image."))
+      (standard-alert-dialog "I am sorry but the height and width of the image file for this operation must be a power of 2."  :explanation-text (format nil "Please select another image file or convert the height to ~A and width to ~A." (expt 2 (truncate (/ (log height) (log 2)))) (Expt 2 (truncate (/ (log width) (log 2))) ))))
     nil))
 
 
 (defun POWER-OF-2-P (number)
-  (let ((i 1))
-    (loop
-      while
-      (< i number)
-      do
-      (setf i (* i 2))
-      (when (equal i number)
-        (return-from power-of-2-p t)))))
+  (when (equal (- (truncate (/ (log number) (log 2)))  (/ (log number) (log 2))) 0.0)
+    t))
+    
 
 #| Example:
 
