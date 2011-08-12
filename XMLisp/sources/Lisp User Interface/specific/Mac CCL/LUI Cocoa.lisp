@@ -802,6 +802,10 @@
     (#/makeKeyWindow (native-window self))))
 
 
+(defmethod CENTER ((Self window))
+  (#/center (lui::native-window Self)))
+
+
 (defmethod HIDE ((Self window))
   (in-main-thread ()
     (#/orderOut: (native-window Self) nil)))
@@ -2253,13 +2257,13 @@
 ; Editable TEXT                    |
 ;__________________________________/
 
-(defclass native-editable-text (ns:ns-text-field)
+(defclass NATIVE-EDITABLE-TEXT (ns:ns-text-field)
   ((lui-view :accessor lui-view :initarg :lui-view)
    (text-before-edit :accessor text-before-edit :initform "" :documentation "sometimes it will be nescisary to remember the value of the text field before a text field is editted and restore this value if a bad value is entered"))
   (:metaclass ns:+ns-object))
 
 
-(defmethod make-native-object ((Self editable-text-control))
+(defmethod MAKE-NATIVE-OBJECT ((Self editable-text-control))
   (let ((Native-Control (make-instance 'native-editable-text :lui-view Self)))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
       (#/initWithFrame: Native-Control Frame)
