@@ -178,6 +178,7 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 (defgeneric GESTURE-END-EVENT-HANDLER (event-listener-interface x y)
   (:documentation "A swipe, rotate, or magnify gesture has ended"))
+
 ;**********************************
 ;* LUI-FRAME                      *
 ;**********************************
@@ -203,8 +204,7 @@ Call with most important parameters. Make other paramters accessible through *Cu
    (full-screen-p :accessor full-screen-p :initform nil :initarg :full-screen-p :type boolean :documentation "is the view in full screen mode")
    (current-cursor :accessor current-cursor :initform nil :initarg :current-cursor :documentation "the name of the current cursor of this view")
    (tooltip :accessor tooltip :initform nil :initarg :tooltip :documentation "If this accessor is set it will display this for the tool instead of the documentation")
-   (hidden-p :accessor hidden-p :initform nil :documentation "This predicate will tell you if the view is currently hidden or not, should only be set by set-hidden")
-   )
+   (hidden-p :accessor hidden-p :initform nil :documentation "This predicate will tell you if the view is currently hidden or not, should only be set by set-hidden"))
   (:documentation "a view, control or window with position and size"))
 
 ;;_______________________________
@@ -299,15 +299,11 @@ Call with most important parameters. Make other paramters accessible through *Cu
   (setf (width Self) Width)
   (setf (height Self) Height))
 
+
 (Defmethod SET-FRAME-WITH-FRAME ((self view) frame)
   (set-size self (width frame) (height frame))
   (set-position self (x frame) (y frame))) 
-#|
-(defmethod SET-SIZE  :after ((Self view) Width Height)
-  (print "SET SIZE AFTER VIEW")
-  (enable-tooltips self)
-  )
-|#
+
 
 (defmethod SET-POSITION ((Self view) X Y)
   (setf (x Self) X)
@@ -407,12 +403,12 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 
 (defmethod VIEW-MOUSE-ENTERED-EVENT-HANDLER ((Self view))
-  ;; (format t "~%entered ~A" (type-of Self))
+  ;; do nothing
   )
 
 
 (defmethod VIEW-MOUSE-EXITED-EVENT-HANDLER ((Self view))
-  ;; (format t "~%exited ~A" (type-of Self))
+  ;; do nothing
   )
 
 
@@ -425,16 +421,21 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 
 (defmethod VIEW-MOUSE-SCROLL-WHEEL-EVENT-HANDLER ((Self view) x y dx dy)
-  (declare (ignore x y))
-  (format t "~%scroll wheel ~A dx=\"~A\" dy=\"~A\"" (type-of Self) dx dy))
+  (declare (ignore x y dx dy))
+  ;; do nothing
+  )
 
 
 (defmethod GESTURE-MAGNIFY-EVENT-HANDLER ((Self view) x y Maginification)
-  (format t "~%magnify gesture x=\"~A\" y=\"~A\" maginifcation=\"~A\"" x y Maginification))
+  (declare (ignore x y Maginification))
+  ;; do nothing
+  )
 
 
 (defmethod GESTURE-ROTATE-EVENT-HANDLER ((Self view) x y Rotation)
-  (format t "~%rotate gesture x=\"~A\" y=\"~A\" rotation=\"~A\"" x y Rotation))
+  (declare (ignore x y Rotation))
+  ;; do nothing
+  )
 
 
 (defmethod SIZE-CHANGED-EVENT-HANDLER ((Self view) Width Height)
@@ -642,12 +643,6 @@ after any of the window controls calls stop-modal close window and return value.
   (when (do-show-immediately Self)
     (show Self)))
 
-#|
-(defmethod INITIALIZE-INSTANCE :after ((Self window) &rest Args)
-  (declare (ignore args))
-  (print "INIT AFTER WINDOW")
-  (map-subviews self #'(lambda (View) (view-did-end-resize View ))))
-|#
 
 (defmethod DISPLAY ((Self Window)) 
   ;; nada
@@ -818,18 +813,17 @@ after any of the window controls calls stop-modal close window and return value.
       (:rotate-gesture
        (gesture-rotate-event-handler view x y (rotation Event)))
       (t
-       (format t "~%not handling ~A event yet, ~A" (event-type Event) (native-event Event)))))))
+       (warn "~%not handling ~A event yet, ~A" (event-type Event) (native-event Event)))))))
 
 
 (defmethod KEY-EVENT-HANDLER ((Self window) Event)
-  (setf *current-event* event)
-  (format t "~%window key event ~A" (native-event Event)))
+  (setf *Current-Event* Event))
 
 
 (defmethod VIEW-EVENT-HANDLER ((Self Window) Event)
   ;; generic event hander
   (let ((*Current-Event* Event))
-    (format t "not handling ~A event yet~%" (event-type Event))))
+    (warn "not handling ~A event yet~%" (event-type Event))))
 
 
 (defmethod VIEW-EVENT-HANDLER ((Self Window) (Event mouse-event))
@@ -875,7 +869,6 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defmethod VIEW-MOUSE-MOVED-EVENT-HANDLER ((Self window) x y dx dy)
   (declare (ignore X Y DX DY))
-  ;(format t "~%mouse moved x=~A y=~A dx=~A dy=~A" x y dx dy)
   ;; nothing
   )
 
@@ -905,19 +898,18 @@ after any of the window controls calls stop-modal close window and return value.
 
 
 (defmethod VIEW-MOUSE-ENTERED-EVENT-HANDLER ((Self window))
-  ;; (format t "~%entered ~A" (type-of Self))
+  ;; do nothing
   )
 
 
 (defmethod VIEW-MOUSE-EXITED-EVENT-HANDLER ((Self window))
-  ;; (format t "~%exited ~A" (type-of Self))
+  ;; do nothing
   )
 
 
 ;; notifications
 
 (defmethod HAS-BECOME-MAIN-WINDOW ((Self window))
-  ;;(format t "~%new main window: ~A" Self)
   )
 
 
@@ -995,14 +987,14 @@ after any of the window controls calls stop-modal close window and return value.
   (text self))
 
 
-(defmethod control-default-action ((Window window) (Target Control))
-  ;(format t "~%control default action: window=~A, target=~A" Window Target)
+(defmethod CONTROL-DEFAULT-ACTION ((Window window) (Target Control))
+  ;; do nothing
   )
 
 
-(defmethod control-default-action ((Window null) (Target Control))
+(defmethod CONTROL-DEFAULT-ACTION ((Window null) (Target Control))
   ;; control may not be properly installed in window
-  (format t "~%control default action: window=~A, target=~A" Window Target))
+  (warn "~%control default action: window=~A, target=~A" Window Target))
 
 
 (defmethod MAKE-NATIVE-CONTROL ((Self control))
@@ -1011,7 +1003,6 @@ after any of the window controls calls stop-modal close window and return value.
 
 
 (defmethod INVOKE-ACTION ((Self control))  
-  ;;(format t "~%action=~A window=~A target=~A" (action Self) (window Self) (target Self))
   (funcall (action Self) (window Self) (target Self)))
 
 
@@ -1155,7 +1146,8 @@ after any of the window controls calls stop-modal close window and return value.
 
 
 (defmethod IMAGE-CLUSTER-ACTION ((window window) (self Radio-Button-Control))
-  (print "CLUSTER"))
+  ;; do nothing
+  )
 
 
 ;__________________________________
@@ -1241,8 +1233,9 @@ after any of the window controls calls stop-modal close window and return value.
   (funcall (attribute-changed-action self) (window self) (attribute-owner self)))
 
 
-(defmethod DEFAULT-ATTRIBUTE-CHANGED-ACTION ( (window window)(Self attribute-editor-view))
-  (print "Please override me"))
+(defmethod DEFAULT-ATTRIBUTE-CHANGED-ACTION ((window window) (Self attribute-editor-view))
+  ;; do nothing
+  )
 
 ;__________________________________
 ; ATTRIBUTE VALUE LIST TEXT VIEW   |
