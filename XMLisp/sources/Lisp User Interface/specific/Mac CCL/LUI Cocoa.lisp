@@ -1880,8 +1880,6 @@
       ;; mini controls
       (#/setControlSize: (#/cell native-control)  #$NSSmallControlSize)
       (#/setFont: native-control (#/systemFontOfSize: ns:ns-font (#/systemFontSizeForControlSize: ns:ns-font #$NSSmallControlSize)))
-      ;; (#/setControlSize: (#/cell native-control)  #$NSMiniControlSize)
-      ;; (#/setFont: native-control (#/systemFontOfSize: ns:ns-font (#/systemFontSizeForControlSize: ns:ns-font #$NSMiniControlSize)))
     Native-Control)))
 
 
@@ -2225,28 +2223,30 @@
 ; LABEL                            |
 ;__________________________________/
 
-(defclass native-label (ns:ns-text-view)
+(defclass NATIVE-LABEL (ns:ns-text-view)
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
 
 
-(defmethod make-native-object ((Self label-control))
+(defmethod MAKE-NATIVE-OBJECT ((Self label-control))
   (let ((Native-Control (make-instance 'native-label :lui-view Self)))  ;; NSText is not actually a control, would NSTextField be better?
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
-      (#/initWithFrame: Native-Control Frame)
-      (#/setDrawsBackground: Native-Control nil)
-      (#/setString: Native-Control (native-string (text Self)))
-      (ecase (align Self)
-        (:left (#/alignLeft: Native-Control Native-Control))
-        (:center (#/alignCenter: Native-Control Native-Control))
-        (:right (#/alignRight: Native-Control Native-Control))
-        (:justified (#/alignJustified: Native-Control Native-Control)))
-      (#/setEditable: Native-Control #$NO)
-      (#/setSelectable: Native-Control #$NO) )
-    Native-Control))
+      (#/initWithFrame: Native-Control Frame))
+    (#/setDrawsBackground: Native-Control nil)
+    (#/setString: Native-Control (native-string (text Self)))
+    (ecase (align Self)
+      (:left (#/alignLeft: Native-Control Native-Control))
+      (:center (#/alignCenter: Native-Control Native-Control))
+      (:right (#/alignRight: Native-Control Native-Control))
+      (:justified (#/alignJustified: Native-Control Native-Control)))
+    (#/setEditable: Native-Control #$NO)
+    (#/setSelectable: Native-Control #$NO)
+    (unless (zerop (size Self))
+      (#/setFont: Native-Control (#/systemFontOfSize: ns:ns-font (float (size Self) 0.0d0))))
+  Native-Control))
 
 
-(defmethod (setf text) :after (Text (Self label-control))
+(defmethod (SETF TEXT) :after (Text (Self label-control))
   (#/setString: (native-view Self) (native-string Text)))
 
 ;__________________________________
