@@ -42,7 +42,7 @@
    (ceiling-value :accessor ceiling-value :initarg :ceiling-value :initform 1.0 :type short-float)
    (noise :accessor noise :initform 0s0)
    (smooth :accessor smooth :initarg :smooth :initform 0 :type integer)
-   (max-value :accessor max-value :initform 1.0)
+   (max-value :accessor max-value :initform 1.0 :initarg :max-value)
    (dx :accessor dx :initform 1.0 :initarg :dx :type short-float)
    (dy :accessor dy :initform 1.0 :initarg :dy :type short-float)
    (dz :accessor dz :initform 0.0 :initarg :dz :type short-float :documentation "z offset, can be used to antialias through edge snipping")
@@ -63,7 +63,7 @@
    (is-flat :accessor is-flat :initform nil :type boolean :documentation "speed optimized rendering if flat"))
   (:documentation "High polygon count 3D object made from inflated icon")
   (:default-initargs 
-      :depth 0.0))
+      :depth 1.0))
 
 
 ;********************************************************
