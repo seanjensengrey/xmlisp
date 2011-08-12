@@ -254,6 +254,22 @@
   (attach Self (make-instance 'sky-dome :name "The World around me" :pitch -90.0 :view Self)))
 
 
+(defmethod ATTACH-SKY-DOME ((Self agent-3d-view) texture-path)
+  "make and a attach a sky-dome with the given texture"
+  (remove-sky-dome self)
+  (let ((sky-dome (make-instance 'sky-dome :pitch 0.0 :view Self :texture (concatenate 'string (pathname-name texture-path) "." (pathname-type texture-path)) :texture-path (make-pathname :directory (pathname-directory texture-path)))))
+    (attach Self sky-dome)
+    (display self)))
+
+
+(defmethod REMOVE-SKY-DOME ((self agent-3d-view))
+  (dolist (Agent (agents self))
+    (when (equal (Type-of agent) 'xlui::sky-dome)
+      (setf (agents Self) (remove  agent (agents Self) :test 'equal) )
+      (setf (part-of agent) nil)
+      (display self)))) 
+
+
 (defmethod DRAW ((Self agent-3d-view))
   (dolist (Agent (agents Self))
     (draw Agent)))
