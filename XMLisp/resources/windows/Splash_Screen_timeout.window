@@ -1,29 +1,43 @@
 <?xml version="1.0"?>
-<agentcubes-splash-window title="Welcome to AgentCubes" timeout="10.0" margin="0" width="480" height="360" zoomable="false" resizable="false" minimizable="false">
+<agentcubes-splash-window title="Welcome to AgentCubes" timeout="10.0" margin="0" width="480" height="520" zoomable="false" resizable="false" minimizable="false">
   <column align="stretch" valign="stretch">>
     <agentcube-view name="cubes" full-scene-anti-aliasing="true" vflex="1">
       <agent-hyper-cube segments="8"/>
     </agentcube-view>
     <row minimize="vertical" align="center">
-      <label text="AgentCubes" width="120"/>/>
+      <label text="AgentCubes" width="150" height="25" size="20.0"/>/>
     </row>
-    <spacer height="50"/>
-    <row minimize="vertical" align="left">
-      <label text="Frame Rate: " width="120" align="right"/>
-      <label name="frame rate" text="0" width="40" />
-      <label name="FPS" text="[FPS] HyperAgentCube x8 benchmark" width="300"/>
+    <row minimize="vertical" align="center">
+      <label text="Version" width="100" align="right" height="25" size="14.0"/>/>
+      <label name="agentcubes version" text="" width="100" height="25" size="14.0"/>/>
     </row>
+    <spacer height="20"/>
     <row minimize="vertical" align="left">
-       <label text="OpenGL Version: " width="120" align="right"/> 
-       <label name="version" text="" width="120"/>
-    </row>
-    <row minimize="vertical" align="left">
-       <label text="Vendor: " width="120" align="right"/> 
-       <label name="vendor" text="0" width="120"/>
+      <label text="Frame Rate: " size="9.0" width="120" align="right"/>
+      <label name="frame rate" size="9.0"  text="0" width="40" />
+      <label name="FPS" size="9.0" text="[FPS] HyperAgentCube x8 benchmark" width="300"/>
     </row>
     <row minimize="vertical" align="left">
-       <label text="Renderer: " width="120" align="right"/> 
-       <label name="renderer" text="0" width="120"/>
+       <label text="OpenGL Version: " size="9.0" width="120" align="right"/> 
+       <label name="version" text="" size="9.0" width="120"/>
+    </row>
+    <row minimize="vertical" align="left">
+       <label text="Vendor: " size="9.0" width="120" align="right"/> 
+       <label name="vendor" text="0" size="9.0" width="120"/>
+    </row>
+    <row minimize="vertical" align="left">
+       <label text="Renderer: " size="9.0" width="120" align="right"/> 
+       <label name="renderer" text="0" size="9.0" width="320"/>
+    </row>
+    <spacer height="10"/>
+    <row minimize="vertical" align="stretch">
+      <spacer width="64"/>
+      <label flex="1" height="35" size="9.0" text="Copyright (C) 2009-2012 AgentSheets Inc., Protected by United States Patents 7,630,580 and 7,995,863 (Inflatable Icons); Patent Pending 13/012,465 (Conversational Programming)."/>
+    </row>
+    <spacer height="10"/>
+    <row minimize="vertical" align="stretch">
+     <img src="nsf-logo.png"/>
+    <label flex="1" height="35" size="8.0" text="This material is based in part upon work supported by the National Science Foundation under Grant Numbers No. IIP 0712571 and IIP 0848962. Any opinions, findings, and conclusions expressed in this material are those of the authors and do not necessarily reflect the views of the National Science Foundation."/>
     </row>
   </column>
 </agentcubes-splash-window>
