@@ -1341,7 +1341,8 @@ after any of the window controls calls stop-modal close window and return value.
 ;__________________________________/
 
 (defclass LABEL-CONTROL (control)
-  ((align :accessor align :initform :left :initarg :align :type keyword :documentation ":left, :center , :right, :justified"))
+  ((align :accessor align :initform :left :initarg :align :type keyword :documentation ":left, :center , :right, :justified")
+   (size :accessor size :initform 0.0 :initarg :size :type float :documentation "font size. 0.0 for default system font size"))
   (:documentation "static text label")
   (:default-initargs 
     :text ""
