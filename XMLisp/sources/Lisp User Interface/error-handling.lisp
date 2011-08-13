@@ -32,7 +32,7 @@
   (if *Output-To-Alt-Console-P*
     (apply #'format t Control-String Format-Arguments)
     (let ((NSString (#/retain (ccl::%make-nsstring (apply #'format nil Control-String Format-Arguments)))))
-      (#_NSLog NSString)
+      (#_NSLog #@"%@" :address NSString)  ;; make sure NSString is not interpreted as format string
       (#/release NSString))))
     
 
@@ -150,7 +150,7 @@
       (/ 3.4 (sin 0.0)))))
 
 
-(print-to-log "~%this and that")
+(print-to-log "this and that")
 
 (print-to-log "only ~A bottles of beer" 69)
 
