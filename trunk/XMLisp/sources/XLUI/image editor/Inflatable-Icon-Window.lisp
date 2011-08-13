@@ -849,24 +849,23 @@
 
 
 (defmethod ADJUST-PRESSURE-ACTION ((Window inflatable-icon-editor-window) (Slider inflation-jog-slider) &optional do-not-display)
-  (enable (view-named Window "flatten-button"))
-  (let ((Pressure (value Slider)))
-    ;; audio feedback
-    #-cocotron
-    (set-volume "whiteNoise.mp3" (abs Pressure))
-    ;; model update
-    (let ((Text-View (view-named Window 'pressuretext)))
-      ;; update label
-      (setf (text Text-View) (format nil "~4,2F" Pressure))  
-      (unless do-not-display
-        (display Text-View))   
-      ;; update model editor
-      (let ((Model-Editor (view-named Window 'model-editor)))
-        (incf (pressure (inflatable-icon Model-Editor)) (* 0.02 Pressure))
-        (update-inflation Window)
-        (setf (is-flat (inflatable-icon Model-Editor)) nil))))
-  ;;Wicked cocotron hack to get the inflated icon editor to update
-  )
+  (ccl::with-autorelease-pool
+    (enable (view-named Window "flatten-button"))
+    (let ((Pressure (value Slider)))
+      ;; audio feedback
+      #-cocotron
+      (set-volume "whiteNoise.mp3" (abs Pressure))
+      ;; model update
+      (let ((Text-View (view-named Window 'pressuretext)))
+        ;; update label
+        (setf (text Text-View) (format nil "~4,2F" Pressure))  
+        (unless do-not-display
+          (display Text-View))   
+        ;; update model editor
+        (let ((Model-Editor (view-named Window 'model-editor)))
+          (incf (pressure (inflatable-icon Model-Editor)) (* 0.02 Pressure))
+          (update-inflation Window)
+          (setf (is-flat (inflatable-icon Model-Editor)) nil))))))
 
 
 (defmethod ADJUST-CEILING-ACTION ((Window inflatable-icon-editor-window) (Slider slider) &key (draw-transparent-ceiling t))
