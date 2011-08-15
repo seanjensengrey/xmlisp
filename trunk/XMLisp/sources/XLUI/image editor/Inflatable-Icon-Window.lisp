@@ -543,7 +543,7 @@
       (Setf (transparent-ceiling-update-process (window self)) nil))
     (progn
       ;; draw the transparent ceiling
-      (let ((ceiling-height (+ .02  (max-value (inflatable-icon (view-named (Window self) 'model-editor)))))
+      (let ((ceiling-height (+ .02 *flat-shape-z-offset* (max-value (inflatable-icon (view-named (Window self) 'model-editor)))))
             (z-offset (value (view-named (Window self) "z_slider"))))
         (glpushmatrix)
         
@@ -911,19 +911,30 @@
 
   
 (defmethod ADJUST-NOISE-ACTION ((Window inflatable-icon-editor-window) (Slider slider))
-  (let ((Noise (value Slider)))
+  
+  (let ((Noise (value Slider))
+        (Model-Editor (view-named Window 'model-editor)))
+    (print (smooth (inflatable-icon Model-Editor)))
     (if (equal Noise 0.0)
-      (disable (view-named window "smooth_slider"))
+      (progn
+        (setf (value (view-named window "smooth_slider")) 0.0)
+        (disable (view-named window "smooth_slider"))
+        (let ((Text-View (view-named window 'smooth-text)))
+          ;; update label
+          (setf (text Text-View) (format nil "~A" 0.0))
+          (display Text-View))
+        (setf (smoothing-cycles Window) 0)
+        (setf (smooth (inflatable-icon Model-Editor)) 0))
       (enable (view-named window "smooth_slider")))
     (let ((Text-View (view-named Window 'noise-text)))
       ;; update label
       (setf (text Text-View) (format nil "~4,2F" Noise))
       (display Text-View)
       ;; update model editor
-      (let ((Model-Editor (view-named Window 'model-editor)))
+      
         (setf (noise (inflatable-icon Model-Editor)) Noise)
         (update-inflation Window)
-        (setf (is-flat (inflatable-icon Model-Editor)) nil))))
+        (setf (is-flat (inflatable-icon Model-Editor)) nil)))
     ;;Wicked cocotron hack to get the inflated icon editor to update
   )
 
@@ -938,7 +949,8 @@
       (setf (smoothing-cycles Window) Smooth)
       (setf (smooth (inflatable-icon (view-named Window 'model-editor))) smooth)
       (update-inflation Window)))
-    ;;Wicked cocotron hack to get the inflated icon editor to update
+  
+  ;;Wicked cocotron hack to get the inflated icon editor to update
   )
 
 
@@ -1100,10 +1112,21 @@
 
 (defmethod CLEAR-ACTION ((Window inflatable-icon-editor-window) (Button button))
   (declare (ftype function execute-command))
-  (execute-command (command-manager window) (make-instance 'pixel-update-command :image-editor (view-named window 'icon-editor) :image-snapeshot (create-image-array (view-named window 'icon-editor))))
-  (erase-all (view-named window 'icon-editor))
+
   (let* ((Model-Editor (or (view-named window 'model-editor) (error "model editor missing")))
          (Inflatable-Icon (inflatable-icon Model-Editor)))
+    
+    (setf (noise inflatable-icon) 0.0)
+    (setf (smooth inflatable-icon) 0)
+    (setf (smoothing-cycles window) 0)
+    (setf (max-value inflatable-icon) 2.0)
+    (setf (distance inflatable-icon) 0.0)
+    (setf (surfaces inflatable-icon) 'front)
+    (turn-off (view-named window "upright"))
+    (setf (is-upright inflatable-icon) nil)
+    (set-selected-item-with-title (view-named window "surfaces") "Front")
+    (execute-command (command-manager window) (make-instance 'pixel-update-command :image-editor (view-named window 'icon-editor) :image-snapeshot (create-image-array (view-named window 'icon-editor))))
+    (erase-all (view-named window 'icon-editor))
     (dotimes (Row (rows Inflatable-Icon ))
       (dotimes (Column (columns Inflatable-Icon ))
         (setf (aref (altitudes Inflatable-Icon ) Row Column) 0.0)))
@@ -1112,12 +1135,15 @@
         (glDeleteTextures 1 &Tex-Id))
       (setf (texture-id Inflatable-Icon) nil))
     (Setf (pressure Inflatable-Icon) 0.0)
+    
     (setf (value (view-named window "distance-slider")) 0.00)
     (setf (distance (inflatable-icon Model-Editor)) 0.0)
     (setf (value (view-named window "ceiling_slider")) 1.0)
     (setf (value (view-named window "smooth_slider")) 0.0)
     (setf (value (view-named window "noise_slider")) 0.0)
     (setf (value (view-named window "z_slider")) 0.0)
+    ; (set-selected-item-with-title (view-named window "surfaces") "Front")
+     
     (setf (dz (inflatable-icon Model-Editor) ) 0.0)
     (let ((Text-View (view-named window 'distance-text)))
       ;; update label
@@ -1131,10 +1157,12 @@
       ;; update label
       (setf (text Text-View) (format nil "~4,2F" 0.0))
       (display Text-View))
+    
     (let ((Text-View (view-named window 'noise-text)))
       ;; update label
       (setf (text Text-View) (format nil "~4,2F" 0.0))
       (display Text-View))
+    
     (let ((Text-View (view-named window 'smooth-text)))
       ;; update label
       (setf (text Text-View) (format nil "~A" 0.0))
