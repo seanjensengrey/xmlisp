@@ -195,6 +195,11 @@
   (:documentation "A huge sphere containing the world"))
 
 
+(defmethod PRINT-SLOTS ((Self sky-dome))
+  `(x y z roll pitch heading size texture texture-path))
+
+
+
 (defmethod INITIALIZE-INSTANCE ((Self sky-dome) &rest Initargs)
   (declare (ignore Initargs))
   ;; sky domes must be very LARGE
