@@ -225,19 +225,19 @@
               ((is-upright Self)
                (case (surfaces Self)
                  (cube
-                  (float (+ (dz self) (maximum-altitude Self) (distance self) ) 0.0))
+                  (float (+ *flat-shape-z-offset* (dz self) (maximum-altitude Self) (distance self) ) 0.0))
                  (t
-                  (+ (dz self) (float (/ (max-visible-pixel-row Self) (rows Self)) 0.0)))))
+                  (+ *flat-shape-z-offset* (dz self) (float (/ (max-visible-pixel-row Self) (rows Self)) 0.0)))))
               (t  
                (case (surfaces Self)
                  (front-and-back 
-                     (+  (dz self)(distance self) (maximum-altitude Self)))
+                     (+ *flat-shape-z-offset* (dz self)(distance self) (maximum-altitude Self)))
                  (front-and-back-connected 
-                     (+  (dz self)(distance self) (maximum-altitude Self)))
+                     (+ *flat-shape-z-offset* (dz self)(distance self) (maximum-altitude Self)))
                  (cube
-                  (float (+ (dz self) (maximum-altitude Self) (distance self) ) 0.0))                                                                                                                     
+                  (float (+ *flat-shape-z-offset* (dz self) (maximum-altitude Self) (distance self) ) 0.0))                                                                                                                     
                  (t
-                  (+ (dz self) (maximum-altitude Self)))))))))
+                  (+ *flat-shape-z-offset* (dz self) (maximum-altitude Self)))))))))
 
 
 #| need to take these into account
@@ -466,6 +466,7 @@
   ;; just in time while display is not elegant but works
   (glpushmatrix)
   (glTranslatef 0s0 0s0 (dz Self))  ;; keep from interfering with background
+  (glTranslatef 0.0 0.0 *flat-shape-z-offset*)
   (when (and (is-upright Self) (not (equal (surfaces self) 'cube)))
     (glRotatef +90s0 1.0s0 0.0s0 0.0s0)
     (glTranslatef (/ (- 1s0 (dx Self)) 2s0) +0.0s0 -0.5s0))
