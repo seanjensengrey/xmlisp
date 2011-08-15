@@ -19,6 +19,7 @@
 
 (in-package :xlui)
 
+(defparameter *FLAT-SHAPE-Z-OFFSET* .02)
 
 (defclass SHAPE (agent-3d)
   ((depth :accessor depth :initform 1.0 :type float :initarg :depth)
@@ -609,7 +610,7 @@
    (height :accessor height :initform 1.0 :type float :initarg :height :documentation "height")
    (texture :accessor texture :initform nil :initarg :texture :documentation "texture file name"))
   (:default-initargs 
-      :depth 0.01)
+      :depth *FLAT-SHAPE-Z-OFFSET*)
   (:documentation "Tile"))
 
 
