@@ -1910,7 +1910,7 @@
 (defmethod ADD-ITEM ((Self popup-button-control) Text Action )
   (if (equal (#/indexOfItemWithTitle: (native-view Self) (native-string Text)) -1)
     (progn 
-      (#/addItemWithTitle: (native-view Self) (native-string (String-capitalize Text)))
+      (#/addItemWithTitle: (native-view Self) (native-string Text))
       (setf (actions Self) (append (actions Self) (list Action))))
     (warn "Cannot add item with the same title (~S)" Text)))
 
@@ -2762,15 +2762,11 @@
     (if item-addition-action-string-list
       (add-item Pop-Up (first item-addition-action-string-list) (second item-addition-action-string-list)))
     (add-subviews window Pop-up)
-    
     (if selected-item
       (#/selectItemWithTitle: (native-view pop-up) (native-string selected-item))
       (#/selectItemWithTitle: (native-view pop-up) nil))
-    
-    
     (#/setTransparent: (native-view Pop-Up) #$YES)
     (#/performClick:  (native-view Pop-up) +null-ptr+)
-    ;(#/setState: (native-view Pop-up) #$NSOnState)
     (#/removeFromSuperview (native-view Pop-up))
     (unless (%null-ptr-p (#/titleOfSelectedItem (native-view Pop-Up)))
       (ccl::lisp-string-from-nsstring  (#/titleOfSelectedItem (native-view Pop-Up))))))
