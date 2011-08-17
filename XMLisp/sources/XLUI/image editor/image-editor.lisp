@@ -1429,7 +1429,7 @@
 
 
 (defmethod MIRROR-TOOL-ACTION ((W window) (Button image-button))
-  (print "MIRROR"))
+  )
 
 
 (defmethod ENABLE-GRID-ACTION ((W window) (Check-Box check-box))
