@@ -19,7 +19,7 @@
 
 (in-package :lui)
 
-(export '(sizeof make-vector with-vector with-vector-of-size dispose-vector 
+(export '(sizeof make-vector copy-vector with-vector with-vector-of-size dispose-vector 
                  make-byte-vector get-byte set-byte make-vector-of-size get-long SET-BYTE-VECTOR))
 
 ;;______________________________________________________________
@@ -87,6 +87,18 @@
         (single-float (setf (%get-single-float &Vector Index) Value))
         (double-float (setf (%get-double-float &Vector Index) Value)))
       (incf Index (sizeof Value)))))
+
+
+(defun COPY-VECTOR (Vector &optional Size) "
+  in:  Vector, &optional Size.
+  out: Vector-Copy.
+  Create a copy of <Vector>."
+  (unless Size (setq Size (sizeof Vector)))
+  (let ((Vector-Copy (make-vector-of-size Size)))
+    ;; this is a reall slow way to copy a vector byte by byte
+    ;; consider using #_memmove but worry about Mac/PC
+    (dotimes (i Size Vector-Copy)
+      (setf (%get-byte Vector-Copy i) (%get-byte Vector i)))))
 
 
 (defun MAKE-VECTOR-OF-SIZE (Size) "
@@ -296,6 +308,15 @@
 
 (with-vector-of-size (Selection 2048)
   (sizeof Selection))
+
+
+(defparameter *v1* (make-vector-of-size 1000000))
+
+(sizeof *v1*)
+
+(sizeof (copy-vector *v1*))  ;; about 10ms on Mac Book Pro 2.6Ghz
+
+
 
 
 |#
