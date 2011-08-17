@@ -20,7 +20,6 @@
   )
 
 (defmethod READ-RETURN-VALUE ((Self get-new-agent-info-from-user-window))
-  (print "FROM READ RETURN")
   Self)
 
 
