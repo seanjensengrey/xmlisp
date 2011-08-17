@@ -34,8 +34,7 @@
                          
 
 (defclass INFLATABLE-ICON-EDITOR-WINDOW (application-window)
-  ((container :accessor container :initform nil :initarg :container)
-   (smoothing-cycles :accessor smoothing-cycles :initform 0 :initarg :smoothing-cycles)
+  ((smoothing-cycles :accessor smoothing-cycles :initform 0 :initarg :smoothing-cycles)
    (selected-tool :accessor selected-tool :initform nil :type symbol :initarg :selected-tool :documentation "the name of the currently selected tool")
    (selected-camera-tool :accessor selected-camera-tool :initform nil :type symbol :initarg :selected-camera-tool :documentation "the name of the currently selected camera tool")
    (file :accessor file :initform nil :documentation "shape file")
@@ -50,7 +49,9 @@
    (transparent-ceiling-update-frequency :accessor transparent-ceiling-update-frequency :initform .02 :documentation "How often in seconds the transparency value will be udpated")
    (transparent-ceiling-should-fade :accessor transparent-ceiling-should-fade :initform nil :documentation "Fade will not begin until this is set.")
    (transparent-ceiling-update-process :accessor transparent-ceiling-update-process :initform nil :documentation "This process will update the transparency of the ceiling to cause a fade out when it is not used")
-   (command-manager :reader command-manager :initform (make-instance 'inflatable-icon-command-manager)))
+   (command-manager :reader command-manager :initform (make-instance 'inflatable-icon-command-manager))
+   (save-button-closure-action :accessor save-button-closure-action :initform nil :initarg :save-button-closure-action )
+   )
   (:default-initargs
       :track-mouse t)
   (:documentation "Editor used to create inflatable icons"))
@@ -1074,42 +1075,6 @@
   (close-window-with-warning Window))
 
 
-(defmethod EDIT-ICON-APPLY-ACTION ((Window inflatable-icon-editor-window) (Button button))
-  (declare (ftype function project-window display-world project-manager-reference lui::save-button-pressed lui::apply-button-pressed))  ;; this file is in the wrong place: should move into AgentCubes
-  (let ((Model-Editor (view-named Window 'model-editor)))
-    ;; finalize geometry
-    (compute-depth (inflatable-icon Model-Editor))
-    (when (container window)
-      (let ((Icon-Editor (view-named window 'icon-editor)))
-        (with-vector-of-size (&image (* (img-width icon-editor) (img-height icon-editor)(truncate (img-depth icon-editor) 8)))
-          (glBindTexture GL_TEXTURE_2D (img-texture icon-editor))  ; make the texture current
-          (glGetTexImage GL_TEXTURE_2D 0 (ecase (truncate (img-depth icon-editor) 8)
-                                           (3 GL_RGB)
-                                           (4 GL_RGBA))
-                         GL_UNSIGNED_BYTE &image)
-          #|
-          (lui::apply-button-pressed (container window) Window :applied-image (print (lui::get-image-as-data &image 
-                               (img-width icon-editor) (img-height icon-editor) :depth (truncate (img-depth icon-editor) 8))))
-          |#
-          )))
-    ;; save
-    (when (destination-inflatable-icon Window)
-      ;; (format t "~%copy into icon")
-      ;; copy the buffer and other flags
-      (copy-content-into (inflatable-icon Model-Editor) (destination-inflatable-icon Window))
-      ;; reinitialize the texture
-      (when (is-flat (destination-inflatable-icon Window))
-        (unless (view (destination-inflatable-icon Window))
-          ;; hack: if the destination inflatable icon does not have a view use the current world
-          (setf (view (destination-inflatable-icon Window)) 
-                (view-named (project-window (project-manager-reference (container window))) "the world")))
-        (update-texture-from-image (destination-inflatable-icon Window)))))
-  (when (container window)
-    ;  (lui::save-button-pressed (container window))
-    (display-world (project-window (project-manager-reference (container window)))))
-  )
-
-
 (defmethod CLEAR-ACTION ((Window inflatable-icon-editor-window) (Button button))
   (declare (ftype function execute-command))
 
@@ -1175,60 +1140,30 @@
 (defmethod EDIT-ICON-SAVE-ACTION ((Window inflatable-icon-editor-window) (Button button))
   (declare (ftype function shape project-window display-world project-manager-reference save shape lui::save-button-pressed lui::apply-button-pressed))  ;; this file is in the wrong place: should move into AgentCubes
   ;; finalize geometry
-  (compute-depth (inflatable-icon (view-named Window 'model-editor)))
-
+   (compute-depth (inflatable-icon (view-named Window 'model-editor)))
   (window-save Window)
   (let ((shape-manager (load-object (make-pathname :name "index" :type "shape"  :directory (pathname-directory (file window))):package (find-package :xlui)))
         (Model-Editor (view-named Window 'model-editor)))
-    
     (let ((image-editor (view-named window 'icon-editor))
-          (colors #|(make-array (list (Rows (inflatable-icon Model-Editor)) (Columns (inflatable-icon Model-Editor))) 
-                              ;:element-type 'short-float
-                              :initial-element 00)|#""
-                  ))
-      
+          (colors  ""))
       (dotimes (Column  (Columns (inflatable-icon Model-Editor)))
         (dotimes (Row  (Rows (inflatable-icon Model-Editor)))
           (multiple-value-bind (red green blue alpha)
                                (get-rgba-color-at  image-editor  (- 31 column) row)                   
-            
-            
             (setf colors (concatenate 'string colors (if (equal red 0) "00" (write-to-string red :base 16))))
             (setf colors (concatenate 'string colors (if (equal green 0) "00" (write-to-string green :base 16))))
             (setf colors (concatenate 'string colors (if (equal blue 0) "00" (write-to-string blue :base 16))))
-            (setf colors (concatenate 'string colors (if (equal alpha 0) "00" (write-to-string alpha :base 16))))
-            ;(setf colors (concatenate 'string colors " "))
-            
-          )
-          )
-        ;(setf colors (concatenate 'string colors (string #\newline)))
-        )
-        ;(print colors)
+            (setf colors (concatenate 'string colors (if (equal alpha 0) "00" (write-to-string alpha :base 16)))))))
       (setf (colors (inflatable-icon Model-Editor)) colors))
     (window-save Window)
-    
     (setf (shape shape-manager) (inflatable-icon Model-Editor)) 
     (save shape-manager))
   (let ((Model-Editor (view-named Window 'model-editor)))
     ;; finalize geometry
     (compute-depth (inflatable-icon Model-Editor))
-    (if (container window)
-      (lui::apply-button-pressed (container window) Window))
-    ;; save
-    (when (destination-inflatable-icon Window)
-      ;; (format t "~%copy into icon")     
-      (copy-content-into (inflatable-icon Model-Editor) (destination-inflatable-icon Window))
-      ;; reinitialize the texture
-      (when (is-flat (destination-inflatable-icon Window))
-        (unless (view (destination-inflatable-icon Window))
-          ;; hack: if the destination inflatable icon does not have a view use the current world
-          (setf (view (destination-inflatable-icon Window)) 
-                (view-named (project-window (project-manager-reference (container window))) "the world")))
-        (update-texture-from-image (destination-inflatable-icon Window)))))
-  (window-close window)
-  (when (container window)
-    (lui::save-button-pressed (container window))
-    (display-world (project-window (project-manager-reference (container window))))))
+    (when (save-button-closure-action window)
+      (funcall (save-button-closure-action window) (inflatable-icon Model-Editor))))
+  (window-close window))
 
 
 ;___________________________________________
@@ -1271,7 +1206,7 @@
     Window))
 
 
-(defun NEW-INFLATABLE-ICON-EDITOR-WINDOW-FROM-IMAGE (Pathname &key Shape-Name Shape-Filename Destination-Inflatable-Icon Close-Action Alert-Close-Action Alert-Close-Target) "
+(defun NEW-INFLATABLE-ICON-EDITOR-WINDOW-FROM-IMAGE (Pathname &key save-button-closure-action Shape-Name Shape-Filename Destination-Inflatable-Icon Close-Action Alert-Close-Action Alert-Close-Target) "
   Create and return an new inflatable icon editor by loading an image. 
   If folder contains .shape file matching image file name then load shape file."
   (declare (ignore Close-Action Destination-Inflatable-Icon)
@@ -1281,7 +1216,7 @@
    (let* ((Window #-cocotron (load-object "lui:resources;windows;inflatable-icon-editor.window" :package (find-package :xlui)) #+cocotron (load-object "lui:resources;windows;inflatable-icon-editor-windows.window" :package (find-package :xlui)))
           (Icon-Editor (view-named Window "icon-editor"))
           (Inflated-Icon-Editor (view-named Window "model-editor")))
-     
+     (setf (save-button-closure-action window) save-button-closure-action)
     (if shape-name
       (setf (title window) (format nil "Inflatable Icon: ~A" (String-capitalize shape-name)))
       (setf (title window) (format nil "Inflatable Icon: ~A" (pathname-name Pathname))))
