@@ -927,7 +927,8 @@
   #-cocotron
   (#/orderedIndex Window)
   #+cocotron
-  (objc:objc-message-send window "orderedIndex" :int))
+  (ccl::with-ns-exceptions-as-errors 
+      (objc:objc-message-send window "orderedIndex" :int)))
 
 
 (defun ORDERED-TEST ()
@@ -1030,8 +1031,10 @@
         ((condition #'(lambda (Condition)
                         (declare (ignore Condition))
                         ;; could be an NS-ERROR caused by the mouse not supporting the creation of an event with a deviceDeltaX
-                        (throw :mouse-info-access-error (* (objc:objc-message-send Event "deltaX" #>CGFloat) 10)))))
-      (objc:objc-message-send Event "deviceDeltaX" #>CGFloat))))
+                        (throw :mouse-info-access-error (* (ccl::with-ns-exceptions-as-errors 
+                                                               (objc:objc-message-send Event "deltaX" #>CGFloat)) 10)))))
+      (ccl::with-ns-exceptions-as-errors 
+          (objc:objc-message-send Event "deviceDeltaX" #>CGFloat)))))
 
 
 (defun GET-MOUSE-EVENT-DELTA-Y-SAVELY (Event)
@@ -1041,8 +1044,10 @@
         ((condition #'(lambda (Condition)
                         (declare (ignore Condition))
                         ;; could be an NS-ERROR caused by the mouse not supporting the creation of an event with a deviceDeltaY
-                        (throw :mouse-info-access-error (* (objc:objc-message-send Event "deltaY" #>CGFloat) 10)))))
-      (objc:objc-message-send Event "deviceDeltaY" #>CGFloat))))
+                        (throw :mouse-info-access-error (* (ccl::with-ns-exceptions-as-errors 
+                                                               (objc:objc-message-send Event "deltaY" #>CGFloat)) 10)))))
+      (ccl::with-ns-exceptions-as-errors 
+          (objc:objc-message-send Event "deviceDeltaY" #>CGFloat)))))
 
 
 (objc:defmethod (#/scrollWheel: :void) ((self native-window-view) Event)
@@ -1081,7 +1086,8 @@
       (view-event-handler 
        (lui-window Self)
        (make-instance 'gesture-event
-         :magnification (objc:objc-message-send Event "magnification" #>CGFloat)
+         :magnification (ccl::with-ns-exceptions-as-errors  
+                            (objc:objc-message-send Event "magnification" #>CGFloat))
          :event-type (native-to-lui-event-type (#/type event))
          :x (truncate (pref mouse-loc :<NSP>oint.x))
          :y (truncate (- (height (lui-window Self)) (pref mouse-loc :<NSP>oint.y)))
@@ -1095,7 +1101,8 @@
       (view-event-handler 
        (lui-window Self)
        (make-instance 'gesture-event
-         :rotation (objc:objc-message-send Event "rotation" #>float)
+         :rotation (ccl::with-ns-exceptions-as-errors 
+                       (objc:objc-message-send Event "rotation" #>float))
          :event-type (native-to-lui-event-type (#/type event))
          :x (truncate (pref mouse-loc :<NSP>oint.x))
          :y (truncate (- (height (lui-window Self)) (pref mouse-loc :<NSP>oint.y)))
