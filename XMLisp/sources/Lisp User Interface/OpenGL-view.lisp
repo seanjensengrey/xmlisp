@@ -247,6 +247,9 @@
               (zerop (gluBuild2DMipmaps GL_TEXTURE_2D InternalFormat width height PixelFormat GL_UNSIGNED_BYTE &Image))
             (error "could not create mipmaps"))
           (when Verbose (format t "Completed Mipmaps~%"))))
+      ;; OpenGL should have copied now the image data into texture memory: release
+      (dispose-vector &Image)
+      ;; return the texture handle and image dimensions
       (values
        (%get-long &texName)
        Width 
