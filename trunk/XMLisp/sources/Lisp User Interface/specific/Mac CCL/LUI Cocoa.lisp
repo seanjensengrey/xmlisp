@@ -590,18 +590,7 @@
   (:metaclass ns:+ns-object
 	      :documentation "Native window"))
 
-#|
-(objc:defmethod (#/sendEvent: :void) ((Self native-window) Event)
-  ;; (print (native-to-lui-event-type (#/type Event)))
-  (call-next-method Event))
-|#
-#|
-(objc:defmethod (#/validateMenuItem: #>BOOL) 
-                ((self native-window) (item :id))
-  (print "VALIDATE NATIVE WINDOW")
-  (print item)
-  #$YES)
-|#
+
 
 (objc:defmethod (#/zoom: :void) ((self native-window) sender)
   (call-next-method sender)
@@ -1911,7 +1900,7 @@
 
 
 (defmethod SET-SELECTED-ITEM-WITH-TITLE ((Self popup-button-control) text)
-  (#/selectItemWithTitle: (native-view self) (native-string (string-capitalize text))))
+  (#/selectItemWithTitle: (native-view self) (native-string text)))
 
 
 (defmethod ADD-ITEM ((Self popup-button-control) Text Action )
@@ -2499,6 +2488,11 @@
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
 
+
+(objc:defmethod (#/mouseDown: :void) ((self native-color-well) event)
+  (call-next-method event)
+  (unless (#/isActive self)
+    (#/activate: self #$YES)))
 
 (defmethod MAKE-NATIVE-OBJECT ((Self color-well-control))
   (let ((Native-Control (make-instance 'native-color-well :lui-view Self)))
