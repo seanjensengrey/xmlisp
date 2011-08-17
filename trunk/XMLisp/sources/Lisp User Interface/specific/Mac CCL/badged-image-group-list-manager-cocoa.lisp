@@ -174,13 +174,13 @@
               :documentation "This is a view that will detect mouse input fo the group and will also containt all the other views for the group"))
 
 
-(defmethod UPDATE-IMAGE ((self group-detection-view) &key (image-name nil) (image-data nil))
+(defmethod UPDATE-IMAGE ((self group-detection-view) group-name item-name &key  (image-name nil) (image-data nil))
   (let ((subviews (gui::list-from-ns-array (#/subviews self))))  
     (dolist (subview subviews)
       (if (or
            (equal (type-of subview) 'lui::group-item-image-view)
            (equal (type-of subview) 'lui::badged-image-view))
-        (update-image subview :image-name image-name :image-data image-data)))))
+        (update-image subview  group-name item-name :image-name image-name :image-data image-data)))))
 
 
 (objc:defmethod (#/mouseDown: :void) ((self group-detection-view) Event)
@@ -313,7 +313,7 @@
       self)))
 
 
-(defmethod UPDATE-IMAGE ((self group-item-image-view) &key (image-name nil) (image-data nil)) 
+(defmethod UPDATE-IMAGE ((self group-item-image-view) group-name item-name &key (image-name nil) (image-data nil)) 
   (if image-name
     (setf (image-name self) image-name))
   (let ((subviews (gui::list-from-ns-array (#/subviews self))))   
@@ -321,7 +321,7 @@
       (if (equal (type-of subview) 'lui::mouse-detecting-image-view)
         (progn
           (#/removeFromSuperviewWithoutNeedingDisplay subview)
-          (let ((image (make-instance 'image-control  :image-path (image-path (get-group-item-with-name (container self) (selected-group (container self)) (if (selected-group-item (container self)) (selected-group-item (container self)) (item-name (get-main-item (get-group-with-name (container self) (selected-group (container self))))) )))  :src (image-name self) :x 0 :y 0 :width (image-size self) :height (image-size self)))) 
+          (let ((image (make-instance 'image-control  :image-path (image-path (get-group-item-with-name (container self) group-name item-name))  :src (image-name self) :x 0 :y 0 :width (image-size self) :height (image-size self)))) 
             (let ((image-view (#/alloc mouse-detecting-image-view)))
               (ns:with-ns-rect (Frame 0 0 (image-size self) (image-size self))
                 (#/initWithFrame: image-view Frame )  
@@ -393,7 +393,7 @@
   self) 
 
 
-(defmethod UPDATE-IMAGE ((self badged-image-view) &key (Image-Name nil) (image-data nil))
+(defmethod UPDATE-IMAGE ((self badged-image-view) group-name item-name &key (Image-Name nil) (image-data nil))
   (declare (ignore Image-Name))
   (let ((subviews (gui::list-from-ns-array (#/subviews self))))  
     (dolist (subview subviews)
@@ -695,7 +695,7 @@
       (setf (list-item detection-view-item) group-item)
       (setf (item-detection-view group-item) detection-view-item)))
   
-  (update-image (group-view group))
+  (update-image (group-view group) (group-name group) (item-name group-item))
   (remove-background-from-text-fields (native-view self)))
 
 
@@ -773,13 +773,10 @@
   (if (< (width self) (width (lui-view (#/superview (#/superview (native-view self))))))
     (setf (width self) (width (lui-view (#/superview (#/superview (native-view self)))))))
   (dolist (old-group (groups self))
-    (if (or
+    (when (or
          (equal (first group) (group-name old-group))
          (equal (first group) (string-capitalize (group-name old-group))))
-      (progn 
-        (print "Cannot add group, a group with this name already exists")
-        ;(warn "Cannot add group, a group with this name already exists")
-        (return-from add-group nil))))                                                                                             ;need to do a dolist for the following
+        (return-from add-group nil)))                                                                                             ;need to do a dolist for the following
   (let ((list-group (make-instance 'list-group :is-disclosed nil :group-name (first group) :group-image (second group) :group-items (create-list-of-items-from-list-of-strings (third group))))); (third group)))) ;(make-instance 'list-group-item :item-name (first (third group)) :image-name (second (third group))))))
     (case (groups self)
       (nil (setf (groups self) (list list-group)))
