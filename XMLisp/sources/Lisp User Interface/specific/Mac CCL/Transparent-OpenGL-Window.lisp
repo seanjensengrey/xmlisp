@@ -151,7 +151,6 @@
 
 
 (defmethod PREPARE-OPENGL ((Self transparent-opengl-window))
-  ;; (print "init")
   )
 
 
