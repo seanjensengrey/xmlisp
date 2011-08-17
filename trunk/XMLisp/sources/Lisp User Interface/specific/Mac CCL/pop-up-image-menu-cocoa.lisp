@@ -158,14 +158,6 @@
     (#/stopModal (#/sharedApplication ns:ns-application))))
 
 
-#|  Attemp to track off window mouse events
-(objc:defmethod (#/resignKeyWindow :void) ((Self popup-window))
-  ;(print "resigned!!!!"))
-
-  (objc:defmethod (#/resignMainWindow :void) ((Self popup-window))
-  ;(print "resigned!!!!"))                                        
-    (objc:defmethod (#/mouseMoved: :void) ((self popup-window) Event))
-|#
 ;;_______________________________
 ;; Popup window view             |
 ;;_______________________________
