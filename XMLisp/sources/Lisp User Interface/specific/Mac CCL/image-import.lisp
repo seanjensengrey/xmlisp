@@ -108,7 +108,7 @@
     ;; should massage data: GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV for best performance
     ;; http://developer.apple.com/documentation/graphicsimaging/Conceptual/OpenGL-MacProgGuide/opengl_texturedata/opengl_texturedata.html
     (when (%null-ptr-p Image-Representation)
-      (format t "~%missing texture ~S" Filename)
+      (error "~%missing texture ~S" Filename)
       (return-from create-image-from-file))
     ;; do the OpenGL vertical image flip
     (when Flip-Vertical
