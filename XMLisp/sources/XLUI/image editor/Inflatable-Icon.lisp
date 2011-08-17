@@ -447,8 +447,6 @@
   ;; current: random small quads -> super infefficient way to draw the connectors
   ;; better: sort and make quad strips
   ;; best: run-lenght join quads: same color, connected, planar quads into big quads
-  ;(print "draw connectors")
-  ;(print (/ (hemlock::time-to-run 
   (dolist (Connector (connectors Self))
     (glBegin gl_quads)
     (glcolor4ub (red Connector) (green Connector) (blue Connector) (alpha Connector))
