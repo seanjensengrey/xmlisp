@@ -38,7 +38,8 @@
              (#_CGLLockContext ,CGLContext)
              (#/makeCurrentContext ,GLContext)
              (progn ,@Forms))
-         (#/flushBuffer ,GLContext)
+         #+cocotron (#/flushBuffer ,GLContext)
+         #-cocotron (glFlush)  ;;; no double buffering required for OS X Cocoa
          (#/clearCurrentContext ns:ns-opengl-context)
          (#_CGLUnlockContext  ,CGLContext))))))
 
@@ -110,7 +111,6 @@
                                         #$NSOpenGLPFADepthSize 32
                                         0}
                             #-cocotron {#$NSOpenGLPFAColorSize 32 
-                                        #$NSOpenGLPFADoubleBuffer 
                                         #$NSOpenGLPFADepthSize 32
                                         #$NSOpenGLPFASampleBuffers 1
                                         #$NSOpenGLPFASamples 4
@@ -122,7 +122,6 @@
                                         #$NSOpenGLPFADepthSize 32
                                         0}
                             #-cocotron {#$NSOpenGLPFAColorSize 32 
-                                        #$NSOpenGLPFADoubleBuffer 
                                         #$NSOpenGLPFADepthSize 32
                                         #$NSOpenGLPFANoRecovery
                                         0}))))
@@ -141,8 +140,7 @@
                     (#/pixelFormat native-control) ;; redundant but should be OK
                     (#/openGLContext (native-view View-to-Share)))))
               (unless glContext (error "cannot share OpenGLContext of view ~A" View-to-Share))
-              (#/setOpenGLContext: native-control glContext)
-              )))
+              (#/setOpenGLContext: native-control glContext))))
         (#/release Pixel-Format)
         Native-Control))))
 
