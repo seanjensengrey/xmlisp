@@ -104,38 +104,46 @@
   Create an image buffer from <Filename>
   - File must be 32 bit ARGB compatible, e.g., .png with mask or 24 bit RGB."
   (when Verbose (format t "CREATE-IMAGE-FROM-FILE: ~A~%" Filename))
-  (let* ((Image-Representation (#/retain (ns-image-rep-from-file (native-string (namestring (translate-logical-pathname Filename)))))))
-    ;; should massage data: GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV for best performance
-    ;; http://developer.apple.com/documentation/graphicsimaging/Conceptual/OpenGL-MacProgGuide/opengl_texturedata/opengl_texturedata.html
-    (when (%null-ptr-p Image-Representation)
-      (error "~%missing texture ~S" Filename)
-      (return-from create-image-from-file))
-    ;; do the OpenGL vertical image flip
-    (when Flip-Vertical
-      (flip-vertical-buffer 
-       (#/bitmapData Image-Representation) 
-       (* (#/bytesPerRow Image-Representation) (#/pixelsHigh Image-Representation))
-       (#/bytesPerRow Image-Representation)))
-    ;(format t "bitmap Data = ~A pixelsWide = ~A pixelsHigh = ~A bitsPerPixel = ~A" (#/bitmapData Image-Representation) (#/pixelsWide Image-Representation) (#/pixelsHigh Image-Representation) (#/bitsPerPixel Image-Representation))
-    (if (and Forced-Depth
-             (= Forced-Depth 32)
-             (= (#/bitsPerPixel Image-Representation) 24))
-      (values 
-       (create-32bit-rgba-image-from-24bit-rgb-image (#/bitmapData Image-Representation)
-                                                     (#/pixelsWide Image-Representation)
-                                                     (#/pixelsHigh Image-Representation))
-       (#/pixelsWide Image-Representation)
-       (#/pixelsHigh Image-Representation)
-       Forced-Depth
-       t
-       (#/bitmapFormat Image-Representation))
-      (values 
-       (#/bitmapData Image-Representation)
-       (#/pixelsWide Image-Representation)
-       (#/pixelsHigh Image-Representation)
-       (#/bitsPerPixel Image-Representation)
-       (#/hasAlpha Image-Representation)
-       (#/bitmapFormat Image-Representation)))))
+  ;; access image data from file, copy into vector and return
+  (ccl::with-autorelease-pool
+      (let* ((Image-Representation (ns-image-rep-from-file (native-string (namestring (translate-logical-pathname Filename))))))
+        ;; should massage data: GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV for best performance
+        ;; http://developer.apple.com/documentation/graphicsimaging/Conceptual/OpenGL-MacProgGuide/opengl_texturedata/opengl_texturedata.html
+        (when (%null-ptr-p Image-Representation)
+          (error "~%missing texture ~S" Filename)
+          (return-from create-image-from-file))
+        ;; do the OpenGL vertical image flip
+        (when Flip-Vertical
+          (flip-vertical-buffer 
+           (#/bitmapData Image-Representation) 
+           (* (#/bytesPerRow Image-Representation) (#/pixelsHigh Image-Representation))
+           (#/bytesPerRow Image-Representation)))
+        ;(format t "bitmap Data = ~A pixelsWide = ~A pixelsHigh = ~A bitsPerPixel = ~A" (#/bitmapData Image-Representation) (#/pixelsWide Image-Representation) (#/pixelsHigh Image-Representation) (#/bitsPerPixel Image-Representation))
+        (if (and Forced-Depth
+                 (= Forced-Depth 32)
+                 (= (#/bitsPerPixel Image-Representation) 24))
+          (values 
+           (create-32bit-rgba-image-from-24bit-rgb-image 
+            (#/bitmapData Image-Representation)
+            (#/pixelsWide Image-Representation)
+            (#/pixelsHigh Image-Representation))
+           (#/pixelsWide Image-Representation)
+           (#/pixelsHigh Image-Representation)
+           Forced-Depth
+           t
+           (#/bitmapFormat Image-Representation))
+          (values 
+           (copy-vector (#/bitmapData Image-Representation) 
+                        (* (#/pixelsWide Image-Representation)
+                           (#/pixelsHigh Image-Representation)
+                           (ecase (#/bitsPerPixel Image-Representation)
+                             (32 4)
+                             (24 3))))
+           (#/pixelsWide Image-Representation)
+           (#/pixelsHigh Image-Representation)
+           (#/bitsPerPixel Image-Representation)
+           (#/hasAlpha Image-Representation)
+           (#/bitmapFormat Image-Representation))))))
 
 
 (defun RGBA-IMAGE-RED (Image X Y Width) "
@@ -184,5 +192,12 @@
 (time (create-image-from-file "/Users/alex/working copies/XMLisp svn/trunk/XMLisp/resources/textures/palm-araceae02.png"))
 
 (time (create-image-from-file "/Users/alex/working copies/XMLisp svn/trunk/XMLisp/resources/textures/palm-araceae02.png" :flip-vertical nil))
+
+
+;; watch "Real Memory" in Activity Monitor: should not change much
+
+(dotimes (i 100)
+  (print i)
+  (dispose-vector (create-image-from-file "lui:resources;textures;palm-araceae02.png")))
 
 |#
