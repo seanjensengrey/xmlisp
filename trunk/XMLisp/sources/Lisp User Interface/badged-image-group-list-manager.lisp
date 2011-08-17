@@ -164,7 +164,8 @@
 
 
 (defmethod DEFAULT-SELECTED-GROUP-CHANGED-ACTION ((window window)(self badged-image-group-list-manager-view))
-  (print "DEFAULT SELECTED GROUP CHANGED ACTION"))
+  ;;Do nothing
+  )
 
 
 (defmethod MAKE-SELECTION ((self badged-image-group-list-manager-view) group-name)
@@ -172,19 +173,19 @@
 
 
 (defmethod layout-changed ((self badged-image-group-list-manager-view))
-  ;nothing
+  ;; nothing
   )
 
 
 (defmethod EDIT-GROUP ((self badged-image-group-list-manager-view) group-name)
   (declare (ignore group-name))
-  (print "Editting group.  Please override me" ))
-
+  ;; do nothing)
+  )
 
 (defmethod EDIT-GROUP-ITEM ((self badged-image-group-list-manager-view) group-name item-name)
   (declare (ignore group-name item-name))
-  (print "Editting group item.  Please override me" ))
-
+  ;; do nothing)
+  )
   
 (defmethod MAP-SUBVIEWS ((Self badged-image-group-list-manager-view) Function &rest Args)
   (declare (ignore Function Args))
@@ -221,13 +222,13 @@
 
 (defmethod group-name-changed ((Self badged-image-group-list-manager-view) group-name new-name)
   (declare (ignore group-name new-name))
-  (print "GROUP NAME CHANGED"))
-
+  ;; do nothing)
+  )
 
 (defmethod item-name-changed ((Self badged-image-group-list-manager-view) group-name item-name new-name)
   (declare (ignore group-name item-name new-name))
-  (print "ITEM NAME CHANGED"))
-
+  ;; do nothing)
+  )
 
 (defmethod TAKE-FOCUS ((Self badged-image-group-list-manager-view))
   (declare (ftype function remove-background-and-end-editting-for-all-text-fields)) ;; implemented in cocoa specific file
