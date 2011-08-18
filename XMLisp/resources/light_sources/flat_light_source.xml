@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+  <light-source name="flat" x="10.0" y="10.4" z="10.0">
+    <ambient red="1.0" green="1.0" blue="1.0"/>
+    <diffuse red="0.0" green="0.0" blue="0.0"/>
+    <specular red="0.0" green="0.0" blue="0.0"/>
+  </light-source>
