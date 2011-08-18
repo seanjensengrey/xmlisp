@@ -159,7 +159,7 @@
       (catch :cancel
         (setf yes-no-return-val 
               (xlui::standard-alert-dialog (format nil "Are you sure you want to close the window ~A?" (title self))
-                                           :explanation-text "Your inflatable iocn is unsaved and any unsaved changes will be lost." 
+                                           :explanation-text "Your inflatable icon is unsaved and any unsaved changes will be lost." 
                                            :yes-text    "Save" 
                                            :no-text     "Don't Save" 
                                            :cancel-text "Cancel"))
