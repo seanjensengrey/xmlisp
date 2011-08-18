@@ -59,6 +59,7 @@
 
 (defmethod INITIALIZE-INSTANCE :after ((Self inflatable-icon-editor-window) &rest Args) 
   (declare (ignore Args))
+  (setf (window (command-manager self)) self)
   (let ((Model-Editor (view-named self 'model-editor)))
     (if (is-upright (inflatable-icon Model-Editor))
       (enable (view-named self "upright")))))
@@ -149,6 +150,32 @@
 (defmethod WINDOW-CLOSE-EVENT-HANDLER ((Self inflatable-icon-editor-window))
   (close-window-with-warning Self))
 
+
+(defmethod WINDOW-SHOULD-CLOSE ((Self inflatable-icon-editor-window))
+  (when (window-needs-saving-p self)
+    (let ((cancelled t)
+          (yes-no-return-val nil))
+      (lui::bring-to-front self)
+      (catch :cancel
+        (setf yes-no-return-val 
+              (xlui::standard-alert-dialog (format nil "Are you sure you want to close the window ~A?" (title self))
+                                           :explanation-text "Your inflatable iocn is unsaved and any unsaved changes will be lost." 
+                                           :yes-text    "Save" 
+                                           :no-text     "Don't Save" 
+                                           :cancel-text "Cancel"))
+        (setf cancelled nil))
+      (cond 
+       (cancelled
+        (return-from window-should-close nil))
+       (yes-no-return-val
+        ;; This will close the window
+        (edit-icon-save-action self (make-instance 'button))
+        )
+       (t
+        (return-from window-should-close t))
+       )))
+  t)
+  
 
 (defmethod SELECT-ALL ((Self inflatable-icon-editor-window))
   (select-all (view-named Self 'icon-editor)))
@@ -268,8 +295,11 @@
 (defmethod DOCUMENT-TYPE-FILE-EXTENSION ((Self inflatable-icon-editor-window))
   "shape")
 
+
+#|
 (defmethod WINDOW-NEEDS-SAVING-P ((Self inflatable-icon-editor-window))
   t)
+|#
 
 
 (defmethod IMAGE-FILE-NAME ((Self inflatable-icon-editor-window))
@@ -912,10 +942,8 @@
 
   
 (defmethod ADJUST-NOISE-ACTION ((Window inflatable-icon-editor-window) (Slider slider))
-  
   (let ((Noise (value Slider))
         (Model-Editor (view-named Window 'model-editor)))
-    (print (smooth (inflatable-icon Model-Editor)))
     (if (equal Noise 0.0)
       (progn
         (setf (value (view-named window "smooth_slider")) 0.0)
@@ -932,12 +960,9 @@
       (setf (text Text-View) (format nil "~4,2F" Noise))
       (display Text-View)
       ;; update model editor
-      
-        (setf (noise (inflatable-icon Model-Editor)) Noise)
-        (update-inflation Window)
-        (setf (is-flat (inflatable-icon Model-Editor)) nil)))
-    ;;Wicked cocotron hack to get the inflated icon editor to update
-  )
+      (setf (noise (inflatable-icon Model-Editor)) Noise)
+      (update-inflation Window)
+      (setf (is-flat (inflatable-icon Model-Editor)) nil))))
 
 
 (defmethod ADJUST-SMOOTH-ACTION ((Window inflatable-icon-editor-window) (Slider slider))
@@ -1077,10 +1102,8 @@
 
 (defmethod CLEAR-ACTION ((Window inflatable-icon-editor-window) (Button button))
   (declare (ftype function execute-command))
-
   (let* ((Model-Editor (or (view-named window 'model-editor) (error "model editor missing")))
          (Inflatable-Icon (inflatable-icon Model-Editor)))
-    
     (setf (noise inflatable-icon) 0.0)
     (setf (smooth inflatable-icon) 0)
     (setf (smoothing-cycles window) 0)
@@ -1108,7 +1131,6 @@
     (setf (value (view-named window "noise_slider")) 0.0)
     (setf (value (view-named window "z_slider")) 0.0)
     ; (set-selected-item-with-title (view-named window "surfaces") "Front")
-     
     (setf (dz (inflatable-icon Model-Editor) ) 0.0)
     (let ((Text-View (view-named window 'distance-text)))
       ;; update label
@@ -1122,7 +1144,6 @@
       ;; update label
       (setf (text Text-View) (format nil "~4,2F" 0.0))
       (display Text-View))
-    
     (let ((Text-View (view-named window 'noise-text)))
       ;; update label
       (setf (text Text-View) (format nil "~4,2F" 0.0))
@@ -1133,14 +1154,13 @@
       (setf (text Text-View) (format nil "~A" 0.0))
       (display Text-View))
     (clear-selection (view-named window 'icon-editor))
-    (display-with-force Model-Editor)
-    ))
+    (display-with-force Model-Editor)))
 
 
 (defmethod EDIT-ICON-SAVE-ACTION ((Window inflatable-icon-editor-window) (Button button))
   (declare (ftype function shape project-window display-world project-manager-reference save shape lui::save-button-pressed lui::apply-button-pressed))  ;; this file is in the wrong place: should move into AgentCubes
-  ;; finalize geometry
-   (compute-depth (inflatable-icon (view-named Window 'model-editor)))
+  (set-document-editted window :mark-as-editted nil)
+  (setf  (window-needs-saving-p window) nil)
   (window-save Window)
   (let ((shape-manager (load-object (make-pathname :name "index" :type "shape"  :directory (pathname-directory (file window))):package (find-package :xlui)))
         (Model-Editor (view-named Window 'model-editor)))
@@ -1155,7 +1175,7 @@
             (setf colors (concatenate 'string colors (if (equal blue 0) "00" (write-to-string blue :base 16))))
             (setf colors (concatenate 'string colors (if (equal alpha 0) "00" (write-to-string alpha :base 16)))))))
       (setf (colors (inflatable-icon Model-Editor)) colors))
-    (window-save Window)
+    ;(window-save Window)
     (setf (shape shape-manager) (inflatable-icon Model-Editor)) 
     (save shape-manager))
   (let ((Model-Editor (view-named Window 'model-editor)))
