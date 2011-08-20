@@ -383,14 +383,14 @@
 ;__________________________________________________________________________________________________
 ; Image Button Cluster                                                                             |
 ;                                                                                                  |
-;      <image-button-segment>                                                                      |
+;      <image-button-cluster>                                                                      |
 ;        <image-button image="draw-button.png" action="draw-tool-action" />                        | 
 ;        <image-button image="erase-button.png" action="erase-tool-action" />                      |
 ;      </image-button-cluster>                                                                     |
 ;__________________________________________________________________________________________________
 
 (defclass IMAGE-BUTTON-CLUSTER (column) 
-  ((selected-button :accessor selected-button :initform nil :documentation "currently selected button")
+  ((selected-button :accessor selected-button :initarg :selected-button :initform nil :documentation "currently selected button")
    (images :accessor images :initform ())
    )
   (:default-initargs
@@ -425,7 +425,11 @@
   (setf (user-action button) (action button))
   (setf (action button) 'cluster-action)
   (initialize-event-handling button)
-  (setf (images cluster) (append (images cluster) (list button))))
+  (setf (images cluster) (append (images cluster) (list button)))
+  (when (equal (selected-button cluster) (name button))
+    (set-button-on button)
+    (setf (selected-in-cluster button) t)))
+
 
 ;__________________________________________________________________________________________________
 ; Image Button Cluster                                                                             |
