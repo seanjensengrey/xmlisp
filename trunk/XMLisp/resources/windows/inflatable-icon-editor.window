@@ -3,46 +3,46 @@
   <column align="stretch" valign="stretch">
   <row align="stretch" valign="stretch" vflex="1">
     <image-button-cluster>
-     <image-button tooltip="Draw tool"  name="draw button" action="draw-tool-action" image="draw-button.png"/> 
-     <image-button tooltip="Erase tool" name="erase button" action="erase-tool-action" image="erase-button.png"/> 
-     <image-button tooltip="Eyedropper tool" name="eye dropper button" action="eye-dropper-tool-action" image="eye-dropper-button.png"/> 
-     <image-button tooltip="Paintbucket tool" name="paint bucket button" action="paint-bucket-tool-action" image="paint-bucket-button.png"/>
-     <image-button tooltip="Magic wand tool" name="magic wand button" action="magic-wand-tool-action" image="magic-wand-button.png"/>
-     <image-button tooltip="Rectangle selection tool" name="select rectangle button" action="rect-tool-action" image="select-rect-button.png"/>
-     <image-button tooltip="Ellipse selection tool" name="select ellipse button" action="ellipse-tool-action" image="select-ellipse-button.png"/>
-     <image-button tooltip="Polygon selection tool" name="select polygon button" action="polygon-tool-action" image="select-polygon-button.png"/>
+     <image-button tooltip="Draw Tool: click in the 2D Icon Editor to draw pixels of the selected drawing color."  name="draw button" action="draw-tool-action" image="draw-button.png"/> 
+     <image-button tooltip="Erase Tool: click in the 2D Icon Editor to erase pixels." name="erase button" action="erase-tool-action" image="erase-button.png"/> 
+     <image-button tooltip="Eyedropper Tool: click on a pixel in the 2D Icon Editor to select its color as the drawing color." name="eye dropper button" action="eye-dropper-tool-action" image="eye-dropper-button.png"/> 
+     <image-button tooltip="Paint Bucket Tool: click to fill the continuously colored area or the area within a selection defined with the Marquee tools with the drawing color." name="paint bucket button" action="paint-bucket-tool-action" image="paint-bucket-button.png"/>
+     <image-button tooltip="Magic Wand Tool: click to select all the pixels of the same color as the one clicked on. " name="magic wand button" action="magic-wand-tool-action" image="magic-wand-button.png"/>
+     <image-button tooltip="Rectangular Marquee Tool: click and drag in the 2D Icon Editor to select a rectangular area." name="select rectangle button" action="rect-tool-action" image="select-rect-button.png"/>
+     <image-button tooltip="Elliptical Marquee Tool: click and drag in the 2D Icon Editor to select an elliptical area." name="select ellipse button" action="ellipse-tool-action" image="select-ellipse-button.png"/>
+     <image-button tooltip="Polygonal Marquee Tool: click at different points in the 2D Icon Editor to create a polygonal selection. Double click at the end to close the selection." name="select polygon button" action="polygon-tool-action" image="select-polygon-button.png"/>
      <spacer height="10"/>
-     <color-well tooltip="Color selection tool" name="color well" action="pick-color-action" color="000000"/>
+     <color-well tooltip="Color Selection Tool: use the color picker to set the drawing color for the 2D Icon Editor." name="color well" action="pick-color-action" color="000000"/>
     </image-button-cluster>
     <spacer width="5"/>
-    <icon-editor tooltip="2D Editor" name="icon-editor" flex="1" action="change-icon-action"/>
+    <icon-editor tooltip="2D Icon Editor: a 32x32 pixel canvas for creating the 2D icon to be inflated." name="icon-editor" flex="1" action="change-icon-action"/>
     <spacer width="5"/>
     <image-button-cluster name="mirror-cluster">
-     <image-button tooltip="Mirror none" name="mirror-none-button" action="mirror-none-action" image="mirror-none-button.png"/> 
-     <image-button tooltip="Mirror horizontally" name="mirror-horizontally-button" action="mirror-horizontally-action" image="mirror-horizontally-button.png"/> 
-     <image-button tooltip="Mirror vertically" name="mirror-vertically-button" action="mirror-vertically-action" image="mirror-vertically-button.png"/> 
-     <image-button tooltip="Mirror horizontally and vertically" name="mirror-both-button" action="mirror-both-action" image="mirror-both-button.png"/> 
+     <image-button tooltip="No Mirroring." name="mirror-none-button" action="mirror-none-action" image="mirror-none-button.png" /> 
+     <image-button tooltip="Mirror Horizontally: the top half of your 2D icon will be mirrored at the bottom." name="mirror-horizontally-button" action="mirror-horizontally-action" image="mirror-horizontally-button.png"/> 
+     <image-button tooltip="Mirror Vertically: the left half of your 2D icon will be mirrored on the right." name="mirror-vertically-button" action="mirror-vertically-action" image="mirror-vertically-button.png"/> 
+     <image-button tooltip="Mirror Horizontally and Vertically: the top left quadrant of your 2D icon will be mirrored in the other three quadrants." name="mirror-both-button" action="mirror-both-action" image="mirror-both-button.png"/> 
     </image-button-cluster>
     <column width="250" valign="top" align="stretch">
       <label width="65" text="Inflation" align="center"/>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="Pressure"/>
-        <inflation-jog-slider tooltip="Pressure" action="adjust-pressure-action" name="pressure_slider" value="0.0" min-value="-0.1" max-value="0.1" flex="1"/>
+        <inflation-jog-slider tooltip="Pressure jog dial: drag and hold to inflate or deflate the pixels selected in the 2D Icon Editor." action="adjust-pressure-action" name="pressure_slider" value="0.0" min-value="-0.1" max-value="0.1" flex="1"/>
         <label name="pressuretext" align="right" width="35" text="0.0"/>
      </row>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="Ceiling"/>
-        <slider tooltip="Ceiling" action="adjust-ceiling-action" name="ceiling_slider" value="1.0" max-value="2.0" flex="1"/>
+        <slider tooltip="Ceiling slider: create a plane that defines the maximum altitute for the inflation. Ceilings can be defined for the entire icon or only for a selection." action="adjust-ceiling-action" name="ceiling_slider" value="1.0" max-value="2.0" flex="1"/>
         <label name="ceilingtext" align="right" width="35" text="1.0"/>
       </row>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="Noise"/>
-        <slider tooltip="Noise" action="adjust-noise-action" name="noise_slider" max-value="0.2" flex="1" />
+        <slider tooltip="Noise slider: add noise to the entire icon or the selection." action="adjust-noise-action" name="noise_slider" max-value="0.2" flex="1" />
         <label name="noise-text" align="right" width="35" text="0.0"/>
       </row>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="Smooth"/>
-        <slider tooltip="Smoothness" action="adjust-smooth-action"  max-value="5" flex="1"  name="smooth_slider"/>
+        <slider tooltip="Smoothness slider: ???smoothen out the noise in discrete steps???" action="adjust-smooth-action"  max-value="5" flex="1"  name="smooth_slider"/>
         <label name="smooth-text" align="right" width="35" text="0.0"/>
       </row>
       <row align="center" minimize="vertical" valign="middle">
@@ -52,7 +52,7 @@
       <label width="65" text="Geometry" align="center"/>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="z offset"/>
-        <slider tooltip="Z-offset" action="adjust-z-offset-action" min-value="-1.0" max-value="1.0" flex="1" name="z_slider"/>
+        <slider tooltip="Z-offset: distance from the grid in the world at which the shape will be drawn." action="adjust-z-offset-action" min-value="-1.0" max-value="1.0" flex="1" name="z_slider"/>
         <label name="z-offset-text" align="right" width="35" text="0.0"/>
       </row>
       <check-box tooltip="Upright" name="upright" text="upright" action="upright-action"/>
