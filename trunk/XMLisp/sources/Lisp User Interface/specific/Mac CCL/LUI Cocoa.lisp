@@ -1913,6 +1913,10 @@
     (warn "Cannot add item with the same title (~S)" Text)))
 
 
+(defmethod REMOVE-ITEM ((Self popup-button-control) Title)
+  (#/removeItemWithTitle: (native-view Self) (native-string Title)))
+
+
 (defmethod ADD-NS-MENU-ITEM ((Self popup-button-control) Item)
   (if (equal (#/indexOfItemWithTitle: (native-view Self) (native-string (Text item))) -1)
     (progn   
