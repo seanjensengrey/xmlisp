@@ -62,7 +62,8 @@
   (setf (window (command-manager self)) self)
   (let ((Model-Editor (view-named self 'model-editor)))
     (if (is-upright (inflatable-icon Model-Editor))
-      (enable (view-named self "upright")))))
+      (enable (view-named self "upright"))))
+  (set-cursor "drawCursor"))
   
 
 (defun TRANSPARENT-CEILING-UPDATE-LOCK()
