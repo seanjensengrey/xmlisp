@@ -909,19 +909,18 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 
 
 (defmethod MOUSE-DRAG-ENTER-EVENT-HANDLER ((Agent1 agent-3d) (Agent2 agent-3d))
-  (format t "~%drag enter: ~A onto ~A" (type-of Agent2) (type-of Agent1))
   (setf (is-drag-entered Agent1) t)
   (unless (is-animated (view Agent1)) (display (view Agent1))))
 
 
 (defmethod MOUSE-DRAG-LEAVE-EVENT-HANDLER ((Agent1 agent-3d) (Agent2 agent-3d))
-  (format t "~%drag leave: ~A from ~A" (type-of Agent2) (type-of Agent1))
   (setf (is-drag-entered Agent1) nil)
   (unless (is-animated (view Agent1)) (display (view Agent1))))
 
 
 (defmethod RECEIVE-DROP ((Agent1 agent-3d) (Agent2 agent-3d))
-  (format t "~%received drop: ~A onto ~A" (type-of Agent2) (type-of Agent1)))
+  ;;; (format t "~%received drop: ~A onto ~A" (type-of Agent2) (type-of Agent1)))
+  )
 
 
 (defmethod CLICK-TARGET ((Self agent-3d))
