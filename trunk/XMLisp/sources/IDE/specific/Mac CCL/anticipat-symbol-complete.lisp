@@ -61,7 +61,7 @@
       (setq *Anticipatory-Symbol-Completion-Background-Color* 
             (gui::color-values-to-nscolor 55000/65535 55000/65535 64000/65535))))
 
-(defvar *Zero-Completion-Hook* #'beep "Call this function if there are no completions: could be the sign of a typo. Typically replace with more subtle sound.")
+(defvar *Zero-Completion-Hook* nil "Call this function if there are no completions: could be the sign of a typo. Typically replace with more subtle sound.")
 
 (defvar *Use-API-Names* t "if true convert symbols to same name and case as in API definition")
 
