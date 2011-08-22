@@ -441,7 +441,7 @@
 ;__________________________________________________________________________________________________
 
 (defclass IMAGE-BUTTON-ROW (row) 
-  ((selected-button :accessor selected-button :initform nil :documentation "currently selected button")
+  ((selected-button :accessor selected-button :initarg :selected-button :initform nil :documentation "currently selected button")
    (images :accessor images :initform ()))
   (:default-initargs
     :padding -1
@@ -471,7 +471,10 @@
   (setf (user-action button) (action button))
   (setf (action button) 'cluster-action)
   (initialize-event-handling button)
-  (setf (images cluster) (append (images cluster) (list button))))
+  (setf (images cluster) (append (images cluster) (list button)))
+  (when (equal (selected-button cluster) (name button))
+    (set-button-on button)
+    (setf (selected-in-cluster button) t)))
 
 ;_____________________________________________________________________
 ; Radio Button Cluster                                                |
