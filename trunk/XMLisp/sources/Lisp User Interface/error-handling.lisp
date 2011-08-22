@@ -85,13 +85,14 @@
                                   (ccl:print-call-history :start-frame-number 1 :detailed-p nil :stream Log)
                                   (format Log "~%~%~%")))
                              ;; show minmalist message to end-user
-                             (standard-alert-dialog 
-                              (with-output-to-string (Out)
-                                (print-condition-understandably Condition "Error: " Out))
-                              :is-critical t
-                              :explanation-text (format nil "While ~A" ,Situation)))
-                           ,After-Message
-                           (throw :wicked-error Condition)))))
+                             (in-main-thread () ;; OS X 10.7 is really insisting on using NSAlerts only in the mmain thread
+                               (standard-alert-dialog 
+                                (with-output-to-string (Out)
+                                  (print-condition-understandably Condition "Error: " Out))
+                                :is-critical t
+                                :explanation-text (format nil "While ~A" ,Situation)))
+                             ,After-Message
+                             (throw :wicked-error Condition))))))
        ,@Forms))))
 
 
