@@ -57,7 +57,7 @@
   
 
 (eval-when (:execute :load-toplevel :compile-toplevel)
-(defmacro CATCH-ERRORS-NICELY ((Situation &key Before-Message After-Message) &body Forms) "Catch errors at high level. Also works in gui threads and Cocoa call backs"
+(defmacro CATCH-ERRORS-NICELY ((Situation &key Before-Message After-Message) &body Forms) "Catch errors at high level. Also works in secondary threads. Tries to execute all forms. Any form raising an error will be reported. The remaining forms will not be executted."
   `(catch :wicked-error
      (handler-bind
          ((warning #'(lambda (Condition)
@@ -105,6 +105,15 @@
 (catch-errors-nicely
   ("trying to divide")
   (print (/ 3.4 (sin 0.0))))
+
+
+(catch-errors-nicely ("various prints")
+  (print 1)
+  (print 2)
+  (error "bad printing")
+  (print 3)
+  (print 4)
+  (print 5))
 
 
 (catch-errors-nicely ("trying to divide" :before-message (print :sandman))
