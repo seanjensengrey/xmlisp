@@ -1492,7 +1492,7 @@
              ((null Char) (return Output-String))
              ;; found &
              ((char= Char #\&)
-              (vector-push-extend (print (decode-xml-entity-reference String)) Output-String))
+              (vector-push-extend (decode-xml-entity-reference String) Output-String))
              (t
               (vector-push-extend Char Output-String)))))))))
 
