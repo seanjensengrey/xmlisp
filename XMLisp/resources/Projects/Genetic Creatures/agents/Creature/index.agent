@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<agent-manager name="CREATURE_AGENT">
-  <agent-tracking-camera eye-x="1.5043633260036176D0" eye-y="16.999980961023702D0" eye-z="0.8849999904632568D0" center-x="1.5D0" center-y="16.5D0" center-z="0.8849999904632568D0" up-x="0.0D0" up-y="0.0D0" up-z="1.0D0" fovy="100.0D0" aspect="2.0900195694716244D0" near="0.005D0" far="2000.0D0" azimuth="1.5707963267948966D0" zenith="1.5620695640216282D0" distance="0.5" elevation="0.825" camera-rotation-offset="-450.5"/>
-</agent-manager>

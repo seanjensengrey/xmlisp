@@ -1,1 +1,0 @@
-<?xml version="1.0"?><behavior comments="I am user controlled">  <method comments="create randomly a new car">    <on selector="GENERATECAR"/>    <rule>      <if/>      <then>        <new shape="CAR small_car">          <direction/>        </new>        <move-random distance="7"/>      </then>    </rule>  </method></behavior>
