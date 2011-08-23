@@ -294,7 +294,7 @@
 
 
 (defmethod DOUBLE-CLICKED ((self group-item-image-view))
-  (edit-group-item (container self) (group-name  (#/superview(#/superview (#/superview self)))) (item-name (#/superview self))))
+  (edit-group-item (container self) (string-capitalize (group-name  (#/superview(#/superview (#/superview self))))) (string-capitalize (item-name (#/superview self)))))
 
 
 (defmethod CREATE-IMAGE ((self group-item-image-view)(list-item list-group-item))
@@ -889,6 +889,9 @@
             (if (equal (String-capitalize item-name) (string-capitalize (item-name item)))
               (progn    
                 (group-selected self)
+                ;; This fixed case 657-- Multiple selection possible on Windows
+                (when (item-selection-view group)
+                  (#/setHidden: (item-selection-view group) #$YES))
                 (let ((y-offset   (position item-name (group-items group) :key #'item-name :test #'equal)))
                   (setf (selected-item-name group) (item-name item))
                   (setf (is-selected group) "YES")
