@@ -719,20 +719,6 @@
 ; window methods                   |
 ;__________________________________/
 
-(defmacro IN-MAIN-THREAD (() &body body)
-  (let ((thunk (gensym))
-        (done (gensym))
-        (result (gensym)))
-    `(let ((,done nil)
-           (,result nil))
-       (flet ((,thunk ()
-                (setq ,result (multiple-value-list (progn ,@body))
-                      ,done t)))
-         (gui::execute-in-gui #',thunk)
-         (process-wait "Main thread" #'(lambda () ,done))
-         (values-list ,result)))))
-
-
 (defmethod MAKE-NATIVE-OBJECT ((Self window))
   (declare (ftype function window-controller))
   (in-main-thread ()
