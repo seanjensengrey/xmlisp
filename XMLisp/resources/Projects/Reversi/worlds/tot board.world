@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+<world width="900" height="252">
+  <light-source x="5.0" y="12.0" z="7.0">
+    <ambient red="0.0" green="0.0" blue="0.0"/>
+    <diffuse red="1.0" green="1.0" blue="1.0"/>
+    <specular red="1.5" green="1.5" blue="1.5"/>
+  </light-source>
+  <background-color red="0.0" green="0.0" blue="0.0"/>
+  <camera eye-x="6.852796891848729D0" eye-y="5.302007881841601D0" eye-z="10.812052117775181D0" center-x="7.055542383827402D0" center-y="5.5360836753375615D0" center-z="-0.8884099161899076D0" up-x="0.0897890880614824D0" up-y="9.95468141812456D0" up-z="-5.181736992890736D0" fovy="60.0D0" aspect="3.5714285714285716D0" near="0.005D0" far="2000.0D0" azimuth="-0.01732625626027584D0" zenith="-0.020000018179416656D0"/>
+  <agent-matrix name="AGENT-MATRIX11508" rows="11" columns="11" layers="1">
+    <player_a_agent col="3" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent col="4" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent col="5" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent col="6" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent col="7" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="1" col="2" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="1" col="3" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="1" col="4" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="1" col="5" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="1" col="6" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="1" col="7" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="1" col="8" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="2" col="1" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="2" col="2" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="2" col="3" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="2" col="4" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="2" col="5" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="2" col="6" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="2" col="7" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="2" col="8" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="2" col="9" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="3" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="3" col="1" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="3" col="2" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="3" col="3" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="3" col="4" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="3" col="5" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="3" col="6" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="3" col="7" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="3" col="8" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="3" col="9" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="3" col="10" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="4" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="4" col="1" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="4" col="2" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="4" col="3" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="4" col="4" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="4" col="5" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="4" col="6" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="4" col="7" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="4" col="8" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="4" col="9" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="4" col="10" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="5" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="5" col="1" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="5" col="2" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="5" col="3" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="5" col="4" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="5" col="6" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="5" col="7" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="5" col="8" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="5" col="9" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="5" col="10" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="6" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="6" col="1" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="6" col="2" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="6" col="3" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="6" col="4" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="6" col="5" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="6" col="6" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="6" col="7" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="6" col="8" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="6" col="9" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="6" col="10" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="7" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="7" col="1" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="7" col="2" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="7" col="3" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="7" col="4" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="7" col="5" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="7" col="6" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="7" col="7" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="7" col="8" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="7" col="9" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="7" col="10" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="8" col="1" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="8" col="2" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="8" col="3" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="8" col="4" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="8" col="5" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="8" col="6" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="8" col="7" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="8" col="8" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="8" col="9" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="9" col="2" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="9" col="3" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="9" col="4" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="9" col="5" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="9" col="6" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="9" col="7" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="9" col="8" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <turn_marker_agent row="10" shape-name="RED_TURN" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="10" col="3" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="10" col="4" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="10" col="5" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="10" col="6" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+    <player_a_agent row="10" col="7" shape-name="BOARD_SPACE" x-turn="0.5" y-turn="0.5"/>
+  </agent-matrix>
+</world>

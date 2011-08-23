@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<behavior comments="What am I doing?">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if/>
+      <then>
+        <plot-agents-attribute attribute="SAFE" row2="19" col2="19" color="0.0 1.0 0.073474534 0.5" agent1="?" agent2="?" agent3="?"/>
+        <plot-agents-attribute attribute="HEAT" row2="19" col2="19" color="1.0 0.0 0.0 0.5" agent1="?" agent2="?" agent3="?"/>
+        <plot-agents-attribute attribute="HERDING" row2="19" col2="19" color="0.0 0.03456668 1.0 0.5" agent1="?" agent2="?" agent3="?"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

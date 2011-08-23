@@ -1,0 +1,448 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if>
+        <first-person-view/>
+        <key label="up arrow"/>
+      </if>
+      <then>
+        <message selector="Move_Forward">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <first-person-view/>
+        <key label="shift+down arrow"/>
+      </if>
+      <then>
+        <message selector="Move_Forward_Down">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <first-person-view/>
+        <key label="shift+up arrow"/>
+      </if>
+      <then>
+        <message selector="Move_Forward_Up">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <first-person-view/>
+        <key label="left arrow"/>
+      </if>
+      <then>
+        <message selector="Rotate_Left">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <first-person-view/>
+        <key label="shift+left arrow"/>
+      </if>
+      <then>
+        <message selector="Rotate_Left">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <first-person-view/>
+        <key label="right arrow"/>
+      </if>
+      <then>
+        <message selector="Rotate_Right">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <first-person-view/>
+        <key label="shift+right arrow"/>
+      </if>
+      <then>
+        <message selector="Rotate_Right">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <first-person-view/>
+        <key label="down arrow"/>
+      </if>
+      <then>
+        <message selector="Rotate_Back">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="Layer" operator="&lt;" expression2="0"/>
+      </if>
+      <then>
+        <set attribute="LAYER" value="0"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <current-world world="Crystalkeep"/>
+      </if>
+      <then>
+        <set attribute="@LAYERHEIGHT" value="14"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <current-world world="Grand_Hall"/>
+      </if>
+      <then>
+        <set attribute="@LAYERHEIGHT" value="4"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <current-world world="Privatecouncilroom"/>
+      </if>
+      <then>
+        <set attribute="@LAYERHEIGHT" value="2"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Move_Forward"/>
+    <rule>
+      <if>
+        <see-a class-name="Stairs">
+          <direction drow="1"/>
+        </see-a>
+        <test expression1="Height[Up]" expression2="@Layerheight"/>
+        <test expression1="Dirp" expression2="0"/>
+      </if>
+      <then>
+        <move>
+          <direction drow="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see-a class-name="Stairs">
+          <direction dcol="1"/>
+        </see-a>
+        <test expression1="Height[Right]" expression2="@Layerheight"/>
+        <test expression1="Dirp" expression2="1"/>
+      </if>
+      <then>
+        <move>
+          <direction dcol="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see-a class-name="Stairs">
+          <direction drow="-1"/>
+        </see-a>
+        <test expression1="Height[Down]" expression2="@Layerheight"/>
+        <test expression1="Dirp" expression2="2"/>
+      </if>
+      <then>
+        <move>
+          <direction drow="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see-a class-name="Stairs">
+          <direction dcol="-1"/>
+        </see-a>
+        <test expression1="Height[Left]" expression2="@Layerheight"/>
+        <test expression1="Dirp" expression2="3"/>
+      </if>
+      <then>
+        <move>
+          <direction dcol="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <empty negated="true">
+          <direction drow="1"/>
+        </empty>
+        <test expression1="Height[Up]" operator="&lt;" expression2="@Layerheight"/>
+        <test expression1="Dirp" expression2="0"/>
+      </if>
+      <then>
+        <move>
+          <direction drow="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <empty negated="true">
+          <direction dcol="1"/>
+        </empty>
+        <test expression1="Height[Right]" operator="&lt;" expression2="@Layerheight"/>
+        <test expression1="Dirp" expression2="1"/>
+      </if>
+      <then>
+        <move>
+          <direction dcol="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <empty negated="true">
+          <direction drow="-1"/>
+        </empty>
+        <test expression1="Height[Down]" operator="&lt;" expression2="@Layerheight"/>
+        <test expression1="Dirp" expression2="2"/>
+      </if>
+      <then>
+        <move dlayer="+0">
+          <direction drow="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <empty negated="true">
+          <direction dcol="-1"/>
+        </empty>
+        <test expression1="Height[Left]" operator="&lt;" expression2="@Layerheight"/>
+        <test expression1="Dirp" expression2="3"/>
+      </if>
+      <then>
+        <move>
+          <direction dcol="-1"/>
+        </move>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Move_Forward_Down"/>
+    <rule>
+      <if>
+        <test expression1="Dirp" expression2="0"/>
+        <empty negated="true" disclosed="true" dlayer="-1">
+          <direction drow="1"/>
+        </empty>
+      </if>
+      <then>
+        <move disclosed="true" dlayer="-1">
+          <direction/>
+        </move>
+        <move>
+          <direction drow="1"/>
+        </move>
+        <set attribute="LAYER" value="Layer-1"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="Dirp" expression2="1"/>
+        <empty negated="true" disclosed="true" dlayer="-1">
+          <direction dcol="1"/>
+        </empty>
+      </if>
+      <then>
+        <move disclosed="true" dlayer="-1">
+          <direction/>
+        </move>
+        <move>
+          <direction dcol="1"/>
+        </move>
+        <set attribute="LAYER" value="Layer-1"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="Dirp" expression2="2"/>
+        <empty negated="true" disclosed="true" dlayer="-1">
+          <direction drow="-1"/>
+        </empty>
+      </if>
+      <then>
+        <move disclosed="true" dlayer="-1">
+          <direction/>
+        </move>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <set attribute="LAYER" value="Layer-1"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="Dirp" expression2="3"/>
+        <empty negated="true" disclosed="true" dlayer="-1">
+          <direction dcol="-1"/>
+        </empty>
+      </if>
+      <then>
+        <move disclosed="true" dlayer="-1">
+          <direction/>
+        </move>
+        <move>
+          <direction dcol="-1"/>
+        </move>
+        <set attribute="LAYER" value="Layer-1"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Move_Forward_Up"/>
+    <rule>
+      <if>
+        <test expression1="Dirp" expression2="0"/>
+        <empty negated="true" disclosed="true" dlayer="+1">
+          <direction drow="1"/>
+        </empty>
+      </if>
+      <then>
+        <move disclosed="true" dlayer="+1">
+          <direction drow="1"/>
+        </move>
+        <set attribute="LAYER" value="Layer+1"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="Dirp" expression2="1"/>
+        <empty negated="true" disclosed="true" dlayer="+1">
+          <direction dcol="1"/>
+        </empty>
+      </if>
+      <then>
+        <move disclosed="true" dlayer="+1">
+          <direction dcol="1"/>
+        </move>
+        <set attribute="LAYER" value="Layer+1"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="Dirp" expression2="2"/>
+        <empty negated="true" disclosed="true" dlayer="+1">
+          <direction drow="-1"/>
+        </empty>
+      </if>
+      <then>
+        <move disclosed="true" dlayer="+1">
+          <direction drow="-1"/>
+        </move>
+        <set attribute="LAYER" value="Layer+1"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="Dirp" expression2="3"/>
+        <empty negated="true" disclosed="true" dlayer="+1">
+          <direction dcol="-1"/>
+        </empty>
+      </if>
+      <then>
+        <move disclosed="true" dlayer="+1">
+          <direction dcol="-1"/>
+        </move>
+        <set attribute="LAYER" value="Layer+1"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Rotate_Right"/>
+    <rule>
+      <if>
+        <test expression1="Dirp" expression2="3"/>
+      </if>
+      <then>
+        <set attribute="DIRP" value="0"/>
+        <rotate-by droll="-90"/>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="DIRP" value="Dirp+1"/>
+        <rotate-by droll="-90"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Rotate_Left"/>
+    <rule>
+      <if>
+        <test expression1="Dirp" expression2="0"/>
+      </if>
+      <then>
+        <set attribute="DIRP" value="3"/>
+        <rotate-by droll="90"/>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="DIRP" value="Dirp-1"/>
+        <rotate-by droll="90"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Rotate_Back"/>
+    <rule>
+      <if>
+        <test expression1="Dirp" expression2="0"/>
+      </if>
+      <then>
+        <set attribute="DIRP" value="2"/>
+        <rotate-by droll="180"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="Dirp" expression2="1"/>
+      </if>
+      <then>
+        <set attribute="DIRP" value="3"/>
+        <rotate-by droll="180"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="Dirp" expression2="2"/>
+      </if>
+      <then>
+        <set attribute="DIRP" value="0"/>
+        <rotate-by droll="180"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="Dirp" expression2="3"/>
+      </if>
+      <then>
+        <set attribute="DIRP" value="1"/>
+        <rotate-by droll="180"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

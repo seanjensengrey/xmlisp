@@ -1,0 +1,173 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if>
+        <next-to operator="&gt;=" number="1" shape="CREATURE Creature"/>
+        <key label="G"/>
+      </if>
+      <then>
+        <broadcast class-name="Gene" selector="Savegenome"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <next-to shape="CREATURE Creature"/>
+        <key label="B"/>
+      </if>
+      <then>
+        <message selector="Breed">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <key label="1"/>
+      </if>
+      <then>
+        <message selector="Selectg1">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <key label="2"/>
+      </if>
+      <then>
+        <message selector="Selectg2">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <next-to number="0" shape="CREATURE Creature"/>
+      </if>
+      <then>
+        <set attribute="@GENOMESTOEDIT" value="0"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <next-to shape="CREATURE Creature"/>
+      </if>
+      <then>
+        <set attribute="@GENOMESTOEDIT" value="2"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <next-to number="1" shape="CREATURE Creature"/>
+      </if>
+      <then>
+        <set attribute="@GENOMESTOEDIT" value="1"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <next-to number="3" shape="CREATURE Creature"/>
+      </if>
+      <then>
+        <set attribute="@GENOMESTOEDIT" value="3"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <next-to number="4" shape="CREATURE Creature"/>
+      </if>
+      <then>
+        <set attribute="@GENOMESTOEDIT" value="4"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Random"/>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="RANDINT1" value="Random(31)"/>
+        <set attribute="RANDINT2" value="Random(31)"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Createdivide"/>
+    <rule>
+      <if>
+        <test expression1="Randint1" operator="&gt;" expression2="Randint2"/>
+      </if>
+      <then>
+        <set attribute="@DIVIDER2" value="Randint1"/>
+        <set attribute="@DIVIDER1" value="Randint2"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="Randint1" operator="&lt;" expression2="Randint2"/>
+      </if>
+      <then>
+        <set attribute="@DIVIDER1" value="Randint1"/>
+        <set attribute="@DIVIDER2" value="Randint2"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="Randint1" expression2="Randint2"/>
+      </if>
+      <then>
+        <set attribute="@DIVIDER1" value="Randint1-1"/>
+        <set attribute="@DIVIDER2" value="Randint2+1"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Divide"/>
+    <rule>
+      <if/>
+      <then>
+        <message selector="Random">
+          <direction/>
+        </message>
+        <message selector="Createdivide">
+          <direction/>
+        </message>
+        <broadcast class-name="Updowndivide" selector="Placedividers"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Breed"/>
+    <rule>
+      <if/>
+      <then>
+        <message selector="Divide">
+          <direction/>
+        </message>
+        <broadcast class-name="Gene" selector="Clearbottom"/>
+        <broadcast class-name="Gene" selector="Topbreed"/>
+        <broadcast class-name="Gene" selector="Bottombreed"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Selectg1"/>
+    <rule>
+      <if/>
+      <then>
+        <broadcast class-name="Gene" selector="Copyg1"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Selectg2"/>
+    <rule>
+      <if/>
+      <then>
+        <broadcast class-name="Gene" selector="Copyg2"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

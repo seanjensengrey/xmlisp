@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="GENE_UP">
+  <tile texture="GeneStay.png"/>
+</shape-manager>

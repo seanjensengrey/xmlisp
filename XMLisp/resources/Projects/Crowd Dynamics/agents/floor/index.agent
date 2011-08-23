@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<agent-manager name="FLOOR_AGENT">
+  <agent-tracking-camera eye-x="10.795999854803085D0" eye-y="12.5D0" eye-z="1.3250000476837158D0" center-x="10.5D0" center-y="12.5D0" center-z="1.3250000476837158D0" up-x="0.0D0" up-y="0.0D0" up-z="1.0D0" fovy="100.0D0" aspect="2.580568720379147D0" near="0.005D0" far="2000.0D0" azimuth="1.5707963267948966D0" zenith="0.0D0" distance="0.29599985" elevation="1.325" camera-rotation-offset="0.0"/>
+</agent-manager>

@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="CRYSTALWALL3">
+  <cube texture="Kunzite.jpg"/>
+</shape-manager>

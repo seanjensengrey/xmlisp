@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<agent-manager name="E_COLI_CELL_AGENT">
+  <agent-tracking-camera eye-x="3.5939857769686427D0" eye-y="7.501640527879049D0" eye-z="2.709501028060913D0" center-x="3.5D0" center-y="7.5D0" center-z="2.709501028060913D0" up-x="0.0D0" up-y="0.0D0" up-z="1.0D0" fovy="100.0D0" aspect="2.5454545454545454D0" near="0.005D0" far="2000.0D0" azimuth="1.5707963267948966D0" zenith="0.017453292942563252D0" distance="0.09400009" elevation="0.6999998" camera-rotation-offset="1.0"/>
+</agent-manager>

@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true" comments="Swap vertically and horizontally. Press the R key to randomly switch values of few 2D bubbl&#10;es (and colors)">
+    <while-running/>
+    <rule>
+      <if>
+        <key label="R"/>
+        <percent-chance expression="2"/>
+      </if>
+      <then>
+        <set attribute="RED" value="Random(1.0)"/>
+        <set attribute="GREEN" value="Random(1.0)"/>
+        <set-rgba-color red="Red" green="Green" alpha="1.0"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <percent-chance/>
+      </if>
+      <then>
+        <message selector="Swap_Vertical">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <message selector="Swap_Horizontal">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="Assume a random Red and Green values (decimal values from 0 to 1) and map those value to a color">
+    <when-creating-new-agent/>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="RED" value="Random(1.0)"/>
+        <set attribute="GREEN" value="Random(1.0)"/>
+        <set-rgba-color red="Red" green="Green" alpha="1.0"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="if the Green value of the 2D bubble above me is less than or equal to my Green value, swap places: i move up and the other bubble moves down">
+    <on selector="Swap_Vertical"/>
+    <rule>
+      <if>
+        <see-a class-name="Two_D_Bubble">
+          <direction drow="1"/>
+        </see-a>
+        <test expression1="Green[Up]" operator="&lt;=" expression2="Green"/>
+      </if>
+      <then>
+        <message selector="Move_Down">
+          <direction drow="1"/>
+        </message>
+        <move>
+          <direction drow="1"/>
+        </move>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="if the Red value of the 2D bubble to my left is less than to my Red value, swap places: i move to the left and the other bubble moves to the right">
+    <on selector="Swap_Horizontal"/>
+    <rule>
+      <if>
+        <see-a class-name="Two_D_Bubble">
+          <direction dcol="-1"/>
+        </see-a>
+        <test expression1="Red[Left]" operator="&lt;" expression2="Red"/>
+      </if>
+      <then>
+        <message selector="Move_Right">
+          <direction dcol="-1"/>
+        </message>
+        <move>
+          <direction dcol="-1"/>
+        </move>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="i move to the right">
+    <on selector="Move_Right"/>
+    <rule>
+      <if/>
+      <then>
+        <move>
+          <direction dcol="1"/>
+        </move>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="i move down">
+    <on selector="Move_Down"/>
+    <rule>
+      <if/>
+      <then>
+        <move>
+          <direction drow="-1"/>
+        </move>
+      </then>
+    </rule>
+  </method>
+</behavior>

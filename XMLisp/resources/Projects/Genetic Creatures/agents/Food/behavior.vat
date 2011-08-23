@@ -1,0 +1,249 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method comments="Eat One Pellet">
+    <on selector="Dec"/>
+    <rule>
+      <if>
+        <see shape="FOOD_9 Food">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <change shape="FOOD_8 Food">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="FOOD_8 Food">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <change shape="FOOD_7 Food">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="FOOD_7 Food">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <change shape="FOOD_6 Food">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="FOOD_6 Food">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <change shape="FOOD_5 Food">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="FOOD_5 Food">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <change shape="FOOD_4 Food">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="FOOD_4 Food">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <change shape="FOOD_3 Food">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="FOOD_3 Food">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <change shape="FOOD_2 Food">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="FOOD_2 Food">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <change shape="FOOD_1 Food">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="FOOD_1 Food">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <change shape="FOOD_0 Food">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+  </method>
+  <method>
+    <on selector="Eat"/>
+    <rule>
+      <if>
+        <see negated="true" shape="FOOD_0 Food">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <play-sound ref="Bit.Mp3"/>
+        <message selector="Dec">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method comments="Reset @Inc If There Is No Food Down">
+    <on selector="Food_Down"/>
+    <rule>
+      <if>
+        <see shape="FOOD_0 Food">
+          <direction/>
+        </see>
+        <empty>
+          <direction drow="-1"/>
+        </empty>
+      </if>
+      <then>
+        <set attribute="@INC" value="0"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see-a class-name="Food">
+          <direction drow="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <message selector="Food_Down">
+          <direction drow="-1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method comments="Reset @Inc If There Is No Food Up">
+    <on selector="Food_Up"/>
+    <rule>
+      <if>
+        <see shape="FOOD_0 Food">
+          <direction/>
+        </see>
+        <empty>
+          <direction drow="1"/>
+        </empty>
+      </if>
+      <then>
+        <set attribute="@INC" value="0"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see-a class-name="Food">
+          <direction drow="1"/>
+        </see-a>
+      </if>
+      <then>
+        <message selector="Food_Up">
+          <direction drow="1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method comments="Reset @Inc If There Is No Food Left">
+    <on selector="Food_Left"/>
+    <rule>
+      <if>
+        <see shape="FOOD_0 Food">
+          <direction/>
+        </see>
+        <empty>
+          <direction dcol="-1"/>
+        </empty>
+      </if>
+      <then>
+        <set attribute="@INC" value="0"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see-a class-name="Food">
+          <direction dcol="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <message selector="Food_Left">
+          <direction dcol="-1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method comments="Reset @Inc If There Is No Food Right">
+    <on selector="Food_Right"/>
+    <rule>
+      <if>
+        <see shape="FOOD_0 Food">
+          <direction/>
+        </see>
+        <empty>
+          <direction dcol="1"/>
+        </empty>
+      </if>
+      <then>
+        <set attribute="@INC" value="0"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see-a class-name="Food">
+          <direction dcol="1"/>
+        </see-a>
+      </if>
+      <then>
+        <message selector="Food_Right">
+          <direction dcol="1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+</behavior>

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<behavior comments="Plot destination">
+  <method disclosed="true" comments="Plot destination diffusion">
+    <while-running/>
+    <rule>
+      <if/>
+      <then>
+        <plot-agents-attribute attribute="DESTINATION" row2="19" col2="19" color="0.0 1.0 0.0 0.4" offset="-1" agent1="DESTINATIONPOINT" agent2="?" agent3="?"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

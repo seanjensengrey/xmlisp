@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<behavior>
+  <method disclosed="true" comments="Put text here to explain what method does!">
+    <while-running/>
+    <rule>
+      <if>
+        <next-to number="1" shape="E_COLI_CELL E_COLI_CELL"/>
+      </if>
+      <then>
+        <erase>
+          <direction/>
+        </erase>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <move-random-on disclosed="true" shape="WATER_AGENTS_TRANSPARENT Water_Agents" animation="Constant"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

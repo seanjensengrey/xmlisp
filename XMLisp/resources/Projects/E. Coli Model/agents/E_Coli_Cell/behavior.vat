@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<behavior>
+  <method disclosed="true" comments="Put text here to explain what method does!">
+    <while-running/>
+    <rule>
+      <if>
+        <next-to number="1" shape="GLUCOSE_MOLECULES GLUCOSE_MOLECULES"/>
+      </if>
+      <then>
+        <set attribute="POLLUTION" value="pollution+ 1"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <percent-chance/>
+        <see shape="E_COLI_CELL_ON E_COLI_CELL">
+          <direction/>
+        </see>
+        <see shape="WATER_AGENTS WATER_AGENTS">
+          <direction drow="-1"/>
+        </see>
+      </if>
+      <then>
+        <move>
+          <direction drow="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <move-random-on shape="WATER_AGENTS_TRANSPARENT Water_Agents"/>
+      </then>
+    </rule>
+  </method>
+  <method comments="Put text here to explain what method does!">
+    <when-creating-new-agent/>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="POLLUTION" value="0"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="Put text here to explain what method does!">
+    <on selector="TURN_ON"/>
+    <rule>
+      <if/>
+      <then>
+        <change shape="E_COLI_CELL_ON E_COLI_CELL">
+          <direction/>
+        </change>
+        <set-color-to color="0.015814617 1.0 0.11547998 1.0"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="Put text here to explain what method does!">
+    <on selector="TURN_OFF"/>
+    <rule>
+      <if/>
+      <then>
+        <change shape="E_COLI_CELL E_COLI_CELL">
+          <direction/>
+        </change>
+        <set-color-to/>
+      </then>
+    </rule>
+  </method>
+</behavior>

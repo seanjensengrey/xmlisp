@@ -1,0 +1,229 @@
+<?xml version="1.0"?>
+<behavior comments="What am I doing?">
+  <method>
+    <while-running/>
+    <rule>
+      <if/>
+      <then>
+        <message selector="INVISIBLE">
+          <direction/>
+        </message>
+        <message selector="CAR_MOVE">
+          <direction/>
+        </message>
+        <message selector="PARK">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method comments="car movements">
+    <on selector="CAR_MOVE"/>
+    <rule>
+      <if>
+        <stacked-a adjacency="somewhere above" class-name="BUILDING"/>
+      </if>
+      <then>
+        <move-random/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="Destination[DOWN]" operator="&gt;" expression2="Destination"/>
+        <see-a class-name="STREET">
+          <direction drow="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <rotate-to roll-angle="90"/>
+        <move disclosed="true" animation="constant">
+          <direction drow="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="Destination[DOWN]" operator="&gt;" expression2="Destination"/>
+        <see-a class-name="SEMAPHORE">
+          <direction drow="-1"/>
+        </see-a>
+        <test expression1="greenDirection[DOWN]" operator="&lt;" expression2="0.0"/>
+      </if>
+      <then>
+        <rotate-to roll-angle="90"/>
+        <move disclosed="true" animation="constant">
+          <direction drow="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="Destination[UP]" operator="&gt;" expression2="Destination"/>
+        <see-a class-name="STREET">
+          <direction drow="1"/>
+        </see-a>
+      </if>
+      <then>
+        <rotate-to roll-angle="270"/>
+        <move disclosed="true" animation="constant">
+          <direction drow="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="Destination[UP]" operator="&gt;" expression2="Destination"/>
+        <see-a class-name="SEMAPHORE">
+          <direction drow="1"/>
+        </see-a>
+        <test expression1="greenDirection[UP]" operator="&lt;" expression2="0.0"/>
+      </if>
+      <then>
+        <rotate-to roll-angle="270"/>
+        <move disclosed="true">
+          <direction drow="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="Destination[RIGHT]" operator="&gt;" expression2="Destination"/>
+        <see-a class-name="STREET">
+          <direction dcol="1"/>
+        </see-a>
+      </if>
+      <then>
+        <rotate-to roll-angle="180"/>
+        <move disclosed="true" animation="constant">
+          <direction dcol="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="Destination[RIGHT]" operator="&gt;" expression2="Destination"/>
+        <see-a class-name="SEMAPHORE">
+          <direction dcol="1"/>
+        </see-a>
+        <test expression1="greenDirection[RIGHT]" operator="&gt;" expression2="0.0"/>
+      </if>
+      <then>
+        <rotate-to roll-angle="180"/>
+        <move disclosed="true" animation="constant">
+          <direction dcol="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="Destination[LEFT]" operator="&gt;" expression2="Destination"/>
+        <see-a class-name="STREET">
+          <direction dcol="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <rotate-to/>
+        <move disclosed="true" animation="constant" duration="Slider()">
+          <direction dcol="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="Destination[LEFT]" operator="&gt;" expression2="Destination"/>
+        <see-a class-name="SEMAPHORE">
+          <direction dcol="-1"/>
+        </see-a>
+        <test expression1="greenDirection[LEFT]" operator="&gt;" expression2="0.0"/>
+      </if>
+      <then>
+        <rotate-to/>
+        <move disclosed="true" animation="constant" duration="Slider()">
+          <direction dcol="-1"/>
+        </move>
+      </then>
+    </rule>
+  </method>
+  <method comments="DEACTIVATED METHOD">
+    <on selector="WAITICREMENT"/>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="WAITTIME" value="WaitTime + 5"/>
+      </then>
+    </rule>
+  </method>
+  <method comments="delete self and broadcast new car message">
+    <on selector="PARK"/>
+    <rule>
+      <if>
+        <see-a class-name="DESTINATIONPOINT">
+          <direction dcol="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <erase>
+          <direction/>
+        </erase>
+        <broadcast class-name="COUNTINGCARGENERATOR" selector="GENERATECAR"/>
+        <broadcast class-name="CARGENERATOR" selector="GENERATECAR"/>
+        <broadcast class-name="STATICCARGENERATOR" selector="GENERATECAR"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see-a class-name="DESTINATIONPOINT">
+          <direction dcol="1"/>
+        </see-a>
+      </if>
+      <then>
+        <erase>
+          <direction/>
+        </erase>
+        <broadcast class-name="COUNTINGCARGENERATOR" selector="GENERATECAR"/>
+        <broadcast class-name="CARGENERATOR" selector="GENERATECAR"/>
+        <broadcast class-name="STATICCARGENERATOR" selector="GENERATECAR"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see-a class-name="DESTINATIONPOINT">
+          <direction drow="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <erase>
+          <direction/>
+        </erase>
+        <broadcast class-name="COUNTINGCARGENERATOR" selector="GENERATECAR"/>
+        <broadcast class-name="CARGENERATOR" selector="GENERATECAR"/>
+        <broadcast class-name="STATICCARGENERATOR" selector="GENERATECAR"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see-a class-name="DESTINATIONPOINT">
+          <direction drow="1"/>
+        </see-a>
+      </if>
+      <then>
+        <erase>
+          <direction/>
+        </erase>
+        <broadcast class-name="COUNTINGCARGENERATOR" selector="GENERATECAR"/>
+        <broadcast class-name="CARGENERATOR" selector="GENERATECAR"/>
+        <broadcast class-name="STATICCARGENERATOR" selector="GENERATECAR"/>
+      </then>
+    </rule>
+  </method>
+  <method>
+    <on selector="INVISIBLE"/>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="DESTINATION" value="(Destination[UP] + Destination[DOWN] + Destination[RIGHT] + Destination[LEFT]) * 0.25"/>
+        <set attribute="TRAFFIC" value="(Traffic[UP] + Traffic[DOWN] + Traffic[RIGHT] + Traffic[LEFT]) * 0.25"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

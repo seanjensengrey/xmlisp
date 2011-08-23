@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<behavior>
+  <method comments="Put text here to explain what this method does!">
+    <while-running/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method comments="Put text here to explain what this method does!">
+    <on selector="NEW"/>
+    <rule>
+      <if/>
+      <then>
+        <new shape="robot ROBOT">
+          <direction/>
+        </new>
+      </then>
+    </rule>
+  </method>
+</behavior>

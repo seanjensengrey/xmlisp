@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<agent-manager name="NOCH_AGENT">
+  <agent-tracking-camera eye-x="7.5D0" eye-y="12.139999866485596D0" eye-z="1.0749988040328162D0" center-x="7.5D0" center-y="12.5D0" center-z="1.0749988040328162D0" up-x="0.0D0" up-y="0.0D0" up-z="1.0D0" fovy="100.0D0" aspect="2.1709006928406467D0" near="0.005D0" far="2000.0D0" azimuth="-1.5707963267948966D0" zenith="-1.5707963267948966D0" distance="-0.36000013" elevation="1.0649988042563336D0" camera-rotation-offset="90.0"/>
+</agent-manager>

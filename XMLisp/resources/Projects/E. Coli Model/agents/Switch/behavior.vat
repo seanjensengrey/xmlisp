@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<behavior>
+  <method disclosed="true" comments="Put text here to explain what method does!">
+    <on-mouse-click/>
+    <rule>
+      <if>
+        <see shape="SWITCH_OFF SWITCH">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <broadcast class-name="SWITCH" selector="TURN_ON"/>
+        <broadcast class-name="E_COLI_CELL" selector="TURN_ON"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="SWITCH SWITCH">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <broadcast class-name="SWITCH" selector="TURN_OFF"/>
+        <broadcast class-name="E_COLI_CELL" selector="TURN_OFF"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="Put text here to explain what method does!">
+    <on selector="TURN_OFF"/>
+    <rule>
+      <if/>
+      <then>
+        <change shape="SWITCH_OFF SWITCH">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="Put text here to explain what method does!">
+    <on selector="TURN_ON"/>
+    <rule>
+      <if/>
+      <then>
+        <change shape="SWITCH SWITCH">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+  </method>
+</behavior>

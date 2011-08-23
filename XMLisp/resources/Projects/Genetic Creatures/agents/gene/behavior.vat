@@ -1,0 +1,730 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Savegenome"/>
+    <rule>
+      <if>
+        <test expression1="Iscopy" operator="!=" expression2="1"/>
+        <see shape="GENE_STAY Gene">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <new shape="GENE_STAY Gene">
+          <direction drow="1"/>
+        </new>
+        <message selector="Placegenome">
+          <direction drow="1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="Iscopy" operator="!=" expression2="1"/>
+        <see shape="GENE_RIGHT Gene">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <new shape="GENE_RIGHT Gene">
+          <direction drow="1"/>
+        </new>
+        <message selector="Placegenome">
+          <direction drow="1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="Iscopy" operator="!=" expression2="1"/>
+        <see shape="GENE_LEFT Gene">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <new shape="GENE_LEFT Gene">
+          <direction drow="1"/>
+        </new>
+        <message selector="Placegenome">
+          <direction drow="1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="Iscopy" operator="!=" expression2="1"/>
+        <see shape="GENE_DOWN Gene">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <new shape="GENE_DOWN Gene">
+          <direction drow="1"/>
+        </new>
+        <message selector="Placegenome">
+          <direction drow="1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="Iscopy" operator="!=" expression2="1"/>
+        <see shape="GENE_UP Gene">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <new shape="GENE_UP Gene">
+          <direction drow="1"/>
+        </new>
+        <message selector="Placegenome">
+          <direction drow="1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Placegenome"/>
+    <rule>
+      <if>
+        <test expression1="@Genomestoedit" expression2="2"/>
+      </if>
+      <then>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <message selector="Erasedown">
+          <direction/>
+        </message>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <set attribute="ISCOPY" value="1"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@Genomestoedit" expression2="1"/>
+      </if>
+      <then>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <message selector="Erasedown">
+          <direction/>
+        </message>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <set attribute="ISCOPY" value="1"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Topbreed"/>
+    <rule>
+      <if>
+        <see negated="true" shape="BRAIN Brain">
+          <direction drow="-1"/>
+        </see>
+        <empty negated="true">
+          <direction drow="-1"/>
+        </empty>
+        <empty>
+          <direction drow="1"/>
+        </empty>
+        <see shape="GENE_UP Gene">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <message selector="Topclear">
+          <direction/>
+        </message>
+        <new shape="GENE_UP Gene">
+          <direction drow="-1"/>
+        </new>
+        <message selector="Topmove">
+          <direction drow="-1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see negated="true" shape="BRAIN Brain">
+          <direction drow="-1"/>
+        </see>
+        <empty negated="true">
+          <direction drow="-1"/>
+        </empty>
+        <empty>
+          <direction drow="1"/>
+        </empty>
+        <see shape="GENE_STAY Gene">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <message selector="Topclear">
+          <direction/>
+        </message>
+        <new shape="GENE_STAY Gene">
+          <direction drow="-1"/>
+        </new>
+        <message selector="Topmove">
+          <direction drow="-1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see negated="true" shape="BRAIN Brain">
+          <direction drow="-1"/>
+        </see>
+        <empty negated="true">
+          <direction drow="-1"/>
+        </empty>
+        <empty>
+          <direction drow="1"/>
+        </empty>
+        <see shape="GENE_RIGHT Gene">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <message selector="Topclear">
+          <direction/>
+        </message>
+        <new shape="GENE_RIGHT Gene">
+          <direction drow="-1"/>
+        </new>
+        <message selector="Topmove">
+          <direction drow="-1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see negated="true" shape="BRAIN Brain">
+          <direction drow="-1"/>
+        </see>
+        <empty negated="true">
+          <direction drow="-1"/>
+        </empty>
+        <empty>
+          <direction drow="1"/>
+        </empty>
+        <see shape="GENE_LEFT Gene">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <message selector="Topclear">
+          <direction/>
+        </message>
+        <new shape="GENE_LEFT Gene">
+          <direction drow="-1"/>
+        </new>
+        <message selector="Topmove">
+          <direction drow="-1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see negated="true" shape="BRAIN Brain">
+          <direction drow="-1"/>
+        </see>
+        <empty negated="true">
+          <direction drow="-1"/>
+        </empty>
+        <empty>
+          <direction drow="1"/>
+        </empty>
+        <see shape="GENE_DOWN Gene">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <message selector="Topclear">
+          <direction/>
+        </message>
+        <new shape="GENE_DOWN Gene">
+          <direction drow="-1"/>
+        </new>
+        <message selector="Topmove">
+          <direction drow="-1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Bottombreed"/>
+    <rule>
+      <if>
+        <empty negated="true">
+          <direction drow="1"/>
+        </empty>
+        <empty>
+          <direction drow="-1"/>
+        </empty>
+        <see shape="GENE_UP Gene">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <new shape="GENE_UP Gene">
+          <direction drow="1"/>
+        </new>
+        <message selector="Bottommove">
+          <direction drow="1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <empty negated="true">
+          <direction drow="1"/>
+        </empty>
+        <empty>
+          <direction drow="-1"/>
+        </empty>
+        <see shape="GENE_STAY Gene">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <new shape="GENE_STAY Gene">
+          <direction drow="1"/>
+        </new>
+        <message selector="Bottommove">
+          <direction drow="1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <empty negated="true">
+          <direction drow="1"/>
+        </empty>
+        <empty>
+          <direction drow="-1"/>
+        </empty>
+        <see shape="GENE_RIGHT Gene">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <new shape="GENE_RIGHT Gene">
+          <direction drow="1"/>
+        </new>
+        <message selector="Bottommove">
+          <direction drow="1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <empty negated="true">
+          <direction drow="1"/>
+        </empty>
+        <empty>
+          <direction drow="-1"/>
+        </empty>
+        <see shape="GENE_LEFT Gene">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <new shape="GENE_LEFT Gene">
+          <direction drow="1"/>
+        </new>
+        <message selector="Bottommove">
+          <direction drow="1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <empty negated="true">
+          <direction drow="1"/>
+        </empty>
+        <empty>
+          <direction drow="-1"/>
+        </empty>
+        <see shape="GENE_DOWN Gene">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <new shape="GENE_DOWN Gene">
+          <direction drow="1"/>
+        </new>
+        <message selector="Bottommove">
+          <direction drow="1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Clearbottom"/>
+    <rule>
+      <if>
+        <see-a class-name="Gene">
+          <direction drow="1"/>
+        </see-a>
+        <empty>
+          <direction drow="-1"/>
+        </empty>
+        <see-a class-name="Gene">
+          <direction/>
+        </see-a>
+      </if>
+      <then>
+        <message selector="Bottomclear">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Topmove"/>
+    <rule>
+      <if>
+        <see shape="UNITLED Updowndivide">
+          <direction drow="-1"/>
+        </see>
+      </if>
+      <then>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <move>
+          <direction drow="-1"/>
+        </move>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Bottommove"/>
+    <rule>
+      <if>
+        <see shape="UNITLED Updowndivide">
+          <direction drow="1"/>
+        </see>
+      </if>
+      <then>
+        <move>
+          <direction drow="1"/>
+        </move>
+        <move>
+          <direction drow="1"/>
+        </move>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Moveg1"/>
+    <rule>
+      <if/>
+      <then>
+        <move>
+          <direction drow="1"/>
+        </move>
+        <move>
+          <direction drow="1"/>
+        </move>
+        <move>
+          <direction drow="1"/>
+        </move>
+        <move>
+          <direction drow="1"/>
+        </move>
+        <move>
+          <direction drow="1"/>
+        </move>
+        <move>
+          <direction drow="1"/>
+        </move>
+        <move>
+          <direction drow="1"/>
+        </move>
+        <move>
+          <direction drow="1"/>
+        </move>
+        <erase>
+          <direction drow="1"/>
+        </erase>
+        <move>
+          <direction drow="1"/>
+        </move>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Moveg2"/>
+    <rule>
+      <if/>
+      <then>
+        <move>
+          <direction drow="1"/>
+        </move>
+        <move>
+          <direction drow="1"/>
+        </move>
+        <move>
+          <direction drow="1"/>
+        </move>
+        <move>
+          <direction drow="1"/>
+        </move>
+        <move>
+          <direction drow="1"/>
+        </move>
+        <move>
+          <direction drow="1"/>
+        </move>
+        <move>
+          <direction drow="1"/>
+        </move>
+        <move>
+          <direction drow="1"/>
+        </move>
+        <move>
+          <direction drow="1"/>
+        </move>
+        <move>
+          <direction drow="1"/>
+        </move>
+        <erase>
+          <direction drow="1"/>
+        </erase>
+        <move>
+          <direction drow="1"/>
+        </move>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Copyup"/>
+    <rule>
+      <if>
+        <see shape="GENE_UP Gene">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <new shape="GENE_UP Gene">
+          <direction drow="1"/>
+        </new>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="GENE_STAY Gene">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <new shape="GENE_STAY Gene">
+          <direction drow="1"/>
+        </new>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="GENE_RIGHT Gene">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <new shape="GENE_RIGHT Gene">
+          <direction drow="1"/>
+        </new>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="GENE_LEFT Gene">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <new shape="GENE_LEFT Gene">
+          <direction drow="1"/>
+        </new>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="GENE_DOWN Gene">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <new shape="GENE_DOWN Gene">
+          <direction drow="1"/>
+        </new>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Copyg1"/>
+    <rule>
+      <if>
+        <see-a class-name="Updowndivide">
+          <direction drow="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <message selector="Copyup">
+          <direction/>
+        </message>
+        <message selector="Moveg1">
+          <direction drow="1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Copyg2"/>
+    <rule>
+      <if>
+        <see-a class-name="Updowndivide">
+          <direction drow="1"/>
+        </see-a>
+      </if>
+      <then>
+        <message selector="Copyup">
+          <direction/>
+        </message>
+        <message selector="Moveg2">
+          <direction drow="1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Topclear"/>
+    <rule>
+      <if>
+        <see-a class-name="Gene">
+          <direction drow="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <erase>
+          <direction drow="-1"/>
+        </erase>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Bottomclear"/>
+    <rule>
+      <if>
+        <see-a class-name="Gene">
+          <direction drow="1"/>
+        </see-a>
+      </if>
+      <then>
+        <erase>
+          <direction drow="1"/>
+        </erase>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Erase"/>
+    <rule>
+      <if/>
+      <then>
+        <erase>
+          <direction/>
+        </erase>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Erasedown"/>
+    <rule>
+      <if>
+        <see-a class-name="Gene">
+          <direction drow="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <message selector="Erase">
+          <direction drow="-1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+</behavior>
