@@ -298,6 +298,7 @@
 ;;___________________________________________
 
 
+(load "lui:sources;Lisp User Interface;in-main-thread")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;native-strings")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;standard-alert-dialog")
 (load "lui:sources;Lisp User Interface;error-handling")
