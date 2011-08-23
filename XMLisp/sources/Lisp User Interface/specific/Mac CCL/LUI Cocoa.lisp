@@ -647,6 +647,13 @@
     Rect))
 
 
+#+cocotron
+(objc:defmethod (#/hasMainMenu: :<BOOL>) ((self native-window))
+  (if (show-main-menu-on-windows (lui-window self))
+    #$YES
+    #$NO))
+
+
 ;;RESPONDER CHAIN HACK
 (objc:defmethod (#/noResponderFor: :void)
                 ((self native-window) (eventSelector :<SEL>))
