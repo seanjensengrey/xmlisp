@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<agent-manager name="BUNNY_AGENT">
+  <agent-tracking-camera eye-x="9.542700751265235D0" eye-y="6.38897984935314D0" eye-z="0.5099999904632568D0" center-x="9.5D0" center-y="5.5D0" center-z="0.5099999904632568D0" up-x="0.0D0" up-y="0.0D0" up-z="1.0D0" fovy="100.0D0" aspect="2.301282051282051D0" near="0.005D0" far="2000.0D0" azimuth="1.5707963267948966D0" zenith="1.5227997869292171D0" distance="0.8900047902761798D0" elevation="0.5" camera-rotation-offset="-182.75"/>
+</agent-manager>

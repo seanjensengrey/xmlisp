@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="COLOR_CUBE">
+  <cube texture="cementwall.jpg"/>
+</shape-manager>

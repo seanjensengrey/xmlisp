@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if/>
+      <then>
+        <move-random/>
+        <rotate-by droll="360"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

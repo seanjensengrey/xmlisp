@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<world width="1150" height="319">
+  <agent-matrix name="AGENT-MATRIX11508" rows="20" columns="20" layers="1">
+    <robin_agent col="3" shape-name="ROBIN"/>
+  </agent-matrix>
+  <camera eye-x="4.099999882280827D0" eye-y="-1.5957984067965123D0" eye-z="1.7726545264721558D0" center-x="4.099999882280827D0" center-y="6.78579973129592D0" center-z="-4.878571604710487D0" up-x="0.0D0" up-y="9.44981514000726D0" up-z="3.9953183238704373D0" fovy="60.0D0" aspect="3.605015673981191D0" near="0.005D0" far="2000.0D0" azimuth="0.0D0" zenith="-0.9000000506639481D0"/>
+</world>

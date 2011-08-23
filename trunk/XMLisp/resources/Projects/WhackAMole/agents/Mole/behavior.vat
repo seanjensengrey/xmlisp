@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if>
+        <see shape="MADMOLE Mole">
+          <direction/>
+        </see>
+        <once-every seconds="1"/>
+      </if>
+      <then>
+        <move-random/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <once-every seconds="1"/>
+      </if>
+      <then>
+        <message selector="Duck">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <is-selected/>
+      </if>
+      <then>
+        <message selector="Tag">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <when-creating-new-agent/>
+    <rule>
+      <if>
+        <see shape="MOLE Mole">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <set attribute="DUCKTIME" value="Random(4)"/>
+        <set attribute="DUCKTIME" value="Ducktime+1"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="MADMOLE Mole">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <set attribute="DUCKTIME" value="Random(2)"/>
+        <set attribute="DUCKTIME" value="Ducktime+2"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Duck"/>
+    <rule>
+      <if>
+        <test expression1="Ducktime" operator="&lt;=" expression2="0"/>
+      </if>
+      <then>
+        <play-sound ref="Whip.Mp3"/>
+        <erase>
+          <direction/>
+        </erase>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="DUCKTIME" value="Ducktime-1"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Tag"/>
+    <rule>
+      <if>
+        <see shape="MADMOLE Mole">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <play-sound ref="Synco.Mp3"/>
+        <set attribute="@SCORE" value="@Score+2"/>
+        <erase>
+          <direction/>
+        </erase>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="MOLE Mole">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <play-sound ref="Synco.Mp3"/>
+        <set attribute="@SCORE" value="@Score+1"/>
+        <erase>
+          <direction/>
+        </erase>
+      </then>
+    </rule>
+  </method>
+</behavior>

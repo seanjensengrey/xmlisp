@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="start_initial_fire"/>
+    <rule>
+      <if>
+        <see shape="TREE Tree">
+          <direction/>
+        </see>
+        <test expression1="@first_fire_started" operator="!=" expression2="1"/>
+        <test expression1="@burning_trees" operator="&lt;" expression2="@starting_blaze"/>
+      </if>
+      <then>
+        <set attribute="@FIRST_FIRE_STARTED" value="1"/>
+        <change shape="BURNINGTREE Tree">
+          <direction/>
+        </change>
+        <set attribute="@BURNING_TREES" value="@burnings_trees + 1"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="act"/>
+    <rule>
+      <if>
+        <percent-chance expression="@chance_for_tree_death"/>
+        <see shape="BURNINGTREE Tree">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <change shape="DEADTREE Tree">
+          <direction/>
+        </change>
+        <set attribute="@BURNING_TREES" value="@burning_trees - 1"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="test_if_alive"/>
+    <rule>
+      <if>
+        <see shape="TREE Tree">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <set attribute="@LIVING_TREES" value="@living_trees + 1"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="start_fire"/>
+    <rule>
+      <if>
+        <see shape="TREE Tree">
+          <direction/>
+        </see>
+        <test expression1="@burning_trees" operator="&lt;" expression2="@starting_blaze"/>
+      </if>
+      <then>
+        <change shape="BURNINGTREE Tree">
+          <direction/>
+        </change>
+        <set attribute="@BURNING_TREES" value="@burning_trees + 1"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="spread_fire"/>
+    <rule>
+      <if>
+        <next-to operator="&gt;" number="0" shape="BURNINGTREE Tree"/>
+        <see shape="TREE Tree">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <set attribute="ON_FIRE" value="1"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="catch_fire"/>
+    <rule>
+      <if>
+        <test expression1="on_fire" expression2="1"/>
+        <see shape="TREE Tree">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <set attribute="@BURNING_TREES" value="@burning_trees + 1"/>
+        <change shape="BURNINGTREE Tree">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="count_total_trees"/>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="@TOTAL_TREES" value="@total_trees + 1"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="count_living_trees"/>
+    <rule>
+      <if>
+        <see disclosed="true" shape="TREE Tree">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <set attribute="@LIVING_TREES" value="@living_trees + 1"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

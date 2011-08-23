@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if>
+        <once-every/>
+      </if>
+      <then>
+        <broadcast class-name="Repeater" selector="Make_Astroid"/>
+        <broadcast class-name="Astroid" selector="Move_Down"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

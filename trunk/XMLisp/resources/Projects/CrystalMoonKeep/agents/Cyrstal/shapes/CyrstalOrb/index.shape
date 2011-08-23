@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="CYRSTALORB">
+  <sphere texture="Kunzite.jpg"/>
+</shape-manager>

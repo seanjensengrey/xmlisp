@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if>
+        <key label="W"/>
+      </if>
+      <then>
+        <move>
+          <direction drow="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <key label="S"/>
+      </if>
+      <then>
+        <move>
+          <direction drow="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <key/>
+      </if>
+      <then>
+        <move>
+          <direction dcol="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <key label="D"/>
+      </if>
+      <then>
+        <move>
+          <direction dcol="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="CREATURE Creature">
+          <direction dcol="1"/>
+        </see>
+      </if>
+      <then>
+        <erase>
+          <direction dcol="1"/>
+        </erase>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="CREATURE Creature">
+          <direction dcol="-1"/>
+        </see>
+      </if>
+      <then>
+        <erase>
+          <direction dcol="-1"/>
+        </erase>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="CREATURE Creature">
+          <direction drow="1"/>
+        </see>
+      </if>
+      <then>
+        <erase>
+          <direction drow="1"/>
+        </erase>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="CREATURE Creature">
+          <direction drow="-1"/>
+        </see>
+      </if>
+      <then>
+        <erase>
+          <direction drow="-1"/>
+        </erase>
+      </then>
+    </rule>
+  </method>
+</behavior>

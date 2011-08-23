@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if/>
+      <then>
+        <rotate-by droll="Roll" dpitch="Pitch" dheading="Heading"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Move_Down"/>
+    <rule>
+      <if/>
+      <then>
+        <move>
+          <direction drow="-1"/>
+        </move>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <when-creating-new-agent/>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="ROLL" value="Random(10)-20"/>
+        <set attribute="PITCH" value="Random(10)-20"/>
+        <set attribute="HEADING" value="Random(10)-20"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

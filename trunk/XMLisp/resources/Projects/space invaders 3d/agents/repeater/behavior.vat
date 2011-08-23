@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if>
+        <stacked adjacency="Above Or Below" shape="INVADER Invader"/>
+      </if>
+      <then/>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Make_Astroid"/>
+    <rule>
+      <if>
+        <percent-chance expression="20"/>
+      </if>
+      <then>
+        <new shape="ASTROID Astroid">
+          <direction drow="-1"/>
+        </new>
+      </then>
+    </rule>
+  </method>
+</behavior>

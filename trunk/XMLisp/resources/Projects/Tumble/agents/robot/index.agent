@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<agent-manager name="ROBOT_AGENT">
+  <agent-tracking-camera eye-x="9.504363279192022D0" eye-y="9.000019038567775D0" eye-z="0.6249999403953552D0" center-x="9.5D0" center-y="9.5D0" center-z="0.6249999403953552D0" up-x="0.0D0" up-y="0.0D0" up-z="1.0D0" fovy="100.0D0" aspect="3.392D0" near="0.005D0" far="2000.0D0" azimuth="1.5707963267948966D0" zenith="-1.5620696576483877D0" distance="0.5" elevation="0.62499994" camera-rotation-offset="-89.5"/>
+</agent-manager>

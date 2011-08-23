@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<agent-manager name="TREE_D_BUBBLE_AGENT">
+  <agent-tracking-camera eye-x="4.2360000014305115D0" eye-y="1.5D0" eye-z="46.860408782958984D0" center-x="3.5D0" center-y="1.5D0" center-z="46.860408782958984D0" up-x="0.0D0" up-y="0.0D0" up-z="1.0D0" fovy="100.0D0" aspect="2.4615384615384617D0" near="0.005D0" far="2000.0D0" azimuth="1.5707963267948966D0" zenith="0.0D0" distance="0.736" elevation="0.9499992" camera-rotation-offset="0.0"/>
+</agent-manager>

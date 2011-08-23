@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<behavior>
+  <method disclosed="true" comments="Put text here to explain what this method does!">
+    <while-running/>
+    <rule>
+      <if>
+        <key label="M"/>
+      </if>
+      <then>
+        <erase>
+          <direction/>
+        </erase>
+      </then>
+    </rule>
+  </method>
+</behavior>

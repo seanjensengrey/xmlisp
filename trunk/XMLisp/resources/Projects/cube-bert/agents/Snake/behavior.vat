@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if>
+        <once-every seconds="0.8"/>
+      </if>
+      <then>
+        <message selector="Climb">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Climb"/>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="MAX_P" value="-10000"/>
+        <message selector="Max_Up">
+          <direction/>
+        </message>
+        <message selector="Max_Down">
+          <direction/>
+        </message>
+        <message selector="Max_Left">
+          <direction/>
+        </message>
+        <message selector="Max_Right">
+          <direction/>
+        </message>
+        <message selector="Chase_Cubebert">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Max_Up"/>
+    <rule>
+      <if>
+        <test expression1="P[Up]" operator="&gt;=" expression2="Max_P"/>
+      </if>
+      <then>
+        <set attribute="MAX_P" value="P[Up]"/>
+        <set attribute="DIRECTION" value="0"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Max_Down"/>
+    <rule>
+      <if>
+        <test expression1="P[Down]" operator="&gt;=" expression2="Max_P"/>
+      </if>
+      <then>
+        <set attribute="MAX_P" value="P[Down]"/>
+        <set attribute="DIRECTION" value="2"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Max_Left"/>
+    <rule>
+      <if>
+        <test expression1="P[Left]" operator="&gt;=" expression2="Max_P"/>
+      </if>
+      <then>
+        <set attribute="MAX_P" value="P[Left]"/>
+        <set attribute="DIRECTION" value="1"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Max_Right"/>
+    <rule>
+      <if>
+        <test expression1="P[Right]" operator="&gt;=" expression2="Max_P"/>
+      </if>
+      <then>
+        <set attribute="MAX_P" value="P[Right]"/>
+        <set attribute="DIRECTION" value="3"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Chase_Cubebert"/>
+    <rule>
+      <if>
+        <test expression1="Direction" expression2="0"/>
+      </if>
+      <then>
+        <move disclosed="true">
+          <direction drow="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="Direction" expression2="1"/>
+      </if>
+      <then>
+        <move disclosed="true">
+          <direction dcol="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="Direction" expression2="2"/>
+      </if>
+      <then>
+        <move disclosed="true">
+          <direction drow="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="Direction" expression2="3"/>
+      </if>
+      <then>
+        <move disclosed="true">
+          <direction dcol="1"/>
+        </move>
+      </then>
+    </rule>
+  </method>
+</behavior>

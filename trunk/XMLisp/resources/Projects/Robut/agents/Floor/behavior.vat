@@ -1,0 +1,298 @@
+<?xml version="1.0"?>
+<behavior>
+  <method comments="Put text here to explain what this method does!">
+    <while-running/>
+    <rule>
+      <if>
+        <see shape="LAVA FLOOR">
+          <direction/>
+        </see>
+        <stacked adjacency="above or below" shape="robot ROBOT"/>
+      </if>
+      <then>
+        <broadcast class-name="Robot" selector="dead"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="LAVA FLOOR">
+          <direction/>
+        </see>
+        <stacked adjacency="above or below" shape="robot_2 ROBOT"/>
+      </if>
+      <then>
+        <broadcast class-name="Robot" selector="dead"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="LAVA FLOOR">
+          <direction/>
+        </see>
+        <stacked adjacency="above or below" shape="robot_3 ROBOT"/>
+      </if>
+      <then>
+        <broadcast class-name="Robot" selector="dead"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="LAVA FLOOR">
+          <direction/>
+        </see>
+        <stacked adjacency="above or below" shape="robot_4 ROBOT"/>
+      </if>
+      <then>
+        <broadcast class-name="Robot" selector="dead"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="GOAL FLOOR">
+          <direction/>
+        </see>
+        <stacked-a adjacency="above or below" class-name="Robot"/>
+        <test expression1="@score" operator="&lt;=" expression2="12"/>
+        <test expression1="@level" operator="&lt;=" expression2="0"/>
+      </if>
+      <then>
+        <say text="YOU WIN!!!!!!" voice="Bruce"/>
+        <set attribute="@LEVEL" value="@level+1"/>
+        <wait duration="3"/>
+        <message selector="nextlevel">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="GOAL FLOOR">
+          <direction/>
+        </see>
+        <stacked-a adjacency="above or below" class-name="Robot"/>
+        <test expression1="@score" operator="&lt;=" expression2="10"/>
+        <test expression1="@level" operator="&lt;=" expression2="1"/>
+      </if>
+      <then>
+        <say text="YOU WIN!!!!!!" voice="Bruce"/>
+        <set attribute="@LEVEL" value="@level+1"/>
+        <wait duration="3"/>
+        <message selector="nextlevel">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="GOAL FLOOR">
+          <direction/>
+        </see>
+        <stacked-a adjacency="above or below" class-name="Robot"/>
+        <test expression1="@score" operator="&lt;=" expression2="10"/>
+        <test expression1="@level" operator="&lt;=" expression2="2"/>
+      </if>
+      <then>
+        <say text="YOU WIN!!!!!!" voice="Bruce"/>
+        <set attribute="@LEVEL" value="@level+1"/>
+        <wait duration="3"/>
+        <message selector="nextlevel">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="GOAL FLOOR">
+          <direction/>
+        </see>
+        <stacked-a adjacency="above or below" class-name="Robot"/>
+        <test expression1="@score" operator="&lt;=" expression2="13"/>
+        <test expression1="@level" operator="&lt;=" expression2="3"/>
+      </if>
+      <then>
+        <say text="YOU WIN!!!!!!" voice="Bruce"/>
+        <set attribute="@LEVEL" value="@level+1"/>
+        <wait duration="3"/>
+        <message selector="nextlevel">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="GOAL FLOOR">
+          <direction/>
+        </see>
+        <stacked-a adjacency="above or below" class-name="Robot"/>
+        <test expression1="@score" operator="&lt;=" expression2="16"/>
+        <test expression1="@level" operator="&lt;=" expression2="4"/>
+      </if>
+      <then>
+        <say text="YOU WIN!!!!!!" voice="Bruce"/>
+        <set attribute="@LEVEL" value="@level+1"/>
+        <wait duration="3"/>
+        <message selector="nextlevel">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="GOAL FLOOR">
+          <direction/>
+        </see>
+        <stacked-a adjacency="above or below" class-name="Robot"/>
+        <test expression1="@score" operator="&lt;=" expression2="17"/>
+        <test expression1="@level" operator="&lt;=" expression2="5"/>
+      </if>
+      <then>
+        <say text="YOU WIN!!!!!!" voice="Bruce"/>
+        <set attribute="@LEVEL" value="@level+1"/>
+        <wait duration="3"/>
+        <message selector="nextlevel">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="GOAL FLOOR">
+          <direction/>
+        </see>
+        <stacked-a adjacency="above or below" class-name="Robot"/>
+        <test expression1="@score" operator="&gt;" expression2="12"/>
+        <test expression1="@level" operator="&gt;" expression2="0"/>
+      </if>
+      <then>
+        <say text="TOO MANY MOVES, YOU LOSE" voice="Bruce"/>
+        <wait duration="3"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="GOAL FLOOR">
+          <direction/>
+        </see>
+        <stacked-a adjacency="above or below" class-name="Robot"/>
+        <test expression1="@score" operator="&gt;" expression2="10"/>
+        <test expression1="@level" operator="&gt;" expression2="1"/>
+      </if>
+      <then>
+        <say text="TOO MANY MOVES, YOU LOSE" voice="Bruce"/>
+        <wait duration="3"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="GOAL FLOOR">
+          <direction/>
+        </see>
+        <stacked-a adjacency="above or below" class-name="Robot"/>
+        <test expression1="@score" operator="&gt;" expression2="10"/>
+        <test expression1="@level" operator="&gt;" expression2="2"/>
+      </if>
+      <then>
+        <say text="TOO MANY MOVES, YOU LOSE" voice="Bruce"/>
+        <wait duration="3"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="GOAL FLOOR">
+          <direction/>
+        </see>
+        <stacked-a adjacency="above or below" class-name="Robot"/>
+        <test expression1="@score" operator="&gt;" expression2="13"/>
+        <test expression1="@level" operator="&gt;" expression2="3"/>
+      </if>
+      <then>
+        <say text="TOO MANY MOVES, YOU LOSE" voice="Bruce"/>
+        <wait duration="3"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="GOAL FLOOR">
+          <direction/>
+        </see>
+        <stacked-a adjacency="above or below" class-name="Robot"/>
+        <test expression1="@score" operator="&gt;" expression2="16"/>
+        <test expression1="@level" operator="&gt;" expression2="4"/>
+      </if>
+      <then>
+        <say text="TOO MANY MOVES, YOU LOSE" voice="Bruce"/>
+        <wait duration="3"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="GOAL FLOOR">
+          <direction/>
+        </see>
+        <stacked-a adjacency="above or below" class-name="Robot"/>
+        <test expression1="@score" operator="&gt;" expression2="17"/>
+        <test expression1="@level" operator="&gt;" expression2="5"/>
+      </if>
+      <then>
+        <say text="TOO MANY MOVES, YOU LOSE" voice="Bruce"/>
+        <wait duration="3"/>
+      </then>
+    </rule>
+  </method>
+  <method comments="Put text here to explain what this method does!">
+    <on selector="NEXTLEVEL"/>
+    <rule>
+      <if>
+        <test expression1="@level" expression2="1"/>
+      </if>
+      <then>
+        <switch-to-world world="level_2"/>
+        <set attribute="@LEVEL" value="1"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@level" expression2="2"/>
+      </if>
+      <then>
+        <switch-to-world world="Level_3"/>
+        <set attribute="@LEVEL" value="2"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@level" expression2="3"/>
+      </if>
+      <then>
+        <switch-to-world world="Level_4"/>
+        <set attribute="@LEVEL" value="3"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@level" expression2="4"/>
+      </if>
+      <then>
+        <switch-to-world world="Level_5"/>
+        <set attribute="@LEVEL" value="4"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@level" expression2="5"/>
+      </if>
+      <then>
+        <switch-to-world world="Level_6"/>
+        <set attribute="@LEVEL" value="5"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@level" expression2="6"/>
+      </if>
+      <then>
+        <show-message text="YOU BEAT THE GAME!!!!"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="B">
+  <sphere texture="Ancient Stone Slabs.jpg"/>
+</shape-manager>

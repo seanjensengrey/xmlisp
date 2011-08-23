@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if>
+        <see shape="NOCH_WITH_PICK_AXE_2 Noch">
+          <direction drow="-1"/>
+        </see>
+      </if>
+      <then>
+        <wait/>
+        <print text="You Win Level 1"/>
+        <stop-simulation/>
+        <reload-world/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="NOCH_WITH_PICK_AXE Noch">
+          <direction drow="-1"/>
+        </see>
+      </if>
+      <then>
+        <wait/>
+        <print text="You Win Level 1"/>
+        <switch-to-world world="More Ores"/>
+        <stop-simulation/>
+      </then>
+    </rule>
+  </method>
+</behavior>

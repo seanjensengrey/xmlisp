@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<behavior>
+  <method disclosed="true" comments="Put text here to explain what this method does!">
+    <on selector="EXECUTE"/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method disclosed="true" comments="Put text here to explain what this method does!">
+    <on-mouse-click/>
+    <rule>
+      <if>
+        <see shape="COMMAND_PLACEMENT BOARDER">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <new shape="command COMMAND">
+          <direction/>
+        </new>
+      </then>
+    </rule>
+  </method>
+</behavior>

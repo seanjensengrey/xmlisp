@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<world width="1075" height="312">
+  <background-color red="0.0" green="0.0" blue="0.0"/>
+  <camera eye-x="10.737307558555067D0" eye-y="-5.237805061066016D0" eye-z="13.015948759559853D0" center-x="10.7373073509203D0" center-y="9.109317623799615D0" center-z="-0.9181845348152933D0" up-x="8.444783850972885D-8" up-y="18.32050808132199D0" up-z="5.667198509643358D0" fovy="60.0D0" aspect="3.5714285714285716D0" near="0.005D0" far="2000.0D0" azimuth="1.4901161193847656D-8" zenith="-0.800000062212348D0"/>
+  <agent-matrix name="AGENT-MATRIX11508" rows="20" columns="20" layers="1">
+    <grass_agent row="4" col="12" shape-name="GRASS" x-turn="0.5" y-turn="0.5"/>
+    <grass_agent row="4" col="13" shape-name="GRASS" x-turn="0.5" y-turn="0.5"/>
+    <grass_agent row="5" col="12" shape-name="GRASS" x-turn="0.5" y-turn="0.5"/>
+    <grass_agent row="5" col="13" shape-name="GRASS" x-turn="0.5" y-turn="0.5"/>
+    <grass_agent row="5" col="14" shape-name="GRASS" x-turn="0.5" y-turn="0.5"/>
+    <grass_agent row="6" col="12" shape-name="GRASS" x-turn="0.5" y-turn="0.5"/>
+    <grass_agent row="6" col="13" shape-name="GRASS" x-turn="0.5" y-turn="0.5"/>
+    <grass_agent row="6" col="14" shape-name="GRASS" x-turn="0.5" y-turn="0.5"/>
+    <grass_agent row="6" col="15" shape-name="GRASS" x-turn="0.5" y-turn="0.5"/>
+    <grass_agent row="6" col="16" shape-name="GRASS" x-turn="0.5" y-turn="0.5"/>
+    <grass_agent row="7" col="12" shape-name="GRASS" x-turn="0.5" y-turn="0.5"/>
+    <grass_agent row="7" col="13" shape-name="GRASS" x-turn="0.5" y-turn="0.5"/>
+    <grass_agent row="7" col="14" shape-name="GRASS" x-turn="0.5" y-turn="0.5"/>
+    <grass_agent row="7" col="15" shape-name="GRASS" x-turn="0.5" y-turn="0.5"/>
+    <grass_agent row="7" col="16" shape-name="GRASS" x-turn="0.5" y-turn="0.5"/>
+    <grass_agent row="8" col="12" shape-name="GRASS" x-turn="0.5" y-turn="0.5"/>
+    <grass_agent row="8" col="13" shape-name="GRASS" x-turn="0.5" y-turn="0.5"/>
+    <grass_agent row="8" col="14" shape-name="GRASS" x-turn="0.5" y-turn="0.5"/>
+    <grass_agent row="8" col="15" shape-name="GRASS" x-turn="0.5" y-turn="0.5"/>
+    <grass_agent row="8" col="16" shape-name="GRASS" x-turn="0.5" y-turn="0.5"/>
+    <controller_agent row="13" col="8" shape-name="BILLYJOE" x-turn="0.5" y-turn="0.5"/>
+  </agent-matrix>
+</world>

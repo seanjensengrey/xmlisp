@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<behavior comments="What am I doing?">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+</behavior>

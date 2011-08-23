@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true" comments="hill climb towards any exit">
+    <on selector="Advance"/>
+    <rule>
+      <if>
+        <test expression1="F[Left]" operator="&gt;" expression2="F[Right]"/>
+        <test expression1="F[Left]" operator="&gt;" expression2="F[Up]"/>
+        <test expression1="F[Left]" operator="&gt;" expression2="F[Down]"/>
+      </if>
+      <then>
+        <move>
+          <direction dcol="-1"/>
+        </move>
+        <rotate-to roll-angle="180"/>
+        <play-sound ref="Whip.Mp3"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="F[Right]" operator="&gt;" expression2="F[Left]"/>
+        <test expression1="F[Right]" operator="&gt;" expression2="F[Up]"/>
+        <test expression1="F[Right]" operator="&gt;" expression2="F[Down]"/>
+      </if>
+      <then>
+        <move>
+          <direction dcol="1"/>
+        </move>
+        <rotate-to/>
+        <play-sound ref="Whip.Mp3"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="F[Up]" operator="&gt;" expression2="F[Right]"/>
+        <test expression1="F[Up]" operator="&gt;" expression2="F[Left]"/>
+        <test expression1="F[Up]" operator="&gt;" expression2="F[Down]"/>
+      </if>
+      <then>
+        <move>
+          <direction drow="1"/>
+        </move>
+        <rotate-to roll-angle="90"/>
+        <play-sound ref="Whip.Mp3"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="F[Down]" operator="&gt;" expression2="F[Right]"/>
+        <test expression1="F[Down]" operator="&gt;" expression2="F[Up]"/>
+        <test expression1="F[Down]" operator="&gt;" expression2="F[Left]"/>
+      </if>
+      <then>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <rotate-to roll-angle="270"/>
+        <play-sound ref="Whip.Mp3"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method disclosed="true" comments="check if I am on an exit">
+    <on selector="Game_Over"/>
+    <rule>
+      <if>
+        <stacked shape="TARGET Target"/>
+      </if>
+      <then>
+        <say text="Game Over!"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<behavior>
+  <method disclosed="true" comments="Put text here to explain what this method does!">
+    <while-running/>
+    <rule>
+      <if>
+        <stacked adjacency="immediately below" shape="person PERSON"/>
+        <see shape="SWITCH SWITCH">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <broadcast class-name="Switch" selector="toggle"/>
+        <broadcast class-name="Door" selector="toggle"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="Put text here to explain what this method does!">
+    <on selector="TOGGLE"/>
+    <rule>
+      <if>
+        <see shape="SWITCH SWITCH">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <change shape="switch_pressed SWITCH">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="SWITCH_PRESSED SWITCH">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <change shape="switch SWITCH">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+  </method>
+</behavior>

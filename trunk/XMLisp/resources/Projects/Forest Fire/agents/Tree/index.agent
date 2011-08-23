@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<agent-manager name="TREE_AGENT">
+  <agent-tracking-camera eye-x="22.509161564309192D0" eye-y="10.200139911138601D0" eye-z="1.2099997997283936D0" center-x="22.5D0" center-y="10.5D0" center-z="1.2099997997283936D0" up-x="0.0D0" up-y="0.0D0" up-z="1.0D0" fovy="100.0D0" aspect="3.3333333333333335D0" near="0.005D0" far="2000.0D0" azimuth="1.5707963267948966D0" zenith="-1.5402530315954772D0" distance="0.3" elevation="1.1999998" camera-rotation-offset="-88.25"/>
+</agent-manager>

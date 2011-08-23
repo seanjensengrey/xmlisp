@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<behavior>
+  <method disclosed="true" comments="If I look like a round particle I don&#39;t move anymore, elseif there is at least one round particle adjacent to me become round as well, else   move random on the black background">
+    <while-running/>
+    <rule>
+      <if>
+        <see shape="PARTICLE_FADING_CONNE Particle_Fading">
+          <direction/>
+        </see>
+      </if>
+      <then/>
+    </rule>
+    <rule>
+      <if>
+        <next-to disclosed="true" operator="&gt;=" number="1" shape="PARTICLE_FADING_CONNE Particle_Fading" dlayer="1"/>
+      </if>
+      <then>
+        <change shape="PARTICLE_FADING_CONNE Particle_Fading">
+          <direction/>
+        </change>
+        <set attribute="@COUNT" value="@Count + 1"/>
+        <map value="@Count" from-color="0.015686275 0.14509805 0.5803922 1.0" to-color="0.73332214 0.0 0.0 1.0" to-value="200"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <next-to disclosed="true" operator="&gt;=" number="1" shape="PARTICLE_FADING_CONNE Particle_Fading"/>
+      </if>
+      <then>
+        <change shape="PARTICLE_FADING_CONNE Particle_Fading">
+          <direction/>
+        </change>
+        <set attribute="@COUNT" value="@Count + 1"/>
+        <map value="@Count" from-color="0.015686275 0.14509805 0.5803922 1.0" to-color="0.73332214 0.0 0.0 1.0" to-value="200"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <next-to disclosed="true" operator="&gt;=" number="1" shape="PARTICLE_FADING_CONNE Particle_Fading" dlayer="-1"/>
+      </if>
+      <then>
+        <change shape="PARTICLE_FADING_CONNE Particle_Fading">
+          <direction/>
+        </change>
+        <set attribute="@COUNT" value="@Count + 1"/>
+        <map value="@Count" from-color="0.015686275 0.14509805 0.5803922 1.0" to-color="0.73332214 0.0 0.0 1.0" to-value="200"/>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <move-random disclosed="true" animation="Constant"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="If a round particle is created set it&#39;s color to blue">
+    <when-creating-new-agent/>
+    <rule>
+      <if>
+        <see shape="PARTICLE_FADING_CONNE Particle_Fading">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <set-color-to color="0.0 0.0 0.0 1.0"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

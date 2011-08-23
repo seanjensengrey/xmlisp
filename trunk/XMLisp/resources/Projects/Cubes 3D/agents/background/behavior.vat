@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+<behavior>
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if>
+        <test expression1="invisible" expression2="0"/>
+      </if>
+      <then>
+        <message selector="DISAPPEAR">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="no comments">
+    <on selector="CHECK"/>
+    <rule>
+      <if/>
+      <then>
+        <message selector="UP">
+          <direction drow="1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="DOWN"/>
+    <rule>
+      <if>
+        <see-a class-name="BORDER">
+          <direction drow="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <play-sound ref="click.mp3"/>
+        <message selector="MOVE-TO-THE-LEFT">
+          <direction dcol="1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <message selector="DOWN">
+          <direction drow="-1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="UP"/>
+    <rule>
+      <if>
+        <empty>
+          <direction drow="1"/>
+        </empty>
+      </if>
+      <then>
+        <message selector="DOWN">
+          <direction drow="-1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see-a class-name="BACKGROUND">
+          <direction drow="1"/>
+        </see-a>
+      </if>
+      <then>
+        <message selector="UP">
+          <direction drow="1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="become invisible">
+    <on selector="DISAPPEAR"/>
+    <rule>
+      <if/>
+      <then>
+        <set-color-to color="1.0 1.0 1.0 0.0"/>
+        <set attribute="INVISIBLE" value="1"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="become invisible">
+    <on selector="Appear"/>
+    <rule>
+      <if/>
+      <then>
+        <set-color-to/>
+        <set attribute="INVISIBLE" value="0"/>
+      </then>
+    </rule>
+  </method>
+  <method comments="no comments">
+    <on selector="MOVE-TO-THE-LEFT"/>
+    <rule>
+      <if/>
+      <then>
+        <message selector="MOVE-TO-THE-LEFT">
+          <direction dcol="1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method comments="do nothing">
+    <on selector="BLUE"/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method comments="do nothing">
+    <on selector="SEND-RED"/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method comments="do nothing">
+    <on selector="RED"/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method comments="do nothing">
+    <on selector="GREEN"/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method comments="do nothing">
+    <on selector="YELLOW"/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method comments="do nothing - ideally, forward message to a cube, if one is above me">
+    <on-mouse-click/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+</behavior>

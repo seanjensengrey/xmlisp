@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<agent-manager name="TWO_D_BUBBLE_AGENT">
+  <agent-tracking-camera eye-x="39.80000001192093D0" eye-y="12.5D0" eye-z="1.4499993324279785D0" center-x="39.5D0" center-y="12.5D0" center-z="1.4499993324279785D0" up-x="0.0D0" up-y="0.0D0" up-z="1.0D0" fovy="100.0D0" aspect="2.4615384615384617D0" near="0.005D0" far="2000.0D0" azimuth="1.5707963267948966D0" zenith="0.0D0" distance="0.3" elevation="1.4499993" camera-rotation-offset="0.0"/>
+</agent-manager>

@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<behavior>
+  <method comments="Put text here to explain what method does!">
+    <while-running/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method comments="Put text here to explain what method does!">
+    <on selector="BOUNCE"/>
+    <rule>
+      <if>
+        <see shape="WALL WALL">
+          <direction drow="1"/>
+        </see>
+      </if>
+      <then>
+        <message selector="TEST_DONE">
+          <direction drow="1"/>
+        </message>
+        <new shape="SWITCH SWITCH">
+          <direction dcol="-1"/>
+        </new>
+      </then>
+    </rule>
+  </method>
+  <method comments="Put text here to explain what method does!">
+    <on selector="TEST_DONE"/>
+    <rule>
+      <if>
+        <empty>
+          <direction drow="1"/>
+        </empty>
+      </if>
+      <then/>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <message selector="TEST_DONE">
+          <direction drow="1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+</behavior>
