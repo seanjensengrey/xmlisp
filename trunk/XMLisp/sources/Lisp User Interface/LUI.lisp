@@ -559,6 +559,7 @@ Call with most important parameters. Make other paramters accessible through *Cu
    (tooltip :accessor tooltip :initform nil :initarg :tooltip :documentation "If this accessor is set it will display this for the tool instead of the documentation")
    (hidden-p :accessor hidden-p :initform nil :documentation "This predicate will tell you if the view is currently hidden or not, should only be set by set-hidden")
    (use-custom-window-controller :accessor use-custom-window-controller :initform nil :initarg :use-custom-window-controller :documentation "Tells the window creating whether or not it should use a custom window controller or the default ccl controller")
+   #+cocotron (show-main-menu-on-windows :accessor show-main-menu-on-windows :initform nil :initarg :show-main-menu-on-windows :documentation "Should this window should a main menu on Windows?")
    )
   (:documentation "a window that can contain views, coordinate system: topleft = 0, 0")
   (:default-initargs 
