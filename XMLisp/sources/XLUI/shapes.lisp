@@ -26,6 +26,7 @@
    (turn-height :accessor turn-height :initform 0.0 :initarg :turn-height :type single-float :documentation "height around which shapes will be turned. Default to floor")
    (textures :accessor textures :initform (make-hash-table :test #'equal))
    (texture-path :accessor texture-path :initform nil :initarg :texture-path :documentation "if this value is set the openGLView will look for texture here instead of the default location")
+   (texture :accessor texture :initform nil :initarg :texture :documentation "texture file name")
    ;; (shade :accessor shade :initform nil :type string-or-null :documentation "used as floor shadow in unit size")
    ))
 
@@ -116,6 +117,21 @@
 (defmethod PROXY-ICON-SCALE ((Self shape))
   0.15)
 
+
+(defmethod (SETF texture) :before (value (self shape))
+  "Setting a texture of a shape will purge currently loaded textures"
+  (declare (ignore value))
+  (maphash 
+   #'(lambda (key value) 
+       (declare (ignore key))
+       (with-glcontext (view self) 
+         (ccl::rlet ((&texName :long))
+           (setf (ccl::%get-long &texName) value)
+           (glDeleteTextures 1 &texName))))
+   (textures self)) 
+  (clrhash (textures self)))
+
+
 ;****************************************
 ;  Main shape subclasses                *
 ;****************************************
@@ -126,7 +142,6 @@
 
 (defclass SPHERE (shape)
   ((size :accessor size :initform 0.5d0 :initarg :size :type double-float :documentation "radius")
-   (texture :accessor texture :initform nil :initarg :texture :documentation "texture file name")
    (quadric :accessor quadric :initform nil)))
 
 
@@ -237,8 +252,7 @@
 ;_______________________________________
 
 (defclass CUBE (shape)
-  ((size :accessor size :initform 1.0 :type float)
-   (texture :accessor texture :initform nil :initarg :texture :documentation "texture file name"))
+  ((size :accessor size :initform 1.0 :type float))
   (:documentation "Cube agent"))
 
 
@@ -320,8 +334,7 @@
 ;_______________________________________
 
 (defclass BOX (shape)
-  ((texture :accessor texture :initform nil :initarg :texture :documentation "texture file name")
-   (front-texture :accessor front-texture :initform nil :documentation "texture file name")
+  ((front-texture :accessor front-texture :initform nil :documentation "texture file name")
    (back-texture :accessor back-texture :initform nil :documentation "texture file name")
    (left-texture :accessor left-texture :initform nil :documentation "texture file name")
    (right-texture :accessor right-texture :initform nil :documentation "texture file name")
@@ -434,7 +447,6 @@
 (defclass CYLINDER (shape)
   ((base-radius :accessor base-radius :initform 1.0d0 :type double-float :documentation "The radius of the cylinder at z = 0")
    (top-radius :accessor top-radius :initform 0.0d0 :type double-float :initarg :top-radius :documentation "The radius of the cylinder at z = depth")
-   (texture :accessor texture :initform nil :initarg :texture :documentation "texture file name")
    (quadric :accessor quadric :initform nil))
   (:default-initargs 
       :depth 1.0)
@@ -496,7 +508,6 @@
 (defclass CAPPED-CYLINDER (shape)
   ((base-radius :accessor base-radius :initform 0.5d0 :type double-float :documentation "The radius of the cylinder at z = 0")
    (top-radius :accessor top-radius :initform 0.5d0 :type double-float :initarg :top-radius :documentation "The radius of the cylinder at z = depth")
-   (texture :accessor texture :initform nil :initarg :texture :documentation "texture file name")
    (quadric :accessor quadric :initform nil))
   (:default-initargs 
       :depth 1.0)
@@ -547,7 +558,6 @@
 (defclass DISK (shape)
   ((inner-radius :accessor inner-radius :initform 0.0d0 :type double-float :documentation "The inner radius of the disk (defaults to zero)")
    (outer-radius :accessor outer-radius :initform 1.0d0 :type double-float :documentation "The outer radius of the disk")
-   (texture :accessor texture :initform nil :initarg :texture :documentation "texture file name")
    (quadric :accessor quadric :initform nil))
   (:documentation "Disk"))
 
@@ -607,8 +617,7 @@
 
 (defclass TILE (shape)
   ((width :accessor width :initform 1.0 :type float :initarg :width :documentation "width")
-   (height :accessor height :initform 1.0 :type float :initarg :height :documentation "height")
-   (texture :accessor texture :initform nil :initarg :texture :documentation "texture file name"))
+   (height :accessor height :initform 1.0 :type float :initarg :height :documentation "height"))
   (:default-initargs 
       :depth *FLAT-SHAPE-Z-OFFSET*)
   (:documentation "Tile"))
