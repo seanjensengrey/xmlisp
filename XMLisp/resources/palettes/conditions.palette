@@ -7,9 +7,9 @@
     <stacked/>
     <stacked-a/>
     <empty/>
-    <once-every/>
+    <once-every seconds="5"/>
     <is-selected/>
-    <percent-chance/>
+    <percent-chance expression="5"/>
     <current-world/>
   </category>
   <category tooltip="Keyboard conditions" title="keyboard" disclosed="true">
@@ -24,9 +24,5 @@
   <category tooltip="Camera conditions" title="camera control" disclosed="true">
     <first-person-view/>
     <camera-attached/>
-  </category>
-  <category tooltip="Testing conditions" title="Testing" disclosed="true">
-    <true/> 
-    <false/>
   </category>
 </palette>
