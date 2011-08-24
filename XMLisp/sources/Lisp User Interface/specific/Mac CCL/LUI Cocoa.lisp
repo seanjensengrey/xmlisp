@@ -588,7 +588,8 @@
 
 (defclass NATIVE-WINDOW (ns:ns-window)
   ((lui-window :accessor lui-window :initarg :lui-window)
-   (delegate :accessor delegate :initform nil :initarg :delegate :documentation "event delegate"))
+   (delegate :accessor delegate :initform nil :initarg :delegate :documentation "event delegate")   
+   #+cocotron (show-main-menu-on-windows :accessor show-main-menu-on-windows :initform nil :initarg :show-main-menu-on-windows :documentation "Should this window should a main menu on Windows?"))
   (:metaclass ns:+ns-object
 	      :documentation "Native window"))
 
@@ -649,7 +650,7 @@
 
 #+cocotron
 (objc:defmethod (#/hasMainMenu: :<BOOL>) ((self native-window))
-  (if (show-main-menu-on-windows (lui-window self))
+  (if (show-main-menu-on-windows self)
     #$YES
     #$NO))
 
@@ -732,6 +733,7 @@
     (ccl::with-autorelease-pool
       (let ((Window (make-instance 'native-window
                         :lui-window Self
+                        #+cocotron :show-main-menu-on-windows #+cocotron (show-main-menu-on-windows self)
                         :with-content-rect (ns:make-ns-rect 0 0 (width Self) (height Self))
                         :style-mask (if (borderless Self)
                                       0
