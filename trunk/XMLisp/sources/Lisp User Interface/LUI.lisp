@@ -737,11 +737,9 @@ after any of the window controls calls stop-modal close window and return value.
 (defmethod MOUSE-EVENT-HANDLER ((Self window) Window-x Window-y DX DY Event)
   (declare (ftype function get-x-y-offset-for-window-origin))
   (declare (ftype function convert-from-window-coordinates-to-view-coordinates))
-
   (catch-errors-nicely ("handling mouse event")
   (multiple-value-bind (View x y)
                        (most-specific-view-containing-point Self Window-x Window-y)
-    
     (when view
       (unless (subtypep (type-of view) 'window)
         (multiple-value-bind (test-x test-y)
@@ -816,6 +814,9 @@ after any of the window controls calls stop-modal close window and return value.
        (gesture-magnify-event-handler view x y (magnification Event)))
       (:rotate-gesture
        (gesture-rotate-event-handler view x y (rotation Event)))
+      ((:begin-gesture :swipe-gesture :end-gesture)
+       ;; do not handle these yet
+       )
       (t
        (warn "~%not handling ~A event yet, ~A" (event-type Event) (native-event Event)))))))
 
