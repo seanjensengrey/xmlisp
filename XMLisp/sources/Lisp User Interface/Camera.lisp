@@ -152,7 +152,7 @@
 
 
 (defmethod SAME-SETTINGS ((Camera1 camera) (Camera2 camera))
-  (dolist (slot '(eye-x eye-y eye-z center-x center-y center-z up-x up-y up-z fovy aspect near far) t)
+  (dolist (slot '(eye-x eye-y eye-z center-x center-y center-z up-x up-y up-z fovy #|aspect|# near far) t)  ;; ignore aspect as that is set by views based on view size
     (unless (= (slot-value Camera1 Slot) (slot-value Camera2 Slot))
       (return nil))))
 
