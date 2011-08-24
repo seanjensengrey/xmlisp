@@ -147,11 +147,13 @@
 
 
 (defmethod ANIMATION-ABORTED ((Self opengl-view))
-  (print :ANIMATION-ABORTED))
+  ;; do nothing
+  )
 
 
 (defmethod ANIMATION-CYCLE-ABORTED ((Self opengl-view))
-  (print :ANIMATION-CYCLE-ABORTED))
+  ;; do nothing
+  )
 
 
 (defmethod VIEW ((Self opengl-view))
