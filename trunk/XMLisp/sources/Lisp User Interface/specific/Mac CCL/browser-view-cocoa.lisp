@@ -13,6 +13,7 @@
 
 
 (objc:defmethod (#/browser:numberOfRowsInColumn: :<NSI>nteger) ((self my-browser-delegate) browser (column :<NSI>nteger))
+  (Declare (ignore browser))
   (let ((selected-node-item (lui-view self)))
     (dotimes (i column)
       (when (get-selected-row-in-column (lui-view self) i)
