@@ -1,6 +1,5 @@
 (in-package :lui)
 
-
 ;;*********************************
 ;; HELPER FUNCTIONS               *
 ;;*********************************
@@ -394,7 +393,7 @@
 
 
 (defmethod UPDATE-IMAGE ((self badged-image-view) group-name item-name &key (Image-Name nil) (image-data nil))
-  (declare (ignore Image-Name))
+  (declare (ignore Image-Name group-name item-name))
   (let ((subviews (gui::list-from-ns-array (#/subviews self))))  
     (dolist (subview subviews)
       (#/removeFromSuperviewWithoutNeedingDisplay subview)))
@@ -441,6 +440,7 @@
 
 
 (defmethod INITIALIZE-INSTANCE :after  ((self mouse-detection-text-field) &rest Initargs)
+  (declare (ignore initargs))
   (#/setFont: self (#/fontWithName:size: ns:ns-font (native-string "Times-Roman") 5.0)))
 
 
