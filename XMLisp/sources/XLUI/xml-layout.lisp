@@ -27,9 +27,9 @@
 ;***************************************
 
 (defclass XML-LAYOUT-INTERFACE (xml-serializer)
-  ((name :accessor name :initform "" :type string :documentation "a name used to refer to the object")
-   (flex :accessor flex :initform 0 :type integer :documentation "flexibility: if 0 then unflexible, larger value -> larger flexibility")
-   (vflex :accessor vflex :initform 0 :type integer :documentation "vertical flexibility: if 0 then unflexible, larger value -> larger flexibility"))
+  ((name :accessor name :initform "" :type string :initarg :name :documentation "a name used to refer to the object")
+   (flex :accessor flex :initform 0 :type integer :initarg :flex :documentation "flexibility: if 0 then unflexible, larger value -> larger flexibility")
+   (vflex :accessor vflex :initform 0 :type integer :initarg :vflex :documentation "vertical flexibility: if 0 then unflexible, larger value -> larger flexibility"))
   (:documentation "Interface to create XML based layouts"))
   
 
