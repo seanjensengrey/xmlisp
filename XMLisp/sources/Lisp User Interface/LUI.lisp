@@ -485,8 +485,8 @@ Call with most important parameters. Make other paramters accessible through *Cu
 ;**********************************
 
 (defclass SCROLL-VIEW (view)
-  ((has-horizontal-scroller :accessor has-horizontal-scroller :initform t :type boolean)
-   (has-vertical-scroller :accessor has-vertical-scroller :initform t :type boolean)
+  ((has-horizontal-scroller :accessor has-horizontal-scroller :initform t :type boolean :initarg :has-horizontal-scroller)
+   (has-vertical-scroller :accessor has-vertical-scroller :initform t :type boolean :initarg :has-vertical-scroller)
    (native-color :accessor native-color :initform nil))
   (:documentation "A scrollable view containing a view"))
 
