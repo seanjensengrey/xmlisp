@@ -168,7 +168,7 @@
   (cond
    ((symbolp Formula)
     (if (is-global-variable Formula)
-      `(get-the-property-value ',(strip-global-variable-prefix Formula))
+      `(get-simulation-property-value ',(strip-global-variable-prefix Formula))
       `(get-agent-attribute-value Self ',Formula)))
    ((atom Formula) Formula)
    ;; (- 7) -> -7
@@ -214,15 +214,6 @@
 
 
 #| Examples:
-
-(get-the-property-value 'cycles)
-
-(set-the-property-value 'cycles 456)
-
-(property-exists-p 'cycles)
-
-(remove-property 'cycles)
-
 
 (infix->postfix "-7")
 
