@@ -28,73 +28,9 @@
 
 (in-package :xlui)
 
-(export '(GET-THE-PROPERTY-VALUE 
-          SET-THE-PROPERTY-VALUE
-          EXPAND FLOAT-EXPRESSION
-          INFIX->POSTFIX IS-VAT-FORMULA-ATTRIBUTE-OR-SIMULATION-PROPERY 
+(export '(INFIX->POSTFIX IS-VAT-FORMULA-ATTRIBUTE-OR-SIMULATION-PROPERY 
           IS-GLOBAL-VARIABLE STRIP-GLOBAL-VARIABLE-PREFIX
           EXPAND-VAT-FORMULA))
-
-;_________________________________________
-;  Simulation Properties                  |
-;________________________________________/
-
-;; working non-GUI Simulation Property interface stubs 
-;; for extensions such as Property-Editor.lisp
-
-
-(defun GET-THE-PROPERTY-VALUE (Name) "
-  in:  Name {symbol}.
-  out: Value {number}.
-  Return the simulation property <Name>.
-  If <Name> does not exist then return 0."
-  (gethash Name (property-hash (simulation-properties *project-manager*)) 0))
-        
-
-(defun SET-THE-PROPERTY-VALUE (Name Value &key (update-window t)) "
-  in: Name {symbol}, Value {number}.
-  Set the simulation property <Name> to <Value>." 
-
-  (declare (special *Project-Manager*)
-           
-           (ftype function project-window stop-simulation simulation-properties-window simulation-properties set-property-value add-property))
-  (let ((Name-String (format nil "~A" (string-capitalize Name))))
-    (if (property-exists-p Name)
-      (set-property-value (simulation-properties *Project-Manager*) Name-String Value :update-window update-window)
-      (cond (t
-             #|(standard-alert-dialog (format nil "The simulation property '~A' does not exist. Do you want to add it to the Simulation Properties?" Name)
-                                    :yes-text "Yes"
-                                    :no-text "No"
-                                    :cancel-text nil)|#
-             ;; first time ever a simulation property gets created and no simulation property editor exists yet => create one
-             (unless (simulation-properties-window *Project-Manager*)
-               (setf (simulation-properties-window *Project-Manager*) (make-property-window))
-               ;; should we show the simulation property window if it's the first time a property is being created from within the simulation?
-               (show (simulation-properties-window *Project-Manager*)))
-             (add-property (simulation-properties *Project-Manager*)
-                           :name Name-String)
-             (set-property-value (simulation-properties *Project-Manager*) Name-String Value :update-window update-window))
-            (nil (stop-simulation (project-window *Project-Manager*)))))))
-
-
-(defun PROPERTY-EXISTS-P (Name) "
-  in:  Name {symbol}.
-  out: Exists {boolean}.
-  True if the property <Name> exists."
-  (when (and (simulation-properties *project-manager*) (gethash Name (property-hash (simulation-properties *project-manager*)) )) t))
-
-
-(defun REMOVE-PROPERTY (Name) "
-  in: Name {symbol}.
-  Remove property <Name>."
-  (remhash Name (property-hash (simulation-properties *project-manager*))))
-
-
-(defun CLEAR-PROPERTIES () "
-  Clear all properties: they will no longer exist"
-  (when (simulation-properties *project-manager*)
-    (clrhash (property-hash (simulation-properties *project-manager*)))))
-  
 
 ;_________________________________________
 ;  Infix -> Prefix Functions              |
