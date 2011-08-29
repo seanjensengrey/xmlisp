@@ -168,7 +168,7 @@
   (cond
    ((symbolp Formula)
     (if (is-global-variable Formula)
-      `(get-simulation-property-value ',(strip-global-variable-prefix Formula))
+      `(get-simulation-property-value Self ',(strip-global-variable-prefix Formula))
       `(get-agent-attribute-value Self ',Formula)))
    ((atom Formula) Formula)
    ;; (- 7) -> -7
