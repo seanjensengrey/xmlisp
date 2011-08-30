@@ -212,8 +212,7 @@
 
 
 (defmethod PRINT-SLOTS ((Self sky-dome))
-  `(x y z roll pitch heading size texture texture-path))
-
+  `(x y z roll pitch heading size texture))
 
 
 (defmethod INITIALIZE-INSTANCE ((Self sky-dome) &rest Initargs)
