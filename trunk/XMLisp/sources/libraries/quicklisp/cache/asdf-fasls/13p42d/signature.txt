@@ -1,0 +1,4 @@
+lisp-implementation-type: Clozure Common Lisp
+lisp-implementation-version: Version 1.7-r14927M  (DarwinX8664)
+machine-type: i386
+machine-version: iMac10,1
