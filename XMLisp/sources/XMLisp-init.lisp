@@ -65,6 +65,12 @@
 
 
 (setq ccl::*verbose-eval-selection* t)
+;;___________________________________________
+;;  Load Libraries                          |
+;;___________________________________________
+(load "lui:sources;libraries;quicklisp.lisp")
+(load "lui:sources;libraries;quicklisp;setup.lisp")
+(ql:quickload "zip")
 
 ;;___________________________________________
 ;;  Load IDE extensions                       |
@@ -139,7 +145,7 @@
    "*CURRENT-EVENT*" "VIEW-CURSOR" "CURRENT-CURSOR"
    "KEY-EVENT-HANDLER" "KEY-EVENT" "KEY-CODE"
    "COMMAND-KEY-P" "SHIFT-KEY-P" "ALT-KEY-P" "CONTROL-KEY-P" "DOUBLE-CLICK-P"
-   "WINDOW" "VIEW" "X" "Y" "WIDTH" "HEIGHT" "SHOW" "CENTER" "DO-SHOW-IMMEDIATELY" "SHOW-AND-RUN-MODAL" "STOP-MODAL" "CANCEL-MODAL" "HIDE"  "HAS-BECOME-MAIN-WINDOW" "WINDOW-WILL-CLOSE" "WINDOW-OF-VIEW-WILL-CLOSE" "WINDOW-DID-FINISH-RESIZE" "WINDOW-SHOULD-CLOSE" "MAKE-KEY-WINDOW" "ADD-TRACKING-RECT" "REMOVE-TRACKING-RECT""VIEW-DID-MOVE-TO-WINDOW" "VIEW-DID-END-RESIZE" "VISIBLE-P" "USE-CUSTOM-WINDOW-CONTROLLER" "SET-DOCUMENT-EDITTED"
+   "WINDOW" "VIEW" "X" "Y" "WIDTH" "HEIGHT" "SHOW" "CENTER" "DO-SHOW-IMMEDIATELY" "SHOW-AND-RUN-MODAL" "STOP-MODAL" "CANCEL-MODAL" "HIDE"  "HAS-BECOME-MAIN-WINDOW" "WINDOW-WILL-CLOSE" "WINDOW-OF-VIEW-WILL-CLOSE" "WINDOW-DID-FINISH-RESIZE" "WINDOW-SHOULD-CLOSE" "MAKE-KEY-WINDOW" "ADD-TRACKING-RECT" "REMOVE-TRACKING-RECT""VIEW-DID-MOVE-TO-WINDOW" "VIEW-DID-END-RESIZE" "VISIBLE-P" "USE-CUSTOM-WINDOW-CONTROLLER" "SET-DOCUMENT-EDITTED" "SHOW-MAIN-MENU-ON-WINDOWS"
    "SWITCH-TO-FULL-SCREEN-MODE" "SWITCH-TO-WINDOW-MODE" "FULL-SCREEN-P" "WINDOW-CLOSE" "MIN-WIDTH" "MIN-HEIGHT"
    "FIND-WINDOW-AT-SCREEN-POSITION" "FIND-VIEW-CONTAINING-POINT" "FIND-VIEW-AT-SCREEN-POSITION"
    "SCROLL-VIEW" "HAS-HORIZONTAL-SCROLLER" "HAS-VERTICAL-SCROLLER"
@@ -462,11 +468,11 @@
    (truename "lui:resources;shaders;")
    (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/shaders/" (user-homedir-pathname)))
   #-cocotron 
-  (format t "~%- patch info plist resources")
+  (format t "~%- copy the plist")
   #-cocotron 
-  (copy-file 
-   (truename "lui:resources;English.lproj;InfoPlist.strings")
-   (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/Resources/English.lproj/InfoPlist.strings" (user-homedir-pathname))
+  (copy-file
+   (truename "lui:resources;plists;info.plist")
+   (format nil "~ADesktop/XMLisp/XMLisp.app/Contents/info-plist" (user-homedir-pathname))
    :if-exists :supersede))
 
 
