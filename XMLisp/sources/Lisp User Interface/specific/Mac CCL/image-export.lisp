@@ -74,33 +74,29 @@
             (:jpeg #$NSJPEGFileType)
             (:jpeg2000 #$NSJPEG2000FileType))
           nil)
-         (native-string (namestring (translate-logical-pathname (probe-file Pathname))))
+         (let ((Path (probe-file Pathname)))
+           (if Path
+             (native-string (namestring (translate-logical-pathname Path)))
+             (native-string Pathname)))
          #$YES)
-        (#/release Bitmap)
-        ))))
+        (#/release Bitmap)))))
 
-#|
-(defun WRITECG-RGBA-IMAGE-TO-FILE (Image Height Width Pathname &key (Depth 4) (Image-Type :png)) "
-  in: Image pointer to RBGA buffer; Height, Width int; Pathname pathname; &optional Depth int default 4.
-  Depth in bytes.
-  Write RGBA image buffer into an image file."
-  (let ((bitmap ((#/CGImageCreate
-                  width
-                  height
-                  8
-                  32
-                  (* Width Depth)
-                  #$kCGColorSpaceGenericRGB
-                  #$kCGBitmapAlphaInfoMask
-                  Image
-                  #$NULL
-                  #$NO
-                  #$kCGRenderingIntentDefault))))))
-|#
+
+(defmethod SAVE-FRAME-BUFFER-AS-IMAGE ((Self opengl-view) To-Pathname)
+  (let ((Depth 4))
+    (with-glcontext Self
+      (with-vector-of-size (&buffer (* (height Self) (width Self) Depth))
+        (glReadPixels 0 0 (width Self) (height Self) GL_RGBA GL_UNSIGNED_BYTE &buffer)
+        (flip-vertical-buffer &buffer (* (width Self) (height Self) Depth) (* (width Self) Depth))
+        (write-rgba-image-to-file &buffer (height Self) (width Self) To-Pathname :depth Depth)))))
+      
+
+
 (defun SAVE-TEXTURE-AS-IMAGE (Texture To-Pathname Width Height &key (Depth 4)) "
   in: Texture id; to-pathname pathname; width, height int; &key Depth int default 4.
   Depth in bytes.
-  Save texture into pathname."
+  Save texture into pathname.
+  This needs to be run within a with-glcontext"
   (with-vector-of-size (&image (* Width Height Depth))
     (glBindTexture GL_TEXTURE_2D Texture)  ; make the texture current
     (glGetTexImage GL_TEXTURE_2D 0 (ecase Depth
@@ -108,12 +104,12 @@
                                      (4 GL_RGBA))
                    GL_UNSIGNED_BYTE &image)
     (flip-vertical-buffer &image (* Width Height Depth) (* Width Depth))  ;unflip buffer
-    (write-rgba-image-to-file &image Width Height To-Pathname :depth Depth)))
-
+    (write-rgba-image-to-file &image Height Width To-Pathname :depth Depth)))
 
 
 
 #| Examples:
+
 
 
 (with-vector-of-size (&Image (* 32 32 4))
@@ -124,7 +120,7 @@
         (set-byte &Image 0 (+ Offset 1))
         (set-byte &Image 0 (+ Offset 2))
         (set-byte &Image (* x 8) (+ Offset 3)))))
-  (write-rgba-image-to-file &Image 32 32 "home:Desktop;image99.png"))
+  (write-rgba-image-to-file &Image 32 32 "/Users/alex/Desktop/image99.png"))
 
 
 ;; same by jpeg 2000
@@ -136,7 +132,20 @@
         (set-byte &Image 0 (+ Offset 1))
         (set-byte &Image 0 (+ Offset 2))
         (set-byte &Image (* x 8) (+ Offset 3)))))
-  (write-rgba-image-to-file &Image 32 32 "home:Desktop;image99.jp2" :image-type :jpeg2000))
+  (write-rgba-image-to-file &Image 32 32 "/Users/alex/Desktop/image99.jp2" :image-type :jpeg2000))
+
+
+
+;;; if you have agentcubes running
+
+(save-frame-buffer-as-image 
+  (xlui::view-named (xlui::project-window xlui::*Project-Manager*) "the world")
+  "/Users/alex/Desktop/image102.png")
+
+
+
+(width (xlui::view-named (xlui::project-window xlui::*Project-Manager*) "the world"))
+(height (xlui::view-named (xlui::project-window xlui::*Project-Manager*) "the world"))
 
 
 |#
