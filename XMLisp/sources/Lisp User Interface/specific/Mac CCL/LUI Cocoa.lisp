@@ -97,30 +97,35 @@
 ;**********************************
 
 (defmethod COMMAND-KEY-P ()
-  (let ((current-event (#/currentEvent (#/sharedApplication ns:ns-application))))
-    (unless (%null-ptr-p current-event)
-      (not (zerop (logand (#/modifierFlags current-event) #$NSCommandKeyMask))))))
-
+  ;; see case #882 in FogBugz
+  (in-main-thread ()
+   (let ((current-event (#/currentEvent (#/sharedApplication ns:ns-application))))
+     (unless (%null-ptr-p current-event)
+       (not (zerop (logand (#/modifierFlags current-event) #$NSCommandKeyMask)))))))
 
 
 (defmethod ALT-KEY-P ()
-  (let ((current-event (#/currentEvent (#/sharedApplication ns:ns-application))))
-    (unless (%null-ptr-p current-event)
-      (not (zerop (logand (#/modifierFlags current-event) #$NSAlternateKeyMask))))))
+  ;; see case #882 in FogBugz
+  (in-main-thread ()
+   (let ((current-event (#/currentEvent (#/sharedApplication ns:ns-application))))
+     (unless (%null-ptr-p current-event)
+       (not (zerop (logand (#/modifierFlags current-event) #$NSAlternateKeyMask)))))))
 
 
 (defmethod SHIFT-KEY-P ()
-  (let ((current-event (#/currentEvent (#/sharedApplication ns:ns-application))))
-    (unless (%null-ptr-p current-event)
-      (not (zerop (logand (#/modifierFlags current-event) #$NSShiftKeyMask)))))
-  )
+  ;; see case #882 in FogBugz
+  (in-main-thread ()
+   (let ((current-event (#/currentEvent (#/sharedApplication ns:ns-application))))
+     (unless (%null-ptr-p current-event)
+       (not (zerop (logand (#/modifierFlags current-event) #$NSShiftKeyMask)))))))
     
 
 (defmethod CONTROL-KEY-P ()
-  (let ((current-event (#/currentEvent (#/sharedApplication ns:ns-application))))
-    (unless (%null-ptr-p current-event)
-      (not (zerop (logand (#/modifierFlags current-event) #$NSControlKeyMask))))))
-
+  ;; see case #882 in FogBugz
+  (in-main-thread ()
+   (let ((current-event (#/currentEvent (#/sharedApplication ns:ns-application))))
+     (unless (%null-ptr-p current-event)
+       (not (zerop (logand (#/modifierFlags current-event) #$NSControlKeyMask)))))))
 
 
 (defmethod DOUBLE-CLICK-P ()
@@ -131,8 +136,10 @@
 (defmethod GET-MODIFIER-FLAGS ((Self event))
   (#/modifierFlags (native-event self)))
 
+
 (defmethod GET-CHARACTERS ((Self event))
   (#/characters (native-event self)))
+
 
 ;;*********************************
 ;; Mouse Polling                  *
@@ -293,7 +300,7 @@
   (set-position self 0 0)
   (set-size self (width (window self)) (height (window self)))
   (when (and (superview self) (not (equal (type-of (native-view (superview self))) 'native-window-view)))
-    (print (type-of (native-view (superview self))))
+    (type-of (native-view (superview self)))
     (recursively-maximize-superviews (superview self))))
 
 
@@ -921,7 +928,7 @@
   (let ((window-array  (#/orderedWindows (#/sharedApplication ns::ns-application)))) 
     (dotimes (i (#/count window-array))
       (let ((array-window (#/objectAtIndex: window-array i)))    
-        (print (#/title array-window))))))
+        (#/title array-window)))))
 
 
 (defun FIND-WINDOW-AT-SCREEN-POSITION (screen-x screen-y &key Type) "
