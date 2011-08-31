@@ -735,7 +735,8 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 
 
 (defmethod WINDOW ((Self agent-3d))
-  (window (or (view Self) (error "agent's view is nil"))))
+  (when (view Self)
+    (window (view Self))))
 
 
 (defmethod SELECTION-PRIORITY ((Self agent-3d))
