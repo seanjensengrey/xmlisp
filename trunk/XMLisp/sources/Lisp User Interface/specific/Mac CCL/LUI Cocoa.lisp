@@ -2772,9 +2772,13 @@
 ; Show PopUp                       |
 ;__________________________________/
 
-(defun SHOW-STRING-POPUP (window list &key selected-item container item-addition-action-string-list) 
+(defun SHOW-STRING-POPUP (window list &key selected-item container item-addition-action-string-list)
   (unless list (return-from show-string-popup nil))
-  (let ((Pop-up (make-instance 'popup-button-control  :container container :width 1 :height 1 :x   (- (rational (NS:NS-POINT-X (#/mouseLocation ns:ns-event)))(x window))  :y   (-  (- (NS:NS-RECT-HEIGHT (#/frame (#/mainScreen ns:ns-screen)))(NS:NS-POINT-Y (#/mouseLocation ns:ns-event)))(y window))  )))
+  (let ((longest-string ""))
+    (dolist (string list)
+      (when (> (length string) (length longest-string))
+        (setf longest-string string)))
+    (let ((Pop-up (make-instance 'popup-button-control  :container container :width (truncate (ns:ns-size-width (#/sizeWithAttributes: (lui::native-string longest-string) nil))) :height 1 :x   (- (rational (NS:NS-POINT-X (#/mouseLocation ns:ns-event)))(x window))  :y   (-  (- (NS:NS-RECT-HEIGHT (#/frame (#/mainScreen ns:ns-screen)))(NS:NS-POINT-Y (#/mouseLocation ns:ns-event)))(y window))  )))
     (dolist (String list)
       (add-item Pop-Up String nil))
     (if item-addition-action-string-list
@@ -2783,10 +2787,10 @@
     (if selected-item
       (#/selectItemWithTitle: (native-view pop-up) (native-string selected-item))
       (#/selectItemWithTitle: (native-view pop-up) nil))
-    (#/setTransparent: (native-view Pop-Up) #$YES)
+    ;(#/setTransparent: (native-view Pop-Up) #$YES)
     (#/performClick:  (native-view Pop-up) +null-ptr+)
     (#/removeFromSuperview (native-view Pop-up))
     (unless (%null-ptr-p (#/titleOfSelectedItem (native-view Pop-Up)))
-      (ccl::lisp-string-from-nsstring  (#/titleOfSelectedItem (native-view Pop-Up))))))
+      (ccl::lisp-string-from-nsstring  (#/titleOfSelectedItem (native-view Pop-Up)))))))
 
 
