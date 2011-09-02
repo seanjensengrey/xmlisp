@@ -20,6 +20,8 @@
 
 (defvar *Current-Event* nil "event")
 
+(defvar *Last-Mouse-Event* nil "The last mouse event that occured")
+
 
 (defclass EVENT () 
   ((event-type :accessor event-type :initarg :event-type :initform :mouse-down)
@@ -832,6 +834,7 @@ after any of the window controls calls stop-modal close window and return value.
 
 
 (defmethod VIEW-EVENT-HANDLER ((Self Window) (Event mouse-event))
+  (setf *last-mouse-event* event)
   (let ((*Current-Event* Event))
     (with-simple-restart (abandon-view-event-handler "Stop event handling of mouse event ~S of window ~S" Event Self)
       (mouse-event-handler Self (x Event) (y Event) (dx Event) (dy Event) Event))))
