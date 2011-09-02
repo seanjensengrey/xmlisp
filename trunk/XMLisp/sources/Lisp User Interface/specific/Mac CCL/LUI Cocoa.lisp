@@ -585,6 +585,7 @@
 
 (defmethod WINDOW-CLOSE ((Self Window))
   (when (window-should-close self)
+    (window-will-close self nil)
     (#/close (native-window Self))
     (return-from window-close t))
   nil)
@@ -596,7 +597,7 @@
 (defclass NATIVE-WINDOW (ns:ns-window)
   ((lui-window :accessor lui-window :initarg :lui-window)
    (delegate :accessor delegate :initform nil :initarg :delegate :documentation "event delegate")   
-   #+cocotron (show-main-menu-on-windows :accessor show-main-menu-on-windows :initform nil :initarg :show-main-menu-on-windows :documentation "Should this window should a main menu on Windows?"))
+   #+cocotron (show-main-menu-on-windows :accessor show-main-menu-on-windows :initform nil :initarg :show-main-menu-on-windows :documentation "Should this window show a main menu on Windows?"))
   (:metaclass ns:+ns-object
 	      :documentation "Native window"))
 
@@ -846,6 +847,7 @@
   (when (#/isVisible (native-window Self))
     (error "cannot run modal a window that is already visible"))
   (in-main-thread () (#/makeKeyAndOrderFront: (native-window self) (native-window self)))
+  (before-going-modal self)
   (let ((Code (in-main-thread () 
                               (#/runModalForWindow: (#/sharedApplication ns:ns-application)
                                       (native-window Self)))))
@@ -865,6 +867,12 @@
 (defmethod CANCEL-MODAL ((Self window))
   (setq *Run-Modal-Return-Value* :cancel)
   (#/stopModal (#/sharedApplication ns:ns-application)))
+
+
+(defmethod BEFORE-GOING-MODAL ((Self window))
+  "Do any setup that needs to occur before the window becomes modal but after it is on the screen"
+  ;; By default, do nothing
+  )
 
 
 ;; screen mode
@@ -2250,7 +2258,7 @@
     (#/setEditable: Native-Control #$NO)
     (#/setSelectable: Native-Control #$NO)
     (unless (zerop (size Self))
-      (#/setFont: Native-Control (#/systemFontOfSize: ns:ns-font (float (size Self) 0.0d0))))
+      (#/setFont: Native-Control (#/systemFontOfSize: ns:ns-font (size self))))
   Native-Control))
 
 
