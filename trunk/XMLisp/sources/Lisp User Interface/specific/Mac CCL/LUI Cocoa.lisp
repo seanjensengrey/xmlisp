@@ -2773,6 +2773,7 @@
 ;__________________________________/
 
 (defun SHOW-STRING-POPUP (window list &key selected-item container item-addition-action-string-list) 
+  (unless list (return-from show-string-popup nil))
   (let ((Pop-up (make-instance 'popup-button-control  :container container :width 1 :height 1 :x   (- (rational (NS:NS-POINT-X (#/mouseLocation ns:ns-event)))(x window))  :y   (-  (- (NS:NS-RECT-HEIGHT (#/frame (#/mainScreen ns:ns-screen)))(NS:NS-POINT-Y (#/mouseLocation ns:ns-event)))(y window))  )))
     (dolist (String list)
       (add-item Pop-Up String nil))
