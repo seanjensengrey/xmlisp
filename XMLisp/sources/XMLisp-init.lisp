@@ -65,12 +65,6 @@
 
 
 (setq ccl::*verbose-eval-selection* t)
-;;___________________________________________
-;;  Load Libraries                          |
-;;___________________________________________
-(load "lui:sources;libraries;quicklisp.lisp")
-(load "lui:sources;libraries;quicklisp;setup.lisp")
-(ql:quickload "zip")
 
 ;;___________________________________________
 ;;  Load IDE extensions                       |
