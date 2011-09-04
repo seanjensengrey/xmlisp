@@ -353,6 +353,8 @@
 ; Full Screen Support          |
 ;______________________________
 
+#| No real benefit: disabling multi sample does not appear to save memory nor rendering time
+
 (defmethod ENTER-FULL-SCREEN-MODE :before ((Self opengl-view))
   ;; multisample would be too costly
   (with-glcontext Self
@@ -362,6 +364,8 @@
 (defmethod EXIT-FULL-SCREEN-MODE :before ((Self opengl-view))
   (with-glcontext Self
     (glEnable GL_MULTISAMPLE)))
+
+|#
 
 
 ;------------------------------
