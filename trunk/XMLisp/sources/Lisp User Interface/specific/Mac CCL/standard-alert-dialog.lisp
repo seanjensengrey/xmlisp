@@ -3,6 +3,11 @@
 
 (in-package :lui)
 
+(defgeneric STANDARD-ALERT-DIALOG (Message &key yes-text no-text cancel-text explanation-text is-critical)
+  (:documentation "This class will generate a standard-alert-dialog with up to three buttons depending on which text key paramaters are set.  
+                  VERY IMPORTANT, if you are going to use the cancel button make sure the no-text key is also set, if not the return values 
+                  will be confused, if you only want two button use yes and no."))
+
 
 (defmethod STANDARD-ALERT-DIALOG ((Message string) &key 
                                   (Yes-Text "OK")
@@ -17,8 +22,7 @@
     (when Cancel-Text (#/addButtonWithTitle: Alert (native-string Cancel-Text)))
     (when Explanation-Text (#/setInformativeText: Alert (native-string Explanation-Text)))
     (#/setAlertStyle: Alert (if Is-Critical #$NSCriticalAlertStyle #$NSWarningAlertStyle))
-    
-    (case (#/runModal Alert)
+    (case  (#/runModal Alert)
       (#.#$NSAlertFirstButtonReturn t)
       (#.#$NSAlertSecondButtonReturn nil)
       (#.#$NSAlertThirdButtonReturn (throw :cancel nil)))))
@@ -58,6 +62,7 @@
 (standard-alert-dialog "Too good to be true?" :yes-text "You have been informed" :no-text nil :cancel-text nil)
 
 (standard-alert-dialog "Launch Nukes?" :is-critical t :cancel-text nil)
+
 
 (standard-alert-dialog "No agent or shape selected in project window" 
                        :explanation-text "Select at least one agent in world"
