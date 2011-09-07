@@ -259,20 +259,21 @@
         (unless (transparent-ceiling-update-process self)
           (setf *ceiling-update-thread-should-stop* nil)
           (setf (transparent-ceiling-update-process self)
+         
                 (lui::process-run-function
                  '(:name "transparent ceiling update process")
                  #'(lambda ()
                      (loop
                        (catch-errors-nicely ("inflatable ceilling is animating")
-                        (when *Ceiling-Update-Thread-Should-Stop*  (return))
-                        (unless (or (transparent-ceiling-should-fade self)
-                                    (not (timer-due-p self (truncate (* 2.0 internal-time-units-per-second)))))
-                          (setf (transparent-ceiling-should-fade self) t))
-                        (when (transparent-ceiling-should-fade self)
-                          (ccl::with-lock-grabbed ((transparent-ceiling-update-lock))
-                            
-                            (update-ceiling-transparency self)))
-                        (sleep .04)))))))))))
+                         (when *Ceiling-Update-Thread-Should-Stop*  (return))
+                         (unless (or (transparent-ceiling-should-fade self)
+                                     (not (timer-due-p self (truncate (* 2.0 internal-time-units-per-second)))))
+                           (setf (transparent-ceiling-should-fade self) t))
+                         (when (transparent-ceiling-should-fade self)
+                           (ccl::with-lock-grabbed ((transparent-ceiling-update-lock))
+                             
+                             (update-ceiling-transparency self)))
+                         (sleep .04)))))))))))
 
 
 (defmethod LOAD-IMAGE-FROM-FILE ((Self inflatable-icon-editor-window) Pathname)
@@ -729,14 +730,16 @@
 
 (defmethod START-JOG ((Self inflation-jog-slider))
   (call-next-method)
-  #-cocotron
-  (play-sound "whiteNoise.mp3" :loops t))
+  ;#-cocotron
+  (play-sound "whiteNoise.mp3" :loops t)
+  )
 
 
 (defmethod STOP-JOG ((Self inflation-jog-slider))
   (call-next-method)
-  #-cocotron
-  (stop-sound "whiteNoise.mp3"))
+  ;#-cocotron
+  (stop-sound "whiteNoise.mp3")
+  )
 
 
 ;*************************************************
@@ -907,19 +910,19 @@
     (unless (transparent-ceiling-update-process window)
       (setf *ceiling-update-thread-should-stop* nil)
       (setf (transparent-ceiling-update-process window)
-            (lui::process-run-function
-             '(:name "transparent ceiling update process")
-             #'(lambda ()
-                 (loop
-                   (catch-errors-nicely ("inflatable ceilling is animating")
-                    (when *Ceiling-Update-Thread-Should-Stop*  (return))
-                    (unless (or (transparent-ceiling-should-fade window)
-                                (not (timer-due-p window (truncate (* 2.0 internal-time-units-per-second)))))
-                      (setf (transparent-ceiling-should-fade window) t))
-                    (when (transparent-ceiling-should-fade window)
-                      (ccl::with-lock-grabbed ((transparent-ceiling-update-lock))
-                                       (update-ceiling-transparency window)))
-                    (sleep .04))))))))
+        (lui::process-run-function
+         '(:name "transparent ceiling update process")
+         #'(lambda ()
+             (loop
+               (catch-errors-nicely ("inflatable ceilling is animating")
+                 (when *Ceiling-Update-Thread-Should-Stop*  (return))
+                 (unless (or (transparent-ceiling-should-fade window)
+                             (not (timer-due-p window (truncate (* 2.0 internal-time-units-per-second)))))
+                   (setf (transparent-ceiling-should-fade window) t))
+                 (when (transparent-ceiling-should-fade window)
+                   (ccl::with-lock-grabbed ((transparent-ceiling-update-lock))
+                     (update-ceiling-transparency window)))
+                 (sleep .04))))))))
   (let ((Ceiling (value Slider)))
     (let ((Text-View (view-named Window 'ceilingtext)))
       ;; update label
@@ -937,8 +940,9 @@
 (defmethod UPDATE-CEILING-TRANSPARENCY ((Self inflatable-icon-editor-window))
   (when (timer-due-p self (truncate (* (transparent-ceiling-update-frequency self) internal-time-units-per-second)))
     (setf (ceiling-transparency self)  (- (ceiling-transparency self) (transparent-ceiling-decrement-value self)))
-    ;(display (view-named self 'model-editor))
-    (#/setNeedsDisplay: (lui::native-view (view-named self 'model-editor)) #$YES)
+    (display (view-named self 'model-editor))
+    ;; The following code was causing a memory leak
+    ;(#/setNeedsDisplay: (lui::native-view (view-named self 'model-editor)) #$YES)
     ))
 
   
