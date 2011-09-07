@@ -182,7 +182,7 @@
             (#/setContentView: Window (#/autorelease (native-view Self)))
             (#/setHasShadow: Window #$YES)         
             (let ((current-row 0) (current-col 0)(i 0))
-              (dolist (group (image-names self))
+              (dolist (group (reverse (image-names self)))
                 (let ((group-name (first group)) 
                       (list (elt group 1))             
                       (label (make-instance 'indexed-text-view)))
