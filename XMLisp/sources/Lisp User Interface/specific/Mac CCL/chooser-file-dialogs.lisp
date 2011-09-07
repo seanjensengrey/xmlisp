@@ -40,10 +40,7 @@
                   (if (equal (#/title subview2) (native-string "Cancel"))
                     (#/setTitle: subview2 (native-string cancel-button-string))))))))))
     (when file-type-string-list
-      (dotimes (i (length file-type-string-list))
-        (unless (equal (type-of (elt file-type-string-list i)) (type-of (native-string "string")))
-          (progn
-            (setf (elt file-type-string-list i) (native-string (elt file-type-string-list i))))))
+      (setf file-type-string-list (mapcar #'native-string file-type-string-list))
       (setf file-types (ns-array-from-list file-type-string-list)))
     (when button-string
       (setf button-string (ccl::%make-nsstring button-string))
@@ -143,6 +140,7 @@
                                 cancel-button-string 
                                 (window-title "Choose a Directory") 
                                 prompt 
+                                name-field-string
                                 (window-position (ns:make-ns-point 100 100)))
   (let* ((panel (#/openPanel ns:ns-open-panel))
 	 ;(dc (#/sharedUserDefaultsController ns:ns-user-defaults-controller))
@@ -168,6 +166,8 @@
     (when prompt
       (setf prompt (ccl::%make-nsstring prompt))
       (#/setMessage: panel  prompt))
+    (when name-field-string
+      (#/setNameFieldLabel: panel (ccl::%make-nsstring name-field-string)))
     (#/setAllowsMultipleSelection: panel nil)
     (#/setCanChooseDirectories: panel t)
     (#/setCanChooseFiles: panel nil)
@@ -192,6 +192,7 @@
                                     cancel-button-string 
                                     (window-title "Create a New Directory") 
                                     prompt 
+                                    name-field-string
                                     (window-position (ns:make-ns-point 100 100)))
   (let* ((panel (#/savePanel ns:ns-save-panel))
 	 ;(dc (#/sharedUserDefaultsController ns:ns-user-defaults-controller))
@@ -218,6 +219,8 @@
     (when prompt
       (setf prompt (ccl::%make-nsstring prompt))
       (#/setMessage: panel  prompt))
+     (when name-field-string
+       (#/setNameFieldLabel: panel (ccl::%make-nsstring name-field-string)))
     #-cocotron
     (#/setCanChooseDirectories: panel #$YES)
     ;(#/setCanChooseFiles: panel nil)
