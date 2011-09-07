@@ -30,19 +30,20 @@
 
 
 (defmethod PLAY-SOUND ((Name string) &key Loops)
-  (let ((Sound (or (gethash Name *Sounds*)
-                   (let ((New-Sound
-                          (#/initWithContentsOfFile:byReference: 
-                           (#/alloc ns:ns-sound) 
-                           (native-string (native-path "lui:resources;sounds;" Name))
-                           #$YES)))
-                     ;; (print "loading sound")
-                     (unless (%null-ptr-p New-Sound)
-                       (setf (gethash Name *Sounds*) New-Sound))))))
-    (unless Sound (return-from play-sound (warn "sound \"~A\" is missing" Name)))
-    #-cocotron
-    (#/setLoops: Sound (if Loops #$YES #$NO))
-    (#/play Sound)))
+  (ccl::with-autorelease-pool
+    (let ((Sound (or (gethash Name *Sounds*)
+                     (let ((New-Sound
+                            (#/initWithContentsOfFile:byReference: 
+                             (#/alloc ns:ns-sound) 
+                             (native-string (native-path "lui:resources;sounds;" Name))
+                             #$YES)))
+                       ;; (print "loading sound")
+                       (unless (%null-ptr-p New-Sound)
+                         (setf (gethash Name *Sounds*) New-Sound))))))
+      (unless Sound (return-from play-sound (warn "sound \"~A\" is missing" Name)))
+      #-cocotron
+      (#/setLoops: Sound (if Loops #$YES #$NO))
+      (#/play Sound))))
 
 
 (defmethod SET-VOLUME ((Name string) Volume)
