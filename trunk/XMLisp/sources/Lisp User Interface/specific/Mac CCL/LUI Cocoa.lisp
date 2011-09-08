@@ -723,11 +723,12 @@
 
 
 (objc:defmethod (#/windowDidMove: :void) ((self window-delegate) Notification)
-  (declare (ignore Notification))
+  (declare (ignore Notification))  
   (let ((Window (lui-window Self)))
     (setf (x Window) (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.x)))
     (setf (y Window) 
           (- (screen-height (lui-window Self)) 
+             #-cocotron (#/menuBarHeight (#/mainMenu (#/sharedApplication ns:ns-application))) 
              (height (lui-window Self))
              (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.y))))))
 
@@ -816,6 +817,7 @@
                                (#/mainScreen ns:ns-screen))) 
                   <NSR>ect.size.height)))
 
+
 (defmethod VISIBLE-P ((Self window))
   (when (#/isVisible (native-window Self))
     t))
@@ -873,6 +875,17 @@
   "Do any setup that needs to occur before the window becomes modal but after it is on the screen"
   ;; By default, do nothing
   )
+
+
+(defmethod SET-SIZE-AND-POSITION-ENSURING-WINDOW-WILL-FIT-ON-SCREEN ((Self window) x y width height)
+  "Will try and set the window to the given size but will make sure the window does not appear outside of the screen"
+  (let ((screen-out-of-bounds-margin 30))
+    (when (> (+ screen-out-of-bounds-margin x) (screen-width self))
+      (setf x 0))
+    (when (> (+ screen-out-of-bounds-margin y) (screen-height self))
+      (setf y #+cocotron 0 #-cocotron (#/menuBarHeight (#/mainMenu (#/sharedApplication ns:ns-application)))))
+    (set-size self width height)
+    (set-position self x y)))
 
 
 ;; screen mode
@@ -2767,6 +2780,7 @@
   "IN: A URL in the form of a string
   OUT: the user's default should open to the specified URL"
   (#/openURL: (#/sharedWorkspace ns:ns-workspace) (#/URLWithString: ns:ns-url (native-string url))))
+
 
 ;__________________________________
 ; Show PopUp                       |
