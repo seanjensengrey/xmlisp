@@ -2787,7 +2787,7 @@
 ;__________________________________/
 
 (defun SHOW-STRING-POPUP (window list &key selected-item container item-addition-action-string-list)
-  (unless list (return-from show-string-popup nil))
+  (unless (or list item-addition-action-string-list) (return-from show-string-popup nil))
   (let ((longest-string ""))
     (dolist (string list)
       (when (> (length string) (length longest-string))
