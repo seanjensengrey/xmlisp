@@ -219,7 +219,8 @@
     (when prompt
       (setf prompt (ccl::%make-nsstring prompt))
       (#/setMessage: panel  prompt))
-     (when name-field-string
+    #-cocotron 
+    (when name-field-string
        (#/setNameFieldLabel: panel (ccl::%make-nsstring name-field-string)))
     #-cocotron
     (#/setCanChooseDirectories: panel #$YES)
