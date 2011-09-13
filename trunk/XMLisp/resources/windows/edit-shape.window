@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<new-shape-window title="Agent Shape Browser" width="1000" height="360">
+<edit-shape-window title="Agent Shape Browser" width="1000" height="360">
   <column align="stretch" valign="stretch">
     <row align="stretch" valign="stretch" vflex="1">
       <column width="90" vflex="1" align="stretch" valign="stretch" > 
@@ -43,4 +43,4 @@
       <button text="OK" action="OK-action" default-button="true" start-disabled="true" name="ok-button"/>
     </row>
   </column>
-</new-shape-window>
+</edit-shape-window>
