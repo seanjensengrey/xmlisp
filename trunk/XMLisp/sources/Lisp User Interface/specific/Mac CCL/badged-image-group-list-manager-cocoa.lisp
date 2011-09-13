@@ -66,7 +66,7 @@
     (setf (height self) height)
     (unless (equal (#/superview (native-view self)) +null-ptr+)
       (when call-set-size
-        (set-size (lui-view (#/superview (#/superview (native-view self))))   (width (lui-view (#/superview (#/superview (native-view self))))) (height (lui-view (#/superview (#/superview (native-view self))))))
+        ;(set-size (lui-view (#/superview (#/superview (native-view self))))   (width (lui-view (#/superview (#/superview (native-view self))))) (height (lui-view (#/superview (#/superview (native-view self))))))
         (layout (lui-view (#/superview (#/superview (native-view self))))))
       (when (and (lui-view (#/superview (#/superview (native-view self)))) (> (height (lui-view (#/superview (#/superview (native-view self))))) (height self)))
         (setf (height self) (height (lui-view (#/superview (#/superview (native-view self))))))))))
@@ -134,7 +134,7 @@
         (if (is-disclosed group)     
           (#/setHidden: (item-view group) #$NO)
           (#/setHidden: (item-view group) #$YES))
-        (#/setNeedsDisplay: (item-view group) #$YES)
+        ;(#/setNeedsDisplay: (item-view group) #$YES)
         (if (is-highlighted group)
           (#/setHidden: (selection-view group ) #$NO)
           (#/setHidden: (selection-view group ) #$YES))
@@ -142,8 +142,8 @@
           (#/setFrameOrigin: (selection-view group) Point ))
         (ns:with-ns-size (Size (width (lui-view self)) (row-height (lui-view self)))
           (#/setFrameSize: (selection-view group) Size ))
-        (#/setNeedsDisplay: (selection-view group) #$YES)
-        (#/setNeedsDisplay: (group-view group) #$YES)
+        ;(#/setNeedsDisplay: (selection-view group) #$YES)
+        ;(#/setNeedsDisplay: (group-view group) #$YES)
         (incf y   group-height)))) 
   (#/setNeedsDisplay: self #$YES)
   (resize-height-of-view (lui-view self) )
@@ -699,7 +699,7 @@
   (remove-background-from-text-fields (native-view self)))
 
 
-(defmethod ADD-GROUP-TO-GUI ((Self badged-image-group-list-manager-view) group)
+(defmethod ADD-GROUP-TO-GUI ((Self badged-image-group-list-manager-view) group )
   (let ((x (left-margin self)) (text-length 100))
     (let ((height (row-height self)))
       (unless (eql (is-disclosed group) nil)
@@ -791,7 +791,7 @@
     list-group))
 
 
-(defmethod ADD-GROUP-ITEM ((Self badged-image-group-list-manager-view) group-name item &key (image-path "lui:resources;images;") (force-disclosure nil))
+(defmethod ADD-GROUP-ITEM ((Self badged-image-group-list-manager-view) group-name item &key (do-layout t)(image-path "lui:resources;images;") (force-disclosure nil))
   (setf (first item) (string-capitalize (first item)))
   (let ((list-item (make-instance 'list-group-item :item-name (first item) :image-path image-path :image-name (second item))))
     (let ((group (get-group-with-name self (String-capitalize group-name))))
@@ -807,7 +807,8 @@
       (setf (group-items group) (append (group-items group) (list list-item)  ))
       (add-item-to-gui self group list-item)
       (#/setHidden: (item-view group) #$NO))
-    (layout (native-view self))
+    (when do-layout 
+      (layout (native-view self)))
     (when (window self)
       (size-changed-event-handler (window self) (width (window self)) (height (window self))))
     t))
