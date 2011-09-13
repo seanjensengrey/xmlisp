@@ -36,6 +36,10 @@
   (gethash (symbol-name Name) (named-views Self)))
 
 
+(defmethod REMOVE-NAMED-VIEW ((Self application-window) key)
+  (remhash (string-upcase key) (named-views self)))
+
+
 (defmethod SUBVIEWS-SWAPPED ((Self application-window) (Old-View view) (New-View view))
   ;; remove old name from table
   (unless (string= (name Old-View) "")
@@ -58,7 +62,7 @@
 
 
 (defmethod PRINT-SLOTS ((Self application-window))
-  '(x y width height zoomable minimizable resizable closeable subviews))
+  '(x y width height zoomable minimizable resizable closeable #|subviews|#))
 
 
 (defmethod ADD-SUBOBJECT ((Window application-window) (View xml-layout-interface))
