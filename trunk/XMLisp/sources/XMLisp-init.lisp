@@ -190,7 +190,7 @@
    "COLOR-WELL-CONTROL" "COLOR" "GET-RED" "GET-GREEN" "GET-BLUE" "GET-ALPHA" "SHOW-ALPHA"
    "COLOR-WELL-BUTTON-CONTROL"
    "WEB-BROWSER-CONTROL" "URL"
-   "OPENGL-VIEW" "FRAME-RATE" "ANIMATE" "DELTA-TIME" "TEXTURES" "START-ANIMATION" "STOP-ANIMATION" "IS-ANIMATED" "FULL-SCENE-ANTI-ALIASING" "ANIMATE-OPENGL-VIEW-ONCE" 
+   "OPENGL-VIEW" "FRAME-RATE" "DISPLAY-FRAME-RATE" "ANIMATE" "DELTA-TIME" "TEXTURES" "START-ANIMATION" "STOP-ANIMATION" "IS-ANIMATED" "FULL-SCENE-ANTI-ALIASING" "ANIMATE-OPENGL-VIEW-ONCE" 
    ;; Shader Support
    "SET-SHADER-SOURCE" "GET-SHADER-INFO-LOG"
    "INITIALIZE-CAMERA"
@@ -237,6 +237,12 @@
   (format nil "~A~A" (truename Directory-Name) File-Name))
 
 
+(defun LUI::NATIVE-PATH (Directory-Name File-Name) "
+  in: Directory-Name logical-pathname-string, e.g., ''lui:resources;textures;''
+      File-Name string.
+  out: Native-Path-String
+  Create a native, OS specific, path from a platform independend URL style path"
+  (format nil "~A~A" (truename Directory-Name) File-Name))
 ;;___________________________________________
 ;;  OS Version Management                     |
 ;;___________________________________________
