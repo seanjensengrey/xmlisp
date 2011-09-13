@@ -151,12 +151,6 @@
     (draw Self)))
 
 
-(defmethod DISPLAY-WITH-FORCE ((Self opengl-view))  
-  #+cocotron
-  (#/setNeedsDisplay: (native-view self) #$YES)
-  (display self))
-
-
 (defmethod FRAME-RATE ((Self opengl-view))
   (with-glcontext Self
     (let ((Frame-Count 0)
@@ -293,8 +287,7 @@
     ;;remember to remove the above declare if you are going to use the following frame rate test.
     (when (equal total-time 0)
       (setf total-time 0.01))
-    
-      (display-frame-rate self animation-time total-time rendering-time)
+    (display-frame-rate self animation-time total-time rendering-time)
       ;; Cap framerate 
     (let ((Sleep-Time (- #.(/ 1.0 *Framerate-Ceilling*) (* Total-Time 1.0e-9))))
       (when (> Sleep-Time 0.0) 
