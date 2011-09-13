@@ -29,7 +29,7 @@
 ;*                         clean up mirroring, mirroring choice buttons,     *
 ;*                         grid choice buttons (travis)                      *
 ;*    1.0.9     : 08/08/06 fix bug in absolute-color-difference-ignore-alpha *
-;*                         (travis)                                          *
+;*                         (travis)                                   7       *
 ;*    1.0.10    : 08/25/06 AR: use MCL 5.2 standard-alert-dialog,            *
 ;*                                         window-save-as                    *
 ;*    1.0.11    : 01/04/07 AR: make-me-the-current-context in save-image     *
@@ -361,6 +361,24 @@
       (set-byte (pixel-buffer Self) Alpha (+ Byte-Offset 3)))))
 
 
+(defmethod SET-RGBA-COLOR-AT-WITHOUT-GL-CONTEXT ((Self image-editor) Col Row Red Green Blue &optional (Alpha 255))
+  "VERY DANGEROUS!  MAKE SURE TO ALWAYS ESTABLISH A GL CONTEXT BEFORE CALLING THIS METHOD!!!!!  Sets the color at the specified pixel location."
+  ;; update texture
+  (when (img-texture Self)
+    (with-rgba-byte-vector &color (Red Green Blue Alpha)
+      
+        (glBindTexture GL_TEXTURE_2D (img-texture Self))
+        (glTexSubImage2D GL_TEXTURE_2D 0 Col (- (img-height Self) Row 1) 1 1 GL_RGBA GL_UNSIGNED_BYTE &color)))
+  ;; update pixel buffer
+  (when (pixel-buffer Self)
+    (let ((Byte-Offset (image-byte-offset Self Col Row)))
+      (when (> Byte-Offset (sizeof (pixel-buffer Self))) (error "out of range"))
+      (set-byte (pixel-buffer Self) Red Byte-Offset)
+      (set-byte (pixel-buffer Self) Green (+ Byte-Offset 1))
+      (set-byte (pixel-buffer Self) Blue (+ Byte-Offset 2))
+      (set-byte (pixel-buffer Self) Alpha (+ Byte-Offset 3)))))
+
+
 (defmethod GET-COLOR-AT ((Self image-editor) Col Row)
   (multiple-value-bind (Red Green Blue Alpha)
                        (get-rgba-color-at Self Col Row)
@@ -372,6 +390,14 @@
 
 (defmethod SET-COLOR-AT ((Self image-editor) Col Row Color)
   (set-rgba-color-at Self Col Row
+   (logand Color 255)
+   (logand (ash Color -8) 255)
+   (logand (ash Color -16) 255)
+   (logand (ash Color -24) 255)))
+
+
+(defmethod SET-COLOR-AT-WITHOUT-GL-CONTEXT ((Self image-editor) Col Row Color)
+  (set-rgba-color-at-without-gl-context Self Col Row
    (logand Color 255)
    (logand (ash Color -8) 255)
    (logand (ash Color -16) 255)
@@ -470,20 +496,25 @@
 (defmethod ERASE-SELECTED-PIXELS ((Self image-editor))
   (when (selection-active-p Self)
     (multiple-value-bind (Red Green Blue Alpha) (bg-color Self)
-      (dotimes (Row (img-height Self))
-        (dotimes (Col (img-width Self))
-          (when (pixel-selected-p (selection-mask Self) Col Row)
-            (set-rgba-color-at Self Col Row Red Green Blue Alpha)
-            (mirror-pixel Self Col Row)))))
+      (with-glcontext Self
+        (dotimes (Row (img-height Self))
+          (dotimes (Col (img-width Self))
+            (when (pixel-selected-p (selection-mask Self) Col Row)
+              (set-rgba-color-at-without-gl-context Self Col Row Red Green Blue Alpha)
+              (mirror-pixel Self Col Row))))))
     (display Self)))
 
 
 (defmethod ERASE-ALL ((Self image-editor))
-  (dotimes (X (img-width Self))
-    (dotimes (Y (img-height Self))
-      (multiple-value-bind (Red Green Blue Alpha) (bg-color Self)
-        (set-rgba-color-at Self x y Red Green Blue Alpha))))
-  (display Self))
+  ;; For performance reasons, we should establish the glcontext once outside of the loops instead of establishing the context every time through the loop
+  (with-glcontext Self
+    (dotimes (X (img-width Self))
+      (dotimes (Y (img-height Self))
+        (multiple-value-bind (Red Green Blue Alpha) (bg-color Self)
+          (set-rgba-color-at-without-gl-context Self x y Red Green Blue Alpha)
+          ))))
+  ;(display Self)
+  )
 
 
 (defmethod DRAW-BACKGROUND-TEXTURE ((Self image-editor))
@@ -591,32 +622,37 @@
 
 
 (defmethod MIRROR-IMAGE-LEFT-TO-RIGHT ((Self image-editor))
-  (dotimes (X (/ (img-width Self) 2))
-    (dotimes (Y (img-height Self))
-      (set-color-at Self (- (img-width Self) (+ X 1)) Y (get-color-at Self X Y))))
+  (with-glcontext Self
+    (dotimes (X (/ (img-width Self) 2))
+      (dotimes (Y (img-height Self))
+        (set-color-at-without-gl-context Self (- (img-width Self) (+ X 1)) Y (get-color-at Self X Y)))))
   (display Self))
 
 
 (defmethod MIRROR-IMAGE-TOP-TO-BOTTOM ((Self image-editor))
-  (dotimes (X (img-width Self))
-    (dotimes (Y (/ (img-height Self) 2))
-      (set-color-at Self X (- (img-height Self) (+ Y 1)) (get-color-at Self X Y))))
+  (with-glcontext Self
+    (dotimes (X (img-width Self))
+      (dotimes (Y (/ (img-height Self) 2))
+        (set-color-at-without-gl-context Self X (- (img-height Self) (+ Y 1)) (get-color-at Self X Y)))))
   (display Self))
 
 
 (defmethod MIRROR-PIXEL-VERTICALLY ((Self image-editor) Col Row)
-  (multiple-value-bind (r g b a) (get-rgba-color-at Self Col Row)
-    (set-rgba-color-at Self (- (- (img-width Self) 1) Col) Row r g b a)))
+  (with-glcontext
+      (multiple-value-bind (r g b a) (get-rgba-color-at Self Col Row)
+        (set-rgba-color-at-without-gl-context Self (- (- (img-width Self) 1) Col) Row r g b a))))
 
 
 (defmethod MIRROR-PIXEL-HORIZONTALLY ((Self image-editor) Col Row)
-  (multiple-value-bind (r g b a) (get-rgba-color-at Self Col Row)
-    (set-rgba-color-at Self Col (- (- (img-height Self) 1) Row) r g b a)))
-
+  (with-glcontext Self
+    (multiple-value-bind (r g b a) (get-rgba-color-at Self Col Row)
+      (set-rgba-color-at-without-gl-context Self Col (- (- (img-height Self) 1) Row) r g b a))))
+  
 
 (defmethod MIRROR-PIXEL-DIAGONALLY ((Self image-editor) Col Row)
-  (multiple-value-bind (r g b a) (get-rgba-color-at Self Col Row)
-    (set-rgba-color-at Self (- (- (img-width Self) 1) Col) (- (- (img-height Self) 1) Row) r g b a)))
+  (with-glcontext Self
+    (multiple-value-bind (r g b a) (get-rgba-color-at Self Col Row)
+      (set-rgba-color-at-without-gl-context Self (- (- (img-width Self) 1) Col) (- (- (img-height Self) 1) Row) r g b a))))
 
 
 (defmethod MIRROR-PIXEL ((Self image-editor) Col Row)
@@ -999,7 +1035,7 @@
                          Cur-Red Cur-Green Cur-Blue Cur-Alpha)
                 (and (= Cur-Red Orig-Red) (= Cur-Green Orig-Green)
                      (= Cur-Blue Orig-Blue) (= Cur-Alpha Orig-Alpha)))
-          (set-rgba-color-at Self Col Row New-Red New-Green New-Blue New-Alpha)
+          (set-rgba-color-at-without-gl-context Self Col Row New-Red New-Green New-Blue New-Alpha)
           ;; Mirror the new pixel if needed
           (mirror-pixel Self Col Row)
           
@@ -1140,8 +1176,9 @@
        (when (or (not (selection-active-p Self)) (pixel-selected-p (selection-mask Self) Col Row))
          (execute-command (command-manager (window self)) (make-instance 'pixel-update-command :image-editor self :image-snapeshot (create-image-array self)))))
      (multiple-value-bind (New-Red New-Green New-Blue New-Alpha) (pen-color Self)
+       (with-glcontext Self
        (flood-fill Self Col Row New-Red New-Green New-Blue New-Alpha
-                   :tolerance (tolerance Self) :tolerance-function #'absolute-color-difference-ignore-alpha)))
+                   :tolerance (tolerance Self) :tolerance-function #'absolute-color-difference-ignore-alpha))))
     ;; MAGIC WAND
     (magic-wand
      ;; When not holding shift, clear the selection
