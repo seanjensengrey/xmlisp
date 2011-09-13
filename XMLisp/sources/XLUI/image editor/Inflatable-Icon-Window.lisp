@@ -251,7 +251,7 @@
                 (maximum-altitude Inflatable-Icon :inflate-pixel-p-fn #'pixel-selected-p-fn))
         |#
         ;; update 
-        (display-with-force Model-Editor))
+        (display Model-Editor))
       ;(adjust-ceiling-action self (view-named self "ceiling_slider"))
       (when (>= (maximum-altitude inflatable-icon) (ceiling-value Inflatable-Icon))
         (setf (ceiling-transparency self) (transparent-ceiling-starting-alpha self))
@@ -900,7 +900,8 @@
         (let ((Model-Editor (view-named Window 'model-editor)))
           (incf (pressure (inflatable-icon Model-Editor)) (* 0.02 Pressure))
           (update-inflation Window)
-          (setf (is-flat (inflatable-icon Model-Editor)) nil))))))
+          (setf (is-flat (inflatable-icon Model-Editor)) nil)))))
+)
 
 
 (defmethod ADJUST-CEILING-ACTION ((Window inflatable-icon-editor-window) (Slider slider) &key (draw-transparent-ceiling t))
@@ -995,7 +996,7 @@
       (let* ((Model-Editor (view-named Window 'model-editor)))
         (setf (dz (inflatable-icon Model-Editor)) Offset)
         (adjust-ceiling-action window (view-named window "ceiling_slider"))
-        (display-with-force Model-Editor))))
+        (display Model-Editor))))
     ;;Wicked cocotron hack to get the inflated icon editor to update
   )
 
@@ -1010,7 +1011,7 @@
     (let ((Model-Editor (view-named Window 'model-editor)))
       (setf (distance (inflatable-icon Model-Editor)) Distance)
       (unless do-not-display
-        (display-with-force Model-Editor))))
+        (display Model-Editor))))
   ;;Wicked cocotron hack to get the inflated icon editor to update
   )
 
@@ -1119,6 +1120,7 @@
     (setf (is-upright inflatable-icon) nil)
     (set-selected-item-with-title (view-named window "surfaces") "Front")
     (execute-command (command-manager window) (make-instance 'pixel-update-command :image-editor (view-named window 'icon-editor) :image-snapeshot (create-image-array (view-named window 'icon-editor))))
+    
     (erase-all (view-named window 'icon-editor))
     (dotimes (Row (rows Inflatable-Icon ))
       (dotimes (Column (columns Inflatable-Icon ))
@@ -1159,7 +1161,7 @@
       (setf (text Text-View) (format nil "~A" 0.0))
       (display Text-View))
     (clear-selection (view-named window 'icon-editor))
-    (display-with-force Model-Editor)))
+    (display Model-Editor)))
 
 
 (defmethod EDIT-ICON-SAVE-ACTION ((Window inflatable-icon-editor-window) (Button button))

@@ -104,7 +104,7 @@
   (let ((Value (* 10.0 (value Slider))))
     (setf (value (view-named Window "cover flow view")) Value)
     (aim-camera (camera (view-named Window "cover flow view")) :eye-x Value :center-x Value)
-    (display-with-force (view-named Window "cover flow view"))))
+    (display (view-named Window "cover flow view"))))
 
 
 ;; Window

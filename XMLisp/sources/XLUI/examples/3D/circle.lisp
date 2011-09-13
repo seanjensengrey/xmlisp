@@ -28,7 +28,7 @@
 
 (defmethod ADJUST-SLICES-ACTION ((Window application-window) (Slider slider))
   (setf (slices (view-named Window "crappy circle")) (truncate (value Slider)))
-  (display-with-force (view-named Window "crappy circle")))
+  (display (view-named Window "crappy circle")))
 
 
 <application-window title="circle, really?" y="50">
