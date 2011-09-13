@@ -280,7 +280,7 @@
 (defvar *Framerate-Ceilling* 60 "max frame rate; simulation not exceed to save CPU")
 
 
-(defvar *Print-Frame-Rate-Info* t "if true print run time information including frame rate to console")
+(defvar *Print-Frame-Rate-Info* nil "if true print run time information including frame rate to console")
 
 
 (defmethod ANIMATE-OPENGL-VIEW-ONCE ((Self opengl-view))
