@@ -67,17 +67,16 @@
               </row>
               <column  tooltip="Layer controls" align="center" valign="stretch" flex="1" vflex="1" >
                 <label tooltip="Height of each layer in your world" width="46" text="Height"/>
-                <slider tooltip="Adjust the layer height of this world" vflex="1" width="20" value="5.0" start-disabled="true" name="layer-height-slider" max-value="10.0" min-value="0.0"  action="layer-height-slider-action"/>
+                <slider tooltip="Adjust the layer height of this world" vflex="1" width="20" value="2.0" start-disabled="true" name="layer-height-slider" max-value="6.0" min-value="0.0"  action="layer-height-slider-action"/>
               </column>
               <check-box   text="Grid" start-disabled="true" name="toggle-grid-button" action="toggle-grid-action" width="46" height="24" />
             </column >
           </row>
           <row align="stretch" minimize="vertical"  valign="bottom"  flex="1">
-            <row align="stretch"  minimize="vertical" valign="bottom" flex="1">
-              <status-bar tooltip="Status Bar" align="stretch" flex="1" name="status-bar" text=""/>
-            </row>
-            <row align="stretch" padding="-1" minimize="vertical" valign="middle" flex="1" src="gradient-transparent.png">
-            </row>
+    
+            <status-bar tooltip="Status Bar" align="stretch" flex="1" name="status-bar" text=""/>
+            <label text="FPS:" tooltip="This project's framerate" name="fps-label" width="65"/>
+          
           </row>
         </column>
       </row>
