@@ -39,6 +39,13 @@
 
 (defvar *Global-Variable-Prefix-Char* #\@ "The character used as symbol prefix to designate a global variable, i.e., a simulation property")
 
+(defvar *Infix->Postfix-Expansion-Lock* nil)
+
+(defun INFIX->POSTFIX-EXPANSION-LOCK ()
+  (or *Infix->Postfix-Expansion-Lock*
+      (setq *Infix->Postfix-Expansion-Lock* (ccl::make-lock "Infix->Postfix lock"))))
+ 
+
 (defun INFIX->POSTFIX (Object) "
   in:  Object {t}.
   out: S-Expression {t}.
@@ -50,7 +57,8 @@
     (symbol Object)
     (string 
      (ignore-errors
-      (values (read-from-string (concatenate 'string "#{" Object "$")))))
+      (values (ccl::with-lock-grabbed ((infix->postfix-expansion-lock))
+                (read-from-string (concatenate 'string "#{" Object "$"))))))
     (t (error "Cannot understand ~A in Visual AgenTalk formula" Object))))
 
 ;_________________________________________
