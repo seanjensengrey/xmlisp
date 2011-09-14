@@ -58,18 +58,13 @@
 
 
 (defmethod RESIZE-HEIGHT-OF-VIEW ((Self badged-image-group-list-manager-view) &key (call-set-size t))
+  "Resize this view to fit all of the its contents"
   (let ((height 0))
     (dolist (group (groups self))
       (if (is-disclosed group)
-        (incf height (+ (item-category-label-height self) (row-height self)  (* (row-height self) (length (group-items group)))))
+        (incf height (+ (disclosed-item-list-margin self) (item-category-label-height self) (row-height self)  (* (row-height self) (length (group-items group)))))
         (incf height    (row-height self))))
-    (setf (height self) height)
-    (unless (equal (#/superview (native-view self)) +null-ptr+)
-      (when call-set-size
-        ;(set-size (lui-view (#/superview (#/superview (native-view self))))   (width (lui-view (#/superview (#/superview (native-view self))))) (height (lui-view (#/superview (#/superview (native-view self))))))
-        (layout (lui-view (#/superview (#/superview (native-view self))))))
-      (when (and (lui-view (#/superview (#/superview (native-view self)))) (> (height (lui-view (#/superview (#/superview (native-view self))))) (height self)))
-        (setf (height self) (height (lui-view (#/superview (#/superview (native-view self))))))))))
+      (set-size self  (width self) height)))
 
 
 
@@ -112,12 +107,7 @@
    )
   (:metaclass ns:+ns-object
 	      :documentation ""))
-#|
-(defmethod INITIALIZE-INSTANCE :after ((Self native-badged-image-group-list-manager-view) &rest args)
-  (print (#/superview self))
-  ;(#/setBackgroundColor: self (#/colorWithCalibratedRed:green:blue:alpha: ns:ns-color .7 .7 .7 1.0))
-  )
-|#
+
 
 (defmethod LAYOUT ((Self native-badged-image-group-list-manager-view))
   (let ((y 0)) 
@@ -145,7 +135,7 @@
         ;(#/setNeedsDisplay: (selection-view group) #$YES)
         ;(#/setNeedsDisplay: (group-view group) #$YES)
         (incf y   group-height)))) 
-  (#/setNeedsDisplay: self #$YES)
+  ;(#/setNeedsDisplay: self #$YES)
   (resize-height-of-view (lui-view self) )
   (call-next-method)
   (layout-changed (lui-view self)))
@@ -199,7 +189,7 @@
           (#/setHidden: (item-selection-view group) #$YES)))))
   (let ((subviews (gui::list-from-ns-array (#/subviews self))))
     (dolist (subview subviews)   
-      (#/setNeedsDisplay: subview #$YES)
+      ;(#/setNeedsDisplay: subview #$YES)
       (if (equal (type-of subview) 'LUI::mouse-detection-text-field)
         (if (equal (type-of (#/superview self)) 'LUI::ITEM-CONTAINER-VIEW)
           (ns:with-ns-point (Point (NS:NS-RECT-X (#/frame subview))  (* (- (row-height (lui-view (#/superview(#/superview (#/superview self))))) (text-height (lui-view (#/superview(#/superview (#/superview self)))))) .5 ) )
@@ -562,6 +552,7 @@
 (defmethod DISCLOSURE-ACTION((self badged-image-group-list-manager-view) (button group-disclosure-button) &key (set-state nil)) 
   (when set-state 
     (#/setState: (native-view button) #$NSOnState))
+  
   (if (is-disclosed (group button))
     (progn 
       (setf (is-disclosed (group button)) nil)
@@ -569,8 +560,11 @@
     (progn
       (setf (is-disclosed (group button)) #$YES)
        (layout (native-view self))))
+  #|
   (when (window self)
-    (size-changed-event-handler (window self) (width (window self)) (height (window self)))))
+    (size-changed-event-handler (window self) (width (window self)) (height (window self))))
+  |#
+  )
 
 
 (defmethod LAYOUT ((Self group-disclosure-button))
@@ -598,7 +592,7 @@
 (defmethod SET-SIZE ((Self badged-image-group-list-manager-view) Width Height)
   (declare (ignore Width Height))
   (call-next-method)
-  (if (> (width (lui-view (#/superview (#/superview (native-view self)))))   (minimum-width self))
+    (if (> (width (lui-view (#/superview (#/superview (native-view self)))))   (minimum-width self))
     (setf (width self) (width (lui-view (#/superview (#/superview (native-view self)))))))
   (dolist (group (groups  self))
     (ns:with-ns-size (Size (width self) (NS:NS-RECT-HEIGHT (#/frame (group-view group))))
@@ -611,9 +605,7 @@
         (progn
           (#/setFrameSize: (item-selection-view group) Size )
           (#/setNeedsDisplay: (item-selection-view group) #$YES)))) )  
-  (resize-height-of-view self :call-set-size nil)
-  (display self)
-  (#/setNeedsDisplay: (native-view self) #$YES))
+  (display self))
 
 
 (defmethod DELETE-GROUP ((Self badged-image-group-list-manager-view) group-name)
@@ -721,7 +713,6 @@
           (#/initWithFrame: detection-view detection-frame)
           (#/setFrame: detection-view detection-frame)
           (#/addSubview: (native-view self) detection-view))
-        ;;HERE HERE (item-name (get-main-item group))
         (let ((button (make-instance 'group-disclosure-button :container self :group group :x x :y 0 :width (row-height self) :height (row-height self) :action 'disclosure-action))); (#/alloc ns:ns-button)))
           (ns:with-ns-rect (button-frame x (- group-height (row-height self)) (row-height self) (row-height self))
             (incf x (row-height self))
@@ -786,7 +777,7 @@
         (if (< (width self) (width (lui-view (#/superview (#/superview (native-view self))))))
           (setf (width self) (width (lui-view (#/superview (#/superview (native-view self)))))))
         (add-group-to-gui self (get-group-with-name self (group-name list-group)))
-        (#/setNeedsDisplay: (native-view self) #$YES)
+        ; (#/setNeedsDisplay: (native-view self) #$YES)
         (layout (native-view self))))
     list-group))
 
@@ -809,8 +800,10 @@
       (#/setHidden: (item-view group) #$NO))
     (when do-layout 
       (layout (native-view self)))
+    #|
     (when (window self)
       (size-changed-event-handler (window self) (width (window self)) (height (window self))))
+    |#
     t))
 
 
@@ -876,11 +869,6 @@
     (group-deselected self))
   (let ((i 1)
         (previously-selected-group-name  (selected-group self)))
-    #|
-    (unless (equal (selected-group self) group-name)
-      (print ".5")
-      (selected-group-changed self ))   
-    |#
     (dolist (group (groups self))    
       (setf (is-selected group) nil)
       (setf (is-highlighted group) nil)
