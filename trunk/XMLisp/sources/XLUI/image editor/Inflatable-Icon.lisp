@@ -660,7 +660,11 @@
                 (Y1 (+ y dy)))
           (case state
             (:start
-             (when (>= (rgba-image-alpha Image Column Row (columns Self)) (visible-alpha-threshold Self))
+             (when (and
+                    (>= (rgba-image-alpha Image Column Row (columns Self)) (visible-alpha-threshold Self))
+                    (< column 32)
+                    (< row 32))
+              
                  (let ((Color-Red (rgba-image-red Image Column Row (columns Self)))
                        (Color-Green (rgba-image-green Image Column Row (columns Self)))
                        (Color-Blue (rgba-image-blue Image Column Row (columns Self)))
@@ -807,7 +811,8 @@
         (incf y dy))
       (setq y 0s0)
       (incf x dx)
-      ))
+      )
+      (print state))
     ;; Terminate strip if needed
     
     ;; finish
