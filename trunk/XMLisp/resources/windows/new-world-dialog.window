@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<new-world-dialog title="New World Specifications"  resizable="false" width="300" height="168" >
+<new-world-dialog title="New World"  resizable="false" width="300" height="168" >
   <column align="stretch" valign="stretch" padding="0" name="testcolumn">
     <row align="stretch" height="110" padding="0">
       <column align="right" width="122"  height="110" >
