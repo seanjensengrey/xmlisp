@@ -124,7 +124,6 @@
         (if (is-disclosed group)     
           (#/setHidden: (item-view group) #$NO)
           (#/setHidden: (item-view group) #$YES))
-        ;(#/setNeedsDisplay: (item-view group) #$YES)
         (if (is-highlighted group)
           (#/setHidden: (selection-view group ) #$NO)
           (#/setHidden: (selection-view group ) #$YES))
@@ -132,10 +131,7 @@
           (#/setFrameOrigin: (selection-view group) Point ))
         (ns:with-ns-size (Size (width (lui-view self)) (row-height (lui-view self)))
           (#/setFrameSize: (selection-view group) Size ))
-        ;(#/setNeedsDisplay: (selection-view group) #$YES)
-        ;(#/setNeedsDisplay: (group-view group) #$YES)
         (incf y   group-height)))) 
-  ;(#/setNeedsDisplay: self #$YES)
   (resize-height-of-view (lui-view self) )
   (call-next-method)
   (layout-changed (lui-view self)))
@@ -549,22 +545,18 @@
   (#/setAction: (native-view Self) (objc::@selector #/activateAction)))
 
 
-(defmethod DISCLOSURE-ACTION((self badged-image-group-list-manager-view) (button group-disclosure-button) &key (set-state nil)) 
+(defmethod DISCLOSURE-ACTION((self badged-image-group-list-manager-view) (button group-disclosure-button) &key (do-layout t) (set-state nil)) 
   (when set-state 
     (#/setState: (native-view button) #$NSOnState))
-  
   (if (is-disclosed (group button))
     (progn 
       (setf (is-disclosed (group button)) nil)
-     (layout (native-view self)))
+      (when do-layout
+        (layout (native-view self))))
     (progn
       (setf (is-disclosed (group button)) #$YES)
-       (layout (native-view self))))
-  #|
-  (when (window self)
-    (size-changed-event-handler (window self) (width (window self)) (height (window self))))
-  |#
-  )
+      (when do-layout
+        (layout (native-view self))))))
 
 
 (defmethod LAYOUT ((Self group-disclosure-button))
@@ -787,7 +779,7 @@
   (let ((list-item (make-instance 'list-group-item :item-name (first item) :image-path image-path :image-name (second item))))
     (let ((group (get-group-with-name self (String-capitalize group-name))))
       (when (and force-disclosure (not (is-disclosed group)))
-        (disclosure-action self (lui-view (Button-view group))  :set-state t))
+        (disclosure-action self (lui-view (Button-view group))  :do-layout nil :set-state t))
       (if (group-items group)
         (dolist (group-item (group-items group))
           (if (equal (first item) (item-name group-item))
@@ -797,14 +789,10 @@
               (return-from add-group-item nil)))))
       (setf (group-items group) (append (group-items group) (list list-item)  ))
       (add-item-to-gui self group list-item)
-      (#/setHidden: (item-view group) #$NO))
-    (when do-layout 
-      (layout (native-view self)))
-    #|
-    (when (window self)
-      (size-changed-event-handler (window self) (width (window self)) (height (window self))))
-    |#
-    t))
+      (#/setHidden: (item-view group) #$NO)
+      (when do-layout 
+        (layout (native-view self)))
+    t)))
 
 
 (defmethod MAKE-NATIVE-OBJECT ((Self badged-image-group-list-manager-view))
