@@ -49,8 +49,6 @@
     (setf (gethash (string-upcase (name New-View)) (named-views Self)) New-View)))
   
 
-
-
 (defmethod INITIALIZE-INSTANCE :after ((Self application-window) &rest Args)
   (declare (ignore Args))
   (do-subviews (Subview Self)
