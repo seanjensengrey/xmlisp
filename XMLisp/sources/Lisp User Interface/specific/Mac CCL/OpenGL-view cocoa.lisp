@@ -220,8 +220,6 @@
       (setf (animation-time Self) Time))))
 
 
-
-
 (defmethod ANIMATE ((Self opengl-view) Time)
   (declare (ignore Time))
   ;; nada
