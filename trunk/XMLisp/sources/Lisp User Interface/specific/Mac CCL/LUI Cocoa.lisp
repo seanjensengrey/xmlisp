@@ -281,7 +281,7 @@
     ;(set-position self 0 0)
     ;(set-size self (width (window self)) (height (window self)))
     (show (window self))
-    (display self)
+    
     (display (window self))))
 
 
@@ -361,7 +361,7 @@
 
 (defmethod DISPLAY ((Self view))
   ;; will not work without flushing window
-  (#/display (native-view Self)))
+  (#/setNeedsDisplay: (native-view Self) #$YES))
 
 
 (defmethod ADD-TRACKING-RECT ((Self view))
@@ -603,6 +603,8 @@
 
 
 
+
+
 (objc:defmethod (#/zoom: :void) ((self native-window) sender)
   (call-next-method sender)
   (let ((Content-View (#/contentView (native-window (lui-window Self)))))
@@ -657,10 +659,9 @@
 
 
 #+cocotron
-(objc:defmethod (#/hasMainMenu: :<BOOL>) ((self native-window))
-  (if (show-main-menu-on-windows self)
-    #$YES
-    #$NO))
+(objc:defmethod (#/hasMainMenu :<BOOL>) ((self native-window))
+  #$YES)
+
 
 
 ;;RESPONDER CHAIN HACK
@@ -732,15 +733,32 @@
              (height (lui-window Self))
              (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.y))))))
 
+
+;__________________________________
+; MENULESS-NATIVE-WINDOW           |
+;__________________________________/
+
+
+(defclass MENULESS-NATIVE-WINDOW (native-window)
+  ()
+  (:metaclass ns:+ns-object
+	      :documentation "Native window with no main menu"))
+
+
+#+cocotron
+(objc:defmethod (#/hasMainMenu :<BOOL>) ((self menuless-native-window))
+  #$NO)
+
 ;__________________________________
 ; window methods                   |
 ;__________________________________/
 
 (defmethod MAKE-NATIVE-OBJECT ((Self window))
   (declare (ftype function window-controller))
+  
   (in-main-thread ()
     (ccl::with-autorelease-pool
-      (let ((Window (make-instance 'native-window
+      (let ((Window (make-instance #-cocotron 'native-window #+cocotron (if (show-main-menu-on-windows self)'native-window 'menuless-native-window )
                         :lui-window Self
                         #+cocotron :show-main-menu-on-windows #+cocotron (show-main-menu-on-windows self)
                         :with-content-rect (ns:make-ns-rect 0 0 (width Self) (height Self))
@@ -2239,11 +2257,12 @@
            (unless (is-jog-active (lui-view Self))   (return))
            (catch-errors-nicely ("user is moving jog dial")
             ;; better to activate the action in the main thread!!
-            (in-main-thread ()
-              (#/activateAction (#/target Self)))
-            (sleep (action-interval (lui-view Self)))))))
+                                (in-main-thread ()
+              (#/activateAction (#/target Self));)
+              (sleep (action-interval (lui-view Self))))))))
   ;; this actually does the mouse tracking until mouse up
   (call-next-method Event)
+ 
   ;; mouse is up
   (stop-jog (lui-view Self)))
 
@@ -2471,6 +2490,7 @@
        ((src Self)
         ;; consider caching image with the same file, there is a good chance
         ;; that some image files, e.g., buttons are used frequently
+        
         (let ((Image #-cocotron (#/initByReferencingFile: (#/alloc ns:ns-image) (native-string (source Self)))
                      #+cocotron (#/initWithContentsOfFile: (#/alloc ns:ns-image) (native-string (source Self)))))
           (unless #-cocotron (#/isValid Image)
