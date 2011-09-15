@@ -15,7 +15,6 @@
   </category>
   <category tooltip="Time actions" title="time" disclosed="true">
     <wait/>
-    <finish-animations/>
   </category>
   <category tooltip="Message actions" title="messages" disclosed="true">
     <message/>
@@ -47,6 +46,7 @@
      <run-simulation/>
      <step-simulation/>
      <stop-simulation/>
+     <finish-animations/>
    </category>
    <category tooltip="World control actions" title="World Control" disclosed="true">
      <switch-to-world/>
