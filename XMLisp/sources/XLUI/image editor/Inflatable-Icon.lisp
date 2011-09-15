@@ -736,13 +736,8 @@
                    ;; that contains the triangles: 0 1 2 and 1 2 3 and the pixel that contains the triangles : 3 4 5 and 4 5 6    
                    (unless repeat-next-vertex
                      (glVertex3f (first vertex-before-last) (second vertex-before-last) (third vertex-before-last))
-                     (glVertex3f (first last-vertex) (second last-vertex) (third last-vertex))
-                     )))
+                     (glVertex3f (first last-vertex) (second last-vertex) (third last-vertex)))))
                (when repeat-next-vertex
-
-                   #|
-                   (glVertex3f x1 y1 z11)
-                   |#
                    (normal-at Self Row (1+ Column) 2m)
                    ;; repeat first pixel to form a degenerate triangle
                    (glVertex3f x1 y z01)
@@ -766,7 +761,6 @@
                (setf state :finish)
                (glEnd))
               ;;is the new pixel opaque?  If so switch paint state, change color if needed and draw the pixel (4 vertices) + degenerate triangle
-              
               ((>= (rgba-image-alpha Image Column Row (columns Self)) (visible-alpha-threshold Self))
                (setf state :paint)
                            
@@ -810,11 +804,7 @@
              )))
         (incf y dy))
       (setq y 0s0)
-      (incf x dx)
-      )
-      (print state))
-    ;; Terminate strip if needed
-    
+      (incf x dx)))    
     ;; finish
     (glcolor4fv {1.0 1.0 1.0 1.0})))
 
