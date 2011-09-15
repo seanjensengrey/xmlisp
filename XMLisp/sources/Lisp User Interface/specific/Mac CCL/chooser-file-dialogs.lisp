@@ -239,14 +239,11 @@
 						   file-types)
 	       #$NSOKButton)
     |#
-    (#/runModal  panel)
-    (if (equal (#/filename Panel) +null-ptr+)
-      nil
-      (progn
-        #+cocotron
-        (concatenate 'string (ccl::lisp-string-from-nsstring (#/filename Panel)) "\\")
-        #-cocotron
-         (concatenate 'string (ccl::lisp-string-from-nsstring (#/filename Panel)) "/")))))
+    (when (and (equal (#/runModal  panel) #$NSOKButton)  (not (equal (#/filename Panel) +null-ptr+)))
+      #+cocotron
+      (concatenate 'string (ccl::lisp-string-from-nsstring (#/filename Panel)) "\\")
+      #-cocotron
+      (concatenate 'string (ccl::lisp-string-from-nsstring (#/filename Panel)) "/"))))
 
 
 #| Examples:
