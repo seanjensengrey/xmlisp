@@ -13,6 +13,8 @@
    (do-show-app-window-immediately :accessor do-show-app-window-immediately :initarg :do-show-app-window-immediately :initform t :documentation "if true will show window when creating instance"))
   (:documentation "Window containing xml-serializable views.")
   (:default-initargs 
+      :min-width 50
+      :min-height 50
       :do-show-immediately nil))
 
 
