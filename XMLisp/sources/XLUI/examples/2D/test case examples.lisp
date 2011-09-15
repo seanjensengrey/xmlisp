@@ -198,7 +198,7 @@ NOT RECOMMENDED: if you load the entire buffer at once then you just get a mess 
    :red (value (view-named W "red"))
    :green (value (view-named W "green"))
    :blue (value (view-named W "blue")))
-  (display W))
+  (display (view-named W "color well")))
 
 
 <color-picker-window title="color picker">
@@ -232,7 +232,7 @@ NOT RECOMMENDED: if you load the entire buffer at once then you just get a mess 
   (setf (text (view-named W "red label")) (format nil "~,2F" (value (view-named W "red"))))
   (setf (text (view-named W "green label")) (format nil "~,2F" (value (view-named W "green"))))
   (setf (text (view-named W "blue label")) (format nil "~,2F" (value (view-named W "blue"))))
-  (display W))
+  (display (view-named W "color well")))
 
 
 <labled-color-picker-window title="color picker (resize me!!)" height="130">
@@ -423,7 +423,6 @@ St. Peter replied, 'Well, I've added up all the hours for which you billed your 
   </canvas>
 </application-window>
 
-attribute-editor
 
  ;;********************************************
 ;;*          SCROLLER                        *
@@ -615,7 +614,8 @@ attribute-editor
 ;; ************************
 
 ;; BE PATIENT: there is no progress report
-
+;; We are currently not loading web browser code because it takes a long time, if you want to test this load you need to go to 
+;; lui-cocoa and execute the web-browser code that is commented out
 
 <application-window title="browser" margin="0">
   <web-browser url="http://www.agentsheets.com"/>
@@ -648,9 +648,7 @@ More functional browser example
 (defmethod GO-TO-URL ((w application-window) (button image-button))
   (let ((url (value (view-named w "url"))))
     (setf  (url (view-named w "browser")) url)
-    (print url)
-    (load-url (view-named w "browser") url)
-    ))
+    (load-url (view-named w "browser") url)))
 
 (defmethod load-yahoo ((w application-window) (button choice-image-button))
   (setf (url (view-named w "browser")) "http://www.yahoo.com")
@@ -758,7 +756,7 @@ opengl documentation browser
   (setf (text (view-named W "red label")) (format nil "~,2F" (value (view-named W "red"))))
   (setf (text (view-named W "green label")) (format nil "~,2F" (value (view-named W "green"))))
   (setf (text (view-named W "blue label")) (format nil "~,2F" (value (view-named W "blue"))))
-  (display W))
+  (display (view-named W "color well")))
 
 
 (defmethod OK-ACTION ((D color-picker-dialog) (Button button))
