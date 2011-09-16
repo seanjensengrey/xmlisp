@@ -170,8 +170,7 @@
         (return-from window-should-close nil))
        (yes-no-return-val
         ;; This will close the window
-        (edit-icon-save-action self (make-instance 'button))
-        )
+        (edit-icon-save-action self (make-instance 'button)) :close-window nil)
        (t
         (return-from window-should-close t))
        )))
@@ -1164,7 +1163,7 @@
     (display Model-Editor)))
 
 
-(defmethod EDIT-ICON-SAVE-ACTION ((Window inflatable-icon-editor-window) (Button button))
+(defmethod EDIT-ICON-SAVE-ACTION ((Window inflatable-icon-editor-window) (Button button) &key (close-window t))
   (declare (ftype function shape project-window display-world project-manager-reference save shape lui::save-button-pressed lui::apply-button-pressed))  ;; this file is in the wrong place: should move into AgentCubes
   (set-document-editted window :mark-as-editted nil)
   (setf  (window-needs-saving-p window) nil)
@@ -1190,7 +1189,8 @@
     (compute-depth (inflatable-icon Model-Editor))
     (when (save-button-closure-action window)
       (funcall (save-button-closure-action window) (inflatable-icon Model-Editor))))
-  (window-close window))
+  (when close-window 
+    (window-close window)))
 
 
 ;___________________________________________
