@@ -638,7 +638,7 @@
 
 
 (defmethod MIRROR-PIXEL-VERTICALLY ((Self image-editor) Col Row)
-  (with-glcontext
+  (with-glcontext Self
       (multiple-value-bind (r g b a) (get-rgba-color-at Self Col Row)
         (set-rgba-color-at-without-gl-context Self (- (- (img-width Self) 1) Col) Row r g b a))))
 
