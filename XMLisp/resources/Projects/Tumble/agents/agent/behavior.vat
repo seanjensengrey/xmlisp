@@ -5,7 +5,7 @@
     <rule>
       <if/>
       <then>
-        <move-random disclosed="true" distance="20" empty-cell="true"/>
+        <move-random disclosed="true" distance="5"/>
         <rotate-by droll="(random(7) - 3) * 90" dpitch="(random(7) - 3) * 90" dheading="(random(7) - 3) * 90"/>
       </then>
     </rule>
