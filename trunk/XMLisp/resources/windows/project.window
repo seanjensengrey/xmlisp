@@ -59,7 +59,7 @@
               <text-3d tooltip="Click on the '+' button" text="Click on the '+' button" x="-3.0" y="0.2" size="5.0"/>
               <text-3d tooltip="Click on the '+' button" text="above to add a world" x="-3.0" y="-0.5" size="5.0"/>
             </world>
-            <column tooltip="Layer controls" align="center" valign="stretch"  vflex="1" src="gradient-transparent.png" width="60">
+            <column tooltip="Layer controls" align="center" valign="stretch"  vflex="1" src="light-blue-background.png" width="60">
               <label width="47" text="Layer" tooltip="Layers"  align="center"/>
               <row align="center" height="24">
                 <bevel-button tooltip="Add a new layer to your world" bezel-style="square" text="+" start-disabled="true" name="push-layer-button" action="push-layer-action" width="24" height="24" />
