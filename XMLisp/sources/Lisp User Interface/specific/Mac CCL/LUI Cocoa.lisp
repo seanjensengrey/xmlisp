@@ -2348,7 +2348,6 @@
 
 
 (objc:defmethod (#/textShouldEndEditing: :<BOOL>) ((self native-editable-text) Notification)
-  (print "TEXT DID ENd")
   (let ((lui-view (lui-view self)))
     (unless (validate-final-text-value lui-view (value lui-view)) 
       (setf (value lui-view) (text-before-edit self))))
