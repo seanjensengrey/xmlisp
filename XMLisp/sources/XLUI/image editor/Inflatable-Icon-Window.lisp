@@ -53,7 +53,8 @@
    (save-button-closure-action :accessor save-button-closure-action :initform nil :initarg :save-button-closure-action )
    )
   (:default-initargs
-      :track-mouse t)
+      :track-mouse t
+    :use-custom-window-controller t)
   (:documentation "Editor used to create inflatable icons"))
 
 
@@ -170,7 +171,7 @@
         (return-from window-should-close nil))
        (yes-no-return-val
         ;; This will close the window
-        (edit-icon-save-action self (make-instance 'button)) :close-window nil)
+        (edit-icon-save-action self (make-instance 'button) :close-window nil) )
        (t
         (return-from window-should-close t))
        )))
@@ -187,7 +188,7 @@
     (cond
      ((command-key-p)
       (case Key
-        (#\l (load-image-from-file Self (choose-file-dialog :directory "lui:resources;textures;")))
+        (#\a (load-image-from-file Self (choose-file-dialog :directory "lui:resources;textures;")))
         (#\a (select-all Icon-Editor))
         (#\d (clear-selection Icon-Editor))
         (#\I (invert-selection Icon-Editor))))
