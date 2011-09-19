@@ -1365,7 +1365,8 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defclass EDITABLE-TEXT-CONTROL (control)
   ((align :accessor align :initform :left :initarg :align :type keyword :documentation ":left, :center , :right, :justified")
-   (validation-text-storage :accessor validation-text-storage :initform ""))
+   (validation-text-storage :accessor validation-text-storage :initform "")
+   (secure :accessor secure :initform nil :type boolean :documentation "If this is set to true, the text field will not show characters that are typed"))
   (:documentation "editable text")
   (:default-initargs
     :text ""
