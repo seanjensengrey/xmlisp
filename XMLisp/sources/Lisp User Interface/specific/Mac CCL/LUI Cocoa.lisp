@@ -2307,8 +2307,14 @@
   (:metaclass ns:+ns-object))
 
 
+(defclass NATIVE-SECURE-EDITABLE-TEXT (ns:ns-secure-text-field)
+  ((lui-view :accessor lui-view :initarg :lui-view)
+   (text-before-edit :accessor text-before-edit :initform "" :documentation "sometimes it will be nescisary to remember the value of the text field before a text field is editted and restore this value if a bad value is entered"))
+  (:metaclass ns:+ns-object))
+
+
 (defmethod MAKE-NATIVE-OBJECT ((Self editable-text-control))
-  (let ((Native-Control (make-instance 'native-editable-text :lui-view Self)))
+  (let ((Native-Control (if (secure self)  (make-instance 'native-secure-editable-text :lui-view Self) (make-instance 'native-editable-text :lui-view Self))))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
       (#/initWithFrame: Native-Control Frame)
       (#/setDrawsBackground: Native-Control nil)
@@ -2342,6 +2348,7 @@
 
 
 (objc:defmethod (#/textShouldEndEditing: :<BOOL>) ((self native-editable-text) Notification)
+  (print "TEXT DID ENd")
   (let ((lui-view (lui-view self)))
     (unless (validate-final-text-value lui-view (value lui-view)) 
       (setf (value lui-view) (text-before-edit self))))
