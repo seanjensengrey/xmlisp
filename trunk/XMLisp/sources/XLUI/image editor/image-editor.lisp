@@ -483,6 +483,7 @@
 
 (defmethod FILL-SELECTED-PIXELS ((Self image-editor))
   "Paints all selected pixels with the current pen color."
+  (declare (ftype function execute-command command-manager))
   (execute-command (command-manager (window self)) (make-instance 'pixel-update-command :image-editor self :image-snapeshot (create-image-array self)))
   (when (selection-active-p Self)
     (multiple-value-bind (Red Green Blue Alpha) (pen-color Self)
@@ -495,6 +496,7 @@
 
 
 (defmethod ERASE-SELECTED-PIXELS ((Self image-editor))
+  (declare (ftype function execute-command command-manager))
   (execute-command (command-manager (window self)) (make-instance 'pixel-update-command :image-editor self :image-snapeshot (create-image-array self)))
   (when (selection-active-p Self)
     (multiple-value-bind (Red Green Blue Alpha) (bg-color Self)
