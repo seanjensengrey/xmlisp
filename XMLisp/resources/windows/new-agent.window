@@ -26,7 +26,7 @@
             <node node-name="Tile" node-path="lui:resources;Shape Textures;"   image-path="lui:resources;images;tile.gif" allowed-file-types="directories">
               <node node-name="Custom Texture..."/>
             </node>         
-            <node node-name="Inflatable Icon" node-path="lui:resources;templates;shapes;inflatable icons;"   image-path="lui:resources;images;ladybug.gif"allowed-file-types="directories"/>
+            <node node-name="Inflatable Icon" node-path="lui:resources;templates;shapes;inflatable icons;"   image-path="lui:resources;images;ladybug.gif" allowed-file-types="directories"/>
           </browser>
         </column>
       </column>
@@ -42,7 +42,7 @@
     <row valign="middle" width="700"  minimize="vertical">
       <spacer width="85"/>
       <label align="left" name="explanation-text" width="350" text=""/>
-      <spacer width="402"/>
+      <spacer width="398"/>
       <button text="Cancel" action="cancel-action"/>
       <button text="OK" action="OK-action" default-button="true" start-disabled="true" name="ok-button"/>
     </row>
