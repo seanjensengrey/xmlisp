@@ -71,7 +71,7 @@
 ;;___________________________________________
   
 #-cocotron (load "lui:sources;IDE;specific;Mac CCL;anticipat-symbol-complete")
-#-cocotron (load "lui:sources;IDE;specific;Mac CCL;ns timer")
+(load "lui:sources;IDE;specific;Mac CCL;ns timer")
 #-cocotron (load "lui:sources;IDE;specific;Mac CCL;GLDocs")
 #-cocotron (load "lui:sources;IDE;specific;Mac CCL;hemlock extensions")
 
