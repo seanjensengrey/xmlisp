@@ -11,7 +11,6 @@
     <erase/>
     <rotate-by droll="90"/>
     <rotate-to/>
-    <tooltip/>
   </category>
   <category tooltip="Time actions" title="time" disclosed="true">
     <wait/>

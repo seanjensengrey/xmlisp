@@ -23,6 +23,5 @@
   </category>
   <category tooltip="Camera conditions" title="camera control" disclosed="true">
     <first-person-view/>
-    <camera-attached/>
   </category>
 </palette>
