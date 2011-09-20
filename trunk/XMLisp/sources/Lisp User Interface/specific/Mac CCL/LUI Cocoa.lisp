@@ -1933,7 +1933,9 @@
 
 
 (defmethod GET-SELECTED-ACTION ((Self popup-button-control))
-  (elt (actions self)  (#/indexOfSelectedItem (native-view self))))
+  ;; -1 implies a that nothing is selected on Windows
+  (unless (equal -1 (#/indexOfSelectedItem (native-view self)))
+    (elt (actions self)  (#/indexOfSelectedItem (native-view self)))))
 
 
 (defmethod POPUP-ACTION ((window window) (self popup-Button-Control))
