@@ -2814,11 +2814,12 @@
 
 (defun SHOW-STRING-POPUP (window list &key selected-item container item-addition-action-string-list)
   (unless (or list item-addition-action-string-list) (return-from show-string-popup nil))
-  (let ((longest-string ""))
+  (let ((longest-string "")
+        (text-buffer 1)) ;;Need a small buffer to make sure the longest string in the list does not get clipped
     (dolist (string list)
       (when (> (length string) (length longest-string))
         (setf longest-string string)))
-    (let ((Pop-up (make-instance 'popup-button-control  :container container :width (truncate (ns:ns-size-width (#/sizeWithAttributes: (lui::native-string longest-string) nil))) :height 1 :x   (- (rational (NS:NS-POINT-X (#/mouseLocation ns:ns-event)))(x window))  :y   (-  (- (NS:NS-RECT-HEIGHT (#/frame (#/mainScreen ns:ns-screen)))(NS:NS-POINT-Y (#/mouseLocation ns:ns-event)))(y window))  )))
+    (let ((Pop-up (make-instance 'popup-button-control  :container container :width (+ text-buffer (truncate (ns:ns-size-width (#/sizeWithAttributes: (lui::native-string longest-string) nil)))) :height 1 :x   (- (rational (NS:NS-POINT-X (#/mouseLocation ns:ns-event)))(x window))  :y   (-  (- (NS:NS-RECT-HEIGHT (#/frame (#/mainScreen ns:ns-screen)))(NS:NS-POINT-Y (#/mouseLocation ns:ns-event)))(y window))  )))
     (dolist (String list)
       (add-item Pop-Up String nil))
     (if item-addition-action-string-list
