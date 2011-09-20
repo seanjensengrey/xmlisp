@@ -188,7 +188,7 @@
     (cond
      ((command-key-p)
       (case Key
-        (#\a (load-image-from-file Self (choose-file-dialog :directory "lui:resources;textures;")))
+        (#\l (load-image-from-file Self (choose-file-dialog :directory "lui:resources;textures;")))
         (#\a (select-all Icon-Editor))
         (#\d (clear-selection Icon-Editor))
         (#\I (invert-selection Icon-Editor))))
@@ -880,12 +880,17 @@
   (declare (ignore Button))
   (camera-tool-selection-event Window 'rotate))
 
+
+
+(defmethod SET-DOCUMENT-EDITTED :AFTER ((Self inflatable-icon-editor-window)  &key (mark-as-editted t) )
+  (setf (window-needs-saving-p (window self)) mark-as-editted))
+
+
 ;; Content Actions
-
-
 (defmethod ADJUST-PRESSURE-ACTION ((Window inflatable-icon-editor-window) (Slider inflation-jog-slider) &optional do-not-display)
   (ccl::with-autorelease-pool
     (enable (view-named Window "flatten-button"))
+    (set-document-editted Window :mark-as-editted t)
     (let ((Pressure (value Slider)))
       ;; audio feedback
       #-cocotron
@@ -900,8 +905,7 @@
         (let ((Model-Editor (view-named Window 'model-editor)))
           (incf (pressure (inflatable-icon Model-Editor)) (* 0.02 Pressure))
           (update-inflation Window)
-          (setf (is-flat (inflatable-icon Model-Editor)) nil)))))
-)
+          (setf (is-flat (inflatable-icon Model-Editor)) nil))))))
 
 
 (defmethod ADJUST-CEILING-ACTION ((Window inflatable-icon-editor-window) (Slider slider) &key (draw-transparent-ceiling t))
@@ -925,6 +929,7 @@
                      (update-ceiling-transparency window)))
                  (sleep .04))))))))
   (let ((Ceiling (value Slider)))
+    (set-document-editted Window :mark-as-editted t)
     (let ((Text-View (view-named Window 'ceilingtext)))
       ;; update label
       (setf (text Text-View) (format nil "~4,2F" Ceiling))
@@ -950,6 +955,7 @@
 (defmethod ADJUST-NOISE-ACTION ((Window inflatable-icon-editor-window) (Slider slider))
   (let ((Noise (value Slider))
         (Model-Editor (view-named Window 'model-editor)))
+    (set-document-editted Window :mark-as-editted t)
     (if (equal Noise 0.0)
       (progn
         (setf (value (view-named window "smooth_slider")) 0.0)
@@ -972,6 +978,7 @@
 
 
 (defmethod ADJUST-SMOOTH-ACTION ((Window inflatable-icon-editor-window) (Slider slider))
+  (set-document-editted Window :mark-as-editted t)
   (let ((Smooth (truncate (value Slider))))
     (let ((Text-View (view-named Window 'smooth-text)))
       ;; update label
@@ -980,13 +987,11 @@
       ;; update model editor
       (setf (smoothing-cycles Window) Smooth)
       (setf (smooth (inflatable-icon (view-named Window 'model-editor))) smooth)
-      (update-inflation Window)))
-  
-  ;;Wicked cocotron hack to get the inflated icon editor to update
-  )
+      (update-inflation Window))))
 
 
 (defmethod ADJUST-Z-OFFSET-ACTION ((Window inflatable-icon-editor-window) (Slider slider))
+  (set-document-editted Window :mark-as-editted t)
   (let ((Offset (value Slider)))
     (let ((Text-View (view-named Window 'z-offset-text)))
       ;; update label
@@ -996,12 +1001,11 @@
       (let* ((Model-Editor (view-named Window 'model-editor)))
         (setf (dz (inflatable-icon Model-Editor)) Offset)
         (adjust-ceiling-action window (view-named window "ceiling_slider"))
-        (display Model-Editor))))
-    ;;Wicked cocotron hack to get the inflated icon editor to update
-  )
+        (display Model-Editor)))))
 
 
 (defmethod ADJUST-DISTANCE-ACTION ((Window inflatable-icon-editor-window) (Slider slider) &optional do-not-display)
+  (set-document-editted Window :mark-as-editted t)
   (let ((Distance  (value Slider)))
     (let ((Text-View (view-named Window 'distance-text)))
       ;; update label
@@ -1011,9 +1015,7 @@
     (let ((Model-Editor (view-named Window 'model-editor)))
       (setf (distance (inflatable-icon Model-Editor)) Distance)
       (unless do-not-display
-        (display Model-Editor))))
-  ;;Wicked cocotron hack to get the inflated icon editor to update
-  )
+        (display Model-Editor)))))
 
 
 (defmethod CHANGE-ICON-ACTION ((Window inflatable-icon-editor-window) (Icon-Editor icon-editor))
@@ -1021,6 +1023,7 @@
 
 
 (defmethod UPRIGHT-ACTION ((Window inflatable-icon-editor-window) (Check-Box check-box))
+  (set-document-editted Window :mark-as-editted t)
   (let ((Model-Editor (view-named Window 'model-editor)))
     (setf (is-upright (inflatable-icon Model-Editor))
           (value Check-Box))
@@ -1030,6 +1033,7 @@
 
 (defmethod FRONT-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up pop-up))
   (declare (ignore Pop-Up))
+  (set-document-editted Window :mark-as-editted t)
   (enable (view-named window "upright"))
   (let ((Model-Editor (view-named Window 'model-editor)))
     (setf (value (view-named window "distance-slider")) 0.0)
@@ -1041,6 +1045,7 @@
 
 (defmethod FRONT-AND-BACK-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up pop-up))
   (declare (ignore Pop-Up))
+  (set-document-editted Window :mark-as-editted t)
   (enable (view-named window "upright"))
   (let ((Model-Editor (view-named Window 'model-editor)))
     (enable (view-named window "distance-slider"))
@@ -1050,6 +1055,7 @@
 
 (defmethod FRONT-AND-BACK-CONNECTED-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up-Item pop-up))
   (declare (ignore Pop-Up-item))
+  (set-document-editted Window :mark-as-editted t)
   (enable (view-named window "upright"))
   (let ((Model-Editor (view-named Window 'model-editor)))
     (enable (view-named window "distance-slider"))
@@ -1059,6 +1065,7 @@
 
 (defmethod CUBE-SURFACE-ACTION ((Window inflatable-icon-editor-window) (Pop-Up-Item pop-up))
   (declare (ignore Pop-Up-item))
+  (set-document-editted Window :mark-as-editted t)
   (let ((Model-Editor (view-named Window 'model-editor)))
     (setf (is-upright (inflatable-icon Model-Editor))  nil)
     (turn-off (view-named window "upright"))
@@ -1073,6 +1080,7 @@
 
 
 (defmethod EDIT-ICON-FLATTEN-ACTION ((Window inflatable-icon-editor-window) (Button bevel-button))
+  (set-document-editted Window :mark-as-editted t)
   (let ((Model-Editor (view-named Window 'model-editor)))
     (flatten (inflatable-icon Model-Editor))
     (unless (> (distance (inflatable-icon Model-Editor)) 0.0)
@@ -1120,7 +1128,6 @@
     (setf (is-upright inflatable-icon) nil)
     (set-selected-item-with-title (view-named window "surfaces") "Front")
     (execute-command (command-manager window) (make-instance 'pixel-update-command :image-editor (view-named window 'icon-editor) :image-snapeshot (create-image-array (view-named window 'icon-editor))))
-    
     (erase-all (view-named window 'icon-editor))
     (dotimes (Row (rows Inflatable-Icon ))
       (dotimes (Column (columns Inflatable-Icon ))
