@@ -51,6 +51,7 @@
    (transparent-ceiling-update-process :accessor transparent-ceiling-update-process :initform nil :documentation "This process will update the transparency of the ceiling to cause a fade out when it is not used")
    (command-manager :reader command-manager :initform (make-instance 'inflatable-icon-command-manager))
    (save-button-closure-action :accessor save-button-closure-action :initform nil :initarg :save-button-closure-action )
+   
    )
   (:default-initargs
       :track-mouse t
@@ -730,15 +731,17 @@
 
 (defmethod START-JOG ((Self inflation-jog-slider))
   (call-next-method)
+  ;; the sound is kind of annoying, especially on Windows where we cannot set the volume
   ;#-cocotron
-  (play-sound "whiteNoise.mp3" :loops t)
+  ;(play-sound "whiteNoise.mp3" :loops t)
   )
 
 
 (defmethod STOP-JOG ((Self inflation-jog-slider))
   (call-next-method)
+  ;; the sound is kind of annoying, especially on Windows where we cannot set the volume
   ;#-cocotron
-  (stop-sound "whiteNoise.mp3")
+  ;(stop-sound "whiteNoise.mp3")
   )
 
 
@@ -1072,9 +1075,11 @@
     (disable (view-named window "upright"))
     (enable (view-named window "distance-slider"))
     (setf (value (view-named window "z_slider")) .5)
+    (setf (value  (view-named window "ceiling_slider")) (+ (value  (view-named window "ceiling_slider")) (- .5 (value (view-named window "distance-slider")))))
     (setf (value (view-named window "distance-slider")) .5)
     (adjust-distance-action window (view-named window "distance-slider") t)
     (adjust-z-offset-action window (view-named window "z_slider") )
+    (adjust-ceiling-action window (view-named window "ceiling_slider"))
     (setf (surfaces (inflatable-icon Model-Editor)) 'cube)
     (display Model-Editor)))
 
