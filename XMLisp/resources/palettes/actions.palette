@@ -35,9 +35,6 @@
     <plot-to-window/>
     <plot-agents-attribute/> 
    </category>
-   <category tooltip="Camera actions" title="camera control" disclosed="true">
-    <rotate-first-person-camera/>
-   </category>
    <category tooltip="Dialog actions" title="dialog" disclosed="true">
      <show-message text="Make it so!" subtext="The spaceship is ready to go"/>
    </category>
