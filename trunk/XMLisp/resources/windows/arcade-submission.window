@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+
+<arcade-dialog title="Submit to Arcade" margin="0" width="600" height="780" background-color="EDEDEDFF">
+    <column align="stretch" valign="stretch">
+      <spacer height="20" />
+      <row align="stretch" valign="stretch" flex="1" vflex="1">
+         <spacer width="20"/>
+         <label flex="1" height="22" text="You are uploading your project to the AgentCubes arcade where you can share it with other users. Please provide all information below. If you do not have an arcade account please create one before trying to submit. " size="10"/>
+         <spacer width="20"/>
+      </row>
+      <spacer name="error" height="24" />
+      <row align="stretch" valign="stretch" flex="1" vflex="1">
+         <spacer width="20"/>
+         <label text="Project Information" size="14" bold="true" flex="1" />
+         <spacer width="20"/>
+      </row>
+      <spacer height="8"/>
+      <row align="stretch" height="278" valign="stretch" flex="1" >
+         <spacer width="20"/>
+         <column align="right" width="80">
+            <label text="Screenshot:" width="70" size="10" bold="true" flex="1"/>
+         </column>
+         <column align="left" flex="1"> 
+            <world-screenshot src="screenshot.png" width="480" height="270" flex="1" scale-proportionally="true" alt="screenshot of your currently active world"/>
+         </column>
+         <spacer width="20"/>
+      </row>
+      <spacer height="8"/>
+      <row align="stretch" valign="stretch" flex="1" vflex="1">
+         <spacer width="20"/>
+         <column align="right" width="80">
+            <label text="Author:" width="50" size="10" bold="true" />
+         </column>
+         <column align="left" flex="1"> 
+            <editable-text text="enter your name" name="author" width="480" size="10" />
+         </column>
+         <spacer width="20"/>
+      </row>
+      <spacer height="8"/>
+      <row align="stretch" valign="stretch" flex="1" vflex="1">
+         <spacer width="20"/>
+         <column align="right" width="80">
+            <label text="Title:" width="38" size="10" bold="true" />
+         </column>
+         <column align="left" flex="1"> 
+            <editable-text name="title" text="" width="480" size="10" />
+         </column>
+         <spacer width="20"/>
+      </row>
+      <spacer height="8"/>
+      <row align="stretch" valign="stretch" flex="1" height="120" >
+         <spacer width="20"/>
+         <column align="right" width="80">
+            <label text="Description:" width="72" size="10" bold="true" />
+         </column>
+         <column align="left" flex="1"> 
+            <editable-text text="describe your project" name="project description" size="10" height="120" width="480" flex="1"/>
+         </column>
+         <spacer width="20"/>
+      </row>
+      <spacer height="24" />
+      <row align="stretch" valign="stretch" flex="1" vflex="1">
+         <spacer width="20"/>
+         <label text="Arcade Login Information" size="14" bold="true" width="480" flex="1" />
+         <spacer width="20"/>
+      </row>
+      <spacer height="8"/>
+      <row align="stretch" valign="stretch" flex="1" vflex="1">
+         <spacer width="20"/>
+         <column align="right" width="80">
+            <label text="Login:" width="44" size="10" bold="true"/>
+         </column>
+         <column align="left" flex="1"> 
+            <editable-text text="enter your arcade login" name="login" size="10" width="480" flex="1"/>
+         </column>
+         <spacer width="20"/>
+      </row>
+      <spacer height="8"/>
+      <row align="stretch" valign="stretch" flex="1" vflex="1">
+         <spacer width="20"/>
+         <column align="right" width="80">
+            <label text="Password:" width="64" size="10" bold="true"/>
+         </column>
+         <column align="left" flex="1"> 
+            <editable-text text="enter your arcade password" name="password" width="480" size="10" flex="1"/>
+         </column>
+         <spacer width="20"/>
+      </row>
+      <spacer height="8"/>
+      <row align="stretch" valign="stretch" flex="1" vflex="1">
+         <spacer width="20"/>
+         <column align="right" width="80"/>
+         <column align="left" flex="1"> 
+            <link url="http://scalablegamedesign.cs.colorado.edu/sgda/login/register" text="Create an account, if you don't already have one." width="250" size="10"/>
+         </column>
+         <spacer width="20"/>
+      </row>
+      <spacer height="24"/>
+      <row align="right" valign="stretch" flex="1" vflex="1">
+         <spacer width="20"/>
+         <button text="Cancel" action="cancel-submit-to-arcade-action" />
+         <button text="Submit" action="submit-to-arcade-action" default-button="true"/>
+         <spacer width="20"/>
+      </row>
+      <spacer height="20" />
+   </column>
+</arcade-dialog>
+
