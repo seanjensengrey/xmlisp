@@ -399,5 +399,4 @@
     <key-binding platform="mac" code="76"/>
     <key-binding platform="win" code="49"/>
   </virtual-key>
-  <link url="http://nehe.gamedev.net/data/articles/article.asp?article=09"/>
 </virtual-key-table>
