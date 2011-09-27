@@ -561,6 +561,7 @@ Call with most important parameters. Make other paramters accessible through *Cu
    (tooltip :accessor tooltip :initform nil :initarg :tooltip :documentation "If this accessor is set it will display this for the tool instead of the documentation")
    (hidden-p :accessor hidden-p :initform nil :documentation "This predicate will tell you if the view is currently hidden or not, should only be set by set-hidden")
    (use-custom-window-controller :accessor use-custom-window-controller :initform nil :initarg :use-custom-window-controller :documentation "Tells the window creating whether or not it should use a custom window controller or the default ccl controller")
+   (background-color :accessor background-color :initarg :background-color :initform nil :documentation "the color used as a background for the window in the form (Red Green Blue Alpha)")
     #+cocotron (show-main-menu-on-windows :accessor show-main-menu-on-windows :initform nil :initarg :show-main-menu-on-windows :documentation "Should this window should a main menu on Windows?")
    )
   (:documentation "a window that can contain views, coordinate system: topleft = 0, 0")
@@ -1350,7 +1351,8 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defclass LABEL-CONTROL (control)
   ((align :accessor align :initform :left :initarg :align :type keyword :documentation ":left, :center , :right, :justified")
-   (size :accessor size :initform 0.0 :initarg :size :type float :documentation "font size. 0.0 for default system font size"))
+   (size :accessor size :initform 0.0 :initarg :size :type float :documentation "font size. 0.0 for default system font size")
+   (bold :accessor bold :initform nil :initarg :bold :type boolean :documentation "whether or not the label text is bold"))
   (:documentation "static text label")
   (:default-initargs 
     :text ""
@@ -1366,7 +1368,8 @@ after any of the window controls calls stop-modal close window and return value.
 (defclass EDITABLE-TEXT-CONTROL (control)
   ((align :accessor align :initform :left :initarg :align :type keyword :documentation ":left, :center , :right, :justified")
    (validation-text-storage :accessor validation-text-storage :initform "")
-   (secure :accessor secure :initform nil :type boolean :documentation "If this is set to true, the text field will not show characters that are typed"))
+   (secure :accessor secure :initform nil :type boolean :documentation "If this is set to true, the text field will not show characters that are typed")
+   (size :accessor size :initform 0.0 :initarg :size :type float :documentation "font size. 0.0 for default system font size"))
   (:documentation "editable text")
   (:default-initargs
     :text ""
@@ -1571,6 +1574,20 @@ after any of the window controls calls stop-modal close window and return value.
 (defmethod initialize-event-handling ((Self web-browser-control))
   ;; not clickable
   )
+
+
+(defclass LINK-CONTROL (control)
+  ((url :accessor url :initarg :url)
+   (align :accessor align :initform :left :initarg :align :type keyword :documentation ":left, :center , :right, :justified")
+   (size :accessor size :initform 0.0 :initarg :size :type float :documentation "font size. 0.0 for default system font size")
+   (bold :accessor bold :initform nil :initarg :bold :type boolean :documentation "whether or not the label text is bold"))
+  (:documentation "a link")
+  (:default-initargs 
+    :text "AgentSheets, Inc."
+    :url "http://www.agentsheets.com"
+    :width 100
+    :height 20))
+
 
 #| Examples:
 
