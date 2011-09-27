@@ -43,15 +43,9 @@
 ;**************************************
 
 (defclass VIRTUAL-KEY-TABLE (xml-serializer)
-  ((links :accessor links :initform nil)
-   (virtual-keys :accessor virtual-keys :initform nil)
+  ((virtual-keys :accessor virtual-keys :initform nil)
    (comments :accessor comments :initform "" :type string))
   (:documentation "virtual keys"))
-
-
-(defclass LINK (xml-serializer)
-  ((url :accessor url))
-  (:documentation "web link"))
 
 
 (defclass VIRTUAL-KEY (xml-serializer)
