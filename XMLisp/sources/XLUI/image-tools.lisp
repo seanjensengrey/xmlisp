@@ -13,9 +13,10 @@
     (error "Cannot covnert image file because ~A does not exist." source)
     (return-from convert-image-file))
   (ns:with-ns-size (Size Width Height)
-    (let* ((source-image (#/initWithContentsOfFile: (#/alloc ns:ns-image)(lui::native-string (format nil "~A" (truename (ccl::native-untranslated-namestring Source))))))
+    (let* ((source-image (#/initWithContentsOfFile: (#/alloc ns:ns-image) (lui::native-string (format nil "~A" (truename (ccl::native-untranslated-namestring Source))))))
            (resized-image (#/initWithSize: (#/alloc ns:ns-image) size))
            (original-size (#/size source-image)))
+      (format t "Original image: ~A~%~%" Source-Image)
       (unless (and (equal width (NS:NS-SIZE-WIDTH original-size)) (equal height (NS:NS-SIZE-HEIGHT original-size)))
         (#/lockFocus resized-image)
         (#/drawInRect:fromRect:operation:fraction: 
@@ -25,8 +26,10 @@
          #$NSCompositeSourceOver
          1.0)
         (#/unlockFocus resized-image))
+      (format t "Resized image: ~A~%~%" Resized-Image)
       (let ((image-rep (#/initWithData: (#/alloc ns:ns-bitmap-image-rep) (#/TIFFRepresentation resized-image))))
-        ;(#/setBitsPerSample: image-rep depth)
+        (format t "Image rep: ~A~%~%~%" Image-Rep)
+       ;(#/setBitsPerSample: image-rep depth)
         ;(#/setAlpha: image-rep #$YES)
         (#/writeToFile:atomically: 
          (#/representationUsingType:properties: 
