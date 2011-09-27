@@ -91,3 +91,6 @@
   (setf (value (view-named (progress-window self) "status-bar")) (format nil "Loading: ~A" text))
   (display (progress-window self)))
 
+
+(defmethod WINDOW-CLOSE ((Self determinate-progress-meter))
+  (#/close (lui::native-window (progress-window Self))))
