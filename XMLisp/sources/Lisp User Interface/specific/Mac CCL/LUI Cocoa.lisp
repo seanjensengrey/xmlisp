@@ -803,7 +803,8 @@
 
 (defmethod SET-POSITION :after ((Self window) x y)
   ;; position should be screen + menubarHeight - y
-  (ns:with-ns-size (Position x (- (screen-height Self) (* -1 (#/menuBarHeight (#/mainMenu (#/sharedApplication ns:ns-application))))  y))
+  ;; Also, menu menuBarHeight is not implemented on Windows so we need to just use the value 22, which is the height of the Window's menu bar
+  (ns:with-ns-size (Position x (- (screen-height Self) (* -1 #+cocotron 22 #-cocotron (#/menuBarHeight (#/mainMenu (#/sharedApplication ns:ns-application))))  y))
     (#/setFrameTopLeftPoint: (native-window Self) Position)))
 
 
