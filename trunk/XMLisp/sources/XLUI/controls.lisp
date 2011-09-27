@@ -852,7 +852,7 @@
   (:documentation "Static text"))
 
 ;__________________________________________________________________
-; Label                                                            |
+; Tight Label                                                      |
 ;                                                                  |
 ; <tight-label text="Pressure"/>                                   |
 ;__________________________________________________________________
@@ -905,6 +905,22 @@
 
 (defmethod PRINT-SLOTS ((Self web-browser))
   '(url x y width height))
+
+
+;__________________________________________________________________________________
+; LINK                                                                             |
+;                                                                                  |
+; <link url="http://www.agentsheets.com" text="AgentSheets Inc."/>                 |
+;__________________________________________________________________________________
+
+(defclass LINK (link-control xml-layout-interface)
+  ()
+  (:documentation "a clickable URL"))
+
+
+(defmethod PRINT-SLOTS ((Self LINK))
+  '(url text))
+
 
 ;;***********************************************
 ;;*    3D   OpenGL                              *
