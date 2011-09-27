@@ -729,7 +729,7 @@
     (setf (x Window) (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.x)))
     (setf (y Window) 
           (- (screen-height (lui-window Self)) 
-             #-cocotron (#/menuBarHeight (#/mainMenu (#/sharedApplication ns:ns-application))) 
+             ;#-cocotron (#/menuBarHeight (#/mainMenu (#/sharedApplication ns:ns-application))) 
              (height (lui-window Self))
              (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.y))))))
 
@@ -802,7 +802,8 @@
 
 
 (defmethod SET-POSITION :after ((Self window) x y)
-  (ns:with-ns-size (Position x (- (screen-height Self)  y))
+  ;; position should be screen + menubarHeight - y
+  (ns:with-ns-size (Position x (- (screen-height Self) (* -1 (#/menuBarHeight (#/mainMenu (#/sharedApplication ns:ns-application))))  y))
     (#/setFrameTopLeftPoint: (native-window Self) Position)))
 
 
@@ -898,10 +899,12 @@
 (defmethod SET-SIZE-AND-POSITION-ENSURING-WINDOW-WILL-FIT-ON-SCREEN ((Self window) x y width height)
   "Will try and set the window to the given size but will make sure the window does not appear outside of the screen"
   (let ((screen-out-of-bounds-margin 30))
+    #|
     (when (> (+ screen-out-of-bounds-margin x) (screen-width self))
       (setf x 0))
     (when (> (+ screen-out-of-bounds-margin y) (screen-height self))
       (setf y #+cocotron 0 #-cocotron (#/menuBarHeight (#/mainMenu (#/sharedApplication ns:ns-application)))))
+    |#
     (set-size self width height)
     (set-position self x y)))
 
@@ -916,7 +919,7 @@
   #-cocotron (#_SetSystemUIMode #$kUIModeAllSuppressed #$kUIOptionAutoShowMenuBar)
   #+cocotron
   (let ((Window-Title-Bar-Height 22))
-    (set-position self 0 (- (+ (pref (#/frame (#/screen (native-window Self))) <NSR>ect.size.height) Window-Title-Bar-Height) (height self)))
+    (set-position self 0 (- (+ (pref (#/frame (#/screen (native-window Self))) <NSR>ect.size.height) #| Window-Title-Bar-Height|#) (height self)))
     (set-size self (pref (#/frame (#/screen (native-window Self))) <NSR>ect.size.width) (+ (pref (#/frame (#/screen (native-window Self))) <NSR>ect.size.height) Window-Title-Bar-Height)))
   (setf (full-screen Self) t)
   ;;; random sizing to trigger #/constrainFrameRect:toScreen
@@ -2491,6 +2494,7 @@
 
 
 (defmethod make-native-object ((Self image-control))
+  (ccl::with-autorelease-pool
   (let ((Native-Control (make-instance 'native-image :lui-view Self))) 
       ;; no problem if there is no source, just keep an empty view
       (cond
@@ -2499,7 +2503,7 @@
         ;; consider caching image with the same file, there is a good chance
         ;; that some image files, e.g., buttons are used frequently
         
-        (let ((Image #-cocotron (#/initByReferencingFile: (#/alloc ns:ns-image) (native-string (source Self)))
+        (let ((Image #-cocotron  (#/initByReferencingFile: (#/alloc ns:ns-image) (native-string (source Self)))
                      #+cocotron (#/initWithContentsOfFile: (#/alloc ns:ns-image) (native-string (source Self)))))
           (unless #-cocotron (#/isValid Image)
                   #+cocotron (not (ccl:%null-ptr-p Image))
@@ -2517,8 +2521,8 @@
             (#/setImageScaling: Native-Control #$NSScaleToFit))))
        (t
         (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
-              (#/initWithFrame: Native-Control Frame))))
-      Native-Control))
+          (#/initWithFrame: Native-Control Frame))))
+    Native-Control)))
 
 
 (defmethod change-image ((self image-control) image-name)
