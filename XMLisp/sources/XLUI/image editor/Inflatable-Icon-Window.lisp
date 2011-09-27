@@ -408,7 +408,6 @@
   (call-next-method)
   (case (selected-tool (window self))
     ((or draw erase paint-bucket)
-     
      (let ((Inflatable-Icon (inflatable-icon (or (view-named (window self) 'model-editor) (error "model editor missing")))))
        (when (equal (surfaces inflatable-icon) 'xlui::front-and-back-connected)
          (compute-connectors inflatable-icon))
@@ -1183,6 +1182,7 @@
   (window-save Window)
   (let ((shape-manager (load-object (make-pathname :name "index" :type "shape"  :directory (pathname-directory (file window))):package (find-package :xlui)))
         (Model-Editor (view-named Window 'model-editor)))
+    (compute-depth (inflatable-icon Model-Editor))
     (let ((image-editor (view-named window 'icon-editor))
           (colors  ""))
       (dotimes (Column  (Columns (inflatable-icon Model-Editor)))
@@ -1199,7 +1199,6 @@
     (save shape-manager))
   (let ((Model-Editor (view-named Window 'model-editor)))
     ;; finalize geometry
-    (compute-depth (inflatable-icon Model-Editor))
     (when (save-button-closure-action window)
       (funcall (save-button-closure-action window) (inflatable-icon Model-Editor))))
   (when close-window 
