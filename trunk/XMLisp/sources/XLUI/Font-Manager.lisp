@@ -225,6 +225,13 @@
   (svref (glyphs Self) (char-index Self Char)))
 
 
+(defmethod IS-VALID-CHAR-FOR-FONT ((self font) char)
+  (or
+   ;; 0 is a space which is fine. 
+   (equal (char-index Self Char) 0)
+   (>= (+ (start self) (length (glyphs self)))  (char-index Self Char) (- (end self) (length (glyphs self))))))
+
+
 (defmethod SAVE-GLYPHS-TEXTURE-IMAGE ((Self font) To-File)
   "Saves the glyphs texture image to the given file.
    in: To-File {pathname}."
