@@ -590,6 +590,12 @@
     (return-from window-close t))
   nil)
 
+
+(defmethod SET-COLOR ((Self Window) &key (Red 1.0) (Green 1.0) (Blue 1.0) (Alpha 1.0))
+  (#/setBackgroundColor:
+   (native-window Self)
+   (#/colorWithCalibratedRed:green:blue:alpha: ns:ns-color Red Green Blue Alpha)))
+
 ;__________________________________
 ; NATIVE-WINDOW                     |
 ;__________________________________/
@@ -780,12 +786,16 @@
         (#/setContentView: Window (#/autorelease (native-view Self)))
         (#/setTitle: Window (native-string (title Self)))
         (if (use-custom-window-controller self)
-       
           (#/setWindowController: Window (window-controller)))
         (ns:with-ns-size (minSize (min-width self) (min-height self))
           (#/setMinSize: Window minSize))
         (ns:with-ns-size (Position (x Self) (- (screen-height Self)  (y Self)))
           (#/setFrameTopLeftPoint: (native-window Self) Position))
+        ;; set background color
+        (when (and (background-color Self) (= (length (background-color Self)) 8)) ;; we hope it's a string of hex numbers!
+          (multiple-value-bind (r g b a)
+                               (convert-hex-color-string-to-rgba-list (background-color Self))
+            (set-color Self :red r :green g :blue b :alpha a)))
         (when (track-mouse Self) (#/setAcceptsMouseMovedEvents: (native-window Self) #$YES))
         Window))))
 
@@ -1172,7 +1182,7 @@
 
 
 (defmethod INITIALIZE-EVENT-HANDLING ((Self control))
-  (#/setTarget: (native-view Self) 
+  (#/setTarget: (native-view Self)
                 (make-instance 'native-target 
                   :native-control (native-view Self)
                   :lui-control Self))
@@ -2295,9 +2305,11 @@
       (:justified (#/alignJustified: Native-Control Native-Control)))
     (#/setEditable: Native-Control #$NO)
     (#/setSelectable: Native-Control #$NO)
-    (unless (zerop (size Self))
-      (#/setFont: Native-Control (#/systemFontOfSize: ns:ns-font (size self))))
-  Native-Control))
+    (unless (zerop (size self))
+      (#/setFont: Native-Control (if (bold Self)
+                                   (#/boldSystemFontOfSize: ns:ns-font (size self))
+                                   (#/systemFontOfSize: ns:ns-font (size self)))))
+    Native-Control))
 
 
 (defmethod (SETF TEXT) :after (Text (Self label-control))
@@ -2326,11 +2338,14 @@
       (#/setDrawsBackground: Native-Control nil)
       (#/setStringValue: Native-Control (native-string (text Self)))
       (#/setEditable: Native-Control #$YES)
+      (unless (zerop (size Self))
+        (#/setFont: Native-Control (#/systemFontOfSize: ns:ns-font (size self))))
       #| (ecase (align Self)
         (:left (#/alignLeft: Native-Control Native-Control))
         (:center (#/alignCenter: Native-Control Native-Control))
         (:right (#/alignRight: Native-Control Native-Control))
-        (:justified (#/alignJustified: Native-Control Native-Control))) |# )  
+        (:justified (#/alignJustified: Native-Control Native-Control))) |# )
+    
     Native-Control))
 
 
@@ -2813,6 +2828,49 @@
   "IN: A URL in the form of a string
   OUT: the user's default should open to the specified URL"
   (#/openURL: (#/sharedWorkspace ns:ns-workspace) (#/URLWithString: ns:ns-url (native-string url))))
+
+
+;___________________________________
+; LINK-CONTROL                      |
+;__________________________________/
+
+(defclass NATIVE-LINK (ns:ns-text-view)
+  ((lui-view :accessor lui-view :initarg :lui-view))
+  (:metaclass ns:+ns-object))
+
+
+(defmethod MAKE-NATIVE-OBJECT ((Self link-control))
+  (let ((Native-Control (make-instance 'native-link :lui-view Self)))  ;; NSText is not actually a control, would NSTextField be better?
+    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+      (#/initWithFrame: Native-Control Frame))
+    (#/setDrawsBackground: Native-Control nil)
+    (#/setString: Native-Control (native-string (text Self)))
+    (#/setTextColor: Native-Control (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color 0.0 0.0 255.0 1.0))
+    (ecase (align Self)
+      (:left (#/alignLeft: Native-Control Native-Control))
+      (:center (#/alignCenter: Native-Control Native-Control))
+      (:right (#/alignRight: Native-Control Native-Control))
+      (:justified (#/alignJustified: Native-Control Native-Control)))
+    (#/setEditable: Native-Control #$NO)
+    (#/setSelectable: Native-Control #$NO)
+    (unless (zerop (size self))
+      (#/setFont: Native-Control (if (bold Self)
+                                   (#/boldSystemFontOfSize: ns:ns-font (size self))
+                                   (#/systemFontOfSize: ns:ns-font (size self)))))
+    ;(setf (action Self) (open-url-for-control Self))
+    Native-Control))
+
+
+(objc:defmethod (#/mouseDown: :void) ((self native-link) Event)
+  (declare (ignore Event))
+  (open-url (url (lui-view Self))))
+
+
+(defmethod initialize-event-handling ((Self link-control))
+  (declare (ignore self))
+  ;; do nothing
+  )
+
 
 
 ;__________________________________
