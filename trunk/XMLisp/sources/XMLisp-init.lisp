@@ -149,14 +149,14 @@
    "RECTANGLE-VIEW" "SET-COLOR"
    "COLOR-PALETTE-VIEW"
    "PLOT-VIEW"
-   "ZOOMABLE" "MINIMIZABLE" "RESIZABLE" "CLOSEABLE" "BORDERLESS" "TITLE" "WINDOW-NEEDS-SAVING-P"
+   "ZOOMABLE" "MINIMIZABLE" "RESIZABLE" "CLOSEABLE" "BORDERLESS" "TITLE" "WINDOW-NEEDS-SAVING-P" "BACKGROUND-COLOR"
    "SCREEN-WIDTH" "SCREEN-HEIGHT" "CONTROL" "VALUE" "INITIALIZE-EVENT-HANDLING" "SIZE-CHANGED-EVENT-HANDLER" "START-DISABLED"
    "ACTION" "SUBVIEWS" "DO-SUBVIEWS" "MAP-SUBVIEWS" "ADD-SUBVIEW" "SUPERVIEW" "ADD-SUBVIEWS" "SWAP-SUBVIEW" "SUBVIEWS-SWAPPED" "SET-FRAME" 
    "BUTTON-CONTROL" "DEFAULT-BUTTON" "TURN-ON" "TURN-OFF" "IS-ON-P"
    "INVOKE-ACTION"
    "BEVEL-BUTTON-CONTROL" "DISABLE" "SLIDER-CONTROL" "TICK-MARKS" "MIN-VALUE" "MAX-VALUE" "ENABLE" "DISABLE" "BEZEL-STYLE"
    "JOG-SLIDER-CONTROL" "START-JOG" "STOP-JOG" "STOP-VALUE" "ACTION-INTERVAL"
-   "LABEL-CONTROL" "TEXT" "ALIGN" "SIZE"
+   "LABEL-CONTROL" "TEXT" "ALIGN" "SIZE" "BOLD"
    "EDITABLE-TEXT-CONTROL" "SECURE"
    "TYPE-INTERACTOR-CONTROL" "AGENT-NAME-TYPE-CONTROL" "NUMBER-TYPE-CONTROL" "FORMULA-TYPE-CONTROL" "VALIDATE-TEXT-CHANGE" "ATTRIBUTE-NAME-TYPE-CONTROL"  "ATTRIBUTE-PROPERTY-NAME-TYPE-CONTROL" "INTEGER-TYPE-CONTROL"
    "STATUS-BAR-CONTROL"
@@ -190,6 +190,7 @@
    "COLOR-WELL-CONTROL" "COLOR" "GET-RED" "GET-GREEN" "GET-BLUE" "GET-ALPHA" "SHOW-ALPHA"
    "COLOR-WELL-BUTTON-CONTROL"
    "WEB-BROWSER-CONTROL" "URL"
+   "LINK-CONTROL"
    "OPENGL-VIEW" "FRAME-RATE" "DISPLAY-FRAME-RATE" "ANIMATE" "DELTA-TIME" "TEXTURES" "START-ANIMATION" "STOP-ANIMATION" "IS-ANIMATED" "FULL-SCENE-ANTI-ALIASING" "ANIMATE-OPENGL-VIEW-ONCE" 
    ;; Shader Support
    "SET-SHADER-SOURCE" "GET-SHADER-INFO-LOG"
@@ -303,7 +304,7 @@
 ;;  Load LUI                                 |
 ;;___________________________________________
 
-
+(load "lui:sources;Lisp User Interface;color conversion")
 (load "lui:sources;Lisp User Interface;in-main-thread")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;native-strings")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;standard-alert-dialog")
@@ -331,6 +332,8 @@
 ;; media
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;play-sound")
 
+;; networking
+(load "lui:sources;Networking;http-requests")
 
 ;; add :xlui package
 (setf xml::*XMLisp-Packages* (append xml::*XMLisp-Packages* (list (find-package :xlui))))
@@ -344,7 +347,7 @@
   (:use :common-lisp :XML :LUI :opengl)
   ;; import MOP
   (:import-from "CCL"
-                "SLOT-DEFINITION-NAME" "SLOT-DEFINITION-TYPE")
+                "SLOT-DEFINITION-NAME" "SLOT-DEFINITION-TYPE" "HTTP-POST" "HTTP-GET")
   (:import-from "XML" "FILE")
   (:import-from "CCL" "WITH-CSTR")
   (:export "INFLATABLE-ICON"
