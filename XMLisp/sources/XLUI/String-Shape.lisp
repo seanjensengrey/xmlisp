@@ -594,6 +594,16 @@
   )
 
 
+(defmethod FIND-INVALID-CHARS ((self editable-string-shape) string)
+  (let ((bad-chars nil))
+    (dotimes (i (length string))
+      (unless (is-valid-char-for-font (font self) (elt string i))
+        (if bad-chars
+          (setf bad-chars (format nil "~A ~A" bad-chars (elt string i)))
+          (setf bad-chars (format nil "~A" (elt string i))))))
+    bad-chars))
+  
+
 
 #| Examples:
 
