@@ -145,10 +145,10 @@
   (multiple-value-bind (Agent Destination-View)
                        (drop-target (find-agent-at-screen-position x y) (source-agent Self))
     (declare (ignore Destination-View))
+    (when Agent (agent-mouse-dragged-event-handler Agent))
     (cond
      ;; drag into new agent
-     ((and Agent (not (eq Agent (source-agent Self)))  (not (eq Agent (destination-agent Self))))
-       
+     ((and Agent (not (eq Agent (source-agent Self))) (not (eq Agent (destination-agent Self))))
       (multiple-value-bind (Acceptable Need-To-Copy Explanation)
                            (could-receive-drop Agent (source-agent Self))
         (declare (ignore Explanation))
@@ -476,6 +476,7 @@
 (defmethod VIEW-RIGHT-MOUSE-DOWN-EVENT-HANDLER ((Self agent-3d-view) X Y)
   (declare (ignore x y)))
 
+
 ;; Drag and Drop
 
 (defvar *Drag-Beging-Distance* 3 "how far does mouse need to move after click to indicate drag and drop?")
@@ -487,7 +488,6 @@
    ;; dragging in progress
    ((drag-and-drop-handler Self)
     ;; JIT proxy window
-    ;; *HACK* This doesn't really work for dragging but at least it doesn't crash when we are dragging in full screen mode, I need to fix this up and handle this differently. 
     (unless  (drag-proxy-window (drag-and-drop-handler Self))
       (when (or (>= (abs (- x (x-start (drag-and-drop-handler Self)))) *Drag-Beging-Distance*)
                 (>= (abs (- y (y-start (drag-and-drop-handler Self)))) *Drag-Beging-Distance*))
@@ -499,8 +499,7 @@
                 :height (height Self)
                 :use-global-glcontext t
                 :drag-and-drop-handler (drag-and-drop-handler Self)))))
-    
-    (when  (drag-proxy-window (drag-and-drop-handler Self))
+    (when (drag-proxy-window (drag-and-drop-handler Self))
       (dragged-to
        (drag-and-drop-handler Self)
        (+ x (window-x Self) (x (window Self)))
@@ -513,12 +512,9 @@
 (defmethod VIEW-LEFT-MOUSE-UP-EVENT-HANDLER ((Self agent-3d-view) X Y)
   (declare (ignore x y))
   ;; conclude drag and terminate hander
-  (when  (drag-and-drop-handler Self)  
+  (when (drag-and-drop-handler Self)  
     (conclude-drag (drag-and-drop-handler Self))
-    (setf (drag-and-drop-handler Self) nil))
-  ;(release-conversation-lock)
-  ;(release-animation-lock)
-  )
+    (setf (drag-and-drop-handler Self) nil)))
 
 
 ;; Hovering
@@ -535,14 +531,14 @@
                    (let ((Matrix-Background-Agent-Type 'matrix-background-agent)) ;; shut up the compiler warnings
                      (subtypep (type-of Agent) Matrix-Background-Agent-Type))))  ;; hack! matrix-background-agent are shared
       (when (and agent (is-visible agent))
-        (with-animation-locked
-            (when (agent-hovered Self)
-              (setf (is-hovered (agent-hovered Self)) nil)
-              (mouse-hover-leave-event-handler (agent-hovered Self)))
-          (when Agent
-            (setf (is-hovered Agent) t)
-            (mouse-hover-enter-event-handler Agent))
-          (setf (agent-hovered Self) Agent))))))
+        ;;; this lock is very likely to cause a dead lock with conversational programming ;;(with-animation-locked
+        (when (agent-hovered Self)
+          (setf (is-hovered (agent-hovered Self)) nil)
+          (mouse-hover-leave-event-handler (agent-hovered Self)))
+        (when Agent
+          (setf (is-hovered Agent) t)
+          (mouse-hover-enter-event-handler Agent))
+        (setf (agent-hovered Self) Agent)))))
 
 
 ;****************************************
@@ -582,8 +578,7 @@
    (is-annotated :accessor is-annotated :initform nil :documentation "either nil :true or :false")
    (is-drag-entered :accessor is-drag-entered :initform nil :type boolean :documentation "true if another agent is currently being dragged on my")
    (agents :accessor agents :initform nil :initarg :agents)
-   (tooltip :accessor tooltip :initform nil :initarg :tooltip :documentation "If this accessor is set it will display this for the tool instead of the documentation")
-   )
+   (tooltip :accessor tooltip :initform nil :initarg :tooltip :documentation "If this accessor is set it will display this for the tool instead of the documentation"))
   (:documentation "Open Agent Engine agent base class"))
 
 ;_______________________________________
@@ -708,6 +703,10 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 (defgeneric MOUSE-DRAG-LEAVE-EVENT-HANDLER (Agent1 Agent2)
   (:documentation "<Agent2> was dragged away from me"))
 
+
+(defgeneric AGENT-MOUSE-DRAGGED-EVENT-HANDLER (Agent)
+  (:documentation "Mouse dragging on agent"))
+
 ;; Selection 
 
 (defgeneric SELECT (agent-3d)
@@ -761,7 +760,6 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 (defmethod DRAW :before ((Self agent-3d))
   ;; deal with selection: may have to make sure we have a valid context
   (glPushName (reference-id Self))
-
   ;; BEGIN display with transformations
   (glPushmatrix)
   (cond
@@ -979,6 +977,11 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 (defmethod VIEW-RIGHT-MOUSE-DOWN-EVENT-HANDLER ((Self agent-3d) X Y)
   (declare (ignore x y))
   (call-next-method))
+
+
+(defmethod AGENT-MOUSE-DRAGGED-EVENT-HANDLER ((Self agent-3d))
+  ;; do nothing
+  )
 
 
 (defmethod PROJECTED-WINDOW-POSITION ((Self agent-3d))
