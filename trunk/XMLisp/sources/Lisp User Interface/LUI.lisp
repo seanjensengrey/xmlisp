@@ -1476,8 +1476,9 @@ after any of the window controls calls stop-modal close window and return value.
 (defclass IMAGE-CONTROL (control)
   ((src :accessor src :initform nil :initarg :src :documentation "URL: so far only filename")
    (scale-proportionally :accessor scale-proportionally :initarg :scale-proportionally :type boolean :initform nil :documentation "If true the image will scale proportionally instead of scale to fit")
-  (image-path :accessor image-path :initform nil :initarg :image-path :documentation "if this accesor is nil then the image-control will look for 
-        the image in the resources;images directory, if not it will look for the src image at the location specified by this accessor"))
+   (image-path :accessor image-path :initform nil :initarg :image-path :documentation "if this accesor is nil then the image-control will look for 
+   the image in the resources;images directory, if not it will look for the src image at the location specified by this accessor")
+   (downsample :accessor downsample :initform nil :type boolean :initarg :downsample :documentation "If true, downsample the actual Image file to the size of this image-control"))
   (:documentation "image. If size is 0,0 use original image size")
   (:default-initargs 
     :width 0
