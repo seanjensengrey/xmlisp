@@ -65,20 +65,22 @@
             (:jpeg #$NSJPEGFileType)
             (:jpeg2000 #$NSJPEG2000FileType))
           nil)
-         (#/writeToFile:atomically:
-         (#/representationUsingType:properties: 
-          Initialized-Bitmap 
-          (case Image-Type
-            (:png #$NSPNGFileType)
-            (:tiff #$NSTIFFFileType)
-            (:jpeg #$NSJPEGFileType)
-            (:jpeg2000 #$NSJPEG2000FileType))
-          nil)
-         (let ((Path (probe-file Pathname)))
-           (if Path
-             (native-string (namestring (translate-logical-pathname Path)))
-             (native-string Pathname)))
-         #$YES)
+        (let ((Return-Value
+               (#/writeToFile:atomically:
+                (#/representationUsingType:properties: 
+                 Initialized-Bitmap 
+                 (case Image-Type
+                   (:png #$NSPNGFileType)
+                   (:tiff #$NSTIFFFileType)
+                   (:jpeg #$NSJPEGFileType)
+                   (:jpeg2000 #$NSJPEG2000FileType))
+                 nil)
+                (let ((Path (probe-file Pathname)))
+                  (if Path
+                    (native-string (namestring (translate-logical-pathname Path)))
+                    (native-string Pathname)))
+                #$YES)))
+          (when (equal Return-Value #$NO) (error "File ~A could not be written" Pathname)))
         (#/release Bitmap)))))
 
 
