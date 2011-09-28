@@ -601,6 +601,11 @@
   nil)
 
 
+(defmethod CLOSE-WITH-NO-QUESTIONS-ASKED ((Self Window))
+  (window-will-close self nil)
+  (#/close (native-window Self)))
+
+
 (defmethod SET-COLOR ((Self Window) &key (Red 1.0) (Green 1.0) (Blue 1.0) (Alpha 1.0))
   (#/setBackgroundColor:
    (native-window Self)
@@ -822,9 +827,8 @@
 
 
 (defmethod SET-POSITION :after ((Self window) x y)
-  ;; position should be screen + menubarHeight - y
-  ;; Also, menu menuBarHeight is not implemented on Windows so we need to just use the value 22, which is the height of the Window's menu bar
-  (ns:with-ns-size (Position x (- (screen-height Self) (* -1 #+cocotron 22 #-cocotron (#/menuBarHeight (#/mainMenu (#/sharedApplication ns:ns-application))))  y))
+  ;; position should be screen + menubarHeight(on the mac) - y
+  (ns:with-ns-size (Position x (- (screen-height Self) #-cocotron (* -1  (#/menuBarHeight (#/mainMenu (#/sharedApplication ns:ns-application))))  y))
     (#/setFrameTopLeftPoint: (native-window Self) Position)))
 
 
@@ -940,7 +944,7 @@
   #-cocotron (#_SetSystemUIMode #$kUIModeAllSuppressed #$kUIOptionAutoShowMenuBar)
   #+cocotron
   (let ((Window-Title-Bar-Height 22))
-    (set-position self 0 (- (+ (pref (#/frame (#/screen (native-window Self))) <NSR>ect.size.height) #| Window-Title-Bar-Height|#) (height self)))
+    (set-position self 0 (- (+ (pref (#/frame (#/screen (native-window Self))) <NSR>ect.size.height) Window-Title-Bar-Height) (height self)))
     (set-size self (pref (#/frame (#/screen (native-window Self))) <NSR>ect.size.width) (+ (pref (#/frame (#/screen (native-window Self))) <NSR>ect.size.height) Window-Title-Bar-Height)))
   (setf (full-screen Self) t)
   ;;; random sizing to trigger #/constrainFrameRect:toScreen
@@ -2520,35 +2524,44 @@
 
 
 (defmethod make-native-object ((Self image-control))
-  (ccl::with-autorelease-pool
   (let ((Native-Control (make-instance 'native-image :lui-view Self))) 
-      ;; no problem if there is no source, just keep an empty view
-      (cond
-       ;; in most cases there should be an image source
-       ((src Self)
-        ;; consider caching image with the same file, there is a good chance
-        ;; that some image files, e.g., buttons are used frequently
-        
-        (let ((Image #-cocotron  (#/initByReferencingFile: (#/alloc ns:ns-image) (native-string (source Self)))
-                     #+cocotron (#/initWithContentsOfFile: (#/alloc ns:ns-image) (native-string (source Self)))))
-          (unless #-cocotron (#/isValid Image)
-                  #+cocotron (not (ccl:%null-ptr-p Image))
-            (error "cannot create image from file ~S" (source Self)))
-          ;; if size 0,0 use original size
-          (when (and (zerop (width Self)) (zerop (height Self)))
-            (let ((Size (#/size Image)))
-              (setf (width Self) (rref Size <NSS>ize.width))
-              (setf (height Self) (rref Size <NSS>ize.height))))
-          (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
-            (#/initWithFrame: Native-Control Frame))
-          (#/setImage: Native-Control Image)
-          (if (scale-proportionally self)
-            (#/setImageScaling: Native-Control #$NSScaleProportionally)
-            (#/setImageScaling: Native-Control #$NSScaleToFit))))
-       (t
-        (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
-          (#/initWithFrame: Native-Control Frame))))
-    Native-Control)))
+    ;; no problem if there is no source, just keep an empty view
+    (cond
+     ;; in most cases there should be an image source
+     ((src Self)
+      ;; consider caching image with the same file, there is a good chance
+      ;; that some image files, e.g., buttons are used frequently
+      (ccl::with-autorelease-pool
+          (let ((Image #-cocotron (#/autorelease (#/initByReferencingFile: (#/alloc ns:ns-image) (native-string (source Self))))
+                       #+cocotron (#/initWithContentsOfFile: (#/alloc ns:ns-image) (native-string (source Self)))))
+            (unless #-cocotron (#/isValid Image)
+              #+cocotron (not (ccl:%null-ptr-p Image))
+              (error "cannot create image from file ~S" (source Self)))
+            ;; if size 0,0 use original size
+            (when (and (zerop (width Self)) (zerop (height Self)))
+              (let ((Size (#/size Image)))
+                (setf (width Self) (rref Size <NSS>ize.width))
+                (setf (height Self) (rref Size <NSS>ize.height))))
+            (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+              (#/initWithFrame: Native-Control Frame)
+              (cond
+               ((downsample self)
+                (ns:with-ns-size (Size (width Self) (height Self))
+                  (let ((resized-image  (#/initWithSize: (#/alloc ns:ns-image) size)))
+                    (ns:with-ns-rect (orig-rect 0 0 (NS:NS-SIZE-WIDTH (#/size Image)) (NS:NS-SIZE-HEIGHT (#/size Image)))
+                      (#/lockFocus resized-image)
+                      (#/drawInRect:fromRect:operation:fraction: image Frame orig-rect #$NSCompositeCopy 1.0)
+                      (#/unlockFocus resized-image)
+                      (#/setImage: Native-Control resized-image)))))
+               (t
+                (#/setImage: Native-Control image))))
+            (if (scale-proportionally self)
+              (#/setImageScaling: Native-Control #$NSScaleProportionally)
+              (#/setImageScaling: Native-Control #$NSScaleToFit)))))
+     (t
+      (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+        (#/initWithFrame: Native-Control Frame))))
+    Native-Control))
 
 
 (defmethod change-image ((self image-control) image-name)
