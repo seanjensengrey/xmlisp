@@ -222,7 +222,6 @@
 (defmethod GET-GLYPH ((Self font) Char)
   "Returns the character glyph.
    in: Char {character}."
-  (print (char-index Self Char))
   (svref (glyphs Self) (char-index Self Char)))
 
 
