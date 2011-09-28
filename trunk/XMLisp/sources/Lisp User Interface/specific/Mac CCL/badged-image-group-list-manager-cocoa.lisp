@@ -57,7 +57,7 @@
   nil)
 
 
-(defmethod RESIZE-HEIGHT-OF-VIEW ((Self badged-image-group-list-manager-view) &key (call-set-size t))
+(defmethod RESIZE-HEIGHT-OF-VIEW ((Self badged-image-group-list-manager-view))
   "Resize this view to fit all of the its contents"
   (let ((height 0))
     (dolist (group (groups self))
@@ -288,7 +288,7 @@
     (#/setFrameOrigin: Self Point))
   (ns:with-ns-size (Size (image-size self) (image-size self))
     (#/setFrameSize:  Self Size))
-  (let ((image (make-instance 'image-control :image-path (image-path list-item)  :src (image-name self) :x 0 :y 0 :width (image-size self) :height (image-size self)))) 
+  (let ((image (make-instance 'image-control :downsample t :image-path (image-path list-item)  :src (image-name self) :x 0 :y 0 :width (image-size self) :height (image-size self)))) 
     (let ((image-view (#/alloc mouse-detecting-image-view)))
       (ns:with-ns-rect (Frame 0 0 (image-size self) (image-size self))
         (#/initWithFrame: image-view Frame )
@@ -306,7 +306,7 @@
       (if (equal (type-of subview) 'lui::mouse-detecting-image-view)
         (progn
           (#/removeFromSuperviewWithoutNeedingDisplay subview)
-          (let ((image (make-instance 'image-control  :image-path (image-path (get-group-item-with-name (container self) group-name item-name))  :src (image-name self) :x 0 :y 0 :width (image-size self) :height (image-size self)))) 
+          (let ((image (make-instance 'image-control :downsample t :image-path (image-path (get-group-item-with-name (container self) group-name item-name))  :src (image-name self) :x 0 :y 0 :width (image-size self) :height (image-size self)))) 
             (let ((image-view (#/alloc mouse-detecting-image-view)))
               (ns:with-ns-rect (Frame 0 0 (image-size self) (image-size self))
                 (#/initWithFrame: image-view Frame )  
@@ -352,13 +352,14 @@
   (:metaclass ns:+ns-object
               :documentation "A view that will be composed of two images one for the head-image and one for the badge"))
 
+
 ;;This method  should be totally retooled/removed when this class is reworked.  
- (defmethod CREATE-BADGED-IMAGE ((self badged-image-view) &key (image-data nil))
+(defmethod CREATE-BADGED-IMAGE ((self badged-image-view) &key (image-data nil))
   (ns:with-ns-point (Point (x self) (y self))
     (#/setFrameOrigin: Self Point))
   (ns:with-ns-size (Size (head-image-size self) (head-image-size self))
     (#/setFrameSize:  Self Size))
-  (let ((badge-image (make-instance 'image-control :src (badge-image-name self) :x 0  :y 0 :width (head-image-size self) :height (head-image-size self)))) 
+  (let ((badge-image (make-instance 'image-control :downsample t :src (badge-image-name self) :x 0  :y 0 :width (head-image-size self) :height (head-image-size self)))) 
     (let ((badge-image-view (#/alloc mouse-detecting-image-view)))
       (ns:with-ns-rect (Frame 0 0 (head-image-size self) (head-image-size self))
         (#/initWithFrame: badge-image-view frame)
@@ -368,14 +369,14 @@
                (group-items (list-group (#/superview self)))
                (elt (group-items (list-group (#/superview self))) 0))
             (progn
-              (let ((image (make-instance 'image-control :image-path (image-path (get-main-item (list-group (#/superview self)))) #| (image-path (elt (group-items (list-group (#/superview self))) 0)) |#  :src #| (image-name (elt (group-items (list-group (#/superview self))) 0))|# (image-name (get-main-item (list-group (#/superview self)))) :x 0 :y 0 :width (badge-image-size self) :height (badge-image-size self)))) 
+              (let ((image (make-instance 'image-control :downsample t :image-path (image-path (get-main-item (list-group (#/superview self)))) #| (image-path (elt (group-items (list-group (#/superview self))) 0)) |#  :src #| (image-name (elt (group-items (list-group (#/superview self))) 0))|# (image-name (get-main-item (list-group (#/superview self)))) :x 0 :y 0 :width (head-image-size self) :height (head-image-size self)))) 
                 (if image-data
                   (#/setImage: badge-image-view image-data)
                   (#/setImage: badge-image-view (#/image (native-view image))))))
             (#/setImage: badge-image-view (#/image (native-view badge-image)))))
         (#/setImageScaling: badge-image-view #$NSScaleToFit)
         (#/addSubview: self badge-image-view))))
-  self) 
+  self)
 
 
 (defmethod UPDATE-IMAGE ((self badged-image-view) group-name item-name &key (Image-Name nil) (image-data nil))
@@ -392,7 +393,7 @@
 
 
 (defmethod DOUBLE-CLICKED ((self badged-image-view))
-  (edit-group (container self) (group-name self)))
+  (edit-group-item (container self) (selected-group (container self)) (item-name (get-main-item (get-group-with-name (container self) (selected-group (container self)))))))
 
 
 (defclass MOUSE-DETECTION-TEXT-FIELD-DELEGATE (ns:ns-object)
@@ -413,6 +414,7 @@
    (item-name :accessor item-name :initform nil :initarg :item-name)
    (name-storage :accessor name-storage :initform nil)
    (font-size :accessor font-size :initform 1.0 :initarg :font-size)
+   (text-is-being-editted-p :accessor text-is-being-editted-p :initform nil :documentation "true if this text field is being editted")
    )
   (:metaclass ns:+ns-object
               :documentation "A text field that detects mouse events.  "))
@@ -490,8 +492,12 @@
   (call-next-method))
 
 
+(objc:defmethod (#/resignFirstResponder  :<BOOL>) ((self mouse-detection-text-field))
+  (call-next-method))
+
+
 (objc:defmethod (#/textDidEndEditing: :void) ((Self mouse-detection-text-field) Notification)
-  (when (group self)
+   (when (group self)
     (if (item self)
       (progn
         (setf (item-name (#/superview self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
@@ -508,10 +514,12 @@
             (#/setDrawsBackground:  self #$NO))
           (#/setStringValue: self (native-string (name-storage self))))
         (setf (group-name (group self))(ccl::lisp-string-from-nsstring (#/stringValue self))))))
+  (setf (text-is-being-editted-p self) nil)
   (call-next-method Notification))
 
 
 (objc:defmethod (#/textDidChange: :void) ((self mouse-detection-text-field) Notification) 
+  (setf (text-is-being-editted-p self) t)
   (let ((width (calculate-width-for-text-field self)))
     (ns:with-ns-size (Size  width (NS:NS-RECT-HEIGHT (#/frame self)))
       (#/setFrameSize: self Size )))
@@ -631,7 +639,7 @@
     (#/setFrameSize: (item-view group) Size ))
   (let ((x (+ (left-margin self)(group-item-offset self))) (text-length 100) (item-y (- (item-category-label-height self) (* (row-height self) (length (group-items group))) (row-height self))))
     (unless (item-selection-view group)
-      (let ((selection-image (make-instance 'image-control :src "selectionRect.png" :x 0 :y item-y :width (width self) :height (row-height self))))
+      (let ((selection-image (make-instance 'image-control  :src "selectionRect.png" :x 0 :y item-y :width (width self) :height (row-height self))))
         (unless (eql (item-name group-item) (selected-item-name group))
           (#/setHidden: (native-view selection-image) #$YES))
         (setf (item-selection-view group) (native-view selection-image))
@@ -714,9 +722,11 @@
             (#/addSubview: detection-view (native-view button))))     
         (let ((image (make-instance badged-image-view :container self :group-name (group-name group) :x x :y 0 :head-image-name (group-image group)  :badge-image-name (group-image group)))) 
           (incf x (row-height self))
+          
           (let ((image-view (create-badged-image image)))
             (#/addSubview: detection-view image-view)
             (setf (image-view group) image-view))
+          
         (let ((text (#/alloc mouse-detection-text-field)))
           (ns:with-ns-rect (Frame x  (+ (* (- (row-height self) (text-height self)) .5 ) (- group-height (row-height self)))   text-length (text-height self))
             (setf (container text) self)
