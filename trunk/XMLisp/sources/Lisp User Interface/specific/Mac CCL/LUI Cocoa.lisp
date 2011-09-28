@@ -400,6 +400,16 @@
        (ns:ns-point-y convertedPoint)))))
 
 
+(defmethod GRAB-VIEW-LOCK ((Self view))
+  (unless (lock Self)
+    (setf (lock Self) (ccl::make-lock "view")))
+  (ccl::grab-lock (lock Self)))
+
+
+(defmethod RELEASE-VIEW-LOCK ((Self view))
+  (unless (lock Self) (error "cannot release non existing lock"))
+  (ccl::release-lock (lock Self)))
+
 ;__________________________________
 ; NATIVE-VIEW                      |
 ;__________________________________/
