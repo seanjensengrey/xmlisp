@@ -222,14 +222,13 @@
 (defmethod GET-GLYPH ((Self font) Char)
   "Returns the character glyph.
    in: Char {character}."
+  (print (char-index Self Char))
   (svref (glyphs Self) (char-index Self Char)))
 
 
-(defmethod IS-VALID-CHAR-FOR-FONT ((self font) char)
-  (or
-   ;; 0 is a space which is fine. 
-   (equal (char-index Self Char) 0)
-   (>= (+ (start self) (length (glyphs self)))  (char-index Self Char) (- (end self) (length (glyphs self))))))
+(defmethod IS-VALID-CHAR-FOR-FONT ((self font) char)   
+  ;; Should be fine as long as the char is in the standard asci table
+  (<= (char-index Self Char) (end self)))
 
 
 (defmethod SAVE-GLYPHS-TEXTURE-IMAGE ((Self font) To-File)
