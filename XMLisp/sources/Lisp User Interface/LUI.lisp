@@ -20,6 +20,7 @@
 
 (defvar *Current-Event* nil "event")
 
+
 (defvar *Last-Mouse-Event* nil "The last mouse event that occured")
 
 
@@ -206,7 +207,8 @@ Call with most important parameters. Make other paramters accessible through *Cu
    (full-screen-p :accessor full-screen-p :initform nil :initarg :full-screen-p :type boolean :documentation "is the view in full screen mode")
    (current-cursor :accessor current-cursor :initform nil :initarg :current-cursor :documentation "the name of the current cursor of this view")
    (tooltip :accessor tooltip :initform nil :initarg :tooltip :documentation "If this accessor is set it will display this for the tool instead of the documentation")
-   (hidden-p :accessor hidden-p :initform nil :documentation "This predicate will tell you if the view is currently hidden or not, should only be set by set-hidden"))
+   (hidden-p :accessor hidden-p :initform nil :documentation "This predicate will tell you if the view is currently hidden or not, should only be set by set-hidden")
+   (lock :accessor lock :initform nil :documentation "Some views need to locks to prevent multiple threads from changing their content"))
   (:documentation "a view, control or window with position and size"))
 
 ;;_______________________________
@@ -216,50 +218,66 @@ Call with most important parameters. Make other paramters accessible through *Cu
 (defgeneric WINDOW (view-or-window)
   (:documentation "Return the window containing this view"))
 
+
 (defgeneric SET-FRAME (view &key x y width height)
   (:documentation "set position and size"))
+
 
 (defgeneric SET-SIZE (view-or-window Width Height)
   (:documentation "Set the size"))
 
+
 (defgeneric SET-POSITION (view-or-window X Y)
   (:documentation "Set the position"))
+
 
 (defgeneric WINDOW-X (view)
   (:documentation "x offset in window containing view"))
 
+
 (defgeneric WINDOW-Y (view)
   (:documentation "y offset in window containing view"))
+
 
 (defgeneric VIEW-CURSOR (view x y)
   (:documentation "Returns the name of the cursor this view should use.  This cursor returned may sometimes be dependent upon the x y position of the mouse in the view."))
 
+
 (defgeneric VIEW-DID-MOVE-TO-WINDOW (view)
   (:documentation "Called when this view is moved into a window, sometimes a view may want to do some special setup once they are placed into a view hierarchy, if so override this method. "))
+
 
 (defgeneric DISPLAY (view-or-window)
   (:documentation "Make the view draw: prepare view (e.g., locking, focusing), draw, finish up (e.g., unlocking)"))
 
+
 (defgeneric DRAW (view-or-window)
   (:documentation "Draw view. Assume view is focused. Only issue render commands, e.g., OpenGL glBegin, and no preparation or double buffer flushing"))
+
 
 (defgeneric LAYOUT (view-or-window)
   (:documentation "Adjust size and potentially position to container, adjust size and position of content if necesary"))
 
+
 (defgeneric ALIGN-LUI-SIZE-TO-NATIVE-SIZE (view)
   (:documentation "This method should make sure the lui size and native size are the same"))
+
 
 (defgeneric ADJUST-X-Y-FOR-WINDOW-OFFSET (view x y)
   (:documentation "On windows, it may be necessaryto adjust the x y coordinates in order to make up for cocotrons strange offsets"))
 
+
 (defgeneric MAKE-NATIVE-OBJECT (view-or-window)
   (:documentation "Make and return a native view object"))
+
 
 (defgeneric GET-TOOLIP (view x y)
   (:documentation "Returns a tooltip for this view or for this view's subview"))
 
+
 (defgeneric ENABLE-TOOLTIPS (view)
   (:documentation "Enable Tooltips for this view"))
+
 
 (defgeneric WINDOW-OF-VIEW-WILL-CLOSE (view)
   (:documentation "Notify the view that its window is closing so it may do any cleanup it needs done. "))
@@ -292,6 +310,13 @@ Call with most important parameters. Make other paramters accessible through *Cu
 (defgeneric EXIT-FULL-SCREEN-MODE (view)
   (:documentation "exit from full screen mode"))
 
+
+(defgeneric RELEASE-VIEW-LOCK (view)
+  (:documentation "Release lock of view"))
+
+
+(defgeneric GRAB-VIEW-LOCK (view)
+  (:documentation "Grab lock of view"))
 
 ;;_______________________________
 ;; Default implementation        |
@@ -481,6 +506,14 @@ Call with most important parameters. Make other paramters accessible through *Cu
 (defmethod FRAME ((self view))
   (make-instance 'lui-frame :x (x self)  :y (y self) :width (width self) :height (height self)))
 
+
+(eval-when (:execute :load-toplevel :compile-toplevel)
+(defmacro WITH-VIEW-LOCKED ((View) &rest Body)
+  `(unwind-protect 
+       (progn
+         (grab-view-lock ,View)
+         ,@Body)
+     (release-view-lock ,View))))
 
 ;**********************************
 ;* SCROLL-VIEW                    *
