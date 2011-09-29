@@ -350,7 +350,7 @@
   (:use :common-lisp :XML :LUI :opengl)
   ;; import MOP
   (:import-from "CCL"
-                "SLOT-DEFINITION-NAME" "SLOT-DEFINITION-TYPE" "HTTP-POST" "HTTP-GET")
+                "SLOT-DEFINITION-NAME" "SLOT-DEFINITION-TYPE" "HTTP-POST" "HTTP-GET" "HTTP-STATUS-CODE-EXPLANATION")
   (:import-from "XML" "FILE")
   (:import-from "CCL" "WITH-CSTR")
   (:export "INFLATABLE-ICON"
