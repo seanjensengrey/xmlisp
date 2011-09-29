@@ -1,6 +1,51 @@
 (in-package :ccl)
 
 
+(defun HTTP-STATUS-CODE-EXPLANATION (Status-Code)
+  (case Status-Code
+    (100 "Continue")
+    (101 "Switching Protocols")
+    (200 "OK")
+    (201 "Created")
+    (202 "Accepted")
+    (203 "Non-Authoritative Information")
+    (204 "No Content")
+    (205 "Reset Content")
+    (206 "Partial Content")
+    (300 "Multiple Choices")
+    (301 "Moved Permanently")
+    (302 "Found")
+    (303 "See Other")
+    (304 "Not Modified")
+    (305 "Use Proxy")
+    (307 "Temporary Redirect")
+    (400 "Bad Request")
+    (401 "Unauthorized")
+    (402 "Payment Required")
+    (403 "Forbidden")
+    (404 "Not Found")
+    (405 "Method Not Allowed")
+    (406 "Not Acceptable")
+    (407 "Proxy Authentication Required")
+    (408 "Request Time-out")
+    (409 "Conflict")
+    (410 "Gone")
+    (411 "Length Required")
+    (412 "Precondition Failed")
+    (413 "Request Entity Too Large")
+    (414 "Request-URI Too Large")
+    (415 "Unsupported Media Type")
+    (416 "Requested range not satisfiable")
+    (417 "Expectation Failed")
+    (500 "Internal Server Error")
+    (501 "Not Implemented")
+    (502 "Bad Gateway")
+    (503 "Service Unavailable")
+    (504 "Gateway Time-out")
+    (505 "HTTP Version not supported")
+    (t "Other unrecognized condition")))
+
+
 (defun PARSE-URL (Url) "
   in:  URL {URL}.
   out: Server Port File {string}.
@@ -85,16 +130,21 @@
 
 
 (defmethod ISSUE-HTTP-REQUEST ((Self http-request))
-  (with-open-socket (Stream :remote-host (host Self)
-                            :remote-port (port Self))
-    ;; issue the command
-    (http-command Self Stream)
-    ;; get and (for now) print response
-    (let ((Char))
-      (with-output-to-string (Response)
-        (loop 
-          (setq Char (or (read-char Stream nil nil) (return)))
-          (princ Char Response))))))
+  (handler-case 
+      (with-open-socket (Stream :remote-host (host Self)
+                                :remote-port (port Self))
+        ;; issue the command
+        (http-command Self Stream)
+        ;; get and (for now) print response
+        (let ((Char))
+          (with-output-to-string (Response)
+            (loop 
+              (setq Char (or (read-char Stream nil nil) (return)))
+              (princ Char Response)))))
+    (t (Condition) (lui::standard-alert-dialog 
+                    "Cannot open network connection. Please try again later."
+                    :explanation-text (format nil "~A" Condition))
+       nil)))
 
 
 
@@ -125,19 +175,9 @@
   (multiple-value-bind (Server Port Path-To-Web-Page)
                        (parse-url Url)
       (issue-http-request (make-instance 'http-get-request
-                            :http-protocol 1.1
                             :host Server
                             :port Port
                             :path-to-web-page Path-To-Web-Page))))
-
-
-#| Examples
-
-(http-get "http://199.45.162.69:8000/agentsheets-distribution/register-mac-intel")
-(http-get "http://199.45.162.69:8000/upload-to-arcade?project-name=TEST123&project-author=Andri&zip-file=zip+data+to+come")
-
-|#
-
 
 
 ;***********************************
@@ -153,20 +193,20 @@
 (defmethod HTTP-COMMAND ((Self http-post-request) Stream)
   (let ((Content (content Self)))
     (write-string (format nil "~A~A~A~A~A"
-                                 (format nil "POST ~A HTTP/~A~C~CHost: ~A~A~C~C"
-                                         (path-to-web-page Self)
-                                         (http-protocol Self)
-                                         #\Return #\Linefeed
-                                         (host Self)
-                                         (if (port Self)
-                                           (format nil ":~A" (port Self))
-                                           "")
-                                         #\Return #\Linefeed)
-                                 (format nil "Content-type: ~A~C~C" (content-type Self) #\Return #\Linefeed)
-                                 (format nil "Content-length: ~A~C~C" (content-length Self) #\Return #\Linefeed)
-                                 (format nil "~C~C" #\Return #\Linefeed)
-                                 (format nil "~A~C~C" Content #\Return #\Linefeed))
-                         Stream)
+                          (format nil "POST ~A HTTP/~A~C~CHost: ~A~A~C~C"
+                                  (path-to-web-page Self)
+                                  (http-protocol Self)
+                                  #\Return #\Linefeed
+                                  (host Self)
+                                  (if (port Self)
+                                    (format nil ":~A" (port Self))
+                                    "")
+                                  #\Return #\Linefeed)
+                          (format nil "Content-type: ~A~C~C" (content-type Self) #\Return #\Linefeed)
+                          (format nil "Content-length: ~A~C~C" (content-length Self) #\Return #\Linefeed)
+                          (format nil "~C~C" #\Return #\Linefeed)
+                          (format nil "~A~C~C" Content #\Return #\Linefeed))
+                  Stream)
     (force-output Stream)))
 
 
@@ -190,6 +230,7 @@
 
 
 (defmethod CONTENT-LENGTH ((Self http-urlencoded-form-request))
+  ;; assumes (content Self) was called before requesting the content-length
   (length (slot-value Self 'content)))
 
 
@@ -262,7 +303,6 @@
                        (parse-url Url)
     (let ((Post-Request (cond ((and fields file)
                                (make-instance 'http-multipart-form-request
-                                 :http-protocol 1.1
                                  :host Server
                                  :port Port
                                  :path-to-web-page Path-To-Web-Page
@@ -271,16 +311,27 @@
                                  :file-type File-type
                                  :file-field-name File-Field-Name))
                               (t (make-instance 'http-urlencoded-form-request
-                                   :http-protocol 1.1
                                    :host Server
                                    :port Port
                                    :path-to-web-page Path-To-Web-Page
                                    :fields fields)))))
-      (issue-http-request Post-Request))))
+      ;(print (content-type Post-Request))
+      ;(print (content Post-Request))
+      ;(print (content-length Post-Request))
+           
+      (issue-http-request Post-Request)
+      
+      )))
 
 
 
 #| Examples 
+
+
+(http-get "http://199.45.162.69:8000/agentsheets-distribution/register-mac-intel")
+(http-get "http://199.45.162.69:8000/upload-to-arcade?project-name=TEST123&project-author=Andri&zip-file=zip+data+to+come")
+
+
 
 (defparameter Zip-File "/Users/andri/Desktop/testupload arcade file.zip")
 
@@ -290,14 +341,14 @@
 (http-post "http://scalablegamedesign.cs.colorado.edu/sgda/acarcade/acsubmission.php?"
            :fields '((id "agentcubes") (pass "actesting"))
            :file Zip-File
-           :file-field-name "UFILE"
+           :file-field-name "FILE"
            :file-type "application/zip")
 
 
 (defparameter r (make-instance 'http-multipart-form-request
                   :fields '((id "agentcubes") (pass "actesting"))
                   :file Zip-File
-                  :file-field-name "UFILE"
+                  :file-field-name "FILE"
                   :file-type "application/zip"))
 (content r)
 (content-type r)
