@@ -2463,12 +2463,12 @@
 ; Progress Indicator               |
 ;__________________________________/
 
-(defclass native-progress-indicator-control (ns:ns-progress-indicator)
+(defclass NATIVE-PROGRESS-INDICATOR-CONTROL (ns:ns-progress-indicator)
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
 
 
-(defmethod make-native-object ((Self progress-indicator-control))
+(defmethod MAKE-NATIVE-OBJECT ((Self progress-indicator-control))
   (let ((Native-Control (make-instance 'native-progress-indicator-control :lui-view Self)))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
       (#/initWithFrame: Native-Control Frame)
@@ -2476,7 +2476,7 @@
   Native-Control))
 
 
-(defmethod initialize-event-handling ((Self progress-indicator-control))
+(defmethod INITIALIZE-EVENT-HANDLING ((Self progress-indicator-control))
   (declare (ignore self)))
 
 
@@ -2484,18 +2484,20 @@
   (#/startAnimation: (native-view self) (native-view self)))
 
 
-(defmethod STOP-ANIMATION ((self progress-indicator-control))
-  (#/stopAnimation: (native-view self) (native-view self)))
+(defmethod STOP-ANIMATION ((Self progress-indicator-control) &key Stop-Function)
+  (declare (ignore Stop-Function))
+  (#/stopAnimation: (native-view Self) (native-view Self)))
     
 ;__________________________________
 ; Determinate Progress Indicator   |
 ;__________________________________/
 
-(defclass native-determinate-progress-indicator-control (ns:ns-progress-indicator)
+(defclass NATIVE-DETERMINATE-PROGRESS-INDICATOR-CONTROL (ns:ns-progress-indicator)
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
 
-(defmethod make-native-object ((Self determinate-progress-indicator-control))
+
+(defmethod MAKE-NATIVE-OBJECT ((Self determinate-progress-indicator-control))
   (let ((Native-Control (make-instance 'native-determinate-progress-indicator-control :lui-view Self)))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
       (#/initWithFrame: Native-Control Frame)
@@ -2505,7 +2507,7 @@
   Native-Control))
 
 
-(defmethod initialize-event-handling ((Self determinate-progress-indicator-control))
+(defmethod INITIALIZE-EVENT-HANDLING ((Self determinate-progress-indicator-control))
   (declare (ignore self)))
 
 
