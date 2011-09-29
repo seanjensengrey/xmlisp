@@ -312,6 +312,7 @@
 
 
 (defmethod START-ANIMATION ((Self opengl-view))
+  
   ;; add myself to list
   (pushnew Self (animated-views Self))
   ;; Create an animation processs if needed
@@ -332,24 +333,29 @@
                                        ((animated-views Self)
                                         (animate-opengl-views-once Self)
                                         ;; call the stop function if there is one
-                                        (when (animation-stop-function Self)
-                                          (funcall (animation-stop-function Self) Self)))
+                                        (dolist (animated-view  *deactivated-views*)
+                                          (when (animation-stop-function animated-view)
+                                            (funcall (animation-stop-function animated-view) animated-view)
+                                            (setf (animation-stop-function animated-view) nil)))
+                                        )
                                        ;; nothing to animate: keep process but use little CPU
                                        (t
-                                        (sleep 0.5)))))
+                                        (return)))))
                                (:animation-abort-cycle-cleanup (animation-cycle-aborted Self))
                                (t nil))))
                      ;; call animation-aborted still in OpenGL Animations, good idea???
                      (:stop-animation (animation-aborted Self))
                      (t nil))))))))
 
-
+(defparameter *DEACTIVATED-VIEWS* nil)
 (defmethod STOP-ANIMATION ((Self opengl-view) &key (Stop-Function #'identity))
   (cond
    ;; if view is animated set its stop function and remove it from the animated views
    ((member Self (animated-views Self))
     (setf (animation-stop-function Self) Stop-Function)
-    (setf (animated-views Self) (remove Self (animated-views Self))))
+    (setf (animated-views Self) (remove Self (animated-views Self)))
+    (setf *deactivated-views* (append *deactivated-views* (list self)))
+    )
    ;; view is not animated: just call the stop function immediatly
    (t 
     (funcall Stop-Function Self))))
