@@ -1,5 +1,6 @@
 (in-package :xlui)
 
+
 (defclass PROGRESS-WINDOW (application-window xml-serializer)
   ((value :accessor value :initform nil :documentation "value returned"))
   (:default-initargs 
@@ -9,7 +10,7 @@
     :closeable nil
     :zoomable nil
     :title "")
-  (:documentation " "))
+  (:documentation "A progress indicator window"))
 
 
 (defmethod UPDATE-STATUS-BAR ((self progress-window) text)
@@ -20,13 +21,15 @@
   (start-animation (view-named self "progress")))
 
 
-(defmethod STOP-ANIMATION ((self progress-window))
+(defmethod STOP-ANIMATION ((self progress-window) &key Stop-Function)
+  (declare (ignore Stop-Function))
   (stop-animation (view-named self "progress")))
 
 
 (defmethod HIDE-PROGRESS-WINDOW ((Self progress-window) Return-Value)
   (declare (ignore return-value))
   (hide self))
+
 
 #|
 (defparameter *window* (load-object "lui:resources;windows;progress.window" :package (find-package :xlui)))

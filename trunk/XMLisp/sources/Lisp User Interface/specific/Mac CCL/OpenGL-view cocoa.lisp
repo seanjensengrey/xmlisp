@@ -330,7 +330,10 @@
                                       (cond
                                        ;; at least one view to be animated
                                        ((animated-views Self)
-                                        (animate-opengl-views-once Self))
+                                        (animate-opengl-views-once Self)
+                                        ;; call the stop function if there is one
+                                        (when (animation-stop-function Self)
+                                          (funcall (animation-stop-function Self) Self)))
                                        ;; nothing to animate: keep process but use little CPU
                                        (t
                                         (sleep 0.5)))))
@@ -341,9 +344,16 @@
                      (t nil))))))))
 
 
-(defmethod STOP-ANIMATION ((Self opengl-view))
-  (setf (animated-views Self) (remove Self (animated-views Self))))
-
+(defmethod STOP-ANIMATION ((Self opengl-view) &key (Stop-Function #'identity))
+  (cond
+   ;; if view is animated set its stop function and remove it from the animated views
+   ((member Self (animated-views Self))
+    (setf (animation-stop-function Self) Stop-Function)
+    (setf (animated-views Self) (remove Self (animated-views Self))))
+   ;; view is not animated: just call the stop function immediatly
+   (t 
+    (funcall Stop-Function Self))))
+   
 
 ;------------------------------
 ; Full Screen Support          |
