@@ -50,7 +50,8 @@
   (start-animation (view-named (progress-window self) "progress")))
 
 
-(defmethod STOP-ANIMATION ((self progress-meter))
+(defmethod STOP-ANIMATION ((Self progress-meter) &key Stop-Function)
+  (declare (ignore Stop-Function))
   (stop-animation (view-named (progress-window self) "progress")))
 
 

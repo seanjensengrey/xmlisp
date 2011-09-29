@@ -37,7 +37,8 @@
    (animation-time :accessor animation-time :initform 0 :documentation "Time when animation was run last")
    (animated-views :allocation :class :accessor animated-views :initform nil :documentation "class list of animated views")
    (render-mode :accessor render-mode :initform :render :type keyword :documentation "value: :render :select or :feedback")
-   (camera-type :reader camera-type :initarg :camera-type :initform 'camera))
+   (camera-type :reader camera-type :initarg :camera-type :initform 'camera)
+   (animation-stop-function :accessor animation-stop-function :initform nil :documentation "If there is a stop-function then the animation of this view will be finished, and the stop-function called with the view (in the animation thread)" ))
   (:documentation "OpenGL View"))
 
 
@@ -78,8 +79,8 @@
 (defgeneric START-ANIMATION (opengl-view)
   (:documentation "Start the animation of the view"))
 
-(defgeneric STOP-ANIMATION (opengl-view)
-  (:documentation "Stop the animation of the view"))
+(defgeneric STOP-ANIMATION (opengl-view &key Stop-Function)
+  (:documentation "Stop the animation of the view. If there is a <Stop-Function> call it AFTER the animation thread serviced the view for the last time, or, if the view is not animated call immediatly."))
 
 (defgeneric ANIMATION-ABORTED (opengl-view)
   (:documentation "Called when animation code got aborted via (throw :animation-abort)"))
