@@ -206,7 +206,7 @@
                           (format nil "Content-length: ~A~C~C" (content-length Self) #\Return #\Linefeed)
                           (format nil "~C~C" #\Return #\Linefeed)
                           (format nil "~A~C~C" Content #\Return #\Linefeed))
-                  Stream)
+     Stream)
     (force-output Stream)))
 
 
@@ -298,7 +298,7 @@
   (format nil "multipart/form-data, boundary=~A" (boundary Self)))
 
 
-(defun HTTP-POST (Url &key fields file file-type file-field-name)
+(defun HTTP-POST (Url &key fields file file-type file-field-name) 
   (multiple-value-bind (Server Port Path-to-web-page)
                        (parse-url Url)
     (let ((Post-Request (cond ((and fields file)
@@ -315,13 +315,7 @@
                                    :port Port
                                    :path-to-web-page Path-To-Web-Page
                                    :fields fields)))))
-      ;(print (content-type Post-Request))
-      ;(print (content Post-Request))
-      ;(print (content-length Post-Request))
-           
-      (issue-http-request Post-Request)
-      
-      )))
+      (issue-http-request Post-Request))))
 
 
 
@@ -346,7 +340,7 @@
 
 
 (defparameter r (make-instance 'http-multipart-form-request
-                  :fields '((id "agentcubes") (pass "actesting"))
+                  :fields '((id "agentcubes") (pass "actesting") (title "test project"))
                   :file Zip-File
                   :file-field-name "FILE"
                   :file-type "application/zip"))
