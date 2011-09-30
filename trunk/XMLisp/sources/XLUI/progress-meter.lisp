@@ -43,7 +43,8 @@
 
  
 (defmethod UPDATE-STATUS-BAR ((self progress-meter) text)
-  (setf (value (view-named (progress-window self) "status-bar")) (format nil "Loading: ~A" text)))
+  (setf (value (view-named (progress-window self) "status-bar")) text)
+  (display (progress-window Self)))
 
  
 (defmethod START-ANIMATION ((self progress-meter))
@@ -58,6 +59,11 @@
 (defmethod HIDE-PROGRESS-WINDOW ((Self progress-meter) Return-Value)
   (declare (ignore return-value))
   (hide (progress-window self)))
+
+
+(defmethod WINDOW-CLOSE ((Self progress-meter))
+  (#/close (lui::native-window (progress-window Self))))
+
 
 ;***********************************
 ;  Determinite Progress Meter      *
@@ -89,7 +95,7 @@
 
 
 (defmethod UPDATE-STATUS-BAR ((self determinate-progress-meter) text)
-  (setf (value (view-named (progress-window self) "status-bar")) (format nil "Loading: ~A" text))
+  (setf (value (view-named (progress-window self) "status-bar")) text)
   (display (progress-window self)))
 
 
