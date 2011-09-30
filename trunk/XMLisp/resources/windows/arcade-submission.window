@@ -82,7 +82,7 @@
             <label text="Password:" width="64" size="10" bold="true"/>
          </column>
          <column align="left" flex="1"> 
-            <editable-text text="enter your arcade password" name="password" width="480" size="10" flex="1"/>
+            <editable-text text="" secure="true" name="password" width="480" size="10" flex="1"/>
          </column>
          <spacer width="20"/>
       </row>
