@@ -208,13 +208,18 @@
                                (format nil "Content-type: ~A~C~C" (content-type Self) #\Return #\Linefeed)
                                (format nil "Content-length: ~A~C~C" Content-Length #\Return #\Linefeed)
                                (format nil "~C~C" #\Return #\Linefeed)
-                               (format nil "~A~C~C" Content #\Return #\Linefeed))))
+                               (format nil "~A~C~C" Content #\Return #\Linefeed)))
+         (Size-Increment (/ 98.0d0 Content-Length)) ;; using a couple of percent for other updates
+         (Accumulated-Increment 0))
     (cond (Progress-window
            (with-input-from-string (String POST-Request)
              (loop
                (princ (or (read-char String nil nil) (return)) Stream)
                (force-output Stream)
-               (lui::increment-by Progress-Window (/ 80.0d0 Content-Length)))))  ;; hard-coded for now: 80% of the acracde progress is devoted to uploading; 20% to other activities (saving project info, archiving project, analyzing server response...) 
+               (incf Accumulated-Increment Size-Increment)
+               (when (>= Accumulated-Increment 1)
+                 (lui::increment-by Progress-Window 1.0d0)
+                 (setq Accumulated-Increment 0)))))
           (t 
            (write-string Post-Request Stream)
            (force-output Stream)))))
