@@ -125,16 +125,16 @@
   (:documentation "the base class for http requests"))
 
 
-(defgeneric HTTP-COMMAND (Http-Request Stream)
+(defgeneric HTTP-COMMAND (Http-Request Stream &key Progress-Window)
   (:documentation "implemented by the specific http-request: returns the http command to be issued"))
 
 
-(defmethod ISSUE-HTTP-REQUEST ((Self http-request))
+(defmethod ISSUE-HTTP-REQUEST ((Self http-request) &key Progress-Window)
   (handler-case 
       (with-open-socket (Stream :remote-host (host Self)
                                 :remote-port (port Self))
         ;; issue the command
-        (http-command Self Stream)
+        (http-command Self Stream :progress-window Progress-Window)
         ;; get and (for now) print response
         (let ((Char))
           (with-output-to-string (Response)
@@ -156,7 +156,8 @@
   ((key-value-pairs :accessor key-value-pairs :initarg :key-value-pairs :initform nil)))
 
 
-(defmethod HTTP-COMMAND ((Self http-get-request) Stream)
+(defmethod HTTP-COMMAND ((Self http-get-request) Stream &key Progress-Window)
+  (declare (ignore Progress-Window)) ;; for now
   (write-string
    (format nil "GET ~A HTTP/~A~C~CHost: ~A~A~C~C~C~C"
                   (path-to-web-page Self)
@@ -171,13 +172,14 @@
   (force-output Stream))
 
 
-(defun HTTP-GET (Url)
+(defun HTTP-GET (Url &key Progress-Window)
   (multiple-value-bind (Server Port Path-To-Web-Page)
                        (parse-url Url)
       (issue-http-request (make-instance 'http-get-request
                             :host Server
                             :port Port
-                            :path-to-web-page Path-To-Web-Page))))
+                            :path-to-web-page Path-To-Web-Page
+                            :progress-window Progress-Window))))
 
 
 ;***********************************
@@ -190,24 +192,32 @@
    (content-length :accessor content-length :initarg :content-length :initform nil)))
 
 
-(defmethod HTTP-COMMAND ((Self http-post-request) Stream)
-  (let ((Content (content Self)))
-    (write-string (format nil "~A~A~A~A~A"
-                          (format nil "POST ~A HTTP/~A~C~CHost: ~A~A~C~C"
-                                  (path-to-web-page Self)
-                                  (http-protocol Self)
-                                  #\Return #\Linefeed
-                                  (host Self)
-                                  (if (port Self)
-                                    (format nil ":~A" (port Self))
-                                    "")
-                                  #\Return #\Linefeed)
-                          (format nil "Content-type: ~A~C~C" (content-type Self) #\Return #\Linefeed)
-                          (format nil "Content-length: ~A~C~C" (content-length Self) #\Return #\Linefeed)
-                          (format nil "~C~C" #\Return #\Linefeed)
-                          (format nil "~A~C~C" Content #\Return #\Linefeed))
-     Stream)
-    (force-output Stream)))
+(defmethod HTTP-COMMAND ((Self http-post-request) Stream &key Progress-Window)
+  (let* ((Content (content Self))
+         (Content-Length (content-length Self))
+         (POST-Request (format nil "~A~A~A~A~A"
+                               (format nil "POST ~A HTTP/~A~C~CHost: ~A~A~C~C"
+                                       (path-to-web-page Self)
+                                       (http-protocol Self)
+                                       #\Return #\Linefeed
+                                       (host Self)
+                                       (if (port Self)
+                                         (format nil ":~A" (port Self))
+                                         "")
+                                       #\Return #\Linefeed)
+                               (format nil "Content-type: ~A~C~C" (content-type Self) #\Return #\Linefeed)
+                               (format nil "Content-length: ~A~C~C" Content-Length #\Return #\Linefeed)
+                               (format nil "~C~C" #\Return #\Linefeed)
+                               (format nil "~A~C~C" Content #\Return #\Linefeed))))
+    (cond (Progress-window
+           (with-input-from-string (String POST-Request)
+             (loop
+               (princ (or (read-char String nil nil) (return)) Stream)
+               (force-output Stream)
+               (lui::increment-by Progress-Window (/ 80.0d0 Content-Length)))))  ;; hard-coded for now: 80% of the acracde progress is devoted to uploading; 20% to other activities (saving project info, archiving project, analyzing server response...) 
+          (t 
+           (write-string Post-Request Stream)
+           (force-output Stream)))))
 
 
 ;---------------------------
@@ -298,7 +308,7 @@
   (format nil "multipart/form-data, boundary=~A" (boundary Self)))
 
 
-(defun HTTP-POST (Url &key fields file file-type file-field-name) 
+(defun HTTP-POST (Url &key fields file file-type file-field-name progress-window) 
   (multiple-value-bind (Server Port Path-to-web-page)
                        (parse-url Url)
     (let ((Post-Request (cond ((and fields file)
@@ -315,7 +325,7 @@
                                    :port Port
                                    :path-to-web-page Path-To-Web-Page
                                    :fields fields)))))
-      (issue-http-request Post-Request))))
+      (issue-http-request Post-Request :progress-window Progress-Window))))
 
 
 
