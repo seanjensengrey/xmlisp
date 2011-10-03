@@ -97,35 +97,27 @@
 ;**********************************
 
 (defmethod COMMAND-KEY-P ()
-  ;; see case #882 in FogBugz
-  (in-main-thread ()
-   (let ((current-event (#/currentEvent (#/sharedApplication ns:ns-application))))
-     (unless (%null-ptr-p current-event)
-       (not (zerop (logand (#/modifierFlags current-event) #$NSCommandKeyMask)))))))
+  (let ((current-event (#/currentEvent (#/sharedApplication ns:ns-application))))
+    (unless (%null-ptr-p current-event)
+      (not (zerop (logand (#/modifierFlags current-event) #$NSCommandKeyMask))))))
 
 
 (defmethod ALT-KEY-P ()
-  ;; see case #882 in FogBugz
-  (in-main-thread ()
-   (let ((current-event (#/currentEvent (#/sharedApplication ns:ns-application))))
-     (unless (%null-ptr-p current-event)
-       (not (zerop (logand (#/modifierFlags current-event) #$NSAlternateKeyMask)))))))
+  (let ((current-event (#/currentEvent (#/sharedApplication ns:ns-application))))
+    (unless (%null-ptr-p current-event)
+      (not (zerop (logand (#/modifierFlags current-event) #$NSAlternateKeyMask))))))
 
 
 (defmethod SHIFT-KEY-P ()
-  ;; see case #882 in FogBugz
-  (in-main-thread ()
-   (let ((current-event (#/currentEvent (#/sharedApplication ns:ns-application))))
-     (unless (%null-ptr-p current-event)
-       (not (zerop (logand (#/modifierFlags current-event) #$NSShiftKeyMask)))))))
+  (let ((current-event (#/currentEvent (#/sharedApplication ns:ns-application))))
+    (unless (%null-ptr-p current-event)
+      (not (zerop (logand (#/modifierFlags current-event) #$NSShiftKeyMask))))))
     
 
 (defmethod CONTROL-KEY-P ()
-  ;; see case #882 in FogBugz
-  (in-main-thread ()
-   (let ((current-event (#/currentEvent (#/sharedApplication ns:ns-application))))
-     (unless (%null-ptr-p current-event)
-       (not (zerop (logand (#/modifierFlags current-event) #$NSControlKeyMask)))))))
+  (let ((current-event (#/currentEvent (#/sharedApplication ns:ns-application))))
+    (unless (%null-ptr-p current-event)
+      (not (zerop (logand (#/modifierFlags current-event) #$NSControlKeyMask))))))
 
 
 (defmethod DOUBLE-CLICK-P ()
@@ -602,7 +594,7 @@
 
 
 (defmethod CLOSE-WITH-NO-QUESTIONS-ASKED ((Self Window))
-  (window-will-close self nil)
+  
   (#/close (native-window Self)))
 
 
