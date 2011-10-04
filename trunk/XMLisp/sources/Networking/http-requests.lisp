@@ -209,7 +209,7 @@
                                (format nil "Content-length: ~A~C~C" Content-Length #\Return #\Linefeed)
                                (format nil "~C~C" #\Return #\Linefeed)
                                (format nil "~A~C~C" Content #\Return #\Linefeed)))
-         (Size-Increment (/ 98.0d0 Content-Length)) ;; using a couple of percent for other updates
+         (Size-Increment (/ 95.0d0 Content-Length)) ;; using a few percent for other updates
          (Accumulated-Increment 0))
     (cond (Progress-window
            (with-input-from-string (String POST-Request)
