@@ -71,8 +71,8 @@
   (let ((Start 0) (Lines nil))
     (dotimes (I (length String) Lines)
       ;; end of line
-      (when (or (char= (char String i) #\Return) 
-                (char= (char String i) #\Linefeed))
+      (when (or (char= (char String i) #\Newline) ;; same as #\linefeed
+                (char= (char String i) #\Return))                
         (setq Lines (nconc Lines (list (subseq String Start i))))
         (setq Start (+ i 1)))
       ;; the end
@@ -84,8 +84,8 @@
   "Returns the number of newline characters in the given string."
   (let ((Count 0))
     (dotimes (I (length String) Count)
-      (when (or (char= (char String i) #\Return)
-                (char= (char String i) #\Linefeed))
+      (when (or (char= (char String i) #\Newline) ;; same as #\linefeed
+                (char= (char String i) #\Return))
         (incf Count)))))
 
 
@@ -105,18 +105,20 @@
 (defun ADD-LINE-BREAKS-TO-STRING (String Font max-width)
   "Returns the text box dimension for the given String and Font.
    in: String {string}, Font {font}."
-  (setf String (remove #\newline string))
-  (let ( (X 0s0)(current-line-start 0)(temp-string ""))
+  (setf String (remove #\newline string)) ;; same as #\linefeed
+  (setf String (remove #\return string))
+  (let ((X 0s0) 
+        (current-line-start 0)
+        (temp-string ""))
       (setq x 0s0)
       (dotimes (I (length String))
         (incf x (width (get-glyph Font (char String i))))
-        ;(format t "~% i = ~A max-width = ~A Width-thing = ~A" i max-width (+ x (width (get-glyph Font (char String (+ i 1))))))
         (when (>= (if (> (+ i 1) (length string)) (+ x (width (get-glyph Font (char String (+ i 1))))) x) max-Width) 
-          (setf temp-string  (format nil "~A~A~%" temp-string (subseq string current-line-start I)));(concatenate 'string temp-string (subseq string current-line-start I) " NEWLINE ")) 
+          (setf temp-string  (format nil "~A~A~%" temp-string (subseq string current-line-start I)))
           (setf current-line-start I)
           (setf x 0s0))
         (when (equal I (- (length String) 1))
-          (setf temp-string (concatenate 'string temp-string (subseq string current-line-start ) ))))
+          (setf temp-string (concatenate 'string temp-string (subseq string current-line-start)))))
     temp-string))
 
 
