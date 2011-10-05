@@ -121,15 +121,16 @@
 (defmethod (SETF texture) :before (value (self shape))
   "Setting a texture of a shape will purge currently loaded textures"
   (declare (ignore value))
-  (maphash 
-   #'(lambda (key value) 
-       (declare (ignore key))
-       (with-glcontext (view self) 
-         (ccl::rlet ((&texName :long))
-           (setf (ccl::%get-long &texName) value)
-           (glDeleteTextures 1 &texName))))
-   (textures self)) 
-  (clrhash (textures self)))
+  (when (view self)
+    (maphash 
+     #'(lambda (key value) 
+         (declare (ignore key))
+         (with-glcontext (view self) 
+           (ccl::rlet ((&texName :long))
+             (setf (ccl::%get-long &texName) value)
+             (glDeleteTextures 1 &texName))))
+     (textures self)) 
+    (clrhash (textures self))))
 
 ;;Should already have an glContext before calling this method
 (defmethod CLEAN-UP-TEXTURES ((self shape))
