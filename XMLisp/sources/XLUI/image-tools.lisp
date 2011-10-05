@@ -13,23 +13,21 @@
     (error "Cannot covnert image file because ~A does not exist." source)
     (return-from convert-image-file))
   (ns:with-ns-size (Size Width Height)
-    (let* ((source-image (#/initWithContentsOfFile: (#/alloc ns:ns-image) (lui::native-string (format nil "~A" (truename (ccl::native-untranslated-namestring Source))))))
+    (let* ((Image-Pathname (lui::native-string (format nil "~A" (truename (ccl::native-untranslated-namestring Source)))))
+           (source-image #-cocotron (#/autorelease (#/initByReferencingFile: (#/alloc ns:ns-image) Image-Pathname))
+                         #+cocotron (#/initWithContentsOfFile: (#/alloc ns:ns-image) Image-Pathname))
            (resized-image (#/initWithSize: (#/alloc ns:ns-image) size))
            (original-size (#/size source-image)))
-      (format t "Original image: ~A~%~%" Source-Image)
-      (unless (and (equal width (NS:NS-SIZE-WIDTH original-size)) (equal height (NS:NS-SIZE-HEIGHT original-size)))
-        (#/lockFocus resized-image)
-        (#/drawInRect:fromRect:operation:fraction: 
-         source-image 
-         (ns::make-ns-rect 0 0 width height)
-         (ns::make-ns-rect 0 0 (NS:NS-SIZE-WIDTH original-size) (NS:NS-SIZE-HEIGHT original-size))
-         #$NSCompositeSourceOver
-         1.0)
-        (#/unlockFocus resized-image))
-      (format t "Resized image: ~A~%~%" Resized-Image)
+      (cond ((and (= width (NS:NS-SIZE-WIDTH original-size)) (= height (NS:NS-SIZE-HEIGHT original-size)))
+             (setq resized-image source-image))
+            (t ;; resize
+              (ns:with-ns-rect (Frame 0 0 width height)
+               (ns:with-ns-rect (orig-rect 0 0 (NS:NS-SIZE-WIDTH Original-Size) (NS:NS-SIZE-HEIGHT Original-Size))
+                 (#/lockFocus resized-image)
+                 (#/drawInRect:fromRect:operation:fraction: Source-Image Frame orig-rect #$NSCompositeCopy 1.0)
+                 (#/unlockFocus resized-image)))))
       (let ((image-rep (#/initWithData: (#/alloc ns:ns-bitmap-image-rep) (#/TIFFRepresentation resized-image))))
-        (format t "Image rep: ~A~%~%~%" Image-Rep)
-       ;(#/setBitsPerSample: image-rep depth)
+        ;(#/setBitsPerSample: image-rep depth)
         ;(#/setAlpha: image-rep #$YES)
         (#/writeToFile:atomically: 
          (#/representationUsingType:properties: 
