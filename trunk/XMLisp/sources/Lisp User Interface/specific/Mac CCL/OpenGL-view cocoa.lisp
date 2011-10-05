@@ -310,9 +310,11 @@
   (dolist (View (animated-views Self))
     (animate-opengl-view-once View)))
 
+;; A list of views that have been assigned stop-functions and should be checked for deactivation
+(defparameter *DEACTIVATED-VIEWS* nil)
+
 
 (defmethod START-ANIMATION ((Self opengl-view))
-  
   ;; add myself to list
   (pushnew Self (animated-views Self))
   ;; Create an animation processs if needed
@@ -347,15 +349,17 @@
                      (:stop-animation (animation-aborted Self))
                      (t nil))))))))
 
-(defparameter *DEACTIVATED-VIEWS* nil)
+
+
+
+
 (defmethod STOP-ANIMATION ((Self opengl-view) &key (Stop-Function #'identity))
   (cond
    ;; if view is animated set its stop function and remove it from the animated views
    ((member Self (animated-views Self))
     (setf (animation-stop-function Self) Stop-Function)
     (setf (animated-views Self) (remove Self (animated-views Self)))
-    (setf *deactivated-views* (append *deactivated-views* (list self)))
-    )
+    (setf *deactivated-views* (append *deactivated-views* (list self))))
    ;; view is not animated: just call the stop function immediatly
    (t 
     (funcall Stop-Function Self))))
