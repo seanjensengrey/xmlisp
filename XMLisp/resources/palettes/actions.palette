@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <palette>
   <category tooltip="Basic actions" title="basic actions" disclosed="true">
-    <move/>
-    <transport/> 
+    <move> <direction dcol="1"/> </move>
+    <transport> <direction dcol="1"/> </transport> 
     <move-random/>
     <move-random-on/>
     <move-random-on-a/>
     <change/>
-    <new/>
+    <new> <direction dcol="1"/> </new>
     <erase/>
     <rotate-by droll="90"/>
     <rotate-to/>
