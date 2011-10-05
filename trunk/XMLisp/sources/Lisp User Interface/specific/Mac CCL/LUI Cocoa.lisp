@@ -915,15 +915,8 @@
 
 (defmethod SET-SIZE-AND-POSITION-ENSURING-WINDOW-WILL-FIT-ON-SCREEN ((Self window) x y width height)
   "Will try and set the window to the given size but will make sure the window does not appear outside of the screen"
-  (let ((screen-out-of-bounds-margin 30))
-    #|
-    (when (> (+ screen-out-of-bounds-margin x) (screen-width self))
-      (setf x 0))
-    (when (> (+ screen-out-of-bounds-margin y) (screen-height self))
-      (setf y #+cocotron 0 #-cocotron (#/menuBarHeight (#/mainMenu (#/sharedApplication ns:ns-application)))))
-    |#
-    (set-size self width height)
-    (set-position self x y)))
+  (set-size self width height)
+  (set-position self x y))
 
 
 ;; screen mode
