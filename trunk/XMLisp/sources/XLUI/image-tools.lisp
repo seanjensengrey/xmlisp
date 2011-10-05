@@ -25,7 +25,10 @@
                (ns:with-ns-rect (orig-rect 0 0 (NS:NS-SIZE-WIDTH Original-Size) (NS:NS-SIZE-HEIGHT Original-Size))
                  (#/lockFocus resized-image)
                  (#/drawInRect:fromRect:operation:fraction: Source-Image Frame orig-rect #$NSCompositeCopy 1.0)
-                 (#/unlockFocus resized-image)))))
+                 (#/unlockFocus resized-image)))
+              #+cocotron (standard-alert-dialog 
+                          "Warning: resizing images (e.g. agent depictions or backgrounds) does not currently work on Windows."
+                          :explanation-text "Your project will be converted, but it will contain empty image files for your agent shapes or your background.")))
       (let ((image-rep (#/initWithData: (#/alloc ns:ns-bitmap-image-rep) (#/TIFFRepresentation resized-image))))
         ;(#/setBitsPerSample: image-rep depth)
         ;(#/setAlpha: image-rep #$YES)
