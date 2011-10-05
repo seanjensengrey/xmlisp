@@ -327,6 +327,7 @@
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;table-view-cocoa")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;Transparent-OpenGL-Window")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;speech")
+(load "lui:sources;Lisp User Interface;specific;Mac CCL;show-tool-tip")  ;; this one can only be loaded ONCE
 (load "lui:sources;Lisp User Interface;pop-up-image-menu")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;pop-up-image-menu-cocoa")
 (load "lui:sources;Lisp User Interface;pop-up-image-group-menu")
