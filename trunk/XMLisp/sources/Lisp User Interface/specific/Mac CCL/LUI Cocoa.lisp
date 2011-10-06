@@ -713,17 +713,13 @@
       (setf (x Window) (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.x)))
       (setf (y Window) 
             (- (screen-height (lui-window Self)) 
+               (title-bar-height (lui-window self))
                (height (lui-window Self))
-               (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.y)))))    (screen-height nil)
+               (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.y)))))    
     ;; On window we are ging to save this resize for the end
     #-cocotron
-    (size-changed-event-handler (lui-window Self) (width (lui-window Self)) (height (lui-window Self)))
-    ))
+    (size-changed-event-handler (lui-window Self) (width (lui-window Self)) (height (lui-window Self)))))
 
-#|
-(objc:defmethod (#/windowWillClose: :void) ((self window-delegate) Notification)
-  (window-will-close (lui-window self) Notification))
-|#
 
 (objc:defmethod (#/windowShouldClose: :<BOOL>) ((self window-delegate) Sender)
   ;; Hack:  For now call the window-will-close code inside a positive response from window-should-close, this is needed for now because calling subviews (which is caused when we call window-will-close) 
@@ -742,7 +738,7 @@
     (setf (x Window) (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.x)))
     (setf (y Window) 
           (- (screen-height (lui-window Self)) 
-             ;#-cocotron (#/menuBarHeight (#/mainMenu (#/sharedApplication ns:ns-application))) 
+             (title-bar-height (lui-window self))
              (height (lui-window Self))
              (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.y))))))
 
@@ -819,8 +815,7 @@
 
 
 (defmethod SET-POSITION :after ((Self window) x y)
-  ;; position should be screen + menubarHeight(on the mac) - y
-  (ns:with-ns-size (Position x (- (screen-height Self) #-cocotron (* -1  (#/menuBarHeight (#/mainMenu (#/sharedApplication ns:ns-application))))  y))
+  (ns:with-ns-size (Position x (- (screen-height Self) y))    
     (#/setFrameTopLeftPoint: (native-window Self) Position)))
 
 
@@ -862,6 +857,10 @@
 (defmethod SCREEN-HEIGHT ((Self null))
   (truncate (pref (#/frame (#/mainScreen ns:ns-screen))
                   <NSR>ect.size.height)))
+
+
+(defmethod TITLE-BAR-HEIGHT ((Self window))
+  (- (truncate (pref (#/frame (native-window self)) <NSR>ect.size.height)) (truncate (pref (#/frame (#/contentView (native-window self))) <NSR>ect.size.height))))
 
 
 (defmethod (setf TITLE) :after (Title (self window))
