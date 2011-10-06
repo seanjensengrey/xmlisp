@@ -25,16 +25,18 @@
 
 
 (defvar *Output-to-Alt-Console-p* t "If true output error info into Alt Console on Mac and Windows")
-
+(defparameter *Last-AgentCubes-Bug* "No errors so far." "String containing last error that occurred in AgentCubes and was captured by the error handler")
 
 (defun PRINT-TO-LOG (Control-String &rest Format-Arguments) "
   Print to platform specific log file. On Mac access output via Console.app"
-  (if *Output-To-Alt-Console-P*
-    (apply #'format t Control-String Format-Arguments)
-    (let ((NSString (#/retain (ccl::%make-nsstring (apply #'format nil Control-String Format-Arguments)))))
-      (#_NSLog #@"%@" :address NSString)  ;; make sure NSString is not interpreted as format string
-      (#/release NSString))))
-    
+  (cond (*Output-To-Alt-Console-P*
+         (setq *Last-AgentCubes-Bug* (format nil Control-String Format-Arguments))
+         (apply #'format t Control-String Format-Arguments))
+        (t 
+         (let ((NSString (#/retain (ccl::%make-nsstring (setq *Last-AgentCubes-Bug* (apply #'format nil Control-String Format-Arguments))))))
+           (#_NSLog #@"%@" :address NSString)  ;; make sure NSString is not interpreted as format string
+           (#/release NSString)))))
+
 
 (defun PRINT-CONDITION-UNDERSTANDABLY (Condition &optional (Message "") (Stream t))
   (format Stream "~A " Message)
