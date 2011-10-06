@@ -627,6 +627,7 @@
       (setf (x Window) (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.x)))
       (setf (y Window) 
             (- (screen-height (lui-window Self)) 
+               (title-bar-height (lui-window Self))
                (height (lui-window Self))
                (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.y)))))    (screen-height nil)
     (size-changed-event-handler (lui-window Self) (width (lui-window Self)) (height (lui-window Self)))))
