@@ -378,6 +378,7 @@
 (load "lui:sources;XLUI;agent-3D")
 (load "lui:sources;XLUI;shapes")
 (load "lui:sources;XLUI;keyboard")
+(load "lui:sources;XLUI;system-info")
 
 ;; Agent Warp Engine
 (load "lui:sources;XLUI;AWE;infix")
