@@ -6,7 +6,7 @@
       <row align="left" height="20">
          <spacer width="20"/>
          <label width="263" text="Please report the last error that occurred to" size="12" height="40"/>
-         <link width="150" url="mailto:bugs@agentsheets.com" text="bugs@agentsheets.com" size="12" height="40"/>
+         <link width="150" url="" action="EMAIL-BUG-ACTION" text="bugs@agentsheets.com" size="12" height="40"/>
          <spacer width="20"/>
       </row>        
       <spacer height="24"/>
