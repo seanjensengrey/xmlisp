@@ -925,9 +925,9 @@
   (setf (gethash Self *Window-Full-Screen-Restore-Sizes*) (#/frame (native-window Self)))
   #-cocotron (#_SetSystemUIMode #$kUIModeAllSuppressed #$kUIOptionAutoShowMenuBar)
   #+cocotron
-  (let ((Window-Title-Bar-Height 22))
-    (set-position self 0 (- (+ (pref (#/frame (#/screen (native-window Self))) <NSR>ect.size.height) Window-Title-Bar-Height) (height self)))
-    (set-size self (pref (#/frame (#/screen (native-window Self))) <NSR>ect.size.width) (+ (pref (#/frame (#/screen (native-window Self))) <NSR>ect.size.height) Window-Title-Bar-Height)))
+  (progn
+    (set-position self 0 (- (pref (#/frame (#/screen (native-window Self))) <NSR>ect.size.height) (height self)))
+    (set-size self (pref (#/frame (#/screen (native-window Self))) <NSR>ect.size.width) (+ (pref (#/frame (#/screen (native-window Self))) <NSR>ect.size.height))))
   (setf (full-screen Self) t)
   ;;; random sizing to trigger #/constrainFrameRect:toScreen
   ;;; (set-size Self 100 100)
