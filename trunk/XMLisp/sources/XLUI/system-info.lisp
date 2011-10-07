@@ -1,6 +1,7 @@
 (in-package :xlui)
 
 (defun SYSTEM-INFO ()
+  #-cocotron
   (let ((Process-Info (#/alloc ns:ns-process-info)))
     (values 
      (case (#/operatingSystem Process-Info)
