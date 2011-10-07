@@ -30,7 +30,7 @@
 (defun PRINT-TO-LOG (Control-String &rest Format-Arguments) "
   Print to platform specific log file. On Mac access output via Console.app"
   (cond (*Output-To-Alt-Console-P*
-         (setq *Last-AgentCubes-Bug* (format nil Control-String Format-Arguments))
+         (setq *Last-AgentCubes-Bug* (apply #'format nil Control-String Format-Arguments))
          (apply #'format t Control-String Format-Arguments))
         (t 
          (let ((NSString (#/retain (ccl::%make-nsstring (setq *Last-AgentCubes-Bug* (apply #'format nil Control-String Format-Arguments))))))
@@ -57,6 +57,9 @@
             year
             (- tz))))
   
+
+(defgeneric REPORT-BUG () (:documentation "placeholder for bug-reporting in AgentCubes"))
+
 
 (eval-when (:execute :load-toplevel :compile-toplevel)
 (defmacro CATCH-ERRORS-NICELY ((Situation &key Before-Message After-Message) &body Forms) "Catch errors at high level. Also works in secondary threads. Tries to execute all forms. Any form raising an error will be reported. The remaining forms will not be executted."
@@ -88,11 +91,14 @@
                                   (format Log "~%~%~%")))
                              ;; show minmalist message to end-user
                              (in-main-thread () ;; OS X 10.7 is really insisting on using NSAlerts only in the mmain thread
-                               (standard-alert-dialog 
-                                (with-output-to-string (Out)
-                                  (print-condition-understandably Condition "Error: " Out))
-                                :is-critical t
-                                :explanation-text (format nil "While ~A" ,Situation)))
+                               (unless (standard-alert-dialog 
+                                        (with-output-to-string (Out)
+                                          (print-condition-understandably Condition "Error: " Out))
+                                        :is-critical t
+                                        :explanation-text (format nil "While ~A" ,Situation)
+                                        :yes-text "OK"
+                                        :no-text "Report bug")
+                                 (report-bug)))
                              ,After-Message
                              (throw :wicked-error Condition))))))
        ,@Forms))))
