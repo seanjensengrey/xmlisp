@@ -917,17 +917,19 @@
 
 
 ;; screen mode
-
 (defvar *Window-Full-Screen-Restore-Sizes* (make-hash-table))
 
 
 (defmethod SWITCH-TO-FULL-SCREEN-MODE ((Self window))
   (setf (gethash Self *Window-Full-Screen-Restore-Sizes*) (#/frame (native-window Self)))
   #-cocotron (#_SetSystemUIMode #$kUIModeAllSuppressed #$kUIOptionAutoShowMenuBar)
-  #+cocotron
-  (progn
-    (set-position self 0 (- (pref (#/frame (#/screen (native-window Self))) <NSR>ect.size.height) (height self)))
-    (set-size self (pref (#/frame (#/screen (native-window Self))) <NSR>ect.size.width) (+ (pref (#/frame (#/screen (native-window Self))) <NSR>ect.size.height))))
+  #+cocotron 
+  (SET-SIZE-AND-POSITION-ENSURING-WINDOW-WILL-FIT-ON-SCREEN 
+   self
+   0
+   (title-bar-height self)
+   (pref (#/frame (#/screen (native-window Self))) <NSR>ect.size.width)
+   (+ (pref (#/frame (#/screen (native-window Self))) <NSR>ect.size.height)))
   (setf (full-screen Self) t)
   ;;; random sizing to trigger #/constrainFrameRect:toScreen
   ;;; (set-size Self 100 100)
@@ -2922,8 +2924,6 @@
 
 (objc:defmethod (#/mouseDown: :void) ((self native-link) Event)
   (declare (ignore Event))
-  (when (action (lui-view Self))
-    (funcall (action (lui-view Self)) (window (lui-view Self)) (target (lui-view Self))))
   (open-url (url (lui-view Self))))
 
 
