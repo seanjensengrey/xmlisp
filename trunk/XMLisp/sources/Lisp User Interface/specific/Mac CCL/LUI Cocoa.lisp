@@ -2830,6 +2830,58 @@
 (defun SET-ICON-OF-FILE-AT-PATH (path-to-image path-to-file)
   (#/setIcon:forFile:options: (#/sharedWorkspace ns:ns-workspace)  (#/initByReferencingFile: (#/alloc ns:ns-image) (native-string (namestring (truename path-to-image)))) (lui::native-string (namestring path-to-file)) 0  ))
 |#
+
+
+(defun ENCODE-URL-CHARS (Url) "
+  in:  URL {string}.
+  out: Compliant-URL {string}.
+  Replace non URL compliant characters such as strings with URL equivalents."
+  (with-output-to-string (Output)
+    (with-input-from-string (Input URL)
+      (loop
+        (let ((Char (or (read-char Input nil nil))))
+          (unless Char (return))
+          (case Char
+            (#\space (princ "%20" Output))
+            (#\! (princ "%21" Output))
+            (#\" (princ "%22" Output))
+            (#\# (princ "%23" Output))
+            (#\$ (princ "%24" Output))
+            (#\% (princ "%25" Output))
+            (#\& (princ "%26" Output))
+            (#\' (princ "%27" Output))
+            (#\( (princ "%28" Output))
+            (#\) (princ "%29" Output))
+            (#\* (princ "%2A" Output))
+            (#\+ (princ "%2B" Output))
+            (#\, (princ "%2C" Output))
+            (#\- (princ "%2D" Output))
+            (#\. (princ "%2E" Output))
+            (#\/ (princ "%2F" Output))
+            (#\: (princ "%3A" Output))
+            (#\; (princ "%3B" Output))
+            (#\< (princ "%3C" Output))
+            (#\= (princ "%3D" Output))
+            (#\> (princ "%3E" Output))
+            (#\? (princ "%3F" Output))
+            (#\@ (princ "%40" Output))
+            (#\[ (princ "%5B" Output))
+            (#\\ (princ "%5C" Output))
+            (#\] (princ "%5D" Output))
+            (#\^ (princ "%5E" Output))
+            (#\_ (princ "%5F" Output))
+            (#\` (princ "%60" Output))
+            (#\{ (princ "%7B" Output))
+            (#\| (princ "%7C" Output))
+            (#\} (princ "%7D" Output))
+            (#\~ (princ "%7E" Output))
+            (#\newline (princ "%0A" Output))
+            (#\return (princ "%0D" Output))
+            (#\tab (princ "%09" Output))
+            (t (when (alphanumericp Char)
+                 (princ Char Output)))))))))
+
+
 ;__________________________________
 ; OPEN-URL                         |
 ;__________________________________/
