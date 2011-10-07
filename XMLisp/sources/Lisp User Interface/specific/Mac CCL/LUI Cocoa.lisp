@@ -627,7 +627,6 @@
       (setf (x Window) (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.x)))
       (setf (y Window) 
             (- (screen-height (lui-window Self)) 
-               (title-bar-height (lui-window Self))
                (height (lui-window Self))
                (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.y)))))    (screen-height nil)
     (size-changed-event-handler (lui-window Self) (width (lui-window Self)) (height (lui-window Self)))))
@@ -714,7 +713,6 @@
       (setf (x Window) (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.x)))
       (setf (y Window) 
             (- (screen-height (lui-window Self)) 
-               (title-bar-height (lui-window self))
                (height (lui-window Self))
                (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.y)))))    
     ;; On window we are ging to save this resize for the end
@@ -739,7 +737,6 @@
     (setf (x Window) (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.x)))
     (setf (y Window) 
           (- (screen-height (lui-window Self)) 
-             (title-bar-height (lui-window self))
              (height (lui-window Self))
              (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.y))))))
 
@@ -816,7 +813,7 @@
 
 
 (defmethod SET-POSITION :after ((Self window) x y)
-  (ns:with-ns-size (Position x (- (screen-height Self) y))    
+  (ns:with-ns-size (Position x (+ (title-bar-height self) (- (screen-height Self) y)))    
     (#/setFrameTopLeftPoint: (native-window Self) Position)))
 
 
