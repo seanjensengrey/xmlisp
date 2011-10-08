@@ -6,7 +6,7 @@
     <next-to/>
     <stacked/>
     <stacked-a/>
-    <empty/>
+    <empty> <direction dcol="1"/> </empty>
     <once-every seconds="5"/>
     <is-selected/>
     <percent-chance expression="5"/>
