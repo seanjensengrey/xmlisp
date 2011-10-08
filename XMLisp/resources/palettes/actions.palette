@@ -3,14 +3,14 @@
   <category tooltip="Basic actions" title="basic actions" disclosed="true">
     <move> <direction dcol="1"/> </move>
     <transport> <direction dcol="1"/> </transport> 
-    <move-random/>
+    <move-random distance="2"/>
     <move-random-on/>
     <move-random-on-a/>
     <change/>
     <new> <direction dcol="1"/> </new>
     <erase/>
     <rotate-by droll="90"/>
-    <rotate-to/>
+    <rotate-to Pitch-Angle="270"/>
   </category>
   <category tooltip="Time actions" title="time" disclosed="true">
     <wait/>
