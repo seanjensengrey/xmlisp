@@ -269,7 +269,7 @@
   (ccl::release-lock (animation-lock)))
        
 
-(defvar *Framerate-Ceilling* 60 "max frame rate; simulation not exceed to save CPU")
+(defvar *Framerate-Ceilling* 60 "max frame rate; simulation not exceed to save CPU. Set to nil to turn off.")
 
 
 (defvar *Print-Frame-Rate-Info* nil "if true print run time information including frame rate to console")
@@ -281,18 +281,15 @@
                              (hemlock::time-to-run (animate Self (delta-time Self)))))
          (Rendering-Time (hemlock::time-to-run (display Self)))
          (Total-Time (+ Animation-Time Rendering-Time)))
-    ;(declare (ignore total-time))
     ;;remember to remove the above declare if you are going to use the following frame rate test.
     (when (equal total-time 0)
       (setf total-time 0.01))
     (display-frame-rate self animation-time total-time rendering-time)
-      ;; Cap framerate 
-    (let ((Sleep-Time (- #.(/ 1.0 *Framerate-Ceilling*) (* Total-Time 1.0e-9))))
-      (when (> Sleep-Time 0.0) 
-        (sleep Sleep-Time)
-        ;(format t "~%sleep time: ~A" Sleep-Time)
-        ))))
-
+    ;; Cap framerate 
+    (when *Framerate-Ceilling*
+      (let ((Sleep-Time (- #.(/ 1.0 *Framerate-Ceilling*) (* Total-Time 1.0e-9))))
+        (when (> Sleep-Time 0.0) 
+          (sleep Sleep-Time))))))
 
 
 (defmethod DISPLAY-FRAME-RATE ((self opengl-view) animation-time total-time rendering-time)
@@ -310,8 +307,8 @@
   (dolist (View (animated-views Self))
     (animate-opengl-view-once View)))
 
-;; A list of views that have been assigned stop-functions and should be checked for deactivation
-(defparameter *DEACTIVATED-VIEWS* nil)
+
+(defparameter *Deactivated-Views* nil "A list of views that have been assigned stop-functions and should be checked for deactivation.")
 
 
 (defmethod START-ANIMATION ((Self opengl-view))
