@@ -594,7 +594,6 @@
 
 
 (defmethod CLOSE-WITH-NO-QUESTIONS-ASKED ((Self Window))
-  
   (#/close (native-window Self)))
 
 
@@ -613,9 +612,6 @@
    #+cocotron (show-main-menu-on-windows :accessor show-main-menu-on-windows :initform nil :initarg :show-main-menu-on-windows :documentation "Should this window show a main menu on Windows?"))
   (:metaclass ns:+ns-object
 	      :documentation "Native window"))
-
-
-
 
 
 (objc:defmethod (#/zoom: :void) ((self native-window) sender)
@@ -656,6 +652,7 @@
 (objc:defmethod (#/becomeMainWindow :void) ((self native-window))
   (call-next-method)
   (has-become-main-window (lui-window Self)))
+
 
 #-cocotron
 (objc:defmethod (#/constrainFrameRect:toScreen: :<NSR>ect) ((Self native-window) (Rect :<NSR>ect) Screen)
