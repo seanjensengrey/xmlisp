@@ -48,7 +48,8 @@
 ;*******************************
 
 (defclass DRAG-PROXY-WINDOW (transparent-opengl-window)
-  ((drag-and-drop-handler :accessor drag-and-drop-handler :initarg :drag-and-drop-handler :documentation "drag and drop handler"))
+  ((drag-and-drop-handler :accessor drag-and-drop-handler :initarg :drag-and-drop-handler :documentation "drag and drop handler")
+   #+cocotron (drawing-for-the-first-time :accessor drawing-for-the-first-time :initform t))
   (:documentation "window rendering proxy representation of agent to be dragged"))
 
 
@@ -70,11 +71,14 @@
 (defmethod LUI::DRAW-RECT ((Self drag-proxy-window))
   ;; source view and proxy window share agents -> grab source view lock to avoid
   ;; asynchronous access issues
-  (with-glcontext (source-view (drag-and-drop-handler Self))
-    (with-glcontext Self
-      (clear-background Self)
-      (draw Self)
-      )))
+  ;; HACK:: for some reason drawRect is getting called on Windows every time we move the Windows but we really only want to draw
+  ;;  the first time the window is create because the contents never change.
+  (when #-cocotron t #+ cocotron (drawing-for-the-first-time self)
+    (setf (drawing-for-the-first-time self) nil)
+    (with-glcontext (source-view (drag-and-drop-handler Self))
+      (with-glcontext Self
+        (clear-background Self)
+        (draw Self)))))
 
 
 
