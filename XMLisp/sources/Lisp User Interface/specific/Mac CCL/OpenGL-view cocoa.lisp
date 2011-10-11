@@ -67,11 +67,16 @@
         ;; I initially tried to add this code to an :after method of prepare-opengl but this caused a crash the first time the glyphs were created
         ;; in openGLviews so far now this is the best place I could find to put the method.  
         #+cocotorn
-        (when (first-time-drawing (lui-view self))
-          (glViewport 0 0 (Width (lui-view self)) (Height (lui-view self)))
-          (setf (first-time-drawing (lui-view self)) nil))
+        (cocotron-just-in-time-viewport-initialization (lui-view self))
         (clear-background Opengl-View)
         (draw Opengl-View)))))
+
+
+#+cocotron
+(defmethod COCOTRON-JUST-IN-TIME-VIEWPORT-INITIALIZATION ((self opengl-view))
+  (when (first-time-drawing self)
+    (glViewport 0 0 (Width self) (Height self))
+    (setf (first-time-drawing self) nil)))
 
 
 (objc:defmethod (#/prepareOpenGL :void) ((Self native-opengl-view))

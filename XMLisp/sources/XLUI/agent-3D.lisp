@@ -74,12 +74,22 @@
   ;; HACK:: for some reason drawRect is getting called on Windows every time we move the Windows but we really only want to draw
   ;;  the first time the window is create because the contents never change.
   (when #-cocotron t #+ cocotron (drawing-for-the-first-time self)
+    #+cocotron
     (setf (drawing-for-the-first-time self) nil)
     (with-glcontext (source-view (drag-and-drop-handler Self))
       (with-glcontext Self
+        ;; HACK:: For some reason on some graphics cards (costco MAchine) we need to initialize the glViewport for it to show up correctly
+        ;; I initially tried to add this code to an :after method of prepare-opengl but this caused a crash the first time the glyphs were created
+        ;; in openGLviews so far now this is the best place I could find to put the method.  
+        #+cocotron
+        (cocotron-just-in-time-viewport-initialization self)
         (clear-background Self)
         (draw Self)))))
 
+
+#+cocotron
+(defmethod COCOTRON-JUST-IN-TIME-VIEWPORT-INITIALIZATION ((self opengl-view))
+  (glViewport 0 0 (Width self) (Height self)))
 
 
 (defmethod DISPLAY ((Self drag-proxy-window)) 
