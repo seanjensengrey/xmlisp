@@ -39,7 +39,7 @@
    (render-mode :accessor render-mode :initform :render :type keyword :documentation "value: :render :select or :feedback")
    (camera-type :reader camera-type :initarg :camera-type :initform 'camera)
    (animation-stop-function :accessor animation-stop-function :initform nil :documentation "If there is a stop-function then the animation of this view will be finished, and the stop-function called with the view (in the animation thread)" )
-   (first-time-drawing :accessor first-time-drawing :initform t :documentation "T if this view has not been draw yet"))
+   #+cocotron (first-time-drawing :accessor first-time-drawing :initform t :documentation "T if this view has not been draw yet"))
   (:documentation "OpenGL View"))
 
 
