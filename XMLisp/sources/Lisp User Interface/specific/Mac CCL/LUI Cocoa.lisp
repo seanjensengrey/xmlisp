@@ -2915,12 +2915,13 @@
       (#/setFont: Native-Control (if (bold Self)
                                    (#/boldSystemFontOfSize: ns:ns-font (size self))
                                    (#/systemFontOfSize: ns:ns-font (size self)))))
-    ;(setf (action Self) (open-url-for-control Self))
     Native-Control))
 
 
 (objc:defmethod (#/mouseDown: :void) ((self native-link) Event)
   (declare (ignore Event))
+  (when (action (lui-view Self))
+    (funcall (action (lui-view Self)) (window (lui-view Self)) (target (lui-view Self))))
   (open-url (url (lui-view Self))))
 
 
