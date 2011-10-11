@@ -88,7 +88,7 @@
 
 
 #+cocotron
-(defmethod COCOTRON-JUST-IN-TIME-VIEWPORT-INITIALIZATION ((self opengl-view))
+(defmethod COCOTRON-JUST-IN-TIME-VIEWPORT-INITIALIZATION ((Self drag-proxy-window))
   (glViewport 0 0 (Width self) (Height self)))
 
 
