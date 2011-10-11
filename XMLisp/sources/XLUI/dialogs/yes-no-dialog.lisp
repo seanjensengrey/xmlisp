@@ -20,7 +20,6 @@
     (declare (ignore Code))
     ;; ignore Code for now
     (lui::in-main-thread () (#/close (lui::native-window Self)))
-    (print *Run-Modal-Return-Value*)
     lui::*Run-Modal-Return-Value*))
 
 
