@@ -792,11 +792,8 @@
         (disclosure-action self (lui-view (Button-view group))  :do-layout nil :set-state t))
       (if (group-items group)
         (dolist (group-item (group-items group))
-          (if (equal (first item) (item-name group-item))
-            (progn
-              ;(warn "Cannot add group item, a group item with this name already exists")
-              (print "Cannot add group item, a group item with this name already exists")
-              (return-from add-group-item nil)))))
+          (when (equal (first item) (item-name group-item))
+            (return-from add-group-item nil))))
       (setf (group-items group) (append (group-items group) (list list-item)  ))
       (add-item-to-gui self group list-item)
       (#/setHidden: (item-view group) #$NO)
