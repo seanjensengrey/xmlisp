@@ -22,17 +22,18 @@
   <category tooltip="Sound and speech actions" title="sound and speech" disclosed="true">
     <play-sound/>
     <stop-all-sounds/>
-    <say/>
-    <print/>
+    <say text="I am ~age years old"/>
+    <print text="Score: ~@Score Health: ~@Health"/>
   </category>
-  <category tooltip="Attribute actions" title="attributes" disclosed="true">
-    <set/>
+  <category tooltip="Attribute actions" title="attributes and properties" disclosed="true">
+    <set value="value + 1 + value[right]"/>
+    <set attribute="@Score" value="@Score + 1"/>
   </category>
   <category tooltip="Visualization actions" title="visualization" disclosed="true">
     <set-color-to/>
     <set-rgba-color/>
     <map/>
-    <plot-to-window/>
+    <plot-to-window expression="sin(value)" window-name="sin plot"/>
     <plot-agents-attribute/> 
    </category>
    <category tooltip="Dialog actions" title="dialog" disclosed="true">
@@ -47,8 +48,5 @@
    <category tooltip="World control actions" title="World Control" disclosed="true">
      <switch-to-world/>
      <reload-world/> 
-   </category>
-   <category tooltip="Developer actions" title="Developer only" disclosed="true">
-     <lisp/>
    </category>
 </palette>
