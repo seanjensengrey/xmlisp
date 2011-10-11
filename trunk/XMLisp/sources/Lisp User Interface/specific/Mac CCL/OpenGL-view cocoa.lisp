@@ -63,6 +63,13 @@
   (with-simple-restart (abandon-drawing "Stop trying OpenGL to draw in ~s" Self)
     (let ((Opengl-View (lui-view Self)))
       (with-glcontext Opengl-View
+        ;; HACK:: For some reason on some graphics cards (costco MAchine) we need to initialize the glViewport for it to show up correctly
+        ;; I initially tried to add this code to an :after method of prepare-opengl but this caused a crash the first time the glyphs were created
+        ;; in openGLviews so far now this is the best place I could find to put the method.  
+        #+cocotorn
+        (when (first-time-drawing (lui-view self))
+          (glViewport 0 0 (Width (lui-view self)) (Height (lui-view self)))
+          (setf (first-time-drawing (lui-view self)) nil))
         (clear-background Opengl-View)
         (draw Opengl-View)))))
 
