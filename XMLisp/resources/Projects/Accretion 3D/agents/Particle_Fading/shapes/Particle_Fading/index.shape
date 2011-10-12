@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<shape-manager name="PARTICLE_FADING">
-  <sphere texture="whiteBox.png"/>
-</shape-manager>

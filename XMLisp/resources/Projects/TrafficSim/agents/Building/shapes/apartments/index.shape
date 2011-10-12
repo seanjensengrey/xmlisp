@@ -1,8 +1,0 @@
-<shape-manager>
-  <box front-texture="apartment-128.jpg"
-     back-texture="apartment-128.jpg"
-     right-texture="apartment-128.jpg"
-     left-texture="apartment-128.jpg"
-     top-texture="apartment-roof-128.jpg"
-     bottom-texture="apartment-128.jpg"/>
-</shape-manager>

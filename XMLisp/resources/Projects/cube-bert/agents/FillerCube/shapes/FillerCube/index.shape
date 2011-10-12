@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<shape-manager name="FILLERCUBE">
-  <cube texture="whiteBox.png"/>
-</shape-manager>

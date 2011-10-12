@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<agent-manager name="INVADER_AGENT">
-  <agent-tracking-camera eye-x="9.486911538325353D0" eye-y="6.0001713371854395D0" eye-z="0.30000001192092896D0" center-x="9.5D0" center-y="6.5D0" center-z="0.30000001192092896D0" up-x="0.0D0" up-y="0.0D0" up-z="1.0D0" fovy="100.0D0" aspect="3.5317460317460316D0" near="0.005D0" far="2000.0D0" azimuth="-1.5707963267948966D0" zenith="-1.544616412982116D0" distance="0.5" elevation="0.3" camera-rotation-offset="-91.5"/>
-</agent-manager>
