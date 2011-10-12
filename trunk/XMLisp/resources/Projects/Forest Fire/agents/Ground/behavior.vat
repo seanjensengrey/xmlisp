@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<behavior>
+  <method disclosed="true" comments="when told to do so, create new forests based on the desired density">
+    <on selector="CREATE_FOREST"/>
+    <rule>
+      <if>
+        <percent-chance expression="@desired_density"/>
+      </if>
+      <then>
+        <new shape="tree TREE">
+          <direction/>
+        </new>
+        <set attribute="@TREES" value="@trees + 1"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

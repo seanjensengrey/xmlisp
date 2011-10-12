@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="CYSTALWALL4" relative-texture-path="Crystal">
+  <cube texture="Aquamarine.jpg"/>
+</shape-manager>

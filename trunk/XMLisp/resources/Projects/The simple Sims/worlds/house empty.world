@@ -1,0 +1,142 @@
+<?xml version="1.0"?>
+<world width="1610" height="528">
+  <light-source x="10.0" y="5.0" z="5.0" name="NIL">
+    <ambient red="0.0" green="0.0" blue="0.0"/>
+    <diffuse red="1.0" green="1.0" blue="1.0"/>
+    <specular red="1.0" green="1.0" blue="1.0"/>
+  </light-source>
+  <light-source x="5.0" y="5.0" z="5.0" name="NIL">
+    <ambient red="0.2" green="0.2" blue="0.2"/>
+    <diffuse red="0.5" green="0.5" blue="0.5"/>
+    <specular red="1.0" green="1.0" blue="1.0"/>
+  </light-source>
+  <background-color red="0.0" green="0.0" blue="0.0"/>
+  <camera eye-x="5.740778137818892D0" eye-y="-1.938512800560634D0" eye-z="4.0189860019065495D0" center-x="5.701692581176758D0" center-y="6.389913558959961D0" center-z="0.11056053638458252D0" up-x="0.05211258146216684D0" up-y="7.117549466915578D0" up-z="5.211084552938324D0" fovy="60.0D0" aspect="3.0492424242424243D0" near="0.004999999888241291D0" far="2000.0D0" azimuth="0.009999999776482582D0" zenith="-1.132000045850873D0"/>
+  <sky-dome roll="-60.0" size="100.0D0" texture="sky_and_clowds.jpg"/>
+  <agent-matrix name="AGENT-MATRIX20100" rows="12" columns="11" layers="1" is-grid-visible="false">
+    <plotter_agent col="5" shape-name="PLOTTER" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="1" shape-name="CARPET" attributes="(F 0.016481806)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="1" col="1" shape-name="CARPET" attributes="(F 0.033536777)" x-turn="0.5" y-turn="0.5"/>
+    <mr_sim_agent row="1" col="1" shape-name="STANDING" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="1" col="2" shape-name="CARPET" attributes="(F 0.05127289)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="1" col="3" shape-name="CARPET" attributes="(F 0.068685174)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="1" col="4" shape-name="CARPET" attributes="(F 0.0828671)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="1" col="5" shape-name="CARPET" attributes="(F 0.088913456)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="1" col="6" shape-name="CARPET" attributes="(F 0.08286702)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="1" col="7" shape-name="CARPET" attributes="(F 0.06868507)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="1" col="8" shape-name="CARPET" attributes="(F 0.05127274)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="1" col="9" shape-name="CARPET" attributes="(F 0.03353667)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="1" col="10" shape-name="CARPET" attributes="(F 0.01648173)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="2" shape-name="CARPET" attributes="(F 0.032390524)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="2" col="1" shape-name="CARPET" attributes="(F 0.06639266)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="2" col="2" shape-name="CARPET" attributes="(F 0.1028699)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="2" col="3" shape-name="CARPET" attributes="(F 0.14060108)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="2" col="4" shape-name="CARPET" attributes="(F 0.17387019)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="2" col="5" shape-name="CARPET" attributes="(F 0.1899201)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="2" col="6" shape-name="CARPET" attributes="(F 0.17387003)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="2" col="7" shape-name="CARPET" attributes="(F 0.14060092)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="2" col="8" shape-name="CARPET" attributes="(F 0.1028696)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="2" col="9" shape-name="CARPET" attributes="(F 0.0663924)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="2" col="10" shape-name="CARPET" attributes="(F 0.03239037)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="3" shape-name="CARPET" attributes="(F 0.046687886)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="3" col="1" shape-name="CARPET" attributes="(F 0.09677387)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="3" col="2" shape-name="CARPET" attributes="(F 0.15321334)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="3" col="3" shape-name="CARPET" attributes="(F 0.21697979)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="3" col="4" shape-name="CARPET" attributes="(F 0.282093)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="3" col="5" shape-name="CARPET" attributes="(F 0.3230273)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="3" col="6" shape-name="CARPET" attributes="(F 0.28209272)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="3" col="7" shape-name="CARPET" attributes="(F 0.21697944)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="3" col="8" shape-name="CARPET" attributes="(F 0.15321304)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="3" col="9" shape-name="CARPET" attributes="(F 0.09677351)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="3" col="10" shape-name="CARPET" attributes="(F 0.046687674)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="4" shape-name="CARPET" attributes="(F 0.057587434)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="4" col="1" shape-name="CARPET" attributes="(F 0.12080201)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="4" col="2" shape-name="CARPET" attributes="(F 0.19623077)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="4" col="3" shape-name="CARPET" attributes="(F 0.29201248)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="4" col="4" shape-name="CARPET" attributes="(F 0.41449544)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="4" col="5" shape-name="CARPET" attributes="(F 0.53800434)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="4" col="6" shape-name="CARPET" attributes="(F 0.41449517)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="4" col="7" shape-name="CARPET" attributes="(F 0.292012)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="4" col="8" shape-name="CARPET" attributes="(F 0.1962302)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="4" col="9" shape-name="CARPET" attributes="(F 0.12080165)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="4" col="10" shape-name="CARPET" attributes="(F 0.05758723)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="5" shape-name="CARPET" attributes="(F 0.06286032)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="5" col="1" shape-name="CARPET" attributes="(F 0.13261673)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="5" col="2" shape-name="CARPET" attributes="(F 0.21889594)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="5" col="3" shape-name="CARPET" attributes="(F 0.3403448)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="5" col="4" shape-name="CARPET" attributes="(F 0.545873)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="5" col="5" shape-name="CARPET" attributes="(F 0.5456139)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="5" col="6" shape-name="CARPET" attributes="(F 0.5458726)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="5" col="7" shape-name="CARPET" attributes="(F 0.34034437)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="5" col="8" shape-name="CARPET" attributes="(F 0.2188954)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="5" col="9" shape-name="CARPET" attributes="(F 0.13261625)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="5" col="10" shape-name="CARPET" attributes="(F 0.062860034)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="6" shape-name="CARPET" attributes="(F 0.061237525)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="6" col="1" shape-name="CARPET" attributes="(F 0.12790924)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="6" col="2" shape-name="CARPET" attributes="(F 0.20639278)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="6" col="3" shape-name="CARPET" attributes="(F 0.30459884)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="6" col="4" shape-name="CARPET" attributes="(F 0.42865247)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="6" col="5" shape-name="CARPET" attributes="(F 0.5527067)" x-turn="0.5" y-turn="0.5"/>
+    <refrigerator_agent row="6" col="5" shape-name="REFRIGERATOR" attributes="(F 1)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <carpet_agent row="6" col="6" shape-name="CARPET" attributes="(F 0.4286522)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="6" col="7" shape-name="CARPET" attributes="(F 0.30459848)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="6" col="8" shape-name="CARPET" attributes="(F 0.2063922)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="6" col="9" shape-name="CARPET" attributes="(F 0.12790875)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="6" col="10" shape-name="CARPET" attributes="(F 0.061237305)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="7" shape-name="CARPET" attributes="(F 0.054181125)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="7" col="1" shape-name="CARPET" attributes="(F 0.11139087)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="7" col="2" shape-name="CARPET" attributes="(F 0.17416799)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="7" col="3" shape-name="CARPET" attributes="(F 0.24300675)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="7" col="4" shape-name="CARPET" attributes="(F 0.31143266)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="7" col="5" shape-name="CARPET" attributes="(F 0.35352343)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="7" col="6" shape-name="CARPET" attributes="(F 0.31143242)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="7" col="7" shape-name="CARPET" attributes="(F 0.24300633)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="7" col="8" shape-name="CARPET" attributes="(F 0.17416753)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="7" col="9" shape-name="CARPET" attributes="(F 0.11139043)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="7" col="10" shape-name="CARPET" attributes="(F 0.054180924)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="8" shape-name="CARPET" attributes="(F 0.044096593)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="8" col="1" shape-name="CARPET" attributes="(F 0.089306206)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="8" col="2" shape-name="CARPET" attributes="(F 0.1358828)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="8" col="3" shape-name="CARPET" attributes="(F 0.18182935)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="8" col="4" shape-name="CARPET" attributes="(F 0.22054966)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="8" col="5" shape-name="CARPET" attributes="(F 0.23852307)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="8" col="6" shape-name="CARPET" attributes="(F 0.22054943)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="8" col="7" shape-name="CARPET" attributes="(F 0.18182895)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="8" col="8" shape-name="CARPET" attributes="(F 0.13588226)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="8" col="9" shape-name="CARPET" attributes="(F 0.08930585)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="8" col="10" shape-name="CARPET" attributes="(F 0.044096388)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="9" shape-name="CARPET" attributes="(F 0.032899637)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="9" col="1" shape-name="CARPET" attributes="(F 0.06585539)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="9" col="2" shape-name="CARPET" attributes="(F 0.09822854)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="9" col="3" shape-name="CARPET" attributes="(F 0.12787968)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="9" col="4" shape-name="CARPET" attributes="(F 0.15041499)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="9" col="5" shape-name="CARPET" attributes="(F 0.1594719)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="9" col="6" shape-name="CARPET" attributes="(F 0.15041463)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="9" col="7" shape-name="CARPET" attributes="(F 0.12787934)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="9" col="8" shape-name="CARPET" attributes="(F 0.09822818)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="9" col="9" shape-name="CARPET" attributes="(F 0.06585508)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="9" col="10" shape-name="CARPET" attributes="(F 0.032899465)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="10" shape-name="CARPET" attributes="(F 0.021646863)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="10" col="1" shape-name="CARPET" attributes="(F 0.042988144)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="10" col="2" shape-name="CARPET" attributes="(F 0.06329727)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="10" col="3" shape-name="CARPET" attributes="(F 0.08104736)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="10" col="4" shape-name="CARPET" attributes="(F 0.09375988)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="10" col="5" shape-name="CARPET" attributes="(F 0.098536246)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="10" col="6" shape-name="CARPET" attributes="(F 0.09375977)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="10" col="7" shape-name="CARPET" attributes="(F 0.08104719)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="10" col="8" shape-name="CARPET" attributes="(F 0.063297026)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="10" col="9" shape-name="CARPET" attributes="(F 0.042987924)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="10" col="10" shape-name="CARPET" attributes="(F 0.021646736)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="11" shape-name="CARPET" attributes="(F 0.010700046)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="11" col="1" shape-name="CARPET" attributes="(F 0.021153476)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="11" col="2" shape-name="CARPET" attributes="(F 0.030926015)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="11" col="3" shape-name="CARPET" attributes="(F 0.039253674)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="11" col="4" shape-name="CARPET" attributes="(F 0.045041945)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="11" col="5" shape-name="CARPET" attributes="(F 0.04715482)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="11" col="6" shape-name="CARPET" attributes="(F 0.04504188)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="11" col="7" shape-name="CARPET" attributes="(F 0.03925356)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="11" col="8" shape-name="CARPET" attributes="(F 0.030925862)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="11" col="9" shape-name="CARPET" attributes="(F 0.021153336)" x-turn="0.5" y-turn="0.5"/>
+    <carpet_agent row="11" col="10" shape-name="CARPET" attributes="(F 0.010699984)" x-turn="0.5" y-turn="0.5"/>
+  </agent-matrix>
+</world>

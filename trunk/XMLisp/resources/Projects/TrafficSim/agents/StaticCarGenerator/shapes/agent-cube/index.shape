@@ -1,0 +1,8 @@
+<shape-manager>
+  <box front-texture="agent-blue.png"
+     back-texture="agent-yellow.png"
+     right-texture="agent-lightgreen.png"
+     left-texture="agent-orange.png"
+     top-texture="agent-red.png"
+     bottom-texture="agent-darkgreen.png"/>
+</shape-manager>

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<behavior>
+  <method disclosed="true" comments="Do nothing. I&#39;m just a marker to make experimentation more consistent: if collecting data, try to start your fires on the tree on top of me or closest to me">
+    <while-running/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+</behavior>

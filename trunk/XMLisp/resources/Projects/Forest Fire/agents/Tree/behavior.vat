@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<behavior>
+  <method disclosed="true" comments="do nothing">
+    <while-running/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method disclosed="true" comments="if i&#39;m a healthy tree and i&#39;m next to a burning tree, with a certain chance, indicate that i should be burning">
+    <on selector="PERCEIVE"/>
+    <rule>
+      <if>
+        <see shape="TREE TREE">
+          <direction/>
+        </see>
+        <next-to operator="&gt;=" number="1" shape="tree_burning TREE"/>
+        <percent-chance expression="@Fire_Spreading_Probability"/>
+      </if>
+      <then>
+        <set attribute="BURNING" value="1"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="If i&#39;m a healty tree and determined that i&#39;m supposed to be burning, start the fire; if already burning, with a certain chance burn completely">
+    <on selector="ACT"/>
+    <rule>
+      <if>
+        <see shape="TREE TREE">
+          <direction/>
+        </see>
+        <test expression1="burning" expression2="1"/>
+      </if>
+      <then>
+        <change shape="tree_burning TREE">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="TREE_BURNING TREE">
+          <direction/>
+        </see>
+        <percent-chance expression="@Fire_Die_Out_Probability"/>
+      </if>
+      <then>
+        <change shape="tree_burnt TREE">
+          <direction/>
+        </change>
+        <set attribute="@BURNT_TREES" value="@burnt_trees + 1"/>
+        <set attribute="@PERCENT_BURNT" value="(@burnt_trees/@trees)*100"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="start a fire by changing myself to the burning tree">
+    <on-mouse-click modifier="control"/>
+    <rule>
+      <if>
+        <see shape="TREE TREE">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <change shape="tree_burning TREE">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="Erase myself">
+    <on selector="DELETE"/>
+    <rule>
+      <if/>
+      <then>
+        <erase>
+          <direction/>
+        </erase>
+      </then>
+    </rule>
+  </method>
+</behavior>

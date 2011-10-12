@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="CYSTALWALL7" relative-texture-path="Crystal">
+  <cube texture="Dark Chamber.jpg"/>
+</shape-manager>

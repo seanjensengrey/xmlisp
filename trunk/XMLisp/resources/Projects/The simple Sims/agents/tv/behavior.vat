@@ -1,0 +1,1 @@
+<?xml version="1.0"?><behavior >  <method comments="TV will not be moved">    <while-running/>    <rule>      <if/>      <then/>    </rule>  </method>  <method comments="initialize diffusion value">    <when-creating-new-agent/>    <rule>      <if/>      <then>        <set attribute="E" value="1"/>      </then>    </rule>  </method></behavior>
