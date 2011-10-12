@@ -229,6 +229,7 @@
    "GET-TOOLTIP" "ENABLE-TOOLTIPS" "SET-ICON-OF-FILE-AT-PATH" "TOOLTIP" "ALWAYS-ENABLE-TOOLTIPS"
    "FULL-SCREEN" "ENTER-FULL-SCREEN-MODE" "EXIT-FULL-SCREEN-MODE"
    "ENCODE-URL-CHARS" "OPEN-URL"
+   "DETERMINE-IF-NEW-FILE-CAN-BE-PUT-INTO-DIRECTORY"
    )
   (:import-from "XML"
                 "FILE" "*XMLISP-PRINT-SYNOPTIC*"))
@@ -302,7 +303,19 @@
                                            (and (or (null test) (funcall test File))
                                                 (not (string= (first (last (pathname-directory File))) ".svn"))))
                                  :if-exists if-exists))
+;;___________________________________________
+;;  File Management                          |
+;;___________________________________________
 
+(defun DETERMINE-IF-NEW-FILE-CAN-BE-PUT-INTO-DIRECTORY (directory-path)
+  "This function tests if we can create a new directory inside a given directory-path location by trying to create an invisible test file there and then writing a UUID inside.  "
+  (catch :write-error
+    (handler-bind
+        ((condition #'(lambda (Condition)
+                        (declare (ignore Condition))
+                        (throw :write-error nil))))
+      (ccl::with-open-file (file (format nil "~A~A" directory-path ".lastOpenedAgentCubesFile") :direction :output :if-exists :supersede :if-does-not-exist :create)  
+        (princ (lui::universally-unique-identifier) file)))))
 
 ;;___________________________________________
 ;;  Load LUI                                 |
