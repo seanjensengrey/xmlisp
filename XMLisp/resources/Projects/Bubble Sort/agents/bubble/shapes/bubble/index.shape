@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="BUBBLE">
+  <tile texture="whiteBox.png"/>
+</shape-manager>

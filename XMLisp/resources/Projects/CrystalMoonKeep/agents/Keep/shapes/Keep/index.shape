@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="KEEP" relative-texture-path="Buildings">
+  <cube texture="Cathedral 2 - Lancet Windows.jpg"/>
+</shape-manager>

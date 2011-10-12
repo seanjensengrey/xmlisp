@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="CEILING" relative-texture-path="Buildings">
+  <tile texture="Cathedral 2 - Wall.jpg"/>
+</shape-manager>

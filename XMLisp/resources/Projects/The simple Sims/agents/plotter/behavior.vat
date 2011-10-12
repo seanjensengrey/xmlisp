@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<behavior>
+  <method disclosed="true" comments="Put text here to explain what method does!">
+    <while-running/>
+    <rule>
+      <if/>
+      <then>
+        <plot-agents-attribute attribute="F" row1="1" row2="11" col2="10" color="1.0 0.12441529 0.11356352 0.71" offset="5" plot-option="logarithmically" agent1="REFRIGERATOR" show-agent1="true" agent2="CARPET" agent3="REFRIGERATOR"/>
+        <plot-agents-attribute attribute="E" row1="1" row2="11" col2="10" color="0.027429389 0.030023895 1.0 0.52" offset="5" plot-option="logarithmically" agent1="TV" show-agent1="true" agent2="MISSING-AGENT-PLACEHOLDER" agent3="MISSING-AGENT-PLACEHOLDER"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

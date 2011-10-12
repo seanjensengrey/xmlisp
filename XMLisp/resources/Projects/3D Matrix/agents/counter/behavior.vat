@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true" comments="do nothing">
+    <while-running/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method disclosed="true" comments="count how many times the user pressed the &quot;I&quot; key to make the matrix cubes invisible">
+    <on selector="COUNT-INVISIBLE"/>
+    <rule>
+      <if>
+        <test expression1="counted_invisible" expression2="0"/>
+      </if>
+      <then>
+        <set attribute="COUNTED_VISIBLE" value="0"/>
+        <set attribute="INVISIBLE" value="Invisible+1"/>
+        <set attribute="COUNTED_INVISIBLE" value="1"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="count how many times the user pressed the &quot;V&quot; key to make the matrix cubes visible">
+    <on selector="COUNT-VISIBLE"/>
+    <rule>
+      <if>
+        <test expression1="counted_visible" expression2="0"/>
+      </if>
+      <then>
+        <set attribute="COUNTED_INVISIBLE" value="0"/>
+        <set attribute="VISIBLE" value="visible+1"/>
+        <set attribute="COUNTED_VISIBLE" value="1"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

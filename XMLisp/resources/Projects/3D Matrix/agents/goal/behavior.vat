@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true" comments="every once in a while, yell for help!">
+    <while-running/>
+    <rule>
+      <if>
+        <once-every seconds="60"/>
+      </if>
+      <then>
+        <say text="help me!"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <key label="M"/>
+      </if>
+      <then>
+        <move-random disclosed="true" distance="5"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if/>
+      <then>
+        <message selector="TRAFF_MULTIPLY">
+          <direction/>
+        </message>
+        <set attribute="DESTINATION" value="((Destination[LEFT] + Destination[RIGHT] + Destination[UP] + Destination[DOWN]) * 0.24)"/>
+        <set attribute="TRAFFIC" value="((Traffic[LEFT] + Traffic[RIGHT] + Traffic[UP] + Traffic[DOWN]) * 0.1) + TrafficOffset"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="TRAFF_MULTIPLY"/>
+    <rule>
+      <if>
+        <stacked-a adjacency="somewhere below" class-name="CAR"/>
+      </if>
+      <then>
+        <set attribute="TRAFFICOFFSET" value="TrafficOffset + 5"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

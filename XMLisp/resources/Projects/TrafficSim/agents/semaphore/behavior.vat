@@ -1,0 +1,136 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method>
+    <while-running/>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="TRAFFIC" value="((Traffic[LEFT] + Traffic[RIGHT] + Traffic[UP] + Traffic[DOWN]) * 0.10) + TrafficOffset"/>
+        <set attribute="DESTINATION" value="((Destination[LEFT] + Destination[RIGHT] + Destination[UP] + Destination[DOWN]) * 0.24)"/>
+        <message selector="SWITCHSTATE">
+          <direction/>
+        </message>
+        <message selector="SWITCHSHAPE">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method>
+    <on selector="SWITCHSHAPE"/>
+    <rule>
+      <if>
+        <key label="S"/>
+      </if>
+      <then>
+        <set attribute="SMART" value="1.0"/>
+        <change shape="cross_street_smart">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <key label="D"/>
+      </if>
+      <then>
+        <set attribute="SMART" value="0.0"/>
+        <change shape="cross_street">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+  </method>
+  <method>
+    <on selector="SWITCHSTATE"/>
+    <rule>
+      <if>
+        <test expression1="greenDirection" operator="&lt;=" expression2="0.0"/>
+        <test expression1="Smart" expression2="0.0"/>
+        <once-every seconds="5"/>
+      </if>
+      <then>
+        <rotate-by droll="90" duration="0.0"/>
+        <set attribute="GREENDIRECTION" value="1.0"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="greenDirection" operator="&gt;" expression2="0.0"/>
+        <test expression1="Smart" expression2="0.0"/>
+        <once-every seconds="5"/>
+      </if>
+      <then>
+        <rotate-by droll="90" duration="0.0"/>
+        <set attribute="GREENDIRECTION" value="-1.0"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="greenDirection" operator="&lt;=" expression2="0.0"/>
+        <test expression1="Smart" expression2="1.0"/>
+        <see shape="small_car">
+          <direction dcol="1"/>
+        </see>
+        <once-every seconds="3"/>
+      </if>
+      <then>
+        <rotate-by droll="90" duration="0.0"/>
+        <set attribute="GREENDIRECTION" value="1.0"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="greenDirection" operator="&lt;=" expression2="0.0"/>
+        <test expression1="Smart" expression2="1.0"/>
+        <see shape="small_car">
+          <direction dcol="-1"/>
+        </see>
+        <once-every seconds="3"/>
+      </if>
+      <then>
+        <rotate-by droll="90" duration="0.0"/>
+        <set attribute="GREENDIRECTION" value="1.0"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="greenDirection" operator="&gt;" expression2="0.0"/>
+        <test expression1="Smart" expression2="1.0"/>
+        <see shape="small_car">
+          <direction drow="-1"/>
+        </see>
+        <once-every seconds="3"/>
+      </if>
+      <then>
+        <rotate-by droll="90" duration="0.0"/>
+        <set attribute="GREENDIRECTION" value="-1.0"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="greenDirection" operator="&gt;" expression2="0.0"/>
+        <test expression1="Smart" expression2="1.0"/>
+        <see shape="small_car">
+          <direction drow="1"/>
+        </see>
+        <once-every seconds="3"/>
+      </if>
+      <then>
+        <rotate-by droll="90" duration="0.0"/>
+        <set attribute="GREENDIRECTION" value="-1.0"/>
+      </then>
+    </rule>
+  </method>
+  <method>
+    <on selector="TRAFF_MULTIPLY"/>
+    <rule>
+      <if>
+        <stacked-a adjacency="somewhere below" class-name="CAR"/>
+      </if>
+      <then>
+        <set attribute="TRAFFICOFFSET" value="TrafficOffset + 5"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

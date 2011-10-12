@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<agent-manager name="MR_SIM_AGENT">
+  <agent-tracking-camera eye-x="6.496622888131063D0" eye-y="2.7579778531677883D0" eye-z="1.2949998378753662D0" center-x="6.5D0" center-y="2.5D0" center-z="1.2949998378753662D0" up-x="0.0D0" up-y="0.0D0" up-z="1.0D0" fovy="100.0D0" aspect="3.0492424242424243D0" near="0.005D0" far="2000.0D0" azimuth="-1.5707963267948966D0" zenith="1.5577063698885099D0" distance="0.25799996" elevation="1.2749999" camera-rotation-offset="-89.25"/>
+</agent-manager>

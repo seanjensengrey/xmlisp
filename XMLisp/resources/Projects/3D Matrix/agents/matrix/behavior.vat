@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true" comments="use the I=invisible and V=visible keyboard input to toggle between seeing the matrix a&#10;nd seeing the path you created">
+    <while-running/>
+    <rule>
+      <if>
+        <key label="I"/>
+      </if>
+      <then>
+        <set-color-to color="1.0 1.0 1.0 0.0"/>
+        <broadcast class-name="COUNTER" selector="COUNT-INVISIBLE"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <key label="V"/>
+      </if>
+      <then>
+        <set-color-to/>
+        <broadcast class-name="COUNTER" selector="COUNT-VISIBLE"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="add myself to the @Wall count">
+    <on selector="COUNT"/>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="@WALLS" value="@walls + 1"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

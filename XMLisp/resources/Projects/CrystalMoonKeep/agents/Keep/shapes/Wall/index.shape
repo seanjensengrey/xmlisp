@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="WALL" relative-texture-path="Buildings">
+  <cube texture="Fortress - Arrow Slits (FL 1).jpg"/>
+</shape-manager>

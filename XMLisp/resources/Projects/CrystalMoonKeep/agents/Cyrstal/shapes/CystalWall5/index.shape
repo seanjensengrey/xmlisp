@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="CYSTALWALL5" relative-texture-path="Crystal">
+  <cube texture="Emerald City.jpg"/>
+</shape-manager>

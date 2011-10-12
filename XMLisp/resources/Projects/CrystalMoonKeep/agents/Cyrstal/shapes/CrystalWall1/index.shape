@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="CRYSTALWALL1" relative-texture-path="Crystal">
+  <cube texture="Beryl.jpg"/>
+</shape-manager>
