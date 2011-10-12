@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<agent-manager name="REFRIGERATOR_AGENT">
-  <agent-tracking-camera eye-x="0.3978463416387368D0" eye-y="2.20201345935095D0" eye-z="0.8500000238418579D0" center-x="0.5D0" center-y="3.5D0" center-z="0.8500000238418579D0" up-x="0.0D0" up-y="0.0D0" up-z="1.0D0" fovy="100.0D0" aspect="2.4610091743119265D0" near="0.005D0" far="2000.0D0" azimuth="-1.5707963267948966D0" zenith="-1.4922565853565564D0" distance="1.3020002" elevation="0.3" camera-rotation-offset="-94.5"/>
-</agent-manager>

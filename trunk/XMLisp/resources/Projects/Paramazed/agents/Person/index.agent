@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<agent-manager name="PERSON_AGENT">
-  <agent-tracking-camera eye-x="1.4846696577324279D0" eye-y="17.998234401954885D0" eye-z="0.5549999987706542D0" center-x="1.5D0" center-y="18.5D0" center-z="0.5549999987706542D0" up-x="0.0D0" up-y="0.0D0" up-z="1.0D0" fovy="100.0D0" aspect="2.596026490066225D0" near="0.005D0" far="2000.0D0" azimuth="-1.5707963267948966D0" zenith="-1.5402530315954772D0" distance="0.50199974" elevation="0.5449999989941716D0" camera-rotation-offset="268.25"/>
-</agent-manager>

@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<world>
-  <agent-matrix name="AGENT-MATRIX11508" rows="20" columns="20" layers="1">
-  </agent-matrix>
-  <camera eye-x="10.0D0" eye-y="10.0D0" eye-z="20.0D0" center-x="10.0D0" center-y="10.0D0" center-z="0.0D0" up-x="0.0D0" up-y="1.0D0" up-z="0.0D0" fovy="60.0D0" aspect="1.0D0" near="0.005D0" far="2000.0D0" azimuth="0.0D0" zenith="0.0D0"/>
-</world>

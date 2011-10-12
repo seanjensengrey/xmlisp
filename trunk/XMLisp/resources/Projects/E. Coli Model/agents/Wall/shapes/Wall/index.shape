@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<shape-manager name="WALL">
-  <box texture="wall.png"/>
-</shape-manager>

@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<shape-manager name="CRATE">
-  <sphere texture="wheel.png"/>
-</shape-manager>
