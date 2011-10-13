@@ -1823,9 +1823,10 @@
 
 (defmethod SAVE-OBJECT ((Self xml-serializer) Filename &key Verbose (If-Exists :error) (Xml-Header "<?xml version=\"1.0\"?>"))
   (when Verbose (format t ";; saving object to file: ~A~%" Filename))
-  (with-open-file (File Filename :direction :output :if-exists If-Exists)
-    (when XML-Header (format File "~A~%" XML-Header))
-    (princ Self File)))
+  (let ((*XMLisp-Print-Synoptic* nil)) ;; never save XML object with synoptic printing
+    (with-open-file (File Filename :direction :output :if-exists If-Exists)
+      (when XML-Header (format File "~A~%" XML-Header))
+      (princ Self File))))
 
 ;_____________________________
 ; Set & Aggregation Handlers  |
