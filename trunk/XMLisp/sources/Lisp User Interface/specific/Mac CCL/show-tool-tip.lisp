@@ -117,7 +117,8 @@
 (defun HIDE-TOOL-TIP ()
   "Hide the overlay window"
   (let ((w (tool-tip-window)))
-    (#/orderOut: w ccl:+null-ptr+)))
+    (when (#/isVisible w)
+      (#/orderOut: w ccl:+null-ptr+))))
 
 
 
