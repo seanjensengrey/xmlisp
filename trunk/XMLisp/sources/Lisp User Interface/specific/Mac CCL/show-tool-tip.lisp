@@ -76,7 +76,7 @@
                 (setf (slot-value view 'text-attributes) (#/retain attribs))
                 (setf (slot-value view 'text) (#/retain (gui::%make-nsstring "")))
                 (#/setContentView: w view)
-                (#/setHasShadow: w #$YES)
+                (#/setHasShadow: w #$NO)  ;; YES would leave a trace in Windows 7
                 ;; Set the background color to clear so that (along with the setOpaque call below)
                 ;; we can see through the parts of the window that we're not drawing into
                 (#/setBackgroundColor: w (#/clearColor ns:ns-color))
@@ -106,7 +106,8 @@
           ;; adjust position to avoid 
           (ns:with-ns-point (Position (min x 
                                            (- (pref (#/frame (#/mainScreen ns:ns-screen)) <NSR>ect.size.width) 
-                                              (rref Size <NSS>ize.width)))
+                                              (rref Size <NSS>ize.width)
+                                              10))  ;; psychological margin to make people not think they are missing part of the tool tip
                                       y)
             (#/setFrameOrigin: w Position)))
         ;; (#/invalidateShadow w)
