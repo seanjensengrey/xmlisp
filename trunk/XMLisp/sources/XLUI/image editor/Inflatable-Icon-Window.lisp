@@ -797,6 +797,7 @@
 (defmethod PICK-COLOR-ACTION ((w inflatable-icon-editor-window) (Color-Well color-well-button))
   (multiple-value-bind (red green blue alpha)
                        (get-color-from-user)
+    (unless red (return-from pick-color-action))
     (set-color color-well :red red :green green :blue blue :alpha alpha))
   (set-pen-color (view-named w "icon-editor") (get-red Color-Well) (get-green Color-Well) (get-blue Color-Well) (get-alpha Color-Well)))
 
