@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <project-chooser title="Project chooser" x="200" y="200" height="220" width="490" margin="10">
     <row align="stretch" valign="stretch">
-      <image-button image="create-new-project-button.png" width="150" action="create-new-project-action" />
+      <image-button image="create-new-project-button.png" width="150" height="197" action="create-new-project-action" />
       <spacer width="10"/>
-      <image-button image="open-existing-project-button.png" width="150" action="open-project-action" />
+      <image-button image="open-existing-project-button.png" width="150" height="197" action="open-project-action" />
       <spacer width="10"/>
-      <image-button image="import-project-button.png" width="150" action="import-project-action" />
+      <image-button image="import-project-button.png" width="150" height="197" action="import-project-action" />
     </row>
 </project-chooser>
