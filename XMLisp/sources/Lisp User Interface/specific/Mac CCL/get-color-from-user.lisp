@@ -24,7 +24,8 @@
   #+cocotron
   ;; need to implement a real color picker
   (let ((color (xlui::get-windows-color-picker)))
-    (values (first color) (second color) (third color) (fourth color) )))
+    (when color
+      (values (first color) (second color) (third color) (fourth color) ))))
 
 
 #| Examples:
