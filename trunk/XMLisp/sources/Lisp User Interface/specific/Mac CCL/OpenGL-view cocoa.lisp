@@ -66,8 +66,7 @@
         ;; HACK:: For some reason on some graphics cards (costco MAchine) we need to initialize the glViewport for it to show up correctly
         ;; I initially tried to add this code to an :after method of prepare-opengl but this caused a crash the first time the glyphs were created
         ;; in openGLviews so far now this is the best place I could find to put the method.  
-        #+cocotorn
-        (cocotron-just-in-time-viewport-initialization (lui-view self))
+        #+cocotorn (cocotron-just-in-time-viewport-initialization (lui-view self))
         (clear-background Opengl-View)
         (draw Opengl-View)))))
 
@@ -182,8 +181,15 @@
     ;; Avoid drawing under Cocotron if the window isn't visible as that tends
     ;; to fix the positions of the window's views.  (This behavior is noted in
     ;; Cocotron issue 405.  It's not clear if this is the same issue or not.)
-    (if #+cocotron (#/isVisible (#/window (native-view Self)))
-        #-cocotron t
+                  
+    ;; I believe the above comment and the below switch or no longer need, Cocotron issue 405 has been resolved.
+    ;; Also, not doing the glViewport if the window is not visible causes the "black screen" issue on Intel HD 
+    ;; Graphics cards, I.E. Examples such AgentSheetsGlobe would load with a pure black context and would not
+    ;; display its contents till the window was resized, removed the conditional fixes that problem.  I'll leave
+    ;; it commented out like this for a little while so we have a chance to test it out before making the change 
+    ;; permement.  
+    (if t;#+cocotron (#/isVisible (#/window (native-view Self)))
+        ;#-cocotron t
       (with-glcontext Self
         (glflush)
         (glViewport 0 0 Width Height)
