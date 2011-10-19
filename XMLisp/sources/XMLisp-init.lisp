@@ -208,7 +208,7 @@
    "FOVY" "ASPECT" "NEAR" "FAR" "AZIMUTH" "ZENITH"
    "AIM-CAMERA" "WITH-GLCONTEXT" "WITH-GLCONTEXT-NO-FLUSH" "RENDER-FOR-SELECTION-MODE" "SAME-SETTINGS"
    "SHARED-OPENGL-VIEW"
-   "NATIVE-PATH"
+   "NATIVE-PATH" "NATIVE-PATHNAME-DIRECTORY"
    ;; Dialogs
    "STANDARD-ALERT-DIALOG" "CHOOSE-FILE-DIALOG"
    ;; colors
@@ -235,20 +235,19 @@
                 "FILE" "*XMLISP-PRINT-SYNOPTIC*"))
 
 
-(defun LUI::NATIVE-PATH (Directory-Name File-Name) "
+(defun LUI::NATIVE-PATH (Directory-Name File-Name &key (directory-p nil)) "
   in: Directory-Name logical-pathname-string, e.g., ''lui:resources;textures;''
       File-Name string.
   out: Native-Path-String
   Create a native, OS specific, path from a platform independend URL style path"
-  (format nil "~A~A" (truename Directory-Name) File-Name))
+  (format nil "~A~A~A" (truename Directory-Name) File-Name (if directory-p "/" "")))
 
 
-(defun LUI::NATIVE-PATH (Directory-Name File-Name) "
-  in: Directory-Name logical-pathname-string, e.g., ''lui:resources;textures;''
-      File-Name string.
-  out: Native-Path-String
-  Create a native, OS specific, path from a platform independend URL style path"
-  (format nil "~A~A" (truename Directory-Name) File-Name))
+(defun LUI::NATIVE-PATHNAME-DIRECTORY (Native-Path)
+  (let ((Pathname-String (namestring Native-Path)))
+    (subseq Pathname-String 0 (- (length Pathname-String) 
+                                 (length (format nil "~A.~A" (pathname-name Native-Path) (pathname-type Native-Path)))))))
+
 ;;___________________________________________
 ;;  OS Version Management                     |
 ;;___________________________________________
