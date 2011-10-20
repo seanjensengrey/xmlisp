@@ -245,8 +245,10 @@
 
 (defun LUI::NATIVE-PATHNAME-DIRECTORY (Native-Path)
   (let ((Pathname-String (namestring Native-Path)))
-    (subseq Pathname-String 0 (- (length Pathname-String) 
-                                 (length (format nil "~A.~A" (pathname-name Native-Path) (pathname-type Native-Path)))))))
+    (if (string= (subseq Pathname-String (1- (length Pathname-String))) "/")
+      Pathname-String
+      (subseq Pathname-String 0 (- (length Pathname-String) 
+                                   (length (format nil "~A.~A" (pathname-name Native-Path) (pathname-type Native-Path))))))))
 
 ;;___________________________________________
 ;;  OS Version Management                     |
