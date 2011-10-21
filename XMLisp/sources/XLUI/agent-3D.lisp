@@ -269,7 +269,9 @@
 (defmethod ATTACH-SKY-DOME ((Self agent-3d-view) texture-path)
   "make and attach a sky-dome with the given texture"
   (remove-sky-dome self)
-  (let ((sky-dome (make-instance 'sky-dome :pitch 0.0 :view Self :texture (concatenate 'string (pathname-name texture-path) "." (pathname-type texture-path)) :texture-path (make-pathname :directory (pathname-directory texture-path)))))
+  (let ((sky-dome (make-instance 'sky-dome :pitch 0.0 :view Self 
+                    :texture (concatenate 'string (pathname-name texture-path) "." (pathname-type texture-path)) 
+                    :texture-path (native-pathname-directory texture-path))))
     (attach Self sky-dome)
     (display self)))
 
