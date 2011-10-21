@@ -154,6 +154,13 @@
   )
 
 
+(defmethod PREPARE-OPENGL :after ((Self transparent-opengl-window))
+ (with-glcontext Self
+   (glflush)
+   (glViewport 0 0 (Width self) (Height self))))
+
+
+
 (defmethod CLEAR-BACKGROUND ((Self transparent-opengl-window))
   (glClearColor 0.0 0.0 0.0 0.0)
   (glClear #.(logior GL_COLOR_BUFFER_BIT GL_DEPTH_BUFFER_BIT)))
