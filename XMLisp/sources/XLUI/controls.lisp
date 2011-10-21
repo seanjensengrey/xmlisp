@@ -83,10 +83,11 @@
 (defmethod INITIALIZE-INSTANCE  :after  ((self node) &rest args)
   (declare (ignore args))
   (when (node-path self)
+    ;; Should use native-path instead of make-pathname
     (if (equal (allowed-file-types self) "directories")
-      (dolist (node (reverse (ccl::directory (make-pathname :directory (pathname-directory (truename (node-path self))):name :wild) :directories t :directory-pathnames nil)))
+      (dolist (node (reverse (ccl::directory #| (make-pathname :directory (pathname-directory (truename (node-path self))):name :wild)|# (native-path (truename (node-path self)) "*")  :directories t :directory-pathnames nil)))
         (Setf (nodes self) (append (list (make-instance 'node :node-name (pathname-name node))) (nodes self) )))
-      (dolist (node (reverse (directory (concatenate 'string (node-path self) "*.*" ) )))
+      (dolist (node (reverse (directory (native-path (node-path self) "*.*" ) )))
         (when (or (not (allowed-file-types self)) (find (string-upcase (pathname-type node)) (read-from-string (allowed-file-types self)) :test 'equal :key 'string))
           (Setf (nodes self) (append (list (concatenate 'string (pathname-name node) "." (pathname-type node))) (nodes self) )))))))
 
