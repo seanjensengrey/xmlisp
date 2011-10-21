@@ -181,7 +181,7 @@
 						   +null-ptr+
 						   +null-ptr+)
 	       #$NSOKButton)
-      (make-pathname :directory (ccl::lisp-string-from-nsstring (#/objectAtIndex: (#/filenames Panel) 0))))))
+      (native-path (ccl::lisp-string-from-nsstring (#/objectAtIndex: (#/filenames Panel) 0)) ""))))
 
 
 (defun choose-new-directory-dialog (&key 
