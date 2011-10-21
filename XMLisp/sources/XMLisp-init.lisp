@@ -42,7 +42,7 @@
                    :name :wild
                    :type :wild
                    :version :wild)
-   #p"w:/**/*.*")))
+   #p"x:/**/*.*")))
 
 
 #+cocotron
@@ -208,7 +208,7 @@
    "FOVY" "ASPECT" "NEAR" "FAR" "AZIMUTH" "ZENITH"
    "AIM-CAMERA" "WITH-GLCONTEXT" "WITH-GLCONTEXT-NO-FLUSH" "RENDER-FOR-SELECTION-MODE" "SAME-SETTINGS"
    "SHARED-OPENGL-VIEW"
-   "NATIVE-PATH" "NATIVE-PATHNAME-DIRECTORY"
+   "NATIVE-PATH" "NATIVE-PATHNAME-DIRECTORY" "NATIVE-TRANSLATED-PATH" "NATIVE-PATH-FROM-LIST"
    ;; Dialogs
    "STANDARD-ALERT-DIALOG" "CHOOSE-FILE-DIALOG"
    ;; colors
@@ -234,15 +234,34 @@
   (:import-from "XML"
                 "FILE" "*XMLISP-PRINT-SYNOPTIC*"))
 
+(defun NATIVE-TRANSLATED-PATH (namestring) "
+  in: a string representation of a path
+  out: a native pathname"
+  (pathname (ccl::native-translated-namestring namestring)))
 
-(defun LUI::NATIVE-PATH (Directory-Name File-Name &key (directory-p nil)) "
+
+(defun LUI::NATIVE-PATH (Directory-Name File-Name &key (convert-path t)(directory-p nil)) "
   in: Directory-Name logical-pathname-string, e.g., ''lui:resources;textures;''
       File-Name string.
   out: Native-Path-String
   Create a native, OS specific, path from a platform independend URL style path"
-  (format nil "~A~A~A" (truename Directory-Name) File-Name (if directory-p "/" "")))
+  (format nil "~A~A~A" (if convert-path (native-translated-path Directory-Name) Directory-Name) File-Name (if directory-p "/" "")))
 
 
+(defun LUI::NATIVE-PATH-FROM-LIST (Directory-Path Directory-List &key (file-name nil)) "
+  in: a directory path or string e.g. lui:resources;textures;
+      and a list of directories to add
+  out: a pathname to the newly formed directory with the file name at the end of 
+      one was provided"
+  (let ((pathname (native-translated-path directory-path)))
+    (dolist (directory directory-list)
+      (setf pathname (format nil "~A~A/" pathname directory)))
+    (if file-name
+      (pathname (lui::native-path pathname file-name))
+      (pathname pathname))))
+  
+
+  
 (defun LUI::NATIVE-PATHNAME-DIRECTORY (Native-Path)
   (let ((Pathname-String (namestring Native-Path)))
     (if (string= (subseq Pathname-String (1- (length Pathname-String))) "/")
