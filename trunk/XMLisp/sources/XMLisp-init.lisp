@@ -112,7 +112,7 @@
 
 (load "lui:sources;XMLisp;XMLisp")
 
-8921063
+
 ;; temporarily set xmlisp package to only be :xml to avoid confusion with xml-like structures in Cocoa
 (setf xml::*XMLisp-Packages* (list (find-package :xml)))
 
@@ -234,18 +234,18 @@
   (:import-from "XML"
                 "FILE" "*XMLISP-PRINT-SYNOPTIC*"))
 
-(defun NATIVE-TRANSLATED-PATH (namestring) "
+(defun LUI::NATIVE-TRANSLATED-PATH (namestring) "
   in: a string representation of a path
   out: a native pathname"
   (pathname (ccl::native-translated-namestring namestring)))
 
 
-(defun LUI::NATIVE-PATH (Directory-Name File-Name &key (convert-path t)(directory-p nil)) "
+(defun LUI::NATIVE-PATH (Directory-Name File-Name &key (convert-path t) (directory-p nil)) "
   in: Directory-Name logical-pathname-string, e.g., ''lui:resources;textures;''
       File-Name string.
   out: Native-Path-String
   Create a native, OS specific, path from a platform independend URL style path"
-  (format nil "~A~A~A" (if convert-path (native-translated-path Directory-Name) Directory-Name) File-Name (if directory-p "/" "")))
+  (format nil "~A~A~A" (if convert-path (lui::native-translated-path Directory-Name) Directory-Name) File-Name (if directory-p "/" "")))
 
 
 (defun LUI::NATIVE-PATH-FROM-LIST (Directory-Path Directory-List &key (file-name nil)) "
