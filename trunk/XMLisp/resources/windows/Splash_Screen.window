@@ -32,6 +32,11 @@
     <spacer height="10"/>
     <row minimize="vertical" align="stretch">
       <spacer width="64"/>
+      <link flex="1" height="25" size="10.0" text="About AgentCubes." url="https://199.45.162.68/wiki/" />
+    </row>
+    <spacer height="10"/>
+    <row minimize="vertical" align="stretch">
+      <spacer width="64"/>
       <label flex="1" height="35" size="9.0" text="Copyright (C) 2009-2012 AgentSheets Inc., Protected by United States Patents 7,630,580 and 7,995,863 (Inflatable Icons); Patent Pending 13/012,465 (Conversational Programming)."/>
     </row>
     <spacer height="10"/>
