@@ -896,6 +896,12 @@
   (#/stopModal (#/sharedApplication ns:ns-application)))
 
 
+(defmethod STOP-MODAL ((Self t) Return-Value)
+  ;; special stop-modal to stop without a window
+  (setq *Run-Modal-Return-Value* Return-Value)
+  (#/stopModal (#/sharedApplication ns:ns-application)))
+
+
 (defmethod CANCEL-MODAL ((Self window))
   (setq *Run-Modal-Return-Value* :cancel)
   (#/stopModal (#/sharedApplication ns:ns-application)))
