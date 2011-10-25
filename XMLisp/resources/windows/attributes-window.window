@@ -7,6 +7,7 @@
     <row src="gradient-transparent.png" minimize="vertical"   align="center" valign="bottom">
       <bevel-button height="24" width="20" bezel-style="square" text="+" action="add-attribute-to-editor-action"/>
       <bevel-button height="24" width="20" bezel-style="square" text="-" action="delete-attribute-from-editor-action"/>
+      <bevel-button height="24" width="30" bezel-style="square" text="Edit" action="edit-attribute-from-editor-action"/>
     </row>
  </column>
 </attribute-window> 
