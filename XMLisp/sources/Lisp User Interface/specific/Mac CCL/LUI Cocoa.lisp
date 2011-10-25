@@ -2350,13 +2350,14 @@
 
 (objc:defmethod (#/textDidChange: :void) ((self native-editable-text) Notification) 
   (let ((lui-view (lui-view self)))
-    (if (validate-text-change lui-view (value lui-view))
+    (if (validate-text-change lui-view  (ccl::lisp-string-from-nsstring  (#/stringValue self)))
       (setf (validation-text-storage lui-view) (value lui-view))
       (progn 
         (#_NSBeep)
-        (setf (value lui-view) (validation-text-storage lui-view)))))
+        (#/setStringValue: self (native-string  (if (stringp (validation-text-storage lui-view)) (validation-text-storage lui-view) (write-to-string (validation-text-storage lui-view)))))
+        (display lui-view))))
   (call-next-method Notification))
-
+ 
 
 (objc:defmethod (#/textShouldBeginEditing: :<BOOL>) ((self native-editable-text) Notification)
   (setf (text-before-edit self) (ccl::lisp-string-from-nsstring (#/stringValue self)))
@@ -2371,12 +2372,13 @@
 
 
 (defmethod (setf text) :after (Text (Self editable-text-control))
-  (#/setStringValue: (native-view Self) (native-string Text)))
+  (#/setStringValue: (native-view Self) (native-string text)))
 
 
 (defmethod VALUE ((Self editable-text-control))
   (ccl::lisp-string-from-nsstring 
    (#/stringValue (native-view Self))))
+
 
 (defmethod (setf VALUE)  (Text (Self editable-text-control))
   (#/setStringValue: (native-view Self) (native-string Text)))
