@@ -30,7 +30,7 @@
 (defvar *Cursors* (make-hash-table :test #'equal) "all the cursors")
 
 
-(defvar *Cursor-Resources-Path* "lui:resources;cursors" "location of cursor resources and images")
+(defvar *Cursor-Resources-Path* "lui:resources;cursors;" "location of cursor resources and images")
 
 
 (defvar *Global-Cursor-Name* nil "The name of the global set cursor")
