@@ -162,6 +162,8 @@
    (is-horizontal-line-on :accessor is-horizontal-line-on :initform nil :documentation "True if horizonal line is on, false oterhwise")
    (is-vertical-line-on :accessor is-vertical-line-on :initform nil :documentation "True if vertical line is on, false oterhwise")
    (tolerance :accessor tolerance :initform 0 :documentation "This is the maximum allowed tolerance with the magic wand")
+   (pixels-visited-by-flood-fill :accessor pixels-visited-by-flood-fill :initform nil :documentation "a list of (col row) pairs visited by the flood-fill algorithm")
+   (flood-fill-queue :accessor flood-fill-queue :initform nil)
    )
   (:documentation "Simple image editor."))
 
@@ -471,6 +473,7 @@
 
 (defmethod ERASE-PIXEL ((Self image-editor) Col Row)
   "Paints the specified pixel with the current background color."
+  
   (multiple-value-bind (Red Green Blue Alpha) (bg-color Self)
     (if (selection-active-p Self)
         (when (pixel-selected-p (selection-mask Self) Col Row)
@@ -647,11 +650,21 @@
         (set-rgba-color-at-without-gl-context Self (- (- (img-width Self) 1) Col) Row r g b a))))
 
 
+(defmethod MIRROR-PIXEL-VERTICALLY-WITHOUT-GL-CONTEXT ((Self image-editor) Col Row)
+  (multiple-value-bind (r g b a) (get-rgba-color-at Self Col Row)
+    (set-rgba-color-at-without-gl-context Self (- (- (img-width Self) 1) Col) Row r g b a)))
+
+
 (defmethod MIRROR-PIXEL-HORIZONTALLY ((Self image-editor) Col Row)
   (with-glcontext Self
     (multiple-value-bind (r g b a) (get-rgba-color-at Self Col Row)
       (set-rgba-color-at-without-gl-context Self Col (- (- (img-height Self) 1) Row) r g b a))))
-  
+
+
+(defmethod MIRROR-PIXEL-HORIZONTALLY-WITHOUT-GL-CONTEXT ((Self image-editor) Col Row)
+  (multiple-value-bind (r g b a) (get-rgba-color-at Self Col Row)
+    (set-rgba-color-at-without-gl-context Self Col (- (- (img-height Self) 1) Row) r g b a)))
+
 
 (defmethod MIRROR-PIXEL-DIAGONALLY ((Self image-editor) Col Row)
   (with-glcontext Self
@@ -659,13 +672,18 @@
       (set-rgba-color-at-without-gl-context Self (- (- (img-width Self) 1) Col) (- (- (img-height Self) 1) Row) r g b a))))
 
 
-(defmethod MIRROR-PIXEL ((Self image-editor) Col Row)
+(defmethod MIRROR-PIXEL-DIAGONALLY-WITHOUT-GL-CONTEXT ((Self image-editor) Col Row)
+  (multiple-value-bind (r g b a) (get-rgba-color-at Self Col Row)
+    (set-rgba-color-at-without-gl-context Self (- (- (img-width Self) 1) Col) (- (- (img-height Self) 1) Row) r g b a)))
+
+
+(defmethod MIRROR-PIXEL ((Self image-editor) Col Row &key (with-gl-context t))
   (let ((Horizontal-Mirror (is-horizontal-line-on Self))
         (Vertical-Mirror (is-vertical-line-on   Self)))
-    (if horizontal-mirror (mirror-pixel-horizontally Self Col Row))
-    (if vertical-mirror   (mirror-pixel-vertically Self Col Row))
+    (if horizontal-mirror (if with-gl-context (mirror-pixel-horizontally Self Col Row) (mirror-pixel-horizontally-without-gl-context Self Col Row)))
+    (if vertical-mirror   (if with-gl-context (mirror-pixel-vertically Self Col Row) (mirror-pixel-vertically-without-gl-context Self Col Row)))
     (if (and horizontal-mirror vertical-mirror)
-        (mirror-pixel-diagonally Self Col Row))))
+        (if with-gl-context (mirror-pixel-diagonally Self Col Row)  (mirror-pixel-diagonally-without-gl-context Self Col Row)))))
 
 ;; Mirroring selections
 (defmethod MIRROR-RECT-OR-ELLIPSE-SELECTION-IN-PROGRESS ((Self image-editor) Left Top Right Bottom Shape-Function)
@@ -1001,19 +1019,21 @@
       (set-pen-color Self Red Green Blue Alpha))))
 
 
-(defmethod FLOOD-FILL ((Self image-editor) Col Row 
+(defmethod FLOOD-FILL-PIXEL ((Self image-editor) Col Row 
                        New-Red New-Green New-Blue New-Alpha 
                        &key (Orig-Red -1) Orig-Green Orig-Blue Orig-Alpha Tolerance (Tolerance-Function nil))
   "This function uses the flood fill method to paint the nodes which are of the same color as the original node
    to the new color. For the key arguments, the caller should only specify the tolerance-function to use."
   ;; Verify that the point given by Row and Col is within bounds
+  (setf (pixels-visited-by-flood-fill self) (append (pixels-visited-by-flood-fill self) (list (list col row))))
   (when (and 
          (< Col (img-width Self))  (>= Col 0)
          (< Row (img-height Self)) (>= Row 0))
     ;; If there is a selection and the pixel is not in that selection, exit:
     (if (selection-active-p Self)
         (if (not (pixel-selected-p (selection-mask Self) Col Row))
-            (return-from flood-fill nil)))
+          (progn
+            (return-from flood-fill-pixel nil))))
     ;; Set Current-Pixel-Color to the current pixel's color and set
     ;; first iteration to false
     (multiple-value-bind (Cur-Red Cur-Green Cur-Blue Cur-Alpha) (get-rgba-color-at Self Col Row)
@@ -1027,7 +1047,7 @@
           (when (and
                  (= Orig-Red New-Red) (= Orig-Green New-Green)
                  (= Orig-Blue New-Blue) (= Orig-Alpha New-Alpha))
-            (return-from flood-fill nil))
+            (return-from flood-fill-pixel nil))
           (setf First-Iteration t))
         ;; Check to see if the Current color is within the tolerance
         ;;  of the original color
@@ -1041,33 +1061,93 @@
                      (= Cur-Blue Orig-Blue) (= Cur-Alpha Orig-Alpha)))
           (set-rgba-color-at-without-gl-context Self Col Row New-Red New-Green New-Blue New-Alpha)
           ;; Mirror the new pixel if needed
-          (mirror-pixel Self Col Row)
           
           ;; Call neighbors
-          (flood-fill Self Col (- Row 1) 
+          (unless (find (list col (- row 1)) (pixels-visited-by-flood-fill self) :test 'equal)
+            (flood-fill-pixel Self Col (- Row 1) 
                       New-Red New-Green New-Blue New-Alpha 
                       :orig-red Orig-Red :orig-green Orig-Green 
                       :orig-blue Orig-Blue :orig-alpha Orig-Alpha 
-                      :tolerance Tolerance :tolerance-function Tolerance-Function)
-          (flood-fill Self Col (+ Row 1) 
+                      :tolerance Tolerance :tolerance-function Tolerance-Function))
+          (unless (find (list col (+ row 1)) (pixels-visited-by-flood-fill self) :test 'equal)
+            (flood-fill-pixel Self Col (+ Row 1) 
                       New-Red New-Green New-Blue New-Alpha 
                       :orig-red Orig-Red :orig-green Orig-Green 
                       :orig-blue Orig-Blue :orig-alpha Orig-Alpha 
-                      :tolerance Tolerance :tolerance-function Tolerance-Function)
-          (flood-fill Self (+ Col 1) Row 
+                      :tolerance Tolerance :tolerance-function Tolerance-Function))
+          (unless (find (list (+ col 1) row) (pixels-visited-by-flood-fill self) :test 'equal)
+            (flood-fill-pixel Self (+ Col 1) Row 
                       New-Red New-Green New-Blue New-Alpha 
                       :orig-red Orig-Red :orig-green Orig-Green 
                       :orig-blue Orig-Blue :orig-alpha Orig-Alpha 
-                      :tolerance Tolerance :tolerance-function Tolerance-Function)
-          (flood-fill Self (- Col 1) Row 
+                      :tolerance Tolerance :tolerance-function Tolerance-Function))
+          (unless (find (list (- col 1) row) (pixels-visited-by-flood-fill self) :test 'equal)
+            (flood-fill-pixel Self (- Col 1) Row 
                       New-Red New-Green New-Blue New-Alpha 
                       :orig-red Orig-Red :orig-green Orig-Green 
                       :orig-blue Orig-Blue :orig-alpha Orig-Alpha 
-                      :tolerance Tolerance :tolerance-function Tolerance-Function)
+                      :tolerance Tolerance :tolerance-function Tolerance-Function))
+          (mirror-pixel Self Col Row :with-gl-context nil)
           ;; Only when exiting this function for the last time (when the first iteration is done)
           ;; update the scene
+          #|
           (when First-Iteration
-            (display Self)))))))
+            (display Self))
+          |#
+          )))))
+
+
+(defmethod CELL-COLOR-MATCHES-P ((self image-editor) col row
+                                 red green blue alpha 
+                                 &key Tolerance (Tolerance-Function nil))
+  (multiple-value-bind (Cur-Red Cur-Green Cur-Blue Cur-Alpha) (get-rgba-color-at Self Col Row)
+    (when (if Tolerance-Function
+            (funcall Tolerance-Function Tolerance
+                     red Green Blue Alpha
+                     Cur-Red Cur-Green Cur-Blue Cur-Alpha)
+            (and (= Cur-Red red) (= Cur-Green Green)
+                 (= Cur-Blue Blue) (= Cur-Alpha Alpha)))
+      t)))
+
+
+(defmethod FLOOD-FILL-WITH-QUEUE ((self image-editor )Col Row 
+                       New-Red New-Green New-Blue New-Alpha 
+                       &key (Orig-Red -1) Orig-Green Orig-Blue Orig-Alpha Tolerance (Tolerance-Function nil))
+  (setf (flood-fill-queue self) (list (list col row)))
+  
+  (loop
+    while  (flood-fill-queue self)
+    do 
+    (let ((grid-cell (pop (flood-fill-queue self))))
+      (multiple-value-bind (Cur-Red Cur-Green Cur-Blue Cur-Alpha) (get-rgba-color-at Self Col Row)
+        (print grid-cell)
+        (when (and
+               (cell-color-matches-p self (+ 1 col) row cur-red cur-green cur-blue cur-alpha :tolerance tolerance :tolerance-function tolerance-function)
+               (not (find (list (+ 1 col) row) (pixels-visited-by-flood-fill self) :test 'equal)))
+           (setf (flood-fill-queue self) (append (flood-fill-queue self) (list (+ 1 col) row))))
+        (when (and
+               (cell-color-matches-p self (- 1 col) row cur-red cur-green cur-blue cur-alpha :tolerance tolerance :tolerance-function tolerance-function)
+               (not (find (list (- 1 col) row) (pixels-visited-by-flood-fill self) :test 'equal)))
+          (setf (flood-fill-queue self) (append (flood-fill-queue self) (list (- 1 col) row))))
+        (when (and
+               (cell-color-matches-p self col (+ row 1) cur-red cur-green cur-blue cur-alpha :tolerance tolerance :tolerance-function tolerance-function)
+               (not (find (list (+ 1 col) row) (pixels-visited-by-flood-fill self) :test 'equal)))
+           (setf (flood-fill-queue self) (append (flood-fill-queue self) (list col (+ row 1)))))
+        (when (and
+               (cell-color-matches-p self col (- row 1) cur-red cur-green cur-blue cur-alpha :tolerance tolerance :tolerance-function tolerance-function)
+               (not (find (list col (- row 1)) (pixels-visited-by-flood-fill self) :test 'equal)))
+          (setf (flood-fill-queue self) (append (flood-fill-queue self) (list col (- row 1)))))
+      ))))
+
+  
+(defmethod FLOOD-FILL ((Self image-editor) Col Row 
+                       New-Red New-Green New-Blue New-Alpha 
+                       &key (Orig-Red -1) Orig-Green Orig-Blue Orig-Alpha Tolerance (Tolerance-Function nil))
+  (setf (pixels-visited-by-flood-fill self) nil)
+  ;(flood-fill-with-queue self col row new-red new-green new-blue new-alpha :orig-red orig-red :orig-blue orig-blue :orig-green orig-green :orig-alpha orig-alpha :Tolerance tolerance :tolerance-function tolerance-function)
+  (flood-fill-pixel self col row new-red new-green new-blue new-alpha :orig-red orig-red :orig-blue orig-blue :orig-green orig-green :orig-alpha orig-alpha :Tolerance tolerance :tolerance-function tolerance-function)
+  (display Self))
+
 
 
 (defmethod MAGIC-WAND ((Self image-editor) Col Row  
@@ -1202,9 +1282,10 @@
        (setf (selection-in-progress Self) (list :rect Col Row col  row)))
       ;; dragging
       (Dragged
-       (setf (fourth (selection-in-progress Self)) (1+ Col))
-       (setf (fifth (selection-in-progress Self)) (1+ Row))
-       (display Self))))
+       (when (selection-in-progress Self)
+         (setf (fourth (selection-in-progress Self)) (1+ Col))
+         (setf (fifth (selection-in-progress Self)) (1+ Row))
+         (display Self)))))
     ;; SELECT ELLIPSE
     (select-ellipse
      (cond
@@ -1216,9 +1297,10 @@
        (setf (selection-in-progress Self) (list :ellipse Col Row Col Row)))
       ;; dragging
       (Dragged
-       (setf (fourth (selection-in-progress Self)) (1+ Col))
-       (setf (fifth (selection-in-progress Self)) (1+ Row))
-       (display Self))))
+       (when (selection-in-progress Self)
+         (setf (fourth (selection-in-progress Self)) (1+ Col))
+         (setf (fifth (selection-in-progress Self)) (1+ Row))
+         (display Self)))))
     ;; Select Polygon
     (select-polygon
      (cond
