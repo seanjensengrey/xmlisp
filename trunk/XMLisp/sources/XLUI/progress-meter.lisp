@@ -23,6 +23,12 @@
     (#/orderFront: (lui::native-window self) nil)
     (#/makeKeyWindow (lui::native-window self))))
 
+
+(defmethod WINDOW-SHOULD-CLOSE ((Self progress-window))
+  ;; should not be closing window: only gets called on Windows with the X button
+  nil)
+
+
 ;***********************************
 ;    Application Meter             *
 ;***********************************
@@ -101,3 +107,4 @@
 
 (defmethod WINDOW-CLOSE ((Self determinate-progress-meter))
   (#/close (lui::native-window (progress-window Self))))
+
