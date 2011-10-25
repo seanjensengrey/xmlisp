@@ -8,6 +8,7 @@
         <bevel-button height="24" width="20" bezel-style="square" text="+" action="add-property-to-editor-action"/>
         <bevel-button height="24" width="20" bezel-style="square" text="-" action="delete-property-from-editor-action"/>
         <bevel-button height="24" bezel-style="square" text="Save" action="save-simulation-properties-action"/>
+        <bevel-button height="24" bezel-style="square" text="Edit" action="edit-simulation-properties-action"/>
      </row>
    </column>
 </simulation-properties-window> 
