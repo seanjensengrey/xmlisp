@@ -201,7 +201,7 @@
 
 (defmethod SELECTED-GROUP-ITEM ((Self badged-image-group-list-manager-view))
   (dolist (group (groups self))
-    (if (is-selected group)       
+    (when (is-selected group)       
       (return-from selected-group-item (selected-item-name group)))))
 
 
