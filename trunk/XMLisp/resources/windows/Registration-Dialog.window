@@ -1,19 +1,23 @@
-<registration-dialog title="Registration Information" height="180">
+<registration-dialog title="Register AgentCubes" height="145" width="350">
   <column align="stretch" valign="distribute">
-    <row align="center" flex="1" >
-      <label width="300" text="Please enter your registration information below"/>
+    <row align="stretch" valign="stretch" vflex="1" flex="1" >
+      <column align="right" width="126" height="140">    
+        <spacer height="3"/>
+        <label width="90"  text="Registered To:"/>
+         <spacer height="15"/>
+        <label width="83"  text="Organization:"/>
+        <spacer height="15"/>
+        <label width="126"  text="Registration Number:"/>
+      </column>
+      <column align="left" width="224" padding="9" height="140">   
+        <editable-text name="name-field" width="200" align="stretch"/>
+        <editable-text name="orginization-field" width="200" align="stretch"/>
+        <editable-text name="key-field" width="200" align="stretch"/>
+      </column>
     </row>
-    <row align="stretch" flex="1" >
-      <label width="50"  text="Name:"/>
-      <editable-text name="name-field" width="250" align="stretch"/>
-    </row>
-    <row align="stretch" flex="1" >
-      <label width="50"  text="Key:"/>
-      <editable-text name="key-field" width="250" align="stretch"/>
-    </row>
-    <row align="right" minimize="vertical">
+    <row align="right" valign="bottom" height="40" minimize="vertical">
       <button text="Cancel" action="cancel-action"/>
-      <button text="OK" action="ok-action"/>
+      <button text="OK" default-button="true" action="ok-action"/>
     </row>
   </column>
 </registration-dialog>
