@@ -1,4 +1,4 @@
-<registration-dialog title="Register AgentCubes" height="145" width="350">
+<registration-dialog title="Register AgentCubes" height="145" width="450">
   <column align="stretch" valign="distribute">
     <row align="stretch" valign="stretch" vflex="1" flex="1" >
       <column align="right" width="126" height="140">    
@@ -9,10 +9,10 @@
         <spacer height="15"/>
         <label width="126"  text="Registration Number:"/>
       </column>
-      <column align="left" width="224" padding="9" height="140">   
-        <editable-text name="name-field" width="200" align="stretch"/>
-        <editable-text name="orginization-field" width="200" align="stretch"/>
-        <editable-text name="key-field" width="200" align="stretch"/>
+      <column align="left" width="324" padding="9" height="140">   
+        <editable-text name="name-field" width="300" align="stretch"/>
+        <editable-text name="orginization-field" width="300" align="stretch"/>
+        <editable-text name="key-field" width="300" align="stretch"/>
       </column>
     </row>
     <row align="right" valign="bottom" height="40" minimize="vertical">
