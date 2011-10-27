@@ -78,10 +78,11 @@
 
 (defmethod GET-STRING-VALUE-OF-CELL-AT-ROW-COLUMN ((self table-view) row column)
   (elt (elt (columns self) column) row))
-;(ccl::lisp-string-from-nsstring (#/stringValue (#/preparedCellAtColumn:row: (native-view self) column row))))
+
 
 (defmethod GET-SELECTED-ROW ((self table-view))
   (#/selectedRow (native-view self)))
+
 
 (defmethod GET-ROW-OF-CELL-BEING-EDITED ((self table-view))
   (#/editedRow (native-view self)))
@@ -89,3 +90,4 @@
 
 (defmethod GET-COLUMN-OF-CELL-BEING-EDITED ((self table-view))
   (#/editedColumn (native-view self)))
+
