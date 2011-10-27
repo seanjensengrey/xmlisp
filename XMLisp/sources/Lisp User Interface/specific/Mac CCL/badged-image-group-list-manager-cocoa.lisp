@@ -52,7 +52,7 @@
   (dolist (group (groups self))
     (when (equal (group-name group) group-name)
       (dolist (item (group-items group))
-        (when (equal (item-name item) item-name)
+        (when (equal (string-capitalize (item-name item)) (string-capitalize item-name))
           (return-from get-group-item-with-name item)))))
   nil)
 
