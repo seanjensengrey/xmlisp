@@ -1018,7 +1018,7 @@
     (multiple-value-bind (Red Green Blue Alpha) (get-rgba-color-at Self Col Row)
       (set-pen-color Self Red Green Blue Alpha))))
 
-
+#| Not used anymore
 (defmethod FLOOD-FILL-PIXEL ((Self image-editor) Col Row 
                        New-Red New-Green New-Blue New-Alpha 
                        &key (Orig-Red -1) Orig-Green Orig-Blue Orig-Alpha Tolerance (Tolerance-Function nil))
@@ -1061,7 +1061,6 @@
                      (= Cur-Blue Orig-Blue) (= Cur-Alpha Orig-Alpha)))
           (set-rgba-color-at-without-gl-context Self Col Row New-Red New-Green New-Blue New-Alpha)
           ;; Mirror the new pixel if needed
-          
           ;; Call neighbors
           (unless (find (list col (- row 1)) (pixels-visited-by-flood-fill self) :test 'equal)
             (flood-fill-pixel Self Col (- Row 1) 
@@ -1095,57 +1094,73 @@
             (display Self))
           |#
           )))))
-
+|#
 
 (defmethod CELL-COLOR-MATCHES-P ((self image-editor) col row
                                  red green blue alpha 
                                  &key Tolerance (Tolerance-Function nil))
   (multiple-value-bind (Cur-Red Cur-Green Cur-Blue Cur-Alpha) (get-rgba-color-at Self Col Row)
-    (when (if Tolerance-Function
+    (when (and 
+           (or 
+            (not (selection-active-p Self))
+            (pixel-selected-p (selection-mask Self) Col Row))
+           (< Col (img-width Self))  (>= Col 0)
+           (< Row (img-height Self)) (>= Row 0)
+           (if Tolerance-Function
             (funcall Tolerance-Function Tolerance
                      red Green Blue Alpha
                      Cur-Red Cur-Green Cur-Blue Cur-Alpha)
             (and (= Cur-Red red) (= Cur-Green Green)
-                 (= Cur-Blue Blue) (= Cur-Alpha Alpha)))
+                 (= Cur-Blue Blue) (= Cur-Alpha Alpha))))
       t)))
 
 
 (defmethod FLOOD-FILL-WITH-QUEUE ((self image-editor )Col Row 
                        New-Red New-Green New-Blue New-Alpha 
                        &key (Orig-Red -1) Orig-Green Orig-Blue Orig-Alpha Tolerance (Tolerance-Function nil))
-  (setf (flood-fill-queue self) (list (list col row)))
-  
+  (declare (ignore orig-red orig-green orig-blue orig-alpha))
+  (when (or 
+            (not (selection-active-p Self))
+            (pixel-selected-p (selection-mask Self) Col Row))
+    (setf (flood-fill-queue self) (list (list col row))))
   (loop
     while  (flood-fill-queue self)
     do 
     (let ((grid-cell (pop (flood-fill-queue self))))
-      (multiple-value-bind (Cur-Red Cur-Green Cur-Blue Cur-Alpha) (get-rgba-color-at Self Col Row)
-        (print grid-cell)
+      ;(print (incf i))
+      (setf col (first grid-cell))
+      (setf row (second grid-cell))
+      (multiple-value-bind (Cur-Red Cur-Green Cur-Blue Cur-Alpha) (get-rgba-color-at Self (first grid-cell) (second grid-cell))
         (when (and
                (cell-color-matches-p self (+ 1 col) row cur-red cur-green cur-blue cur-alpha :tolerance tolerance :tolerance-function tolerance-function)
                (not (find (list (+ 1 col) row) (pixels-visited-by-flood-fill self) :test 'equal)))
-           (setf (flood-fill-queue self) (append (flood-fill-queue self) (list (+ 1 col) row))))
+          (setf (flood-fill-queue self) (append (flood-fill-queue self) (list (list (+ 1 col) row))))
+          (setf (pixels-visited-by-flood-fill self) (append (pixels-visited-by-flood-fill self) (list (list (+ 1 col) row)))))
         (when (and
-               (cell-color-matches-p self (- 1 col) row cur-red cur-green cur-blue cur-alpha :tolerance tolerance :tolerance-function tolerance-function)
-               (not (find (list (- 1 col) row) (pixels-visited-by-flood-fill self) :test 'equal)))
-          (setf (flood-fill-queue self) (append (flood-fill-queue self) (list (- 1 col) row))))
+               (cell-color-matches-p self (- col 1) row cur-red cur-green cur-blue cur-alpha :tolerance tolerance :tolerance-function tolerance-function)
+               (not (find (list (- col 1) row) (pixels-visited-by-flood-fill self) :test 'equal)))
+          (setf (flood-fill-queue self) (append (flood-fill-queue self) (list (list (- col 1) row))))
+          (setf (pixels-visited-by-flood-fill self) (append (pixels-visited-by-flood-fill self) (list (list (- col 1) row)))))
         (when (and
                (cell-color-matches-p self col (+ row 1) cur-red cur-green cur-blue cur-alpha :tolerance tolerance :tolerance-function tolerance-function)
-               (not (find (list (+ 1 col) row) (pixels-visited-by-flood-fill self) :test 'equal)))
-           (setf (flood-fill-queue self) (append (flood-fill-queue self) (list col (+ row 1)))))
+               (not (find (list col (+ row 1)) (pixels-visited-by-flood-fill self) :test 'equal)))
+          (setf (flood-fill-queue self) (append (flood-fill-queue self) (list (list col (+ row 1)))))
+          (setf (pixels-visited-by-flood-fill self) (append (pixels-visited-by-flood-fill self) (list (list col (+ row 1))))))
         (when (and
                (cell-color-matches-p self col (- row 1) cur-red cur-green cur-blue cur-alpha :tolerance tolerance :tolerance-function tolerance-function)
                (not (find (list col (- row 1)) (pixels-visited-by-flood-fill self) :test 'equal)))
-          (setf (flood-fill-queue self) (append (flood-fill-queue self) (list col (- row 1)))))
-      ))))
+          (setf (flood-fill-queue self) (append (flood-fill-queue self) (list (list col (- row 1)))))
+          (setf (pixels-visited-by-flood-fill self) (append (pixels-visited-by-flood-fill self) (list (list col (- row 1))))))
+        (set-rgba-color-at-without-gl-context Self Col Row New-Red New-Green New-Blue New-Alpha)
+        (mirror-pixel Self Col Row :with-gl-context nil)))))
 
   
 (defmethod FLOOD-FILL ((Self image-editor) Col Row 
                        New-Red New-Green New-Blue New-Alpha 
                        &key (Orig-Red -1) Orig-Green Orig-Blue Orig-Alpha Tolerance (Tolerance-Function nil))
   (setf (pixels-visited-by-flood-fill self) nil)
-  ;(flood-fill-with-queue self col row new-red new-green new-blue new-alpha :orig-red orig-red :orig-blue orig-blue :orig-green orig-green :orig-alpha orig-alpha :Tolerance tolerance :tolerance-function tolerance-function)
-  (flood-fill-pixel self col row new-red new-green new-blue new-alpha :orig-red orig-red :orig-blue orig-blue :orig-green orig-green :orig-alpha orig-alpha :Tolerance tolerance :tolerance-function tolerance-function)
+  (flood-fill-with-queue self col row new-red new-green new-blue new-alpha :orig-red orig-red :orig-blue orig-blue :orig-green orig-green :orig-alpha orig-alpha :Tolerance tolerance :tolerance-function tolerance-function)
+  ;(flood-fill-pixel self col row new-red new-green new-blue new-alpha :orig-red orig-red :orig-blue orig-blue :orig-green orig-green :orig-alpha orig-alpha :Tolerance tolerance :tolerance-function tolerance-function)
   (display Self))
 
 
