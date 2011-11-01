@@ -1262,16 +1262,16 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 <application-window title="What is this?" margin="0">
   <agent-3d-view>
     <camera eye-z="2.0"/>
-    <cube texture="metal1.jpg"/>
-    <cylinder top-radius="0.2" texture="metal1.jpg"/>
-    <cube x="-1" y="-1" texture="metal1.jpg"/>
+    <cube texture="metal1.png"/>
+    <cylinder top-radius="0.2" texture="metal1.png"/>
+    <cube x="-1" y="-1" texture="metal1.png"/>
   </agent-3d-view>
 </application-window>
 
 
 <application-window title="What is this?" track-mouse="true" margin="0">
   <agent-3d-view>
-    <cube z="-1.5" texture="metal1.jpg"/>
+    <cube z="-1.5" texture="metal1.png"/>
     <text-3d text="hello world"/>
     <text-3d heading="-90" text="hello world"/>
     <text-3d y="0.5" text="hello world 2" size="4.0" font="comic sans ms"/>
