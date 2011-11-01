@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<arcade-dialog title="Submit to Arcade" margin="0" width="680" height="470" background-color="EDEDEDFF">
+<arcade-dialog title="Submit to Arcade" margin="0" width="680" height="490" background-color="EDEDEDFF">
     <column align="stretch" valign="stretch">
       <spacer height="20" />
       <row align="stretch" valign="stretch" flex="1" height="25">
@@ -15,7 +15,7 @@
          <spacer width="20"/>
       </row>
       <spacer height="8"/>
-      <row align="stretch" valign="stretch" flex="1" width="320" height="180">
+      <row align="stretch" valign="stretch" flex="1" width="320" height="210">
          <spacer width="20"/>
          <column align="right" valign="stretch" width="80">
             <label text="Author:" width="50" size="10" bold="true" />
@@ -23,6 +23,8 @@
             <label text="Title:" width="38" size="10" bold="true" />
             <spacer height="16"/>
             <label text="Description:" width="72" size="10" bold="true" />
+            <spacer height="114"/>
+            <label text="Tags:" width="38" size="10" bold="true" />
          </column>
          <column align="stretch" valign="stretch" flex="1" vflex="1"> 
             <editable-text text="enter your name" name="author" flex="1" size="10" />
@@ -30,6 +32,8 @@
             <editable-text name="title" text="" flex="1" size="10" />
             <spacer height="8"/>
             <editable-text text="describe your project" name="project description" size="10" height="120" flex="1"/>
+            <spacer height="8"/>
+            <editable-text name="tags" text="enter comma-separated keywords" flex="1" size="10" />
          </column>
          <spacer width="20"/>
          <column align="stretch" valign="stretch" width="320" height="180" >
