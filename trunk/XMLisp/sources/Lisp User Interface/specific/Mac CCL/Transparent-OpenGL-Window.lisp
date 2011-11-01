@@ -89,7 +89,6 @@
 			 ;;--- I'd like to simply #-cocotron the #$NSOpenGLPFANoRecovery
 			 ;;--- but the {} reader barfs when I try that.
                          #-cocotron {#$NSOpenGLPFAColorSize 32 
-                                     #$NSOpenGLPFADoubleBuffer 
                                      #$NSOpenGLPFADepthSize 32
 			             #$NSOpenGLPFANoRecovery
                                      0}
