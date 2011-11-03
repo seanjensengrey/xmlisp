@@ -68,6 +68,8 @@
 
 (defun SPLIT-STRING-INTO-LINES (String)
   "Splits a string containing newline characters into multiple lines."
+  (unless (stringp String)
+    (setf String (string String)))
   (let ((Start 0) (Lines nil))
     (dotimes (I (length String) Lines)
       ;; end of line
@@ -82,6 +84,8 @@
 
 (defun NEWLINES-COUNT (String)
   "Returns the number of newline characters in the given string."
+  (unless (stringp String) 
+    (setf String (string String)))
   (let ((Count 0))
     (dotimes (I (length String) Count)
       (when (or (char= (char String i) #\Newline) ;; same as #\linefeed
@@ -240,7 +244,7 @@
   ;; release old vertex-arrays if necessary
   (when (vertex-arrays Self) (memory-dealloc (vertex-arrays Self)))
   ;; create new vertex-arrays
-  (setf (vertex-arrays Self) (allocate-vertex-arrays Self (length (str Self))))
+  (setf (vertex-arrays Self) (allocate-vertex-arrays Self (length (if (stringp (str Self)) (str self) (string (str self) )))))
   ;; store pre-computed vertices
   (let ((X 0s0) (Y 0s0) (Z 0s0) (Index 0))
     (put-into-vertex-arrays-at-index Self Index (str Self) (font Self) x y z)
