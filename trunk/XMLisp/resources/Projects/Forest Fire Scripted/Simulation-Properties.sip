@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<simulation-properties x="1147" y="272" width="396" height="334">
+<simulation-properties x="3" y="185" width="396" height="334">
   <property name="Cycles_Ran"/>
   <property name="Burning_Trees" input="NIL" output="NIL"/>
   <property name="Living_Trees"/>
