@@ -9,7 +9,7 @@
         <test expression1="f[up]" operator="&gt;" expression2="f[down]"/>
       </if>
       <then>
-        <move disclosed="true">
+        <move disclosed="true" animation="constant">
           <direction drow="1"/>
         </move>
         <rotate-to disclosed="true" duration="0.5 * slider()"/>
@@ -23,7 +23,7 @@
       </if>
       <then>
         <rotate-to disclosed="true" roll-angle="270" duration="0.5 * slider()"/>
-        <move disclosed="true">
+        <move disclosed="true" animation="constant">
           <direction dcol="1"/>
         </move>
       </then>
@@ -36,7 +36,7 @@
       </if>
       <then>
         <rotate-to disclosed="true" roll-angle="90" duration="0.5 * slider()"/>
-        <move>
+        <move disclosed="true" animation="constant">
           <direction dcol="-1"/>
         </move>
       </then>
@@ -49,7 +49,7 @@
       </if>
       <then>
         <rotate-to disclosed="true" roll-angle="180" duration="0.5 * slider()"/>
-        <move>
+        <move disclosed="true" animation="constant">
           <direction drow="-1"/>
         </move>
       </then>
@@ -67,9 +67,7 @@
   <method disclosed="true">
     <while-running/>
     <rule>
-      <if>
-        <once-every seconds="1.0"/>
-      </if>
+      <if/>
       <then>
         <message selector="ADVANCE">
           <direction/>

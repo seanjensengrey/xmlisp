@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
-<world width="962" height="509">
+<world width="1190" height="469">
   <light-source x="5.0" y="12.0" z="7.0" name="NIL">
     <ambient red="0.0" green="0.0" blue="0.0"/>
     <diffuse red="1.0" green="1.0" blue="1.0"/>
     <specular red="1.5" green="1.5" blue="1.5"/>
   </light-source>
   <background-color red="0.0" green="0.0" blue="0.0"/>
-  <camera eye-x="7.011415357398198D0" eye-y="5.816192134178821D0" eye-z="3.6033875494462415D0" center-x="4.877821463936403D0" center-y="4.799840773762445D0" center-z="2.9142388768665954D0" up-x="-0.3433343075845867D0" up-y="-4.8400168444957625D0" up-z="-0.11089663456950993D0" fovy="60.0D0" aspect="1.8899803536345776D0" near="0.005D0" far="2000.0D0" azimuth="10.68315329682082D0" zenith="2.7160001881420612D0"/>
+  <camera eye-x="7.011415357398198D0" eye-y="5.816192134178821D0" eye-z="3.6033875494462415D0" center-x="4.877821463936403D0" center-y="4.799840773762445D0" center-z="2.9142388768665954D0" up-x="-0.3433343075845867D0" up-y="-4.8400168444957625D0" up-z="-0.11089663456950993D0" fovy="60.0D0" aspect="2.537313432835821D0" near="0.005D0" far="2000.0D0" azimuth="10.68315329682082D0" zenith="2.7160001881420612D0"/>
   <agent-matrix name="AGENT-MATRIX11508" rows="8" columns="8" layers="2" is-grid-visible="false" layer-height="2.032258">
     <cyrstal_agent shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
     <keep_agent shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
@@ -91,7 +91,6 @@
     <cyrstal_agent row="3" col="4" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
     <spire_agent row="3" col="4" layer="1" shape-name="SPIRE" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="3" col="5" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <player_agent row="3" col="5" shape-name="PLAYER" roll="-990.0" attributes="(LAYER 8 DIRP 3)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="3" col="5" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="3" col="6" shape-name="CYSTALFLOOR1" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="3" col="7" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
@@ -106,6 +105,9 @@
     <cyrstal_agent row="4" col="3" shape-name="CYSTALFLOOR1" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="4" col="4" shape-name="CYSTALFLOOR1" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="4" col="5" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
+    <player_agent row="4" col="5" shape-name="PLAYER" roll="-990.0" attributes="(LAYER 8 DIRP 3)" x-turn="0.5" y-turn="0.5">
+      <agent-tracking-camera eye-x="5.5379868732525726D0" eye-y="4.499005293901529D0" eye-z="1.119999885559082D0" center-x="5.5D0" center-y="4.5D0" center-z="1.119999885559082D0" up-x="0.0D0" up-y="0.0D0" up-z="1.0D0" fovy="100.0D0" aspect="2.537313432835821D0" near="0.005D0" far="2000.0D0" azimuth="1.5707963267948966D0" zenith="-0.02617953930574808D0" distance="0.037999894" elevation="1.0999999" camera-rotation-offset="-91.5"/>
+    </player_agent>
     <cyrstal_agent row="4" col="5" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="4" col="6" shape-name="CYSTALFLOOR1" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="4" col="7" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>

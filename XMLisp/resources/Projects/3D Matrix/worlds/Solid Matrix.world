@@ -1,9 +1,11 @@
 <?xml version="1.0"?>
-<world width="1000" height="366">
+<world width="1191" height="461">
   <background-color red="0.0" green="0.0" blue="0.0"/>
-  <camera eye-x="2.659904472529888D0" eye-y="-3.2957987921889904D0" eye-z="7.831483399161776D0" center-x="2.659904472529888D0" center-y="5.0413839680496615D0" center-z="-0.4624284378795549D0" up-x="4.932008934588339D-8" up-y="10.811670303344727D0" up-z="3.202805280685425D0" fovy="60.0D0" aspect="2.73224043715847D0" near="0.004999999888241291D0" far="2000.0D0" azimuth="0.0D0" zenith="-0.7879999279975891D0"/>
+  <camera eye-x="2.659904472529888D0" eye-y="-3.2957987921889904D0" eye-z="7.831483399161776D0" center-x="2.659904472529888D0" center-y="5.0413839680496615D0" center-z="-0.4624284378795549D0" up-x="4.932008934588339D-8" up-y="10.811670303344727D0" up-z="3.202805280685425D0" fovy="60.0D0" aspect="2.58351409978308D0" near="0.004999999888241291D0" far="2000.0D0" azimuth="0.0D0" zenith="-0.7879999279975891D0"/>
   <agent-matrix name="AGENT-MATRIX11237" rows="6" columns="5" layers="6" is-grid-visible="false" layer-height="1.0">
-    <nebuchadnezzar_agent shape-name="NEBUCHADNEZZAR" x-turn="0.5" y-turn="0.5"/>
+    <nebuchadnezzar_agent shape-name="NEBUCHADNEZZAR" x-turn="0.5" y-turn="0.5">
+      <agent-tracking-camera eye-x="0.5075915755913406D0" eye-y="0.15208318220912687D0" eye-z="0.9250001907348633D0" center-x="0.5D0" center-y="0.5D0" center-z="0.9250001907348633D0" up-x="0.0D0" up-y="0.0D0" up-z="1.0D0" fovy="100.0D0" aspect="2.58351409978308D0" near="0.005D0" far="2000.0D0" azimuth="1.5707963267948966D0" zenith="-1.5489797007419974D0" distance="0.34799963" elevation="0.9250002" camera-rotation-offset="-88.75"/>
+    </nebuchadnezzar_agent>
     <counter_agent col="4" layer="5" shape-name="COUNTER" x-turn="0.5" y-turn="0.5"/>
     <matrix_agent row="1" shape-name="MATRIX" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <matrix_agent row="1" layer="1" shape-name="MATRIX" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<simulation-properties x="35" y="462" width="395" height="234">
+<simulation-properties x="9" y="364" width="395" height="234">
   <property name="burnt_trees" input="true" output="true">
     <plotter enabled="false" min="0.0" max="100.0" window="burnt_trees" representing="burnt_trees" color="16711680"/>
   </property>
