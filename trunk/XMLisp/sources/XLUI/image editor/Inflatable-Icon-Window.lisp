@@ -50,9 +50,7 @@
    (transparent-ceiling-should-fade :accessor transparent-ceiling-should-fade :initform nil :documentation "Fade will not begin until this is set.")
    (transparent-ceiling-update-process :accessor transparent-ceiling-update-process :initform nil :documentation "This process will update the transparency of the ceiling to cause a fade out when it is not used")
    (command-manager :reader command-manager :initform (make-instance 'inflatable-icon-command-manager))
-   (save-button-closure-action :accessor save-button-closure-action :initform nil :initarg :save-button-closure-action )
-   
-   )
+   (save-button-closure-action :accessor save-button-closure-action :initform nil :initarg :save-button-closure-action ))
   (:default-initargs
       :track-mouse t
     :use-custom-window-controller t)
@@ -79,6 +77,8 @@
 
 
 (defmethod TOOL-SELECTION-EVENT ((Self inflatable-icon-editor-window) Tool-Name)
+  (setf (selection-in-progress (view-named self "icon-editor")) nil)
+  (display (view-named self "icon-editor"))
   (setf (selected-tool Self) Tool-Name))
 
 
