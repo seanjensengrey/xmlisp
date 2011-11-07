@@ -152,7 +152,7 @@
    "COLOR-PALETTE-VIEW"
    "PLOT-VIEW"
    "ZOOMABLE" "MINIMIZABLE" "RESIZABLE" "CLOSEABLE" "BORDERLESS" "TITLE" "WINDOW-NEEDS-SAVING-P" "BACKGROUND-COLOR"
-   "SCREEN-WIDTH" "SCREEN-HEIGHT" "CONTROL" "VALUE" "INITIALIZE-EVENT-HANDLING" "SIZE-CHANGED-EVENT-HANDLER" "START-DISABLED"
+   "SCREEN-WIDTH" "SCREEN-HEIGHT" "CONTROL" "VALUE" "INITIALIZE-EVENT-HANDLING" "SIZE-CHANGED-EVENT-HANDLER" "START-DISABLED" "IS-ENABLED"
    "ACTION" "SUBVIEWS" "DO-SUBVIEWS" "MAP-SUBVIEWS" "ADD-SUBVIEW" "SUPERVIEW" "ADD-SUBVIEWS" "SWAP-SUBVIEW" "SUBVIEWS-SWAPPED" "SET-FRAME" 
    "BUTTON-CONTROL" "DEFAULT-BUTTON" "TURN-ON" "TURN-OFF" "IS-ON-P"
    "INVOKE-ACTION"
@@ -253,7 +253,7 @@
       and a list of directories to add
   out: a pathname to the newly formed directory with the file name at the end of 
       one was provided"
-  (let ((pathname (native-translated-path directory-path)))
+  (let ((pathname (lui::native-translated-path directory-path)))
     (dolist (directory directory-list)
       (setf pathname (format nil "~A~A/" pathname directory)))
     (if file-name
