@@ -1195,6 +1195,10 @@
   #$YES)
 
 
+(defmethod IS-ENABLED ((Self control))
+  (when (#/isEnabled (native-view self))
+    t))
+
 ;__________________________________
 ; BUTTON                           |
 ;__________________________________/
