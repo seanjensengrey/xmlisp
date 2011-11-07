@@ -1127,7 +1127,6 @@
     while  (flood-fill-queue self)
     do 
     (let ((grid-cell (pop (flood-fill-queue self))))
-      ;(print (incf i))
       (setf col (first grid-cell))
       (setf row (second grid-cell))
       (multiple-value-bind (Cur-Red Cur-Green Cur-Blue Cur-Alpha) (get-rgba-color-at Self (first grid-cell) (second grid-cell))
@@ -1319,7 +1318,6 @@
     ;; Select Polygon
     (select-polygon
      (cond
-      
       ;; starting
       ((or (not (selection-in-progress Self)) (member (first (selection-in-progress Self)) '(:rect :ellipse)))
        (unless (shift-key-p) 
