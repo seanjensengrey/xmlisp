@@ -44,7 +44,7 @@
 
 (objc:defmethod (#/drawRect: :void) ((self tool-tip-view) (rect :<NSR>ect))
   (ccl::with-autorelease-pool 
-      (#/set (#/clearColor ns:ns-color))
+    (#/set (#/clearColor ns:ns-color))
     (#_NSRectFill (#/bounds self))
     (ns:with-ns-point (point 0 1)
       (#/drawAtPoint:withAttributes: (slot-value self 'text)
