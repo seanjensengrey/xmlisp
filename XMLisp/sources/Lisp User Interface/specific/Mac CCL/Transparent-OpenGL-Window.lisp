@@ -152,10 +152,11 @@
 (defmethod PREPARE-OPENGL ((Self transparent-opengl-window))
   )
 
+
 #+cocotron
 (defmethod PREPARE-OPENGL :after ((Self transparent-opengl-window))
  (with-glcontext Self
-   (glflush)
+   (glFlush)
    (glViewport 0 0 (Width self) (Height self))))
 
 
