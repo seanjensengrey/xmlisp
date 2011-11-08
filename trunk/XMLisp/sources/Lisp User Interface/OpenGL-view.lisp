@@ -155,7 +155,10 @@
 
 (defmethod ANIMATION-CYCLE-ABORTED ((Self opengl-view))
   ;; do nothing
-  )
+  (dolist (animated-view  *deactivated-views*)
+    (when (animation-stop-function animated-view)
+      (funcall (animation-stop-function animated-view) animated-view)
+      (setf (animation-stop-function animated-view) nil))))
 
 
 (defmethod VIEW ((Self opengl-view))
