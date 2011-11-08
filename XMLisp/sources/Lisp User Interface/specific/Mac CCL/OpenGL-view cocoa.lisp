@@ -326,7 +326,7 @@
     (animate-opengl-view-once View)))
 
 
-(defparameter *Deactivated-Views* nil "A list of views that have been assigned stop-functions and should be checked for deactivation.")
+
 
 
 (defmethod START-ANIMATION ((Self opengl-view))
@@ -363,9 +363,6 @@
                      ;; call animation-aborted still in OpenGL Animations, good idea???
                      (:stop-animation (animation-aborted Self))
                      (t nil))))))))
-
-
-
 
 
 (defmethod STOP-ANIMATION ((Self opengl-view) &key (Stop-Function #'identity))
