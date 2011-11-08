@@ -38,13 +38,15 @@
 (export '(sky-dome texture tooltip-event-handler tooltip-text processed-tooltip-text 
           reference-point projected-window-position))
 
+
 (defvar *Projected-Agent* nil "agent that is currently being projected to window coordinates")
+
 
 (defvar *Projected-Agent-Window-Position* nil "window coordinates of agent that is currently being projected ")
 
 
 ;*******************************
-;* DRAG-AND-PROXY-WINDOW       *
+;* DRAG-PROXY-WINDOW           *
 ;*******************************
 
 (defclass DRAG-PROXY-WINDOW (transparent-opengl-window)
@@ -73,7 +75,7 @@
   ;; asynchronous access issues
   ;; HACK:: for some reason drawRect is getting called on Windows every time we move the Windows but we really only want to draw
   ;;  the first time the window is create because the contents never change.
-  (when #-cocotron t #+ cocotron (drawing-for-the-first-time self)
+  (when #-cocotron t #+ cocotron (drawing-for-the-first-time Self)
     #+cocotron (setf (drawing-for-the-first-time self) nil)
     (with-glcontext (source-view (drag-and-drop-handler Self))
       (with-glcontext Self
@@ -105,6 +107,122 @@
     (draw View)
     ;; unmask: draw all agents again
     (broadcast-to-agents View #'(lambda (Agent) (setf (is-visible Agent) t)))))
+
+;***********************************
+;* SINGLETON-DRAG-PROXY-WINDOW     *
+;***********************************
+
+(defparameter *Singleton-Drag-Proxy-Window* nil "The one and only drag proxy window used for ALL drag and drop feedback")
+
+
+(defclass SINGLETON-DRAG-PROXY-WINDOW (drag-proxy-window)
+  ()
+  (:documentation "There is only one instance of this class. Before drawing itself it will have to reset itself to new size, position, opengl states of source views, ..."))
+
+
+(defun SINGLETON-DRAG-PROXY-WINDOW (x y width height drag-and-drop-handler) "
+  in:  x, y, width, height of type int; drag-and-drop-handler.
+  out: window.
+  Returns the singleton drag proxy window"
+  (cond
+   ;; we allredy have one: just need to reinitialize
+   (*Singleton-Drag-Proxy-Window*  
+    (setf (drag-and-drop-handler *singleton-drag-proxy-window*) drag-and-drop-handler)
+    (set-position *Singleton-Drag-Proxy-Window* x y)
+    (set-size *singleton-drag-proxy-window* width height)
+    (show *Singleton-Drag-Proxy-Window*)
+    *Singleton-Drag-Proxy-Window*)
+   ;; need to make a new one
+   (t
+     (setf *Singleton-Drag-Proxy-Window* 
+           (make-instance 'singleton-drag-proxy-window
+             :x x
+             :y y
+             :width width
+             :height height
+             :use-global-glcontext t
+             :drag-and-drop-handler drag-and-drop-handler)))))
+
+
+(defmethod LUI::DRAW-RECT ((Self singleton-drag-proxy-window))
+  ;; source view and proxy window share agents -> grab source view lock to avoid asynchronous access issues
+  ;; HACK:: for some reason drawRect is getting called on Windows every time we move the Windows but we really only want to draw
+  ;;  the first time the window is create because the contents never change.
+  (when #-cocotron t #+ cocotron (drawing-for-the-first-time self)
+    #+cocotron (setf (drawing-for-the-first-time self) nil)
+    ;; in Cocoa we need to fill the new size with clear color
+    #-cocotron (#/set (#/clearColor ns:ns-color))
+    #-cocotron (#_NSRectFill (#/bounds (lui::native-view Self)))
+    (with-glcontext (source-view (drag-and-drop-handler Self))
+      (with-glcontext Self
+        ;; HACK:: For some reason on some graphics cards (Costco Machine: Windows 7, Intel HD Video) we need to initialize the glViewport for it to show up correctly
+        ;; I initially tried to add this code to an :after method of prepare-opengl but this caused a crash the first time the glyphs were created
+        ;; in openGLviews so far now this is the best place I could find to put the method.  
+        ;; The view may have been resized, to be on the safe side, we should resize the viewport and clear the entire native-view
+        (glViewport 0 0 (width Self) (height Self))
+        (clear-background Self)
+        (draw Self)))))
+
+
+(defmethod DRAW ((Self singleton-drag-proxy-window)) 
+  (let ((View (source-view (drag-and-drop-handler Self))))
+    ;; mask: draw agent dragged only
+    (broadcast-to-agents View #'(lambda (Agent) (setf (is-visible Agent) nil)))
+    (broadcast-to-agents (source-agent (drag-and-drop-handler Self))  #'(lambda (Agent) (setf (is-visible Agent) t)))
+    ;; reinitialize by running prepare-opengl of source view
+    (prepare-opengl View)
+    ;; .. and finally repeat the draw of the source view
+    (draw View)
+    ;; unmask: draw all agents again
+    (broadcast-to-agents View #'(lambda (Agent) (setf (is-visible Agent) t)))))
+
+
+(defmethod SET-SIZE ((Self singleton-drag-proxy-window) Width Height)
+  (setf (width Self) Width)
+  (setf (height Self) Height)
+  (ns:with-ns-size (Size Width Height)
+    (#/setContentSize: (lui::native-window Self) Size)
+    (#/setFrameSize:  (lui::native-view Self) Size)))
+
+
+#+cocotron
+(defmethod SET-SIZE :after ((Self singleton-drag-proxy-window) Width Height) 
+  (declare (ignore Width Height))
+  (lui::in-main-thread ()           
+    (with-glcontext Self
+      (glFlush))))
+
+
+(defmethod CLEAR-BACKGROUND ((Self singleton-drag-proxy-window))
+  ;; black wiht alpha = 0
+  (glClearColor 0.0 0.0 0.0 0.0)
+  (glClear #.(logior GL_COLOR_BUFFER_BIT GL_DEPTH_BUFFER_BIT)))
+
+
+(defmethod WINDOW-CLOSE ((Self singleton-drag-proxy-window))
+  ;; we need to keep this window. Lets just hide
+  (hide self))
+
+
+(defmethod SHOW ((Self singleton-drag-proxy-window))
+  (lui::in-main-thread ()
+       (let ((x (x Self))
+             (y (y Self)))
+         #+Cocotron (set-position Self 0 -1000)  ;; without this the window will show up on Windows (XP for sure, check Windows 7) as visible flicker with previous content for a short moment
+         #-Cocotron (display Self)
+         (#/makeKeyAndOrderFront: (lui::native-window Self) nil)
+         (set-position Self x y))))
+
+
+(defmethod HIDE ((Self singleton-drag-proxy-window))
+  #+cocotron (setf (drawing-for-the-first-time self) t)
+  (lui::in-main-thread ()
+    (#/orderOut: (lui::native-window Self) nil)))
+
+
+(defmethod VISIBLE-P ((Self singleton-drag-proxy-window))
+  (when (#/isVisible (lui::native-window Self))
+    t))
 
 
 ;*******************************
@@ -506,13 +624,12 @@
       (when (or (>= (abs (- x (x-start (drag-and-drop-handler Self)))) *Drag-Beging-Distance*)
                 (>= (abs (- y (y-start (drag-and-drop-handler Self)))) *Drag-Beging-Distance*))
         (setf (drag-proxy-window (drag-and-drop-handler Self))
-              (make-instance 'drag-proxy-window
-                :x (+ (window-x Self) (x (window Self)))
-                :y (+ (window-y Self) (y (window Self)))
-                :width (width Self)
-                :height (height Self)
-                :use-global-glcontext t
-                :drag-and-drop-handler (drag-and-drop-handler Self)))))
+              (singleton-drag-proxy-window 
+               (+ (window-x Self) (x (window Self)))
+               (+ (window-y Self) (y (window Self)))
+               (width Self)
+               (height Self)
+               (drag-and-drop-handler Self)))))
     (when (drag-proxy-window (drag-and-drop-handler Self))
       (dragged-to
        (drag-and-drop-handler Self)
