@@ -44,6 +44,7 @@
 
 
 (defvar *Shared-OpenGL-View* nil "the GL context of this opengl-view can be share by all windows to share textures and display lists")
+(defparameter *Deactivated-Views* nil "A list of views that have been assigned stop-functions and should be checked for deactivation.")
 
 
 (defun SHARED-OPENGL-VIEW () "
