@@ -139,7 +139,7 @@
    "*CURRENT-EVENT*" "VIEW-CURSOR" "CURRENT-CURSOR"
    "KEY-EVENT-HANDLER" "KEY-EVENT" "KEY-CODE"
    "COMMAND-KEY-P" "SHIFT-KEY-P" "ALT-KEY-P" "CONTROL-KEY-P" "DOUBLE-CLICK-P"
-   "WINDOW" "VIEW" "X" "Y" "WIDTH" "HEIGHT" "SHOW" "CENTER" "DO-SHOW-IMMEDIATELY" "SHOW-AND-RUN-MODAL" "STOP-MODAL" "CANCEL-MODAL" "BEFORE-GOING-MODAL" "HIDE"  "HAS-BECOME-MAIN-WINDOW" "WINDOW-WILL-CLOSE" "WINDOW-OF-VIEW-WILL-CLOSE" "WINDOW-DID-FINISH-RESIZE" "WINDOW-SHOULD-CLOSE" "MAKE-KEY-WINDOW" "ADD-TRACKING-RECT" "REMOVE-TRACKING-RECT""VIEW-DID-MOVE-TO-WINDOW" "VIEW-DID-END-RESIZE" "VISIBLE-P" "USE-CUSTOM-WINDOW-CONTROLLER" "SET-DOCUMENT-EDITTED" "SHOW-MAIN-MENU-ON-WINDOWS" "SET-SIZE-AND-POSITION-ENSURING-WINDOW-WILL-FIT-ON-SCREEN"
+   "WINDOW" "VIEW" "X" "Y" "WIDTH" "HEIGHT" "SHOW" "CENTER" "DO-SHOW-IMMEDIATELY" "SHOW-AND-RUN-MODAL" "STOP-MODAL" "CANCEL-MODAL" "BEFORE-GOING-MODAL" "HIDE"  "HAS-BECOME-MAIN-WINDOW" "WINDOW-WILL-CLOSE" "WINDOW-OF-VIEW-WILL-CLOSE" "WINDOW-DID-FINISH-RESIZE" "WINDOW-SHOULD-CLOSE" "MAKE-KEY-WINDOW" "ADD-TRACKING-RECT" "REMOVE-TRACKING-RECT""VIEW-DID-MOVE-TO-WINDOW" "VIEW-DID-END-RESIZE" "VISIBLE-P" "USE-CUSTOM-WINDOW-CONTROLLER" "SET-DOCUMENT-EDITTED" "SHOW-MAIN-MENU-ON-WINDOWS" "SET-SIZE-AND-POSITION-ENSURING-WINDOW-WILL-FIT-ON-SCREEN" "END-TEXT-EDITTING"
    "SWITCH-TO-FULL-SCREEN-MODE" "SWITCH-TO-WINDOW-MODE" "FULL-SCREEN-P" "WINDOW-CLOSE" "CLOSE-WITH-NO-QUESTIONS-ASKED" "MIN-WIDTH" "MIN-HEIGHT"
    "GRAB-VIEW-LOCK" "RELEASE-VIEW-LOCK" "WITH-VIEW-LOCKED"
    "SWITCH-TO-FULL-SCREEN-MODE" "SWITCH-TO-WINDOW-MODE" "FULL-SCREEN-P" "WINDOW-CLOSE" "MIN-WIDTH" "MIN-HEIGHT"
@@ -323,19 +323,8 @@
                                            (and (or (null test) (funcall test File))
                                                 (not (string= (first (last (pathname-directory File))) ".svn"))))
                                  :if-exists if-exists))
-;;___________________________________________
-;;  File Management                          |
-;;___________________________________________
 
-(defun DETERMINE-IF-NEW-FILE-CAN-BE-PUT-INTO-DIRECTORY (directory-path)
-  "This function tests if we can create a new directory inside a given directory-path location by trying to create an invisible test file there and then writing a UUID inside.  "
-  (catch :write-error
-    (handler-bind
-        ((condition #'(lambda (Condition)
-                        (declare (ignore Condition))
-                        (throw :write-error nil))))
-      (ccl::with-open-file (file (format nil "~A~A" directory-path ".lastOpenedAgentCubesFile") :direction :output :if-exists :supersede :if-does-not-exist :create)  
-        (princ (lui::universally-unique-identifier) file)))))
+
 
 ;;___________________________________________
 ;;  Load LUI                                 |
@@ -441,6 +430,32 @@
 (load "lui:sources;XLUI;image editor;Inflatable-Icon-Window")
 
 
+;;___________________________________________
+;;  File Management                          |
+;;___________________________________________
+
+(defun DETERMINE-IF-NEW-FILE-CAN-BE-PUT-INTO-DIRECTORY (directory-path)
+  "This function tests if we can create a new directory inside a given directory-path location by trying to create an invisible test file there and then writing a UUID inside.  "
+  (catch :write-error
+    (handler-bind
+        ((condition #'(lambda (Condition)
+                        (declare (ignore Condition))
+                        (throw :write-error nil))))
+      (ccl::with-open-file (file (format nil "~A~A" directory-path ".lastOpenedAgentCubesFile") :direction :output :if-exists :supersede :if-does-not-exist :create)  
+        (princ (lui::universally-unique-identifier) file)))))
+
+
+(defun DETERMINE-IF-FILE-CAN-BE-EDITTED-IN-DIRECTORY (directory-path)
+  "This function tests if we can create a new directory inside a given directory-path location by trying to create an invisible test file there and then writing a UUID inside.  "
+  (catch :write-error
+    (handler-bind
+        ((condition #'(lambda (Condition)
+                        (declare (ignore Condition))
+                        (throw :write-error nil))))
+      (ccl::with-open-file (file (format nil "~A~A" directory-path ".lastOpenedAgentCubesFile") :direction :output :if-exists :supersede :if-does-not-exist :create)  
+        (princ (lui::universally-unique-identifier) file))
+      (ccl::with-open-file (file (format nil "~A~A" directory-path ".lastOpenedAgentCubesFile") :direction :output :if-exists :supersede :if-does-not-exist :create)  
+        (princ (lui::universally-unique-identifier) file)))))
 
 ;;___________________________________________
 ;;  Application Building                     |
