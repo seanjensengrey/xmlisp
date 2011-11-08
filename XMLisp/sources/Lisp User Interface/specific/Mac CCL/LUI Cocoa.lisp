@@ -593,6 +593,11 @@
   nil)
 
 
+(defmethod END-TEXT-EDITTING ((Self Window))
+  ;; If any text fields in this window are in the process of editting, end editting and resign first responder
+  (#/endEditingFor: (native-window self) nil ))
+
+  
 (defmethod CLOSE-WITH-NO-QUESTIONS-ASKED ((Self Window))
   (#/close (native-window Self)))
 
