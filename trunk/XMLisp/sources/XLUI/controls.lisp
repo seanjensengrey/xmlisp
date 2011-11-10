@@ -716,6 +716,14 @@
   (:documentation "This class is a text field with agent name validation"))
 
 
+(defclass WORLD-NAME-TYPE (world-name-type-control xml-layout-interface)
+  ()
+  (:default-initargs
+    :width 100 
+    :height 20)
+  (:documentation "This class is a text field with world name validation"))
+
+
 (defclass NUMBER-TYPE (number-type-control xml-layout-interface)
   ()
   (:default-initargs
