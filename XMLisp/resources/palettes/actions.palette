@@ -20,7 +20,7 @@
     <broadcast/>
   </category>
   <category tooltip="Sound and speech actions" title="sound and speech" disclosed="true">
-    <play-sound/>
+    <play-sound ref="Explode.mp3"/>
     <stop-all-sounds/>
     <say text="I am ~age years old"/>
     <print text="Score: ~@Score Health: ~@Health"/>
