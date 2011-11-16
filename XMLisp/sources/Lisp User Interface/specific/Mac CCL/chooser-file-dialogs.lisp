@@ -142,6 +142,7 @@
                                 prompt 
                                 name-field-string
                                 (window-position (ns:make-ns-point 100 100)))
+  #+cocotron (declare (ignore name-field-string))
   (let* ((panel (#/openPanel ns:ns-open-panel))
 	 ;(dc (#/sharedUserDefaultsController ns:ns-user-defaults-controller))
          ;(values (#/values dc))
@@ -166,6 +167,7 @@
     (when prompt
       (setf prompt (ccl::%make-nsstring prompt))
       (#/setMessage: panel  prompt))
+    #-cocotron
     (when name-field-string
       (#/setNameFieldLabel: panel (ccl::%make-nsstring name-field-string)))
     (#/setAllowsMultipleSelection: panel nil)
@@ -194,6 +196,7 @@
                                     prompt 
                                     name-field-string
                                     (window-position (ns:make-ns-point 100 100)))
+  #+cocotron (declare (ignore name-field-string))
   (let* ((panel (#/savePanel ns:ns-save-panel))
 	 ;(dc (#/sharedUserDefaultsController ns:ns-user-defaults-controller))
          ;(values (#/values dc))
