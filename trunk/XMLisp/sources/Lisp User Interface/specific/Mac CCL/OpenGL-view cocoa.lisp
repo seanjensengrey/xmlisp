@@ -418,6 +418,25 @@
   (call-next-method event)
   (mouse-exited (lui-view self)))
 
+;------------------------------
+; Extensions                  |
+;______________________________
+
+(defmethod EXTENSIONS ((Self opengl-view))  
+  ;; Will return the opengl extensions for the environment this opengl-view is running in
+  (with-glcontext Self
+    (let ((extension-pointer (glGetString GL_EXTENSIONS))
+          (extension-string (make-array 0
+                                    :element-type 'character
+                                    :fill-pointer 0
+                                    :adjustable t))
+          (i 0))
+      (loop while (not (equal (lui::%get-byte extension-pointer i) 0))  do
+        ;; read and push one character at a time into the extension-string
+        (vector-push-extend (code-char (lui::%get-byte extension-pointer i))   extension-string)
+        (incf i))
+      extension-string)))
+
 ;______________________________
 ; Events                       |
 ;______________________________
