@@ -30,6 +30,7 @@
 
 
 (defmethod PLAY-SOUND ((Name string) &key Loops)
+  #+cocotron (declare (ignore Loops))
   (ccl::with-autorelease-pool
     (let ((Sound (or (gethash Name *Sounds*)
                      (let ((New-Sound
@@ -47,6 +48,8 @@
 
 
 (defmethod SET-VOLUME ((Name string) Volume)
+  #+cocotron (Declare (ignore volume))
+  #-cocotron
   (let ((Sound (gethash Name *Sounds*)))
     (when Sound (#/setVolume: Sound Volume))))
 
