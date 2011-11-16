@@ -122,6 +122,9 @@
 
 
 (defun AVAILABLE-VOICES ()
+  #+cocotron
+  (standard-alert-dialog "Cannot set Voice." :explanation-dialog "AgentCubes does not support text to speech on Widnows so no voice may be selected.  This action will simply print to the status bar.")
+  #-cocotron
   (let ((Voices nil) (Native-Voices (#/availableVoices ns:NS-Speech-Synthesizer)))
     (dotimes (i (#/count Native-Voices) (reverse Voices))
       (let ((Name (ccl::lisp-string-from-nsstring (#/objectAtIndex: Native-Voices i))))
@@ -192,4 +195,5 @@
 )
 #+cocotron
 (defmethod SPEAK ((Text string) &optional Voice Synthesizer )
+  (declare (ignore voice Synthesizer))
   (print Text))
