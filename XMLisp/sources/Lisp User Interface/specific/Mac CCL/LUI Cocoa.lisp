@@ -60,11 +60,11 @@
     ;; scroll wheel
     (#.#$NSScrollWheel :scroll-wheel)
     ;; Gesture 
-    (#.nseventtypebegingesture :begin-gesture)
-    (#.nseventtypemagnify :magnify-gesture)
-    (#.nseventtypeswipe :swipe-gesture)
-    (#.nseventtyperotate :rotate-gesture)
-    (#.nseventtypeendgesture :end-gesture)
+    #-cocotron (#.nseventtypebegingesture :begin-gesture)
+    #-cocotron (#.nseventtypemagnify :magnify-gesture)
+    #-cocotron (#.nseventtypeswipe :swipe-gesture)
+    #-cocotron (#.nseventtyperotate :rotate-gesture)
+    #-cocotron (#.nseventtypeendgesture :end-gesture)
     ;; trouble!!
     (t  :undefined-event)))
 
@@ -682,6 +682,7 @@
 ;;RESPONDER CHAIN HACK
 (objc:defmethod (#/noResponderFor: :void)
                 ((self native-window) (eventSelector :<SEL>))
+  (declare (ignore eventSelector))
   ;; For now, if we get to the bottom of the responder chain and no one has taken responsibility for the event just do nothing
   ;;Do nothing
   )
@@ -725,13 +726,9 @@
 (objc:defmethod (#/windowShouldClose: :<BOOL>) ((self window-delegate) Sender)
   ;; Hack:  For now call the window-will-close code inside a positive response from window-should-close, this is needed for now because calling subviews (which is caused when we call window-will-close) 
   ;; Sometimes causes problems if the window is already in the process of being closed.  
-  (cond 
-   ((window-should-close (lui-window self)) 
-    (window-will-close (lui-window self) sender)
-    #$YES)
-   (t
-    #$NO)))
-
+  (window-close (lui-window self))
+  #$NO)
+  
 
 (objc:defmethod (#/windowDidMove: :void) ((self window-delegate) Notification)
   (declare (ignore Notification))  
