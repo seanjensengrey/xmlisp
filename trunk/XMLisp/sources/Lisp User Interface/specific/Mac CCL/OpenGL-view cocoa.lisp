@@ -169,11 +169,11 @@
       (loop
         (clear-background Self)
         (draw Self)
-        (#/flushBuffer (#/openGLContext (native-view Self)))
+        #-:cocotron (glFlush)
+        #+:cocotron  (#/flushBuffer (#/openGLContext (native-view Self)))
         (incf Frame-Count)
         (when (>= (get-internal-real-time) Stop-Time)
-          (return (values Frame-Count (- (get-internal-real-time)
-                                         (- Stop-Time internal-time-units-per-second)))))))))
+          (return Frame-Count))))))
 
 
 (defmethod SET-SIZE :after ((Self opengl-view) Width Height)
@@ -287,7 +287,7 @@
   (ccl::release-lock (animation-lock)))
        
 
-(defvar *Framerate-Ceilling* 60 "max frame rate; simulation not exceed to save CPU. Set to nil to turn off.")
+(defvar *Framerate-Ceilling* nil "max frame rate; simulation not exceed to save CPU. Set to nil to turn off.")
 
 
 (defvar *Print-Frame-Rate-Info* nil "if true print run time information including frame rate to console")
@@ -305,7 +305,7 @@
     (display-frame-rate self animation-time total-time rendering-time)
     ;; Cap framerate 
     (when *Framerate-Ceilling*
-      (let ((Sleep-Time (- #.(/ 1.0 *Framerate-Ceilling*) (* Total-Time 1.0e-9))))
+      (let ((Sleep-Time (- (/ 1.0 *Framerate-Ceilling*) (* Total-Time 1.0e-9))))
         (when (> Sleep-Time 0.0) 
           (sleep Sleep-Time))))))
 
