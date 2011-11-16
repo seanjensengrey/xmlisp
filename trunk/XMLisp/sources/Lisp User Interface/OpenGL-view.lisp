@@ -298,6 +298,11 @@
 
 (defparameter *WI* (make-instance 'window :width 340 :height 180))
 
-(add-subview *WI* (make-instance 'opengl-view :width 340 :height 180))
+(defparameter *GV* (make-instance 'opengl-view :width 340 :height 180))
 
+(add-subview *WI* *GV*)
+
+(time (frame-rate *GV*))
+
+(time (sleep 1))
 |#
