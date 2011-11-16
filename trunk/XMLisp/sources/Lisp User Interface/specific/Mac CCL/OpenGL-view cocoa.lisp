@@ -287,7 +287,10 @@
   (ccl::release-lock (animation-lock)))
        
 
-(defvar *Framerate-Ceilling* nil "max frame rate; simulation not exceed to save CPU. Set to nil to turn off.")
+(defvar *Framerate-Ceilling* 
+  #-cocotron 60
+  #+cocotron nil  ;; the windows timer cannot handle small time
+  "max frame rate; simulation not exceed to save CPU. Set to nil to turn off.")
 
 
 (defvar *Print-Frame-Rate-Info* nil "if true print run time information including frame rate to console")
@@ -324,9 +327,6 @@
   Cycle once through all the OpenGL views that need to be animated"
   (dolist (View (animated-views Self))
     (animate-opengl-view-once View)))
-
-
-
 
 
 (defmethod START-ANIMATION ((Self opengl-view))
