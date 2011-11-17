@@ -174,10 +174,26 @@
         ;; This will close the window
         (edit-icon-save-action self (make-instance 'button) :close-window nil) )
        (t
-        (return-from window-should-close t))
-       )))
+        (return-from window-should-close t)))))
   t)
   
+
+(defmethod WINDOW-CLOSE ((Self inflatable-icon-editor-window))
+  (when (window-should-close self)
+    (set-cursor "arrowCursor")
+    (hide self)
+    (return-from window-close t))
+  nil)
+
+
+(defmethod WINDOW-CLOSE-DONT-HIDE ((Self inflatable-icon-editor-window))
+  (when (window-should-close self)
+    (window-will-close self nil)
+    (close-with-no-questions-asked self)
+    (return-from window-close-dont-hide t))
+  nil)
+
+
 
 (defmethod SELECT-ALL ((Self inflatable-icon-editor-window))
   (select-all (view-named Self 'icon-editor)))
@@ -796,7 +812,7 @@
 
 (defmethod PICK-COLOR-ACTION ((w inflatable-icon-editor-window) (Color-Well color-well-button))
   (multiple-value-bind (red green blue alpha)
-                       (get-color-from-user)
+                       (get-color-from-user :red (/ (get-red Color-Well) 255.0) :green (/ (get-green Color-Well) 255.0) :blue (/ (get-blue Color-Well) 255.0) :alpha (/ (get-alpha Color-Well) 255.0))
     (unless red (return-from pick-color-action))
     (set-color color-well :red red :green green :blue blue :alpha alpha))
   (set-pen-color (view-named w "icon-editor") (get-red Color-Well) (get-green Color-Well) (get-blue Color-Well) (get-alpha Color-Well)))
@@ -1115,6 +1131,8 @@
     (window-close Self)))
 
 
+
+
 (defmethod EDIT-ICON-CANCEL-ACTION ((Window inflatable-icon-editor-window) (Button button))
   (close-window-with-warning Window))
 
@@ -1252,6 +1270,7 @@
   If folder contains .shape file matching image file name then load shape file."
   (declare (ignore Close-Action Destination-Inflatable-Icon)
            (ftype function shape))
+  (print "NEW II")
   (catch-errors-nicely 
    ("Editting Inflatable Icon")
    (let* ((Window #-cocotron (load-object "lui:resources;windows;inflatable-icon-editor.window" :package (find-package :xlui)) #+cocotron (load-object "lui:resources;windows;inflatable-icon-editor-windows.window" :package (find-package :xlui)))
