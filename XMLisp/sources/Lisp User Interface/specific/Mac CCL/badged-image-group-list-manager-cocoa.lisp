@@ -553,7 +553,7 @@
   (#/setAction: (native-view Self) (objc::@selector #/activateAction)))
 
 
-(defmethod DISCLOSURE-ACTION((self badged-image-group-list-manager-view) (button group-disclosure-button) &key (do-layout t) (set-state nil)) 
+(defmethod DISCLOSURE-ACTION ((self badged-image-group-list-manager-view) (button group-disclosure-button) &key (do-layout t) (set-state nil)) 
   (when set-state 
     (#/setState: (native-view button) #$NSOnState))
   (if (is-disclosed (group button))
@@ -565,6 +565,13 @@
       (setf (is-disclosed (group button)) #$YES)
       (when do-layout
         (layout (native-view self))))))
+
+
+(defmethod DISCLOSURE-ACTION ((Self badged-image-group-list-manager-view) list-group &key (do-layout t) (set-state nil)) 
+  (if (equal (#/state (button-view list-group)) #$NSOffState) 
+    (#/setState: (button-view list-group) #$NSOnState)
+    (#/setState: (button-view list-group) #$NSOffState))
+  (disclosure-action self (lui-view (Button-view list-group))  :do-layout t :set-state nil))
 
 
 (defmethod LAYOUT ((Self group-disclosure-button))
@@ -940,4 +947,6 @@
           (dolist (image-subview image-subviews)
             (when (equal (type-of image-subview) 'lui::mouse-detecting-image-view)
               (return-from get-image-of-item (#/image image-subview)))))))))
+
+
 
