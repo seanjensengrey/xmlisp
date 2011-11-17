@@ -1270,7 +1270,6 @@
   If folder contains .shape file matching image file name then load shape file."
   (declare (ignore Close-Action Destination-Inflatable-Icon)
            (ftype function shape))
-  (print "NEW II")
   (catch-errors-nicely 
    ("Editting Inflatable Icon")
    (let* ((Window #-cocotron (load-object "lui:resources;windows;inflatable-icon-editor.window" :package (find-package :xlui)) #+cocotron (load-object "lui:resources;windows;inflatable-icon-editor-windows.window" :package (find-package :xlui)))
