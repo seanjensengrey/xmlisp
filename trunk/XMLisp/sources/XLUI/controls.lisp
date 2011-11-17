@@ -702,6 +702,30 @@
 (defmethod SYMBOL-COMPLETION-ENABLED-P ((Self editable-text))
   ;; not a good idea for end users
   nil)
+
+;__________________________________________________________________
+; Text-View                                                        |
+;                                                                  |
+; <text-view text="bla"/>                                          |
+;__________________________________________________________________
+
+(defclass TEXT-VIEW (text-view-control xml-layout-interface)
+  ((action :accessor action :initform 'print-window-and-dialog-action :type layout-value :initarg :action :documentation "method: window dialog"))
+  (:default-initargs
+    :width 100 
+    :height 20)
+  (:documentation "Text View"))
+
+
+(defmethod PRINT-SLOTS ((Self text-view))
+  '(x y width height))
+
+
+(defmethod SYMBOL-COMPLETION-ENABLED-P ((Self text-view))
+  ;; not a good idea for end users
+  nil)
+
+
   ;__________________________________________________________________
 ; Type-Interactors                                                 |
 ;                                                                  |

@@ -1410,6 +1410,16 @@ after any of the window controls calls stop-modal close window and return value.
     :height 20))
 
 
+(defclass TEXT-VIEW-CONTROL (control)
+  ((align :accessor align :initform :left :initarg :align :type keyword :documentation ":left, :center , :right, :justified")
+   (size :accessor size :initform 0.0 :initarg :size :type float :documentation "font size. 0.0 for default system font size"))
+  (:documentation "Text view")
+  (:default-initargs
+    :text ""
+    :width 100
+    :height 20))
+
+
 (defmethod VALIDATE-TEXT-CHANGE ((self editable-text-control) text)
   "This Method is called whenever this editable-text-control's text changes, if this change is not acceptable this method should return nil and the old value will be restored"
   (declare (ignore text))
