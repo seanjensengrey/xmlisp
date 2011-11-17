@@ -710,7 +710,7 @@
 ;__________________________________________________________________
 
 (defclass TEXT-VIEW (text-view-control xml-layout-interface)
-  ((action :accessor action :initform 'print-window-and-dialog-action :type layout-value :initarg :action :documentation "method: window dialog"))
+  ()
   (:default-initargs
     :width 100 
     :height 20)
