@@ -16,30 +16,35 @@
   (Declare (ignore browser))
   (let ((selected-node-item (lui-view self)))
     (dotimes (i column)
-      (when (get-selected-row-in-column (lui-view self) i)
+      (when (and (get-selected-row-in-column (lui-view self) i) (not (>= (get-selected-row-in-column (lui-view self) i) (length (nodes selected-node-item)))))
         (setf selected-node-item (elt (nodes selected-node-item) (get-selected-row-in-column (lui-view self) i)))))
     (length (nodes selected-node-item))))
 
 
 (objc:defmethod (#/browser:willDisplayCell:atRow:column: :void) ((self my-browser-delegate) browser cell (row :<NSI>nteger) (column :<NSI>nteger))
-  (let ((node nil)
-        (selected-node-item (lui-view browser)))
-    (dotimes (i column)
-      (when (get-selected-row-in-column (lui-view browser) i)
-        (setf selected-node-item (elt (nodes selected-node-item) (get-selected-row-in-column (lui-view browser) i)))))
-    (setf node (elt (nodes selected-node-item) row))
-    (cond 
-     ((subtypep (type-of node) 'node-item)
-      #-cocotron
-      (when (image-path node)
-        (let ((image (#/initByReferencingFile: (#/alloc ns:ns-image) (native-string (namestring (truename (image-path node)))))))
-          (#/setImage: cell image)))
-      (#/setStringValue: cell (native-string (node-name node)))
-      (when (and (column-limit (lui-view browser)) (>= (+  1 column)(column-limit (lui-view browser)) ))
-        (#/setLeaf: cell #$YES)))
-     (t 
-      (#/setStringValue: cell (native-string node))
-      (#/setLeaf: cell #$YES)))))
+  (block browser-will-display
+    (let ((node nil)
+          (selected-node-item (lui-view browser)))
+      (dotimes (i column)
+        (when  (>= (get-selected-row-in-column (lui-view self) i) (length (nodes selected-node-item)))
+          (Return-from browser-will-display))
+        (when (get-selected-row-in-column (lui-view self) i)
+          (setf selected-node-item (elt (nodes selected-node-item) (get-selected-row-in-column (lui-view browser) i)))))
+      (when  (>= row (length (nodes selected-node-item)))
+        (Return-from browser-will-display))
+      (setf node (elt (nodes selected-node-item) row))
+      (cond 
+       ((subtypep (type-of node) 'node-item)
+        #-cocotron
+        (when (image-path node)
+          (let ((image (#/initByReferencingFile: (#/alloc ns:ns-image) (native-string (namestring (truename (image-path node)))))))
+            (#/setImage: cell image)))
+        (#/setStringValue: cell (native-string (node-name node)))
+        (when (and (column-limit (lui-view browser)) (>= (+  1 column)(column-limit (lui-view browser)) ))
+          (#/setLeaf: cell #$YES)))
+       (t 
+        (#/setStringValue: cell (native-string node))
+        (#/setLeaf: cell #$YES))))))
 
 
 (defclass NATIVE-BROWSER-VIEW (ns:ns-browser)
@@ -65,6 +70,8 @@
 (defmethod GET-SELECTED-NODE-IN-COLUMN ((self browser-view) column)
   (let ((selected-node-item self))
     (dotimes (i column)
+      (when (>= i (length (nodes selected-node-item)))
+        (return-from get-selected-node-in-column nil))
       (when (get-selected-row-in-column self i)
         (setf selected-node-item (elt (nodes selected-node-item) (get-selected-row-in-column self i)))))
     selected-node-item))
