@@ -2406,7 +2406,60 @@
   ;; no Cocoa digging
   )
 
+;__________________________________
+; Text View                        |
+;__________________________________/
 
+(defclass NATIVE-TEXT-VIEW (ns:ns-text-view)
+  ((lui-view :accessor lui-view :initarg :lui-view))
+  (:metaclass ns:+ns-object))
+
+
+(defmethod MAKE-NATIVE-OBJECT ((Self text-view-control))
+  (let ((Native-Control (make-instance 'native-text-view :lui-view Self) ))
+    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+      (#/initWithFrame: Native-Control Frame)
+      (#/setDrawsBackground: Native-Control nil)
+      (#/setString: Native-Control (native-string (text Self)))
+      (#/setEditable: Native-Control #$YES)
+      (unless (zerop (size Self))
+        (#/setFont: Native-Control (#/systemFontOfSize: ns:ns-font (size self))))
+      #| (ecase (align Self)
+        (:left (#/alignLeft: Native-Control Native-Control))
+        (:center (#/alignCenter: Native-Control Native-Control))
+        (:right (#/alignRight: Native-Control Native-Control))
+        (:justified (#/alignJustified: Native-Control Native-Control))) |# )
+    Native-Control))
+
+
+(defmethod (setf text) :after (Text (Self text-view-control))
+  (#/setStringValue: (native-view Self) (native-string text)))
+
+
+(defmethod VALUE ((Self text-view-control))
+  (ccl::lisp-string-from-nsstring 
+   (#/string (native-view Self))))
+
+
+(defmethod (setf VALUE)  (Text (Self text-view-control))
+  (#/setString: (native-view Self) (native-string Text)))
+
+
+(defmethod MAP-SUBVIEWS ((Self text-view-control) Function &rest Args)
+  (declare (ignore Function Args))
+  ;; no Cocoa digging
+  )
+
+
+(defmethod SUBVIEWS ((Self text-view-control))
+  ;; no Cocoa digging
+  )
+
+
+(defmethod INITIALIZE-EVENT-HANDLING ((Self text-view-control))
+  (declare (ignore self))
+  ;; do nothing
+  )
 ;__________________________________
 ; STATUS BAR                   |
 ;__________________________________/
