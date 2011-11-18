@@ -7,62 +7,94 @@
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>lisp</string>
-			</array>
+			<key>CFBundleTypeName</key>
+			<string>Project File</string>
 			<key>CFBundleTypeIconFile</key>
-			<string>openmcl-icon.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>Lisp source code</string>
+			<string>AgentCubes_document.icns</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
-			<key>LSIsAppleDefaultForType</key>
-			<true/>
-			<key>NSDocumentClass</key>
-			<string>HemlockEditorDocument</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.agentsheets.AgentCubes.project</string>
+			</array>
 		</dict>
 		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Agent File</string>
 			<key>CFBundleTypeIconFile</key>
-			<string>openmcl-icon.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>Listener</string>
+			<string>AgentCubes_document.icns</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
-			<key>NSDocumentClass</key>
-			<string>HemlockListenerDocument</string>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
 			<array>
-				<string>txt</string>
-				<string>text</string>
-				<string>*</string>
+				<string>com.agentsheets.AgentCubes.agent</string>
 			</array>
-			<key>CFBundleTypeName</key>
-			<string>NSStringPboardType</string>
-			<key>CFBundleTypeOSTypes</key>
-			<array>
-				<string>****</string>
-			</array>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>NSDocumentClass</key>
-			<string>HemlockEditorDocument</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeName</key>
-			<string>html</string>
+			<string>Shape File</string>
+			<key>CFBundleTypeIconFile</key>
+			<string>AgentCubes_document.icns</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
-			<key>NSDocumentClass</key>
-			<string>DisplayDocument</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.agentsheets.AgentCubes.shape</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>World File</string>
+			<key>CFBundleTypeIconFile</key>
+			<string>AgentCubes_document.icns</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.agentsheets.AgentCubes.world</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Simulation Properties File</string>
+			<key>CFBundleTypeIconFile</key>
+			<string>AgentCubes_document.icns</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.agentsheets.AgentCubes.sip</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>VAT File</string>
+			<key>CFBundleTypeIconFile</key>
+			<string>AgentCubes_document.icns</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.agentsheets.AgentCubes.vat</string>
+			</array>
 		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>AgentCubes</string>
 	<key>CFBundleGetInfoString</key>
-	<string>AgentCubes version 1.0a4, Copyright 2009-2012 AgentSheets Inc.&quot;</string>
+	<string>AgentCubes version 1.0b1, Copyright 2009-2011 AgentSheets Inc.&quot;</string>
 	<key>CFBundleHelpBookFolder</key>
 	<string>Help</string>
 	<key>CFBundleHelpBookName</key>
@@ -70,7 +102,7 @@
 	<key>CFBundleIconFile</key>
 	<string>AgentCubes_app_icon.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.clozure.Clozure CL-x8664</string>
+	<string>com.agentsheets.AgentCubes</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -78,24 +110,15 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0a4</string>
+	<string>1.0b1</string>
 	<key>CFBundleSignature</key>
-	<string>OMCL</string>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>ccl</string>
-			</array>
-		</dict>
-	</array>
+	<string>ASAC</string>
 	<key>CFBundleVersion</key>
-	<string>14927M (X8664)</string>
+	<string>1.0b1</string>
 	<key>NSAppleScriptEnabled</key>
 	<string>YES</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright 2009-2012 AgentSheets Inc.</string>
+	<string>Copyright 2009-2011 AgentSheets Inc.</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenuApp</string>
 	<key>NSPrincipalClass</key>
@@ -105,22 +128,103 @@
 		<dict>
 			<key>UTTypeConformsTo</key>
 			<array>
-				<string>public.source-code</string>
+				<string>public.xml</string>
 			</array>
-			<key>UTTypeDescription</key>
-			<string>Lisp source file</string>
 			<key>UTTypeIdentifier</key>
-			<string>org.lisp.lisp-source</string>
-			<key>UTTypeReferenceURL</key>
-			<string></string>
+			<string>com.agentsheets.AgentCubes.project</string>
+			<key>UTTypeDescription</key>
+			<string>AgentCubes Project File</string>
+			<key>UTTypeIconFile</key>
+			<string>AgentCubes_document.icns</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
-				<array>
-					<string>lisp</string>
-					<string>lsp</string>
-					<string>cl</string>
-				</array>
+				<string>project</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.xml</string>
+			</array>
+			<key>UTTypeIdentifier</key>
+			<string>com.agentsheets.AgentCubes.agent</string>
+			<key>UTTypeDescription</key>
+			<string>AgentCubes Agent Index File</string>
+			<key>UTTypeIconFile</key>
+			<string>AgentCubes_document.icns</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<string>agent</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.xml</string>
+			</array>
+			<key>UTTypeIdentifier</key>
+			<string>com.agentsheets.AgentCubes.shape</string>
+			<key>UTTypeDescription</key>
+			<string>AgentCubes Shape Index File</string>
+			<key>UTTypeIconFile</key>
+			<string>AgentCubes_document.icns</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<string>shape</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.xml</string>
+			</array>
+			<key>UTTypeIdentifier</key>
+			<string>com.agentsheets.AgentCubes.world</string>
+			<key>UTTypeDescription</key>
+			<string>AgentCubes World File</string>
+			<key>UTTypeIconFile</key>
+			<string>AgentCubes_document.icns</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<string>world</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.xml</string>
+			</array>
+			<key>UTTypeIdentifier</key>
+			<string>com.agentsheets.AgentCubes.sip</string>
+			<key>UTTypeDescription</key>
+			<string>AgentCubes Simulation Properties File</string>
+			<key>UTTypeIconFile</key>
+			<string>AgentCubes_document.icns</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<string>sip</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.xml</string>
+			</array>
+			<key>UTTypeIdentifier</key>
+			<string>com.agentsheets.AgentCubes.vat</string>
+			<key>UTTypeDescription</key>
+			<string>AgentCubes Behavior File</string>
+			<key>UTTypeIconFile</key>
+			<string>AgentCubes_document.icns</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<string>vat</string>
 			</dict>
 		</dict>
 	</array>
