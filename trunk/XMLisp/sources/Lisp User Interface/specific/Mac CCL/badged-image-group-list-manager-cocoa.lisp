@@ -568,6 +568,7 @@
 
 
 (defmethod DISCLOSURE-ACTION ((Self badged-image-group-list-manager-view) list-group &key (do-layout t) (set-state nil)) 
+  (declare (ignore do-layout set-state))
   (if (equal (#/state (button-view list-group)) #$NSOffState) 
     (#/setState: (button-view list-group) #$NSOnState)
     (#/setState: (button-view list-group) #$NSOffState))
