@@ -388,18 +388,20 @@
   "make and attach a sky-dome with the given texture"
   (remove-sky-dome self)
   (let ((sky-dome (make-instance 'sky-dome :pitch 0.0 :view Self 
-                    :texture (concatenate 'string (pathname-name texture-path) "." (pathname-type texture-path)) 
+                    :texture (format nil "~A.~A" (pathname-name texture-path) (pathname-type texture-path)) 
                     :texture-path (native-pathname-directory texture-path))))
     (attach Self sky-dome)
     (display self)))
 
 
 (defmethod REMOVE-SKY-DOME ((self agent-3d-view))
-  (dolist (Agent (agents self))
-    (when (equal (Type-of agent) 'xlui::sky-dome)
-      (setf (agents Self) (remove  agent (agents Self) :test 'equal) )
-      (setf (part-of agent) nil)
-      (display self)))) 
+  (let ((Sky-Dome (sky-dome Self)))
+    (when Sky-Dome
+      (setf (agents Self) (remove Sky-Dome (agents Self) :test 'equal) )
+      (setf (view Sky-Dome) nil)
+      (setf (part-of Sky-Dome) nil)
+      (setf (texture Sky-Dome) nil)
+      (display self))))
 
 
 (defmethod DRAW ((Self agent-3d-view))
@@ -648,6 +650,11 @@
     (setf (drag-and-drop-handler Self) nil)))
 
 
+(defmethod SKY-DOME ((Self agent-3d-view))
+  ;; most agent-3d-views do not have a sky-dome (only the World does for now)
+  nil)
+
+
 ;; Hovering
 (defmethod VIEW-MOUSE-MOVED-EVENT-HANDLER ((Self agent-3d-view) x y dx dy)
   ;; add some delay here to avoid taxing CPU with high frequency picking
@@ -661,15 +668,16 @@
                    (find-class 'matrix-background-agent nil)
                    (let ((Matrix-Background-Agent-Type 'matrix-background-agent)) ;; shut up the compiler warnings
                      (subtypep (type-of Agent) Matrix-Background-Agent-Type))))  ;; hack! matrix-background-agent are shared
-      (when (and agent (is-visible agent))
+      (when (and Agent (is-visible Agent))
         ;;; this lock is very likely to cause a dead lock with conversational programming ;;(with-animation-locked
         (when (agent-hovered Self)
           (setf (is-hovered (agent-hovered Self)) nil)
           (mouse-hover-leave-event-handler (agent-hovered Self)))
-        (when Agent
+        ;; only set hovered agent if it's not the sky-dome!
+        (when (not (equal Agent (sky-dome Self)))
           (setf (is-hovered Agent) t)
-          (mouse-hover-enter-event-handler Agent))
-        (setf (agent-hovered Self) Agent)))))
+          (mouse-hover-enter-event-handler Agent)
+          (setf (agent-hovered Self) Agent))))))
 
 
 ;****************************************
