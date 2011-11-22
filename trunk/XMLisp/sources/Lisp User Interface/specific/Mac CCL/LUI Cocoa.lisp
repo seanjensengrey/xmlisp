@@ -632,6 +632,10 @@
                (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.y)))))    (screen-height nil)
     (size-changed-event-handler (lui-window Self) (width (lui-window Self)) (height (lui-window Self)))))
 
+#|
+(objc:defmethod (#/close :void) ((self native-window))
+  (print "CLOSE"))
+  |#
 
 (objc:defmethod (#/mouseMoved: :void) ((self native-window) Event)
   (let ((mouse-loc (#/locationInWindow event)))
@@ -682,7 +686,7 @@
 ;;RESPONDER CHAIN HACK
 (objc:defmethod (#/noResponderFor: :void)
                 ((self native-window) (eventSelector :<SEL>))
-  (declare (ignore eventSelector))
+  ;(declare (ignore eventSelector))
   ;; For now, if we get to the bottom of the responder chain and no one has taken responsibility for the event just do nothing
   ;;Do nothing
   )
@@ -724,6 +728,7 @@
 
 
 (objc:defmethod (#/windowShouldClose: :<BOOL>) ((self window-delegate) Sender)
+  (declare (ignore sender))
   ;; Hack:  For now call the window-will-close code inside a positive response from window-should-close, this is needed for now because calling subviews (which is caused when we call window-will-close) 
   ;; Sometimes causes problems if the window is already in the process of being closed.  
   (window-close (lui-window self))
