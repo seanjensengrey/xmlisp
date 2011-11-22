@@ -33,7 +33,7 @@
 ;*********************************************************************
 
 (in-package :xlui)
-
+ 
 
 (export '(sky-dome texture tooltip-event-handler tooltip-text processed-tooltip-text 
           reference-point projected-window-position))
