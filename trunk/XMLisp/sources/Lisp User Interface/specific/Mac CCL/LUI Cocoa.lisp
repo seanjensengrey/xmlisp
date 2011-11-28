@@ -2340,6 +2340,12 @@
 (defmethod (SETF TEXT) :after (Text (Self label-control))
   (#/setString: (native-view Self) (native-string Text)))
 
+
+(defmethod (SETF WIDTH) :after (Width (Self label-control))
+   (ns:with-ns-size (Size Width (height Self))
+     (#/setFrameSize: (native-view Self) Size)))
+
+
 ;__________________________________
 ; Editable TEXT                    |
 ;__________________________________/
