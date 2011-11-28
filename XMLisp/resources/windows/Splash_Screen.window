@@ -32,7 +32,7 @@
     <spacer height="10"/>
     <row minimize="vertical" align="stretch">
       <spacer width="64"/>
-      <link flex="1" height="25" size="10.0" text="About AgentCubes." url="https://199.45.162.68/wiki/" />
+      <link flex="1" name="agentcubes link" height="25" size="10.0" text="About AgentCubes." url="https://199.45.162.68/wiki/" />
     </row>
     <spacer height="10"/>
     <row minimize="vertical" align="stretch">
