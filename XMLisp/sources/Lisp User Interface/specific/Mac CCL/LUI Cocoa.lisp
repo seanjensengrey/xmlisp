@@ -632,10 +632,12 @@
                (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.y)))))    (screen-height nil)
     (size-changed-event-handler (lui-window Self) (width (lui-window Self)) (height (lui-window Self)))))
 
-#|
+
 (objc:defmethod (#/close :void) ((self native-window))
-  (print "CLOSE"))
-  |#
+  (if (is-modal-p (lui-window self))
+    (cancel-modal (lui-window self))
+    (call-next-method)))
+  
 
 (objc:defmethod (#/mouseMoved: :void) ((self native-window) Event)
   (let ((mouse-loc (#/locationInWindow event)))
@@ -887,6 +889,7 @@
     (error "cannot run modal a window that is already visible"))
   (in-main-thread () (#/makeKeyAndOrderFront: (native-window self) (native-window self)))
   (before-going-modal self)
+  (setf (is-modal-p self) t)
   (let ((Code (in-main-thread () 
                               (#/runModalForWindow: (#/sharedApplication ns:ns-application)
                                       (native-window Self)))))
@@ -899,8 +902,13 @@
 
 
 (defmethod STOP-MODAL ((Self window) Return-Value)
-  (setq *Run-Modal-Return-Value* Return-Value)
+  (setq *Run-Modal-Return-Value* Return-Value)  
   (#/stopModal (#/sharedApplication ns:ns-application)))
+
+
+(defmethod STOP-MODAL :after ((Self window) Return-Value)
+  (declare (ignore return-value))
+  (setf (is-modal-p self) nil))
 
 
 (defmethod STOP-MODAL ((Self t) Return-Value)
@@ -912,6 +920,11 @@
 (defmethod CANCEL-MODAL ((Self window))
   (setq *Run-Modal-Return-Value* :cancel)
   (#/stopModal (#/sharedApplication ns:ns-application)))
+
+
+(defmethod CANCEL-MODAL :after ((Self window) )
+  (declare (ignore return-value))
+  (setf (is-modal-p self) nil))
 
 
 (defmethod BEFORE-GOING-MODAL ((Self window))
@@ -2633,6 +2646,11 @@
         (setf (height Self) (rref Size <NSS>ize.height))))
     (#/setImage: (Native-view self) Image)
     (#/setNeedsDisplay: (native-view self) #$YES)))
+
+
+(defmethod SET-IMAGE-FROM-IMAGE ((self image-control) ns-image)
+  "Setf the image of this image view to the ns-image provided ns-image MUST be an ns-image NOT an image-control"
+  (#/setImage: (Native-view self) ns-Image))
 
 
 ;__________________________________
