@@ -88,9 +88,6 @@
    (:documentation "A group consists of a name an image and a list of group items."))
 
 
-
-  
-
 ;---------------------------------
 ; Specification                  |
 ;________________________________
