@@ -348,7 +348,9 @@
    (head-image-size :accessor head-image-size :initform 28 :initarg :head-image-size)
    (badge-image-size :accessor badge-image-size :initform 16 :initarg :badge-image-size)
    (x :accessor x :initform 0 :initarg :x :documentation "screen position, pixels")
-   (y :accessor y :initform 00 :initarg :y :documentation "screen position, pixels"))
+   (y :accessor y :initform 00 :initarg :y :documentation "screen position, pixels")
+   (ns-image :accessor ns-image :initform nil)
+   )
   (:metaclass ns:+ns-object
               :documentation "A view that will be composed of two images one for the head-image and one for the badge"))
 
@@ -375,6 +377,7 @@
                   (#/setImage: badge-image-view (#/image (native-view image))))))
             (#/setImage: badge-image-view (#/image (native-view badge-image)))))
         (#/setImageScaling: badge-image-view #$NSScaleToFit)
+        (setf (ns-image self) badge-image-view)
         (#/addSubview: self badge-image-view))))
   self)
 
@@ -948,6 +951,11 @@
           (dolist (image-subview image-subviews)
             (when (equal (type-of image-subview) 'lui::mouse-detecting-image-view)
               (return-from get-image-of-item (#/image image-subview)))))))))
+
+
+(defmethod GET-IMAGE ((self list-group))
+  "Returns the NSImage ascociated with this list group" 
+  (#/image (ns-image (image-view self))))
 
 
 
