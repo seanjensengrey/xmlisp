@@ -3021,6 +3021,10 @@
   )
 
 
+(defmethod (setf text) :after (Text (Self link-control))
+  (#/setString: (native-view Self) (native-string text)))
+
+
 
 ;__________________________________
 ; Show PopUp                       |
