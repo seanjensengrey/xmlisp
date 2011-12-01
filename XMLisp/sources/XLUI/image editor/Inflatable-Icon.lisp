@@ -268,7 +268,9 @@
       (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_MAG_FILTER GL_NEAREST)
       (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_MIN_FILTER GL_LINEAR_MIPMAP_NEAREST)
       ;; need to update also the mipmaps to avoid mix of new and old image
-      (gluBuild2DMipmaps GL_TEXTURE_2D GL_RGBA8 (columns Self) (rows Self) GL_RGBA GL_UNSIGNED_BYTE Image))
+      (unless 
+          (zerop (gluBuild2DMipmaps GL_TEXTURE_2D GL_RGBA8 (columns Self) (rows Self) GL_RGBA GL_UNSIGNED_BYTE Image))
+        (error "could not create mipmaps")))
      (t
       (warn "inflatable icon is not ready for update")))))
 
