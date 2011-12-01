@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="INFO">
+  <cube texture="info-button.png"/>
+</shape-manager>
