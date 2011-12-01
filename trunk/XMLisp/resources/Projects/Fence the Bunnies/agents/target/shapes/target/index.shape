@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="TARGET">
+  <tile texture="trigger.png"/>
+</shape-manager>
