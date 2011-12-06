@@ -1,9 +1,5 @@
-;;;-*- Mode: Lisp; Package: INFIX -*-
-;;;;;;;; Patched by Alexander Repenning 4/14/97
-;;;;;;;; Macro character #$ => #{
-;;;;;;;; MCL uses #$!!
-;;; Tue Mar  9 21:18:00 1993 by Mark Kantrowitz <mkant@GLINDA.OZ.CS.CMU.EDU>
-;;; infix.lisp -- 32284 bytes
+;;; Wed Jan 18 13:13:59 1995 by Mark Kantrowitz <mkant@FLATHEAD.OZ.CS.CMU.EDU>
+;;; infix.cl -- 40545 bytes
 
 ;;; **************************************************************************
 ;;; Infix ********************************************************************
@@ -20,11 +16,14 @@
 ;;; Although similar in concept to the Symbolics infix reader (#<DIAMOND>), 
 ;;; no real effort has been made to ensure compatibility beyond coverage 
 ;;; of at least the same set of basic arithmetic operators. There are several 
-;;; differences in the syntax beyond just the choice of #$ as the macro 
+;;; differences in the syntax beyond just the choice of #I as the macro 
 ;;; character. (Our syntax is a little bit more C-like than the Symbolics 
 ;;; macro in addition to some more subtle differences.) 
-;;; We chose $ because of it's association with mathematics in LaTeX.
-;;; (It's also one of the few characters that wasn't used as an operator.)
+;;;
+;;; We initially chose $ as a macro character because of its association
+;;; with mathematics in LaTeX, but unfortunately that character is already
+;;; used in MCL. We switched to #I() because it was one of the few options
+;;; remaining.
 ;;;
 ;;; Written by Mark Kantrowitz, School of Computer Science,
 ;;; Carnegie Mellon University, March 1993.
@@ -52,13 +51,11 @@
 ;;; Please send bug reports, comments and suggestions to mkant@cs.cmu.edu.
 ;;;
 ;;; The current version of this software and a variety of related utilities
-;;; may be obtained from the Lisp Utilities Repository by anonymous ftp
+;;; may be obtained from the Lisp Repository by anonymous ftp
 ;;; from ftp.cs.cmu.edu [128.2.206.173] in the directory
-;;;     /afs/cs.cmu.edu/user/mkant/Public/Lisp/
-;;; You must cd to this directory in one atomic operation, as some of
-;;; the superior directories on the path are protected from access by
-;;; anonymous ftp. If your site runs the Andrew File System, you can just
-;;; access the files directly without bothering with FTP.
+;;;     user/ai/lang/lisp/code/syntax/infix/
+;;; If your site runs the Andrew File System, you can cd to the AFS directory
+;;;     /afs/cs.cmu.edu/project/ai-repository/ai/lang/lisp/code/syntax/infix/
 ;;;
 ;;; If you wish to be added to the Lisp-Utilities@cs.cmu.edu mailing list,
 ;;; send email to Lisp-Utilities-Request@cs.cmu.edu with your name, email
@@ -73,15 +70,15 @@
 ;;;
 ;;; Syntax:
 ;;;
-;;;   Begin the reader macro with #$ and end it with $. For example,
-;;;      #$ x^^2 + y^^2 $
+;;;   Begin the reader macro with #I( and end it with ). For example,
+;;;      #I( x^^2 + y^^2 )
 ;;;   is equivalent to the Lisp form
 ;;;      (+ (expt x 2) (expt y 2))
 ;;;   but much easier to read according to some folks.
 ;;;
-;;;   If you want to see the expansion, type a quote before the #$ form
+;;;   If you want to see the expansion, type a quote before the #I form
 ;;;   at the Lisp prompt:
-;;;     > '#$if x<y<=z then f(x)=x^^2+y^^2 else f(x)=x^^2-y^^2$
+;;;     > '#I(if x<y<=z then f(x)=x^^2+y^^2 else f(x)=x^^2-y^^2)
 ;;;     (IF (AND (< X Y) (<= Y Z))
 ;;;         (SETF (F X) (+ (EXPT X 2) (EXPT Y 2)))
 ;;;         (SETF (F X) (- (EXPT X 2) (EXPT Y 2))))
@@ -128,6 +125,34 @@
 ;;;     if p then q else r  conditional                    (if p q r) 
 ;;;
 
+;;; Precedence:
+;;;
+;;;    The following precedence conventions are obeyed by the infix operators:
+;;;      [ ( !
+;;;      ^^
+;;;      ~
+;;;      * / %
+;;;      + -
+;;;      << >>
+;;;      < == > <= != >=
+;;;      &
+;;;      ^
+;;;      |
+;;;      not
+;;;      and
+;;;      or
+;;;      = += -= *= /=
+;;;      , 
+;;;      if
+;;;      then else
+;;;      ] )
+;;;
+;;;    Note that logical negation has lower precedence than numeric comparison
+;;;    so that "not a<b" becomes (not (< a b)), which is different from the
+;;;    C precedence conventions. You can change the precedence conventions by
+;;;    modifying the value of the variable *operator-ordering*.
+;;;
+
 ;;; ********************************
 ;;; To Do **************************
 ;;; ********************************
@@ -135,13 +160,45 @@
 ;;;    Write some more test cases.
 ;;;    Write some more syntactic optimizations.
 ;;;    Would really like ~x to be (not x), but need it for (lognot x). 
+;;;    Support for multiple languages, such as a Prolog parser, a 
+;;;    strictly C compatible parser, etc.
+
+;;; Create a more declarative format, where there is one big table of 
+;;; operators with all the info on them, and also NOT have the list of
+;;; operators in the comment, where they are likely to become wrong when
+;;; changes are made to the code. For example, something like:
+#|
+(define-infix-operators
+  ([  30                           :matchfix aref :end ])
+  (*  20 :infix *                                       )
+  (+  10 :infix +        :prefix +                      )
+  (&  10 :infix and                                     )
+  (+= 10 :infix #'+=-operator                           )
+  ...)
+|#
 
 ;;; ********************************
 ;;; Change Log *********************
 ;;; ********************************
 ;;;
-;;;  9-MAR-93 mk    Created
+;;;  9-MAR-93 mk     Created
+;;; 12-MAR-93 mk     Fixed defpackage form for Lucid.
+;;; 1.1:
+;;; 14-OCT-93 mk     Changed macro character from #$ to #I(). Suggested by
+;;;                  Scott McKay.
+;;; 1.2:
+;;; 18-JAN-95 norvig Added *print-infix-copyright*, string->prefix, support
+;;;                  for #I"..." in addition to #i(...) which lets one
+;;;                  type #i"a|b" which doesn't confuse editors that aren't
+;;;                  |-aware. Also added := as a synonym for =, so that
+;;;                  '#i"car(a) := b" yields (SETF (CAR A) B).
+;;;
+;;; 1.3:
+;;; 28-JUN-96 mk    Modified infix reader to allow whitespace between the #I
+;;;                 and the start of the expression.
 
+
+
 ;;; ********************************
 ;;; Implementation Notes ***********
 ;;; ********************************
@@ -153,7 +210,7 @@
 ;;; Center-embedded constructions were also a problem, due to the lack
 ;;; of an explicit stack.
 ;;;
-;;; So we took another tack, that used below. The #$ macro binds the
+;;; So we took another tack, that used below. The #I macro binds the
 ;;; *readtable* to a special readtable, which is used solely for tokenization
 ;;; of the input. Then the problem is how to correctly parenthesize the input.
 ;;; We do that with what is essentially a recursive-descent parser. An 
@@ -193,23 +250,26 @@
 ;;; Package Cruft ******************
 ;;; ********************************
 
-(defpackage "INFIX" (:use #-:lucid "COMMON-LISP" #+:lucid "LISP"))
+(defpackage "INFIX" (:use #-:lucid "COMMON-LISP" 
+			  #+:lucid "LISP" #+:lucid "LUCID-COMMON-LISP"))
 (in-package "INFIX")
-(export 'test-infix)
+(export '(test-infix string->prefix))
 
 (pushnew :infix *features*)
 
 (eval-when (compile load eval)
-  (defparameter *version* "1.0  9-MAR-93")
+  (defparameter *version* "1.3  28-JUN-96")
+  (defparameter *print-infix-copyright* t
+    "If non-NIL, prints a copyright notice upon loading this file.")
 
-  (defun INFIX-COPYRIGHT (&optional (Stream *standard-output*))
+  (defun infix-copyright (&optional (stream *standard-output*))
     "Prints an INFIX copyright notice and header upon startup."
     (format stream "~%;;; ~V,,,'*A" 73 "*")
     (format stream "~%;;;   Infix notation for Common Lisp.")
     (format stream "~%;;;   Version ~A." *version*)
     (format stream "~%;;;   Written by Mark Kantrowitz, ~
                             CMU School of Computer Science.")
-    (format stream "~%;;;   Copyright (c) 1993. All rights reserved.")
+    (format stream "~%;;;   Copyright (c) 1993-95. All rights reserved.")
     (format stream "~%;;;   May be freely redistributed, provided this ~
                             notice is left intact.")
     (format stream "~%;;;   This software is made available AS IS, without ~
@@ -217,8 +277,12 @@
     (format stream "~%;;; ~V,,,'*A~%" 73 "*")
     (force-output stream))
 
-  ;;(infix-copyright)
-  )
+  ;; What this means is you can either turn off the copyright notice
+  ;; by setting the parameter, or you can turn it off by including
+  ;; (setf (get :infix :dont-print-copyright) t) in your lisp init file.
+  (when (and *print-infix-copyright* 
+	     (not (get :infix :dont-print-copyright)))
+    (infix-copyright)))
 
 ;;; ********************************
 ;;; Readtable **********************
@@ -227,25 +291,47 @@
 (defparameter *infix-readtable* (copy-readtable nil))
 (defparameter *normal-readtable* (copy-readtable nil))
 
-(defun INFIX-READER (Stream Subchar Arg)
+(defun infix-reader (stream subchar arg)
+  ;; Read either #I(...) or #I"..."
   (declare (ignore arg subchar))
-  (let ((*Readtable* *infix-readtable*)
-        (*Normal-Readtable* *readtable*))
-    (read-infix stream)))
-(set-dispatch-macro-character #\# #\{ #'infix-reader *readtable*)
+  (let ((first-char (peek-char nil stream t nil t)))
+    (cond ((char= first-char #\space)
+	   (read-char stream)		; skip over whitespace
+	   (infix-reader stream nil nil))
+	  ((char= first-char #\")
+	   ;; Read double-quote-delimited infix expressions.
+	   (string->prefix (read stream t nil t)))
+	  ((char= first-char #\()
+	   (read-char stream)		; get rid of opening left parenthesis
+	   (let ((*readtable* *infix-readtable*)
+		 (*normal-readtable* *readtable*))
+	     (read-infix stream)))
+	  (t
+	   (infix-error "Infix expression starts with ~A" first-char)))))
 
-(defmacro INFIX-ERROR (Format-String &rest Args)
-  `(error ,format-string ,@args))
+(set-dispatch-macro-character #\# #\I #'infix-reader *readtable*) ; was #\# #\$
 
-(defun READ-INFIX (Stream)
-  (let* ((Result (gather-superiors '%infix-end-token% stream))
-	 (Next-Token (read-token stream)))
-    (unless (same-token-p next-token '%infix-end-token%)
+(defun string->prefix (string)
+  "Convert a string to a prefix s-expression using the infix reader.
+  If the argument is not a string, just return it as is."
+  (if (stringp string)
+      (with-input-from-string (stream (concatenate 'string "#I(" string ")"))
+	(read stream))
+      string))
+
+(defmacro infix-error (format-string &rest args)
+  `(let ((*readtable* *normal-readtable*)) 
+     (error ,format-string ,@args)))
+
+(defun read-infix (stream)
+  (let* ((result (gather-superiors '\) stream)) ; %infix-end-token%
+	 (next-token (read-token stream)))
+    (unless (same-token-p next-token '\)) ; %infix-end-token%
       (infix-error "Infix expression ends with ~A." next-token))
     result))
 
-(defun READ-REGULAR (Stream)
-  (let ((*Readtable* *normal-readtable*))
+(defun read-regular (stream)
+  (let ((*readtable* *normal-readtable*))
     (read stream t nil t)))
 
 
@@ -253,10 +339,10 @@
 ;;; Reader Code ********************
 ;;; ********************************
 
-(defun SAME-OPERATOR-P (X Y)
+(defun same-operator-p (x y)
   (same-token-p x y))
 
-(defun SAME-TOKEN-P (X Y)
+(defun same-token-p (x y)
   (and (symbolp x)
        (symbolp y) 
        (string-equal (symbol-name x) (symbol-name y))))
@@ -264,11 +350,11 @@
 ;;; Peeking Token Reader
 
 (defvar *peeked-token* nil)
-(defun READ-TOKEN (Stream)
+(defun read-token (stream)
   (if *peeked-token*
       (pop *peeked-token*)
       (read stream t nil t)))
-(defun PEEK-TOKEN (Stream)
+(defun peek-token (stream)
   (unless *peeked-token*
     (push (read stream t nil t) *peeked-token*))
   (car *peeked-token*))
@@ -276,22 +362,22 @@
 ;;; Hack to work around + and - being terminating macro characters,
 ;;; so 1e-3 doesn't normally work correctly.
 
-(defun FANCY-NUMBER-FORMAT-P (Left Operator Stream)
+(defun fancy-number-format-p (left operator stream)
   (when (and (symbolp left)
 	     (find operator '(+ -) :test #'same-operator-p))
-    (let* ((Name (symbol-name left))
-	   (Length (length name)))
+    (let* ((name (symbol-name left))
+	   (length (length name)))
       (when (and (valid-numberp (subseq name 0 (1- length)))
 		 ;; Exponent, Single, Double, Float, or Long
 		 (find (subseq name (1- length))
 		       '("e" "s" "d" "f" "l")
 		       :test #'string-equal))
 	(read-token stream)
-	(let ((Right (peek-token stream)))
+	(let ((right (peek-token stream)))
 	  (cond ((integerp right)
 		 ;; it is one of the fancy numbers, so return it
 		 (read-token stream)
-		 (let ((*Readtable* *normal-readtable*))
+		 (let ((*readtable* *normal-readtable*))
 		   (read-from-string (format nil "~A~A~A" 
 					     left operator right))))
 		(t
@@ -300,9 +386,10 @@
 		 ;; and return nil
 		 nil)))))))
 
-(defun VALID-NUMBERP (String)
-  (let ((Saw-Dot nil))
-    (dolist (Char (coerce string 'list) t)
+(defun valid-numberp (string)
+  (when (string= string "") (return-from valid-numberp nil)) ;; Alexander Repenning, Gary Byers: an empty string is NOT a valid number. "s + 1" => (+ s 1) instead of s+1
+  (let ((saw-dot nil))
+    (dolist (char (coerce string 'list) t)
       (cond ((char= char #\.)
 	     (if saw-dot
 		 (return nil)
@@ -312,14 +399,14 @@
 
 ;;; Gobbles an expression from the stream.
 
-(defun GATHER-SUPERIORS (Previous-Operator Stream)
+(defun gather-superiors (previous-operator stream)
   "Gathers an expression whose operators all exceed the precedence of
    the operator to the left."
-  (let ((Left (get-first-token stream)))
+  (let ((left (get-first-token stream)))
     (loop
       (setq left (post-process-expression left))
-      (let ((Peeked-Token (peek-token stream)))
-	(let ((Fancy-P (fancy-number-format-p left peeked-token stream)))
+      (let ((peeked-token (peek-token stream)))
+	(let ((fancy-p (fancy-number-format-p left peeked-token stream)))
 	  (when fancy-p
 	    ;; i.e., we've got a number like 1e-3 or 1e+3 or 1f-1
 	    (setq left fancy-p
@@ -333,26 +420,26 @@
 	  (return left)))
       (setq left (get-next-token stream left)))))
 
-(defun GET-FIRST-TOKEN (Stream)
-  (let ((Token (read-token stream)))
+(defun get-first-token (stream)
+  (let ((token (read-token stream)))
     (if (token-operator-p token)
 	;; It's an operator in a prefix context.
 	(apply-token-prefix-operator token stream)
 	;; It's a regular token
 	token)))
 
-(defun APPLY-TOKEN-PREFIX-OPERATOR (Token Stream)
-  (let ((Operator (get-token-prefix-operator token)))
+(defun apply-token-prefix-operator (token stream)
+  (let ((operator (get-token-prefix-operator token)))
     (if operator
 	(funcall operator stream)
 	(infix-error "~A is not a prefix operator" token))))
 
-(defun GET-NEXT-TOKEN (Stream Left)
-  (let ((Token (read-token stream)))
+(defun get-next-token (stream left)
+  (let ((token (read-token stream)))
     (apply-token-infix-operator token left stream)))
 
-(defun APPLY-TOKEN-INFIX-OPERATOR (Token Left Stream)
-  (let ((Operator (get-token-infix-operator token)))
+(defun apply-token-infix-operator (token left stream)
+  (let ((operator (get-token-infix-operator token)))
     (if operator
 	(funcall operator stream left)
 	(infix-error "~A is not an infix operator" token))))
@@ -360,9 +447,9 @@
 ;;; Fix to read-delimited-list so that it works with tokens, not
 ;;; characters.
 
-(defun INFIX-READ-DELIMITED-LIST (End-Token Delimiter-Token Stream)
-  (do ((Next-Token (peek-token stream) (peek-token stream))
-       (List nil))
+(defun infix-read-delimited-list (end-token delimiter-token stream)
+  (do ((next-token (peek-token stream) (peek-token stream))
+       (list nil))
       ((same-token-p next-token end-token)
        ;; We've hit the end. Remove the end-token from the stream.
        (read-token stream)
@@ -375,7 +462,7 @@
     ;; Gather the expression until the next delimiter.
     (push (gather-superiors delimiter-token stream) list)))
 
-
+
 ;;; ********************************
 ;;; Precedence *********************
 ;;; ********************************
@@ -395,7 +482,7 @@
       ( and )
       ( or )
       ;; Where should setf and friends go in the precedence?
-      ( = += -= *= /= )
+      ( = |:=| += -= *= /= )
       ( \, )				; progn (statement delimiter)
       ( if )
       ( then else )
@@ -414,7 +501,7 @@
 (defun operator-right-associative-p (operator)
   (find operator *right-associative-operators*))
 
-
+
 ;;; ********************************
 ;;; Define Operators ***************
 ;;; ********************************
@@ -636,6 +723,21 @@
 	      ,left
 	      ,(gather-superiors '= stream)))
 
+(define-character-tokenization #\:	
+    #'(lambda (stream char)
+        (declare (ignore char))
+        (cond ((char= (peek-char nil stream t nil t) #\=)
+               (read-char stream t nil t)
+               '|:=|)
+              (t
+               '|:|))))
+(define-token-operator |:=|		
+    :infix `(,(if (symbolp left)
+                  'setq
+                  'setf)
+              ,left
+              ,(gather-superiors '|:=| stream)))
+
 (define-character-tokenization #\<
     #'(lambda (stream char)
 	(declare (ignore char))
@@ -722,6 +824,8 @@
 (define-token-operator \)
     :infix (infix-error "Extra close paren \")\" in infix expression"))
 
+#|
+;;; Commented out because no longer using $ as the macro character.
 (define-character-tokenization #\$
     #'(lambda (stream char)
 	(declare (ignore stream char))
@@ -729,6 +833,7 @@
 (define-token-operator %infix-end-token%
     :infix (infix-error "Prematurely terminated infix expression")
     :prefix (infix-error "Prematurely terminated infix expression"))
+|#
 
 (define-character-tokenization #\;
     #'(lambda (stream char)
@@ -736,7 +841,9 @@
 	(do ((char (peek-char nil stream t nil t)
 		   (peek-char nil stream t nil t)))
 	    ((or (char= char #\newline) (char= char #\return)
-		 (char= char #\$))
+		 ;; was #\$
+;		 (char= char #\))
+		 )
 	     ;; Gobble characters until the end of the line or the
 	     ;; end of the input.
 	     (cond ((or (char= char #\newline) (char= char #\return))
@@ -802,7 +909,8 @@
 
 (defparameter *test-cases*
     ;; Note that in strings, we have to slashify \ as \\.
-    '(("1 * +2"         (* 1 2))
+  '(("s + 1"           (+ s 1))
+      ("1 * +2"         (* 1 2))
       ("1 * -2"         (* 1 (- 2)))
       ("1 * /2"         (* 1 (/ 2)))
       ("/2"             (/ 2))
@@ -814,7 +922,9 @@
       ("!foo-bar * 2"  (* foo-bar 2))
       ("!(foo bar baz)" (foo bar baz))
       ("!foo-bar "     foo-bar)
-      ("!foo-bar"      :error)		; eof error -- ! eats the close $
+      ;; The following now longer gives an eof error, since the close
+      ;; parenthesis terminates the token.
+      ("!foo-bar"      foo-bar)		; eof error -- ! eats the close $
       ("a+-b"          (+ a (- b)))
       ("a+b"           (+ a b))
       ("a+b*c"         (+ a (* b c)))
@@ -930,13 +1040,17 @@
       ("a||b"          (or a b))
       ("a%b"           (mod a b))
 
-      ;; Comment character
+      ;; Comment character -- must have carriage return after semicolon.
       ("x^^2   ; the x coordinate
-        + y^^2 ; the y coordinate" (+ (expt x 2) (expt y 2)))
+        + y^^2 ; the y coordinate" :error)
+      ("x^^2   ; the x coordinate
+        + y^^2 ; the y coordinate
+        "              (+ (expt x 2) (expt y 2)))
 
       ;; Errors
       ("foo(bar,baz"   :error)		; premature termination
-      ("foo(bar,baz))" :error)		; extra close parenthesis
+      ;; The following no longer gives an error
+      ("foo(bar,baz))" (foo bar baz))	; extra close parenthesis
       ("foo[bar,baz]]" :error)		; extra close bracket
       ("[foo,bar]"     :error)		; AREF is not a prefix operator
       ("and a"         :error)		; AND is not a prefix operator
@@ -963,22 +1077,22 @@
   (multiple-value-bind (value error)
       (let ((*package* (find-package "INFIX")))
 	(ignore-errors
-	 (values (read-from-string (concatenate 'string "#{" string "$")
+	 (values (read-from-string (concatenate 'string "#I(" string ")")
 				   t nil))))
     (cond (error
 	   (cond ((eq result :error)
 		  t)
 		 (t
-		  (format t "~&Test #$~A$ failed with ERROR." string)
+		  (format t "~&Test #I(~A) failed with ERROR." string)
 		  nil)))
 	  ((eq result :error)
-	   (format t "~&Test #$~A$ failed. ~
+	   (format t "~&Test #I(~A) failed. ~
                            ~&   Expected ERROR ~
                            ~&   but got ~A." 
 		   string value)
 	   nil)
 	  ((not (equal value result))
-	   (format t "~&Test #$~A$ failed. ~
+	   (format t "~&Test #I(~A) failed. ~
                            ~&   Expected ~A ~
                            ~&   but got ~A." 
 		   string result value)
