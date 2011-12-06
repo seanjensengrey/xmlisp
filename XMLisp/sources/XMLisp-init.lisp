@@ -80,6 +80,8 @@
 ;;  Infix                                    |
 ;;___________________________________________
 
+(setf (get :infix :dont-print-copyright) t)
+
 (defpackage :INFIX
   (:use :common-lisp))
 
