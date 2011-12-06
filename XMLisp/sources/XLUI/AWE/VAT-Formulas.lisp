@@ -58,7 +58,7 @@
     (string 
      (ignore-errors
       (values (ccl::with-lock-grabbed ((infix->postfix-expansion-lock))
-                (read-from-string (concatenate 'string "#{" Object "$"))))))
+                (read-from-string (concatenate 'string "#i(" Object ")"))))))
     (t (error "Cannot understand ~A in Visual AgenTalk formula" Object))))
 
 ;_________________________________________
@@ -229,6 +229,10 @@
 
 (expand "180")
 
+(expand "s + 1")
+
+(expand "1s+1")
+
 (expand "180.0")
 
 (expand "5 + 7")
@@ -245,7 +249,7 @@
 
 (expand "age[2, 3, 4] + height[right]")
 
-(expand "age[2, 3, 4, 5]")
+(expand "age[2, 3, 4, 5]")  ;; error
 
 (float-expression -7)
 
