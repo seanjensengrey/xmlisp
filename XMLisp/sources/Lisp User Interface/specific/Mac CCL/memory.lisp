@@ -81,6 +81,8 @@
          (Size (reduce #'+ Values :key #'sizeof))
          (&Vector #-windows-target (#_NewPtr Size)
 		  #+windows-target (#_HeapAlloc (#_GetProcessHeap) 0 Size)))
+    (when (%null-ptr-p &Vector)
+      (error "Memory allocation of ~A bytes failed" Size))
     (dolist (Value Values &Vector)
       (etypecase Value
         (fixnum (setf (%get-long &Vector Index) Value))
@@ -105,8 +107,12 @@
   in: Size int.
   out: Vector.
   Make vector of byte size"
-  #-windows-target (#_NewPtr Size)
-  #+windows-target (#_HeapAlloc (#_GetProcessHeap) 0 Size))
+  (let ((&Vector
+         #-windows-target (#_NewPtr Size)
+         #+windows-target (#_HeapAlloc (#_GetProcessHeap) 0 Size)))
+    (when (%null-ptr-p &Vector)
+      (error "Memory allocation of ~A bytes failed" Size))
+    &Vector))
 
 
 (defun MAKE-BYTE-VECTOR (&rest Values)"
@@ -117,6 +123,8 @@
   (let* ((Index 0)
          (&Vector #-windows-target (#_NewPtr (length Values))
 		  #+windows-target (#_HeapAlloc (#_GetProcessHeap) 0 (length Values))))
+    (when (%null-ptr-p &Vector)
+      (error "Memory allocation of ~A bytes failed" (length Values)))
     (dolist (Value Values &Vector)
       (setf (%get-byte &Vector Index) Value)
       (incf Index))))
@@ -315,6 +323,9 @@
 (sizeof *v1*)
 
 (sizeof (copy-vector *v1*))  ;; about 10ms on Mac Book Pro 2.6Ghz
+
+
+(make-vector-of-size 10000000000000) ;; should raise errorc
 
 
 
