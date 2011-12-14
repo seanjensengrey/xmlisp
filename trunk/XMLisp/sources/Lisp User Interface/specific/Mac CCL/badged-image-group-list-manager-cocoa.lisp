@@ -50,7 +50,7 @@
 
 (defmethod GET-GROUP-ITEM-WITH-NAME ((self badged-image-group-list-manager-view) group-name item-name)
   (dolist (group (groups self))
-    (when (equal (group-name group) group-name)
+    (when (string-equal (group-name group) group-name)
       (dolist (item (group-items group))
         (when (equal (string-capitalize (item-name item)) (string-capitalize item-name))
           (return-from get-group-item-with-name item)))))
