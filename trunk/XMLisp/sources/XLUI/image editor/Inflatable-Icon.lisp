@@ -240,21 +240,8 @@
                   (+ *flat-shape-z-offset* (dz self) (maximum-altitude Self)))))))))
 
 
-#| need to take these into account
-
-  (case (surfaces Self)
-    ;; front
-    (front 
-     ;; front and back
-    ((front-and-back front-and-back-connected)
-    ;; CUBE
-    (cube 
-
-|#
-
-
 (defmethod UPDATE-TEXTURE-FROM-IMAGE ((Self inflatable-icon) &optional Image)
-  (with-glcontext (view Self)  ;; could be called from outside of draw
+  (with-glcontext (if (view Self) (view Self) (shared-opengl-view)) ;; could be called from outside of draw
     (unless Image (setq Image (image Self)))
     ;; replace entire texture with image
     (cond
@@ -421,9 +408,7 @@
 (defmethod (SETF DISTANCE) :after (Value (Self inflatable-icon))
   (declare (ignore Value))
   ;;(format t "~%distance=~A" Value)  
-  (compute-connectors Self)
-  ;;(print (length (connectors Self)))
-  )
+  (compute-connectors Self))
 
 ;___________________________________
 ; DRAW                              |
@@ -626,6 +611,48 @@
   (glTexCoord2i 0 1) (glVertex2f 0.0 1.0)
   (glEnd)
   (glDisable GL_TEXTURE_2D))
+
+
+(defmethod DRAW-AS-PROXY-ICON ((Self inflatable-icon))  
+  (unless (texture-id Self) 
+    ;; use image as texture
+    (unless (image Self) (error "image of inflatable icon is undefined"))
+    ;; HACK: sizeof always return zero so we need to find some other sort of error checking.
+    ;; (unless (= (sizeof (image Self)) (* (rows Self) (columns Self) 4)) (error "image size does not match row/column size"))
+    ;; generate texture
+    (ccl::rlet ((&texName :long))
+      (glPixelStorei GL_UNPACK_ROW_LENGTH (columns Self))  ; Set proper unpacking row length for image
+      (glPixelStorei GL_UNPACK_ALIGNMENT 1)       ; Set byte aligned unpacking (needed for 3-byte-per-pixel image)
+      (glGenTextures 1 &texName)
+      (setf (texture-id Self) (ccl::%get-long &texName)))
+    (glBindTexture GL_TEXTURE_2D (texture-id Self))
+    (glTexSubImage2D GL_TEXTURE_2D 0 0 0 (columns Self) (rows Self) GL_RGBA GL_UNSIGNED_BYTE (image Self))
+    ;; clam to edge to avoid gaps between adjacent textures
+    (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_WRAP_S GL_CLAMP_TO_EDGE)
+    (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_WRAP_T GL_CLAMP_TO_EDGE)
+    ;; linear pixel magnification
+    (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_MAG_FILTER GL_NEAREST)
+    (glTexParameteri GL_TEXTURE_2D GL_TEXTURE_MIN_FILTER GL_LINEAR_MIPMAP_NEAREST)
+    ;;; (glTexImage2D GL_TEXTURE_2D 0 GL_RGBA8 (columns Self) (rows Self) 0 GL_RGBA GL_UNSIGNED_BYTE (image Self))
+    ;#-cocotron (unless (zerop (gluBuild2DMipmaps GL_TEXTURE_2D 4 (columns Self) (rows Self) GL_RGBA GL_UNSIGNED_BYTE (image Self)))
+    (unless (zerop (gluBuild2DMipmaps GL_TEXTURE_2D GL_RGBA8 (columns Self) (rows Self) GL_RGBA GL_UNSIGNED_BYTE (image Self)))
+      (error "could not create mipmaps")))
+  
+  (let ((Height (proxy-icon-size Self))
+        (Width (proxy-icon-size Self)))
+    (glEnable GL_TEXTURE_2D) 
+    (glTexEnvi GL_TEXTURE_ENV GL_TEXTURE_ENV_MODE GL_MODULATE)
+    (glBindTexture GL_TEXTURE_2D (texture-id Self))
+    (glPushMatrix)
+    (glTranslatef 0.0 0.0 0.01)  ;; sligthly towards the viewer
+    (glBegin GL_QUADS)
+    (glnormal3f 0.0 0.0 1.0)
+    (glTexCoord2i 0 0) (glVertex2f 0.0 0.0)
+    (glTexCoord2i 0 1) (glVertex2f 0.0 Height)
+    (glTexCoord2i 1 1) (glVertex2f Width Height)
+    (glTexCoord2i 1 0) (glVertex2f Width 0.0)
+    (glEnd)
+    (glPopMatrix)))
 
 
 (defmethod DRAW-UNCOMPILED ((Self inflatable-icon)) 
@@ -903,6 +930,8 @@
       (glDeleteTextures 1 &Tex-Id))
     (setf (texture-id Self) nil)))
   
+
+
 ;_________________________________________
 ; File I/O                                |
 ;_________________________________________
