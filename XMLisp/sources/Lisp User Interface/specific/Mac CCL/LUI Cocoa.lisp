@@ -923,7 +923,6 @@
 
 
 (defmethod CANCEL-MODAL :after ((Self window) )
-  (declare (ignore return-value))
   (setf (is-modal-p self) nil))
 
 
@@ -1268,17 +1267,17 @@
       (#/initWithFrame: Native-Control Frame)
       (#/setButtonType: Native-Control #$NSMomentaryPushInButton)
       (#/setImagePosition: Native-Control #$NSNoImage)
-      
+      (when (color self)
+        (#/setBackgroundColor: (#/cell native-control) (#/redColor ns:ns-color))
+        (#/setBordered: native-control #$NO))
       (cond
        ((equal (bezel-style self) "square")
         (#/setBezelStyle: Native-Control #$NSThickerSquareBezelStyle)
         ;(#/setBezelStyle: Native-Control #$NSShadowlessSquareBezelStyle)
-        (#/setBezelStyle: native-control #$NSSmallSquareBezelStyle)
-        )
+        (#/setBezelStyle: native-control #$NSSmallSquareBezelStyle))
         (t
          ;(#/setBezelStyle: Native-Control #$NSShadowlessSquareBezelStyle)
-         (#/setBezelStyle: Native-Control #$NSThickerSquareBezelStyle)
-         ))
+         (#/setBezelStyle: Native-Control #$NSThickerSquareBezelStyle)))
       (#/setTitle: Native-Control (native-string (text Self))))
     Native-Control))
 
@@ -2658,7 +2657,85 @@
   "Setf the image of this image view to the ns-image provided ns-image MUST be an ns-image NOT an image-control"
   (#/setImage: (Native-view self) ns-Image))
 
+;__________________________________
+; IMAGE                            |
+;__________________________________/
 
+(defclass native-clickable-image (ns:ns-image-view)
+  ((lui-view :accessor lui-view :initarg :lui-view))
+  (:metaclass ns:+ns-object))
+
+
+(defmethod make-native-object ((Self clickable-image-control))
+  (let ((Native-Control (make-instance 'native-clickable-image :lui-view Self))) 
+    ;; no problem if there is no source, just keep an empty view
+    (cond
+     ;; in most cases there should be an image source
+     ((src Self)
+      ;; consider caching image with the same file, there is a good chance
+      ;; that some image files, e.g., buttons are used frequently
+      (ccl::with-autorelease-pool
+          (let ((Image #-cocotron (#/autorelease (#/initByReferencingFile: (#/alloc ns:ns-image) (native-string (source Self))))
+                       #+cocotron (#/initWithContentsOfFile: (#/alloc ns:ns-image) (native-string (source Self)))))
+            (unless #-cocotron (#/isValid Image)
+              #+cocotron (not (ccl:%null-ptr-p Image))
+              (error "cannot create image from file ~S" (source Self)))
+            ;; if size 0,0 use original size
+            (when (and (zerop (width Self)) (zerop (height Self)))
+              (let ((Size (#/size Image)))
+                (setf (width Self) (rref Size <NSS>ize.width))
+                (setf (height Self) (rref Size <NSS>ize.height))))
+            (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+              (#/initWithFrame: Native-Control Frame)
+              (cond
+               ((downsample self)
+                (ns:with-ns-size (Size (width Self) (height Self))
+                  (let ((resized-image  (#/initWithSize: (#/alloc ns:ns-image) size)))
+                    (ns:with-ns-rect (orig-rect 0 0 (NS:NS-SIZE-WIDTH (#/size Image)) (NS:NS-SIZE-HEIGHT (#/size Image)))
+                      (#/lockFocus resized-image)
+                      (#/drawInRect:fromRect:operation:fraction: image Frame orig-rect #$NSCompositeCopy 1.0)
+                      (#/unlockFocus resized-image)
+                      (#/setImage: Native-Control resized-image)))))
+               (t
+                (#/setImage: Native-Control image))))
+            (if (scale-proportionally self)
+              (#/setImageScaling: Native-Control #$NSScaleProportionally)
+              (#/setImageScaling: Native-Control #$NSScaleToFit)))))
+     (t
+      (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+        (#/initWithFrame: Native-Control Frame))))
+    Native-Control))
+
+(objc:defmethod (#/isFlipped :<BOOL>) ((Self native-clickable-image))
+  ;; Flip to coordinate system to 0, 0 = upper left corner
+  #$NO)
+
+
+(objc:defmethod (#/acceptsFirstResponder :<BOOL>) ((Self native-clickable-image))
+  ;; Flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
+#|
+(objc:defmethod (#/mouseDown: :void) ((self native-clickable-image) event)
+  (let* ((mouse-loc (#/locationInWindow event))
+         (x (- (ns:ns-point-x  (#/locationInWindow event)) (x (lui-view self))))
+         ;(y (+ (- (height (lui-view self))(ns:ns-point-y  (#/locationInWindow event))   ) (y (lui-view self))))
+         ;(y (- (ns:ns-point-y  (#/locationInWindow event)) (y (lui-view self))))
+         (y (- (height (window (lui-view self))) (ns:ns-point-y  (#/locationInWindow event)) (y (lui-view self))))
+         )
+        
+        
+    
+    (view-left-mouse-down-event-handler (lui-view self) x y)
+    
+    )
+
+  )
+
+
+(defmethod VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER ((self clickable-image-control) x y)
+  (print "NOTHINg TO DO")
+  )
+|#
 ;__________________________________
 ; Color Well                       |
 ;__________________________________/
@@ -3039,7 +3116,7 @@
 (defun SHOW-STRING-POPUP (window list &key selected-item container item-addition-action-string-list)
   (unless (or list item-addition-action-string-list) (return-from show-string-popup nil))
   (let ((longest-string "")
-        (text-buffer 1)) ;;Need a small buffer to make sure the longest string in the list does not get clipped
+        (text-buffer 6)) ;;Need a small buffer to make sure the longest string in the list does not get clipped
     (dolist (string list)
       (when (> (length string) (length longest-string))
         (setf longest-string string)))
@@ -3055,7 +3132,7 @@
     ;(#/setTransparent: (native-view Pop-Up) #$YES)
     (#/performClick:  (native-view Pop-up) +null-ptr+)
     (#/removeFromSuperview (native-view Pop-up))
-    (unless (%null-ptr-p (#/titleOfSelectedItem (native-view Pop-Up)))
+      (unless (%null-ptr-p (#/titleOfSelectedItem (native-view Pop-Up)))
       (ccl::lisp-string-from-nsstring  (#/titleOfSelectedItem (native-view Pop-Up)))))))
 
 
