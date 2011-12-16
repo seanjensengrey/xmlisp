@@ -407,7 +407,6 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 (defmethod VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER ((Self view) X Y)
   (declare (ignore X Y))
-  (print "VIEW DOWN VIEW")
   ;; nada
   )
 
