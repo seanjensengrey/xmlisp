@@ -699,3 +699,9 @@
   (or *The-Missing-Shape-Placeholder* 
       (setq *The-Missing-Shape-Placeholder* (make-instance 'Missing-Shape-Placeholder))))
 
+
+(defvar *THE-MISSING-SHAPE-PLACEHOLDER-MANAGER* nil "singleton shape-manager for the MISSING-SHAPE-PLACEHOLDER")
+
+(defun THE-MISSING-SHAPE-PLACEHOLDER-MANAGER ()
+  (or *THE-MISSING-SHAPE-PLACEHOLDER-MANAGER*
+      (setq *the-missing-shape-placeholder-Manager* (make-instance 'shape-manager :shape (the-missing-shape-placeholder)))))
