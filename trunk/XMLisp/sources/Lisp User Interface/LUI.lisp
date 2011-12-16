@@ -407,6 +407,7 @@ Call with most important parameters. Make other paramters accessible through *Cu
 
 (defmethod VIEW-LEFT-MOUSE-DOWN-EVENT-HANDLER ((Self view) X Y)
   (declare (ignore X Y))
+  (print "VIEW DOWN VIEW")
   ;; nada
   )
 
@@ -1067,7 +1068,9 @@ after any of the window controls calls stop-modal close window and return value.
 
 
 (defclass BEVEL-BUTTON-CONTROL (control)
-  ((bezel-style :accessor bezel-style :initform nil :documentation "the bezel style of this button, if this is nil we will use rounded by default"))
+  ((bezel-style :accessor bezel-style :initform nil :documentation "the bezel style of this button, if this is nil we will use rounded by default")
+   (color :accessor color :initform nil :initarg :color :documentation "A hex repsentation of the background color of this button")
+   )
   (:documentation "Bevel Button: any height and width")
   (:default-initargs 
     :width 72
@@ -1510,6 +1513,36 @@ after any of the window controls calls stop-modal close window and return value.
   ;; not clickable
   )
 
+;__________________________________
+; Image                             |
+;__________________________________/
+
+(defclass CLICKABLE-IMAGE-CONTROL (view)
+  ((src :accessor src :initform nil :initarg :src :documentation "URL: so far only filename")
+   (scale-proportionally :accessor scale-proportionally :initarg :scale-proportionally :type boolean :initform nil :documentation "If true the image will scale proportionally instead of scale to fit")
+   (image-path :accessor image-path :initform nil :initarg :image-path :documentation "if this accesor is nil then the image-control will look for 
+   the image in the resources;images directory, if not it will look for the src image at the location specified by this accessor")
+   (downsample :accessor downsample :initform nil :type boolean :initarg :downsample :documentation "If true, downsample the actual Image file to the size of this image-control"))
+  (:documentation "image. If size is 0,0 use original image size")
+  (:default-initargs 
+    :width 0
+    :height 0))
+
+
+(defgeneric SOURCE (clickable-image-control)
+  (:documentation "If the src is local return a file specification"))
+
+
+(defmethod SOURCE ((Self clickable-image-control))
+  (if (image-path self)
+    (native-path (image-path self) (src Self))
+    (native-path "lui:resources;images;" (src Self))))
+
+#|
+(defmethod initialize-event-handling ((Self image-control))
+  ;; not clickable
+  )
+|#
 
 ;__________________________________
 ; Color Well                       |
