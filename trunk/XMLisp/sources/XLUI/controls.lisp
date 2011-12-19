@@ -209,6 +209,13 @@
   (:documentation "Image in HTML style"))
 
 
+(defclass CLICKABLE-IMG (clickable-image-control xml-layout-interface)
+  ((alt :accessor alt :initform "" :type string :documentation "HTML img alt attribute: use for tooltips")
+   
+   )
+  (:documentation "Image in HTML style"))
+
+
 ;;***********************************************
 ;;*    Buttons                                  *
 ;;***********************************************
