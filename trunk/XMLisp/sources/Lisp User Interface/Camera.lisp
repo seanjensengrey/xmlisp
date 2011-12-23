@@ -272,12 +272,14 @@
          (vy (- Eye-y Center-y))
          (vz (- Eye-z Center-z))
          (r (sqrt (+ (expt vx 2) (expt vy 2) (expt vz 2)))))
-    (incf (azimuth Self) (* (- dx) Gain))
-    (incf (zenith Self) (* dy (* 0.4 Gain)))
-    (multiple-value-bind (x2 y2 z2)  ;; the new position
-                         (polar->cathesian r (azimuth Self) (zenith Self))
-      (multiple-value-bind (x3 y3 z3) ;; end point of up vector
-                           (polar->cathesian r (azimuth Self) (+ (zenith Self) 1.0))
+    (incf (azimuth Self) (* dx (* 0.4 Gain)))
+    (incf (zenith Self) (* (- dy) (* 0.4 Gain)))
+    ;; rotate zenith around x, and azimuth around y axis
+    ;; notice: y and z are swapped, azimuth adjusted +90, zenith = old zenith -Pi/2
+    (multiple-value-bind (x2 z2 y2)  ;; the new position
+                         (polar->cathesian r (+ (azimuth Self) pi) (- (/ pi 2) (zenith Self)))
+      (multiple-value-bind (x3 z3 y3) ;; end point of up vector
+                           (polar->cathesian r (+ (azimuth Self) pi) (+ (- (/ pi 2) (zenith Self)) 1.0))
         (aim-camera 
          Self 
          :eye-x (+ Center-x x2)
