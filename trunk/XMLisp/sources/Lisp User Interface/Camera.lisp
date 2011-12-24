@@ -226,14 +226,25 @@
          (vz (- (center-z Self) (eye-z Self)))
          (length (sqrt (+ (* vx vx) (* vy vy) (* vz vz))))
          (distance (* (- Dy) Gain)))
+    ;; (format t "~%length: ~A, distance: ~A" length distance)
     (setq vx (/ vx Length))
     (setq vy (/ vy Length))
     (setq vz (/ vz Length))
-    (aim-camera 
-     Self
-     :eye-x (+ (eye-x Self) (* vx Distance))
-     :eye-y (+ (eye-y Self) (* vy Distance))
-     :eye-z (+ (eye-z Self) (* vz Distance)))))
+    (if (>= distance length)
+      ;; the camera is colliding with the center: need to push the center out a bit in the same direction
+      (aim-camera 
+        Self
+        :eye-x (+ (eye-x Self) (* vx Distance))
+        :eye-y (+ (eye-y Self) (* vy Distance))
+        :eye-z (+ (eye-z Self) (* vz Distance))
+        :center-x (+ (center-x Self)  (* vx Distance))
+        :center-y (+ (center-y Self)  (* vy Distance))
+        :center-z (+ (center-z Self)  (* vz Distance)))
+      (aim-camera 
+       Self
+       :eye-x (+ (eye-x Self) (* vx Distance))
+       :eye-y (+ (eye-y Self) (* vy Distance))
+       :eye-z (+ (eye-z Self) (* vz Distance))))))
 
 
 (defmethod TRACK-MOUSE-PAN ((Self camera) dx dy Gain)
@@ -243,25 +254,22 @@
         (center-x (center-x Self))
         (center-y (center-y Self))
         (center-z (center-z Self)))
-    (let* ((sina (/ x (sqrt (+ (* x x) (* z z)))))
-           (cosa (/ z (sqrt (+ (* x x) (* z z)))))
-           (sinz (/ y (sqrt (+ (* x x) (* y y) (* z z)))))
-           (cosz (/ (sqrt (+ (* x x) (* z z))) (sqrt (+ (* x x) (* y y) (* z z))))))
-      ;;; (format t "~%sina: ~A, cosa: ~A, sinz: ~A, cosz: ~A" sina cosa sinz cosz)
-      ;; compute translation vector
-      (let* ((mx (* (- dx) Gain))
-             (my (* dy Gain))
-             (dex (+ (* mx cosa) (- (* my sina sinz))))
-             (dey (* my cosz))
-             (dez (- (+ (* mx sina) (* my cosa sinz)))))
+    (let* ((sina (sin (- (azimuth Self))))
+           (cosa (cos (- (azimuth Self))))
+           (mx (* dx -1.2 Gain))
+           (my (* dy +1.2 Gain))
+           ;; rotate by azimuth, factor vertical mouse input by cos of zenith: look from top=max, look from side=min
+           (dex (+ (* mx cosa ) (- (* my sina (cos (zenith Self))))))
+           (dey (+ (* mx sina ) (* my cosa  (cos (zenith Self)))))
+           (dez (* my (sin (zenith Self)))))
         (aim-camera 
          Self
-         :eye-x (+ x dex center-x)
-         :eye-y (+ y dey center-y)
-         :eye-z (+ z dez center-z)
+         :eye-x (+ center-x x dex)
+         :eye-y (+ center-y y dey)
+         :eye-z (+ center-z z dez)
          :center-x (+ center-x dex)
          :center-y (+ center-y dey)
-         :center-z (+ center-z dez))))))
+         :center-z (+ center-z dez)))))
 
 
 (defmethod TRACK-MOUSE-SPIN ((Self camera) dx dy Gain)
@@ -279,6 +287,7 @@
     (multiple-value-bind (x2 z2 y2)  ;; the new position
                          (polar->cathesian r (+ (azimuth Self) pi) (- (/ pi 2) (zenith Self)))
       (multiple-value-bind (x3 z3 y3) ;; end point of up vector
+                           ;; hack: that "1.0" looks suspecious, we are dealing with angles in radian, 1.0 does not mean anything
                            (polar->cathesian r (+ (azimuth Self) pi) (+ (- (/ pi 2) (zenith Self)) 1.0))
         (aim-camera 
          Self 
