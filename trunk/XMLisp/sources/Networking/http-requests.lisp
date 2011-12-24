@@ -153,7 +153,8 @@
 ;***********************************
 
 (defclass HTTP-GET-REQUEST (http-request)
-  ((key-value-pairs :accessor key-value-pairs :initarg :key-value-pairs :initform nil)))
+  ((key-value-pairs :accessor key-value-pairs :initarg :key-value-pairs :initform nil)
+   (progress-window :accessor progress-window :initarg :progress-window :initform nil)))
 
 
 (defmethod HTTP-COMMAND ((Self http-get-request) Stream &key Progress-Window)
@@ -338,6 +339,10 @@
 
 
 (http-get "http://199.45.162.69:8000/agentsheets-distribution/register-mac-intel")
+
+(http-get "http://www.eol.ucar.edu/cgi-bin/weather.cgi?site=fl")
+
+
 (http-get "http://199.45.162.69:8000/upload-to-arcade?project-name=TEST123&project-author=Andri&zip-file=zip+data+to+come")
 
 
