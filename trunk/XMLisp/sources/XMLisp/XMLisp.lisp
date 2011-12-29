@@ -1074,10 +1074,12 @@
 ;; DOUBLE-FLOAT
 
 (defmethod PRINT-TYPED-ATTRIBUTE-VALUE (Value (Type (eql 'double-float)) Stream)
-  (format Stream "\"~F\"" Value))
+  (let ((*read-default-float-format* 'double-float))
+    (format Stream "\"~F\"" Value)))
 
 (defmethod READ-TYPED-ATTRIBUTE-VALUE ((Value string) (Type (eql 'double-float)))
-  (float (read-from-string Value) 0d0))
+  (let ((*read-default-float-format* 'double-float))
+    (float (read-from-string Value) 0d0)))
 
 
 ;; PATHNAME
@@ -1826,7 +1828,8 @@
   (let ((*XMLisp-Print-Synoptic* nil)) ;; never save XML object with synoptic printing
     (with-open-file (File Filename :direction :output :if-exists If-Exists)
       (when XML-Header (format File "~A~%" XML-Header))
-      (princ Self File))))
+      (princ Self File)
+      (terpri File))))
 
 ;_____________________________
 ; Set & Aggregation Handlers  |
