@@ -273,7 +273,6 @@
     ;(set-position self 0 0)
     ;(set-size self (width (window self)) (height (window self)))
     (show (window self))
-    
     (display (window self))))
 
 
@@ -768,10 +767,9 @@
 
 (defmethod MAKE-NATIVE-OBJECT ((Self window))
   (declare (ftype function window-controller))
-  
   (in-main-thread ()
     (ccl::with-autorelease-pool
-      (let ((Window (make-instance #-cocotron 'native-window #+cocotron (if (show-main-menu-on-windows self)'native-window 'menuless-native-window )
+      (let ((Window (make-instance #-cocotron 'native-window #+cocotron (if (show-main-menu-on-windows self) 'native-window 'menuless-native-window )
                         :lui-window Self
                         #+cocotron :show-main-menu-on-windows #+cocotron (show-main-menu-on-windows self)
                         :with-content-rect (ns:make-ns-rect 0 0 (width Self) (height Self))
@@ -946,7 +944,7 @@
   (setf (gethash Self *Window-Full-Screen-Restore-Sizes*) (#/frame (native-window Self)))
   #-cocotron (#_SetSystemUIMode #$kUIModeAllSuppressed #$kUIOptionAutoShowMenuBar)
   #+cocotron 
-  (SET-SIZE-AND-POSITION-ENSURING-WINDOW-WILL-FIT-ON-SCREEN 
+  (set-size-and-position-ensuring-window-will-fit-on-screen
    self
    0
    (title-bar-height self)
