@@ -1,5 +1,7 @@
 (in-package :ccl)
 
+;; good tool to experiment with headers: http://web-sniffer.net/
+
 
 (defun HTTP-STATUS-CODE-EXPLANATION (Status-Code)
   (case Status-Code
@@ -129,24 +131,74 @@
   (:documentation "implemented by the specific http-request: returns the http command to be issued"))
 
 
-(defmethod ISSUE-HTTP-REQUEST ((Self http-request) &key Progress-Window)
+(defun READ-CR-LF-TERMINATED-LINE (Stream)
+  (let ((Line-Ending #.(format nil "~C~C" #\Return #\Newline))
+        (i 0))
+    (with-output-to-string (Line)
+      (loop
+        (let ((Char (read-char Stream)))
+          (cond
+           ;; partial match
+           ((char= Char (char Line-Ending i))
+            (incf i)
+            ;; full match
+            (when (= i (length Line-Ending))
+              (return t)))
+           ;; no match
+           (t 
+            (setq i 0)
+            (princ Char Line))))))))
+
+
+(defmethod PARSE-RESPONSE-HEADER (Stream) "
+  out: HTTP-Response-Header-Info.
+  Read to end of reponse header. Return header info as association list of 
+  HTTP Response Header Name, Value strings."
+  (let ((Header-Info nil))
+    (loop
+      (let ((Line (read-cr-lf-terminated-line Stream)))
+        (if (string= Line "")
+          (return Header-Info)
+          (let ((Pos (position #\: Line)))
+            (if Pos
+              (push (list (subseq Line 0 Pos) (subseq Line (+ Pos 2) (length Line))) Header-Info)
+              ;; the first, status reponse, does NOT have a name included
+              (push (list "Status" Line) Header-Info))))))))
+
+
+(defun HTTP-RESPONSE-HEADER-STATUS-CODE (Header)
+  (let ((Info (find "Status" Header :key #'first :test #'string-equal)))
+    (with-input-from-string (Value (second Info))
+      (read Value)
+      (read Value))))
+
+
+ (defmethod ISSUE-HTTP-REQUEST ((Self http-request) &key Progress-Window) "
+  in:  Self http-request, &key Progress-Window 
+  out: Response-Content string, Status-Code int, Response-Header association list (<Name-String> <Value-String>)
+  Return the content of a web page and status information."
   (handler-case 
       (with-open-socket (Stream :remote-host (host Self)
                                 :remote-port (port Self))
         ;; issue the command
         (http-command Self Stream :progress-window Progress-Window)
-        ;; get and (for now) print response
-        (let ((Char))
-          (with-output-to-string (Response)
-            (loop 
-              (setq Char (or (read-char Stream nil nil) (return)))
-              (princ Char Response)))))
+        (let ((Response-Header (parse-response-header Stream)))
+          (let ((Content-Info (find "Content-Length" Response-Header :key #'first :test #'string-equal)))
+            (unless Content-Info (error "cannot determine content length of HTTP response"))
+            (let ((Content-Length (read-from-string (second Content-Info))))
+              ;;(format t "~%content length = ~A" Content-Length)
+              (values
+               (with-output-to-string (Response)
+                 ;; read the exact number of chars indicated by the header. Even just reading on char more will case a very long timeout
+                 (dotimes (i Content-Length)
+                   (let ((Char (read-char Stream)))
+                     (princ Char Response))))
+               (http-response-header-status-code Response-Header)
+               Response-Header)))))
     (t (Condition) (lui::standard-alert-dialog 
                     "Cannot open network connection. Please try again later."
                     :explanation-text (format nil "~A" Condition))
        nil)))
-
-
 
 ;***********************************
 ;    HTTP-GET-REQUEST              *
