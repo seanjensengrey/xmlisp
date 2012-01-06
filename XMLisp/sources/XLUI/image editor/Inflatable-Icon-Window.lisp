@@ -29,7 +29,7 @@
 
 (defvar *ceiling-update-thread-should-stop* nil "Global variable that should be set if we want the ceiling update thread to stop, this can be used as a safe guard in case process-kill fails.")
 
-(defvar *open-icon-window* nil "Global variable representing the open inflatable icon editor window if there is one.")
+
  
 ;; Hack: this is a stop gap until we can develop a better locking mechanism.
 (defvar *transparent-ceiling-update-lock* nil "Lock used to prevent annimation of ceilling fading to interfere with closing window")
@@ -1276,8 +1276,7 @@
 
 
 (defmethod STOP-MODAL :after ((Self inflatable-icon-editor-window) Return-Value)
-  (declare (ignore return-value))
-  (setf *open-icon-window* nil))
+  (declare (ignore return-value)))
 
 ;___________________________________________
 ; Open & New                                |
@@ -1372,7 +1371,6 @@
      (display Window)
      (make-key-window Window )
      (initialize-gui-components Window (inflatable-icon Inflated-Icon-Editor))
-     (setf *open-icon-window* window)
      (show window))))
 
 
