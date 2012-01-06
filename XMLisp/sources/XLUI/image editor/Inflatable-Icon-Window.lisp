@@ -28,12 +28,14 @@
    
 
 (defvar *ceiling-update-thread-should-stop* nil "Global variable that should be set if we want the ceiling update thread to stop, this can be used as a safe guard in case process-kill fails.")
+
+(defvar *open-icon-window* nil "Global variable representing the open inflatable icon editor window if there is one.")
  
 ;; Hack: this is a stop gap until we can develop a better locking mechanism.
 (defvar *transparent-ceiling-update-lock* nil "Lock used to prevent annimation of ceilling fading to interfere with closing window")
                          
 
-(defclass INFLATABLE-ICON-EDITOR-WINDOW (application-window)
+(defclass INFLATABLE-ICON-EDITOR-WINDOW (dialog-window)
   ((smoothing-cycles :accessor smoothing-cycles :initform 0 :initarg :smoothing-cycles)
    (selected-tool :accessor selected-tool :initform nil :type symbol :initarg :selected-tool :documentation "the name of the currently selected tool")
    (selected-camera-tool :accessor selected-camera-tool :initform nil :type symbol :initarg :selected-camera-tool :documentation "the name of the currently selected camera tool")
@@ -53,7 +55,10 @@
    (save-button-closure-action :accessor save-button-closure-action :initform nil :initarg :save-button-closure-action ))
   (:default-initargs
       :track-mouse t
-    :use-custom-window-controller t)
+    :use-custom-window-controller t
+    :do-show-app-window-immediately nil
+    :resizable t
+    )
   (:documentation "Editor used to create inflatable icons"))
 
 
@@ -177,7 +182,7 @@
         (return-from window-should-close t)))))
   t)
   
-
+#|
 (defmethod WINDOW-CLOSE ((Self inflatable-icon-editor-window))
   (when (window-should-close self)
     (set-cursor "arrowCursor")
@@ -192,7 +197,7 @@
     (close-with-no-questions-asked self)
     (return-from window-close-dont-hide t))
   nil)
-
+|#
 
 
 (defmethod SELECT-ALL ((Self inflatable-icon-editor-window))
@@ -516,8 +521,15 @@
   (glEnable GL_ALPHA_TEST)
   ;; top down 45 degree angle view
   (setf (camera Self)
+        #|
         (duplicate <camera eye-x="0.0" eye-y="0.89" eye-z="1.0" center-x="0.0" center-y="0.0" center-z="0.0" up-x="0.0" up-y="0.5726468643072211" up-z="-1.5649032618904695" fovy="60.0" aspect="1.0" near="0.004999999888241291" far="2000.0" azimuth="0.0" zenith="0.7200000286102295"/>
-                   (find-package :xlui)))
+                   (find-package :xlui))
+        
+        |#
+        (duplicate <camera eye-x="0.01672404926864841" eye-y="-1.045163833187696" eye-z="0.8363329886907853" center-x="0.0" center-y="0.0" center-z="0.0" up-x="-0.018947526097554894" up-y="1.1841192696477165" up-z="0.49512727839531756" fovy="60.0" aspect="1.0" near="0.004999999888241291" far="2000.0" azimuth="-0.01600000075995922"  zenith="0.8960000369697809"/>
+                   (find-package :xlui))
+        
+        )
   (setf (view (camera Self)) Self))
 
 
@@ -533,12 +545,14 @@
   
   
 (defmethod DRAW-SKY-BOX ((Self inflated-icon-editor))
+  (glpushmatrix)
   (glenable gl_texture_2d)
   (glEnable gl_cull_face) ;; cull to see through walls
   (gltexenvi gl_texture_env gl_texture_env_mode gl_modulate)
   (use-texture Self "floorTile.png")
   (gltexparameteri gl_texture_2d gl_texture_wrap_s gl_repeat)
   (gltexparameteri gl_texture_2d gl_texture_wrap_t gl_repeat)
+  (glRotatef 90s0 0.s0 0.0s0 0.0s0)
   (glbegin gl_quads)
   ;; floor
   (glnormal3f 0.0 1.0 0.0)
@@ -571,6 +585,7 @@
   (gltexcoord2f 0s0 10s0) (glvertex3f -1s0 0s0  1s0)
   (gltexcoord2f 0s0 0s0) (glvertex3f -1s0 0s0 -1s0)
   (glend)
+  (glpopmatrix)
   (glDisable gl_cull_face))
 
 
@@ -580,8 +595,8 @@
   (draw-sky-box Self)
   ;; floor
   (glpushmatrix)
-  (glTranslatef -0.5s0 +0.01s0 0.5s0)
-  (glRotatef -90s0 1.0s0 0.0s0 0.0s0)
+  (glTranslatef -0.5s0 -0.5s0 0.0s0)
+  ;(glRotatef -90s0 1.0s0 0.0s0 0.0s0)
   (draw (inflatable-icon Self))
   (glpopmatrix)
   (use-texture self "whiteBox.png")
@@ -595,26 +610,26 @@
       (let ((ceiling-height (+ .02 *flat-shape-z-offset* (max-value (inflatable-icon (view-named (Window self) 'model-editor)))))
             (z-offset (value (view-named (Window self) "z_slider"))))
         (glpushmatrix)
-        
-        
         ;(value (view-named (Window self) "z_slider"))
         (case (surfaces (inflatable-icon (view-named (window self) 'model-editor)))
           ((or front-and-back front-and-back-connected)
            (if (is-upright (inflatable-icon (view-named (Window self) 'model-editor)))
              (progn
-               (glTranslatef 0.0s0 1.0s0 0.0s0)
-               (glRotatef 90s0 1.0s0 0.0s0  0.0s0 )
+               (glTranslatef 0.0s0 0.0s0 1.0s0)
+               ;(glRotatef 90s0 1.0s0 0.0s0  0.0s0 )
                (draw-ceiling-quad (ceiling-transparency (window self)) (-  ceiling-height z-offset))
                (glscalef 1s0 -1s0 1s0)
                (draw-ceiling-quad (ceiling-transparency (window self)) (-  ceiling-height z-offset))
                )
              (progn
+               (glRotatef 90s0 1.0s0 0.0s0  0.0s0 )
                (draw-ceiling-quad (ceiling-transparency (window self)) ceiling-height)
                (glscalef 1s0 -1s0 1s0)
                (draw-ceiling-quad (ceiling-transparency (window self)) (- ceiling-height (* 2 (value (view-named (Window self) "z_slider")) ))))))
           (cube 
            (when (is-upright (inflatable-icon (view-named (Window self) 'model-editor)))
              (glTranslatef 0.0s0 0.5s0 0.0s0))
+           (glTranslatef 0.0s0 -0.5s0 0.5s0)
            ;(glTranslatef 0.0s0  (Value (view-named (Window self) "z_slider")) 0.0s0)
            ;;top
            (draw-ceiling-quad (ceiling-transparency (window self)) ceiling-height)
@@ -652,16 +667,20 @@
           (t 
            (if (is-upright (inflatable-icon (view-named (Window self) 'model-editor)))
              (progn
-               (glTranslatef 0.0s0 1.0s0 0.0s0)
-               (glRotatef 90s0 1.0s0 0.0s0  0.0s0 )
+               ;(glTranslatef 0.0s0 1.0s0 0.0s0)
+               (glTranslatef 0.0s0 0.0s0 1.0s0)
+               (glscalef 1s0 -1s0 1s0)
                (draw-ceiling-quad (ceiling-transparency (window self)) (+ 0.0  (-  ceiling-height z-offset))))
-             (draw-ceiling-quad (ceiling-transparency (window self)) (+ 0.0  ceiling-height)))))
+             (progn
+               (glRotatef 90s0 1.0s0 0.0s0  0.0s0 )
+               (draw-ceiling-quad (ceiling-transparency (window self)) (+ 0.0  ceiling-height))))))
         (glpopmatrix)
         (glEnable GL_DEPTH_TEST) 
         (glColor4f 1.0 1.0 1.0 1.0)))))
 
 
 (defun DRAW-CEILING-QUAD (ceiling-transparency ceiling-height)
+
   (glColor4f .5 .7 1.0 ceiling-transparency )
   (glbegin gl_quads)
   (glnormal3f 0.0 1.0 0.0)
@@ -697,15 +716,10 @@
   (declare (ignore X Y))
   (case (selected-camera-tool (window Self))
     (pan
-     (track-mouse-pan (camera Self) dx dy (if (shift-key-p) 0.01 0.05))
-     ;(unless (is-animated Self) (display Self))
-     )
+     (track-mouse-pan (camera Self) dx dy (if (shift-key-p) 0.01 0.05)))
     (zoom
-     (track-mouse-zoom (camera Self) dx dy (if (shift-key-p) 0.01 0.05))
-     ;(unless (is-animated Self) (display Self))
-     )
+     (track-mouse-zoom (camera Self) dx dy (if (shift-key-p) 0.01 0.05)))
     (t
-     
      (track-mouse-3d (camera Self) Self dx dy)))
   (unless (is-animated Self) (display Self)))
 
@@ -1134,10 +1148,17 @@
 
 
 (defmethod EDIT-ICON-CANCEL-ACTION ((Window inflatable-icon-editor-window) (Button button))
-  (close-window-with-warning Window))
+  ;(close-window-with-warning Window)
+  
+  (when (window-should-close window)
+    (stop-modal window nil))
+  
+  )
 
 
-(defmethod CLEAR-ACTION ((Window inflatable-icon-editor-window) (Button button))
+
+
+(defmethod CLEAR-ACTION ((Window inflatable-icon-editor-window) (Button bevel-button))
   (declare (ftype function execute-command))
   (let* ((Model-Editor (or (view-named window 'model-editor) (error "model editor missing")))
          (Inflatable-Icon (inflatable-icon Model-Editor)))
@@ -1161,7 +1182,6 @@
         (glDeleteTextures 1 &Tex-Id))
       (setf (texture-id Inflatable-Icon) nil))
     (Setf (pressure Inflatable-Icon) 0.0)
-    
     (setf (value (view-named window "distance-slider")) 0.00)
     (setf (distance (inflatable-icon Model-Editor)) 0.0)
     (setf (value (view-named window "ceiling_slider")) 1.0)
@@ -1221,8 +1241,12 @@
     ;; finalize geometry
     (when (save-button-closure-action window)
       (funcall (save-button-closure-action window) (inflatable-icon Model-Editor))))
+  (stop-modal window nil)
+  #|
   (when close-window 
-    (window-close window)))
+    (window-close window))
+  |#
+  )
 
 
 ;___________________________________________
@@ -1236,6 +1260,24 @@
               (> Time (+ Now Ticks Ticks)))    ;; timer is out of synch WAY ahead
       (setf (getf (timer-triggers Self) Ticks) (+ Now Ticks))
       t)))
+
+
+;___________________________________________
+; Modal Methods                            |
+;___________________________________________
+
+
+(defmethod READ-RETURN-VALUE ((Self inflatable-icon-editor-window))
+  ;; We want to return the actual window instead of the selected button so that we can create a window and show it later.
+  self)
+
+(defmethod BEFORE-GOING-MODAL ((Self inflatable-icon-editor-window))
+  (display (view-named self "icon-editor")))
+
+
+(defmethod STOP-MODAL :after ((Self inflatable-icon-editor-window) Return-Value)
+  (declare (ignore return-value))
+  (setf *open-icon-window* nil))
 
 ;___________________________________________
 ; Open & New                                |
@@ -1330,7 +1372,8 @@
      (display Window)
      (make-key-window Window )
      (initialize-gui-components Window (inflatable-icon Inflated-Icon-Editor))
-     Window)))
+     (setf *open-icon-window* window)
+     (show window))))
 
 
 (defmethod INITIALIZE-GUI-COMPONENTS ((Self inflatable-icon-editor-window) Inflatable-Icon)
@@ -1363,15 +1406,14 @@
       ;; update label
       (setf (text Text-View) (format nil "~A" (Smooth inflatable-icon)))
       (display Text-View))
-  
   (when (equal (surfaces Inflatable-Icon) 'front)
     (disable (view-named self "distance-slider")))
-  
   (set-selected-item-with-title (view-named self "surfaces")  (string-downcase(substitute #\space #\-  (string (surfaces Inflatable-Icon)) :test 'equal)))
   (when (is-flat Inflatable-icon)
     (disable (view-named self "flatten-button")))
-  (if (is-upright Inflatable-Icon)
-      (enable (view-named self "upright"))))
+  (when (is-upright Inflatable-Icon)
+    (enable (view-named self "upright"))
+    (turn-on (view-named self "upright"))))
   
  
 #| Examples:
