@@ -71,6 +71,45 @@
         (draw Opengl-View)))))
 
 
+(objc:defmethod (#/dealloc :void) ((Self native-opengl-view))
+  (#/release (#/openGLContext self))
+  (call-next-method))
+
+
+#|
+(objc:defmethod (#/finalize :void) ((Self native-opengl-view))
+  (print "finalzie")
+  (print (type-of (lui-view self)))
+  (call-next-method))
+
+
+
+(objc:defmethod (#/retain :id) ((Self native-opengl-view))
+  (print "retain")
+  (print (type-of (lui-view self)))
+  ;(ccl:print-call-history :start-frame-number 1 :detailed-p nil)
+  (print (ccl:print-call-history :start-frame-number 1 :detailed-p nil))
+  (prog1
+      (call-next-method)
+    (print (#/retainCount self)))
+  )
+
+(objc:defmethod (#/autorelease :id) ((Self native-opengl-view))
+  (print (type-of (lui-view self)))
+  (print "autorelease_+_+_+_+_+_+_+_+_+_+_+_+__+_+_+_+_")
+ (prog1
+      (call-next-method)
+    (print (#/retainCount self))))
+
+
+(objc:defmethod (#/release :id) ((Self native-opengl-view))
+  (print "release")
+  (print (type-of (lui-view self)))
+  (prog1
+      (call-next-method)
+    (print (#/retainCount self))))
+
+|#
 #+cocotron
 (defmethod COCOTRON-JUST-IN-TIME-VIEWPORT-INITIALIZATION ((self opengl-view))
   (when (first-time-drawing self)
@@ -110,51 +149,52 @@
   (call-next-method)
   (view-did-move-to-window (lui-view self)))
   
-
+ 
 (defmethod MAKE-NATIVE-OBJECT ((Self opengl-view))
   (in-main-thread ()
-    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
-      (let ((Pixel-Format (#/initWithAttributes: 
-                           (#/alloc ns:NS-OpenGL-Pixel-Format) 
-                           (if (full-scene-anti-aliasing Self)
-                             ;;--- Can't use conditionals inside {} (Sigh)
-                             #+cocotron {#$NSOpenGLPFAColorSize 32 
-                             #$NSOpenGLPFADoubleBuffer 
-                             #$NSOpenGLPFADepthSize 32
-                             0}
-                             #-cocotron {#$NSOpenGLPFAColorSize 32 
-                             #$NSOpenGLPFADepthSize 32
-                             #$NSOpenGLPFASampleBuffers 1
-                             #$NSOpenGLPFASamples 4
-                             #$NSOpenGLPFANoRecovery
-                             0}
-                             ;;--- Can't use conditionals inside {} (Sigh)
-                             #+cocotron {#$NSOpenGLPFAColorSize 32 
-                             #$NSOpenGLPFADoubleBuffer 
-                             #$NSOpenGLPFADepthSize 32
-                             0}
-                             #-cocotron {#$NSOpenGLPFAColorSize 32 
-                             #$NSOpenGLPFADepthSize 32
-                             #$NSOpenGLPFANoRecovery
-                             0}))))
-        (unless Pixel-Format (error "Bad OpenGL pixelformat"))
-        (let ((Native-Control (make-instance 'native-opengl-view
-                                :with-frame Frame
-                                :pixel-format Pixel-Format
-                                :lui-view Self)))
-          ;; sharing  OpenGL context?
-          (let ((View-to-Share (or (and (use-global-glcontext Self) (shared-opengl-view))
-                                   (share-glcontext-of Self))))
-            (when View-to-Share
-              (let ((glContext 
-                     (#/initWithFormat:shareContext: 
-                      (#/alloc ns:ns-opengl-context);(#/openGLContext Native-Control)
-                      (#/pixelFormat native-control) ;; redundant but should be OK
-                      (#/openGLContext (native-view View-to-Share)))))
-                (unless glContext (error "cannot share OpenGLContext of view ~A" View-to-Share))
-                (#/setOpenGLContext: native-control glContext))))
-          (#/release Pixel-Format)
-          Native-Control)))))
+  (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+    (let ((Pixel-Format (#/initWithAttributes: 
+                          (#/alloc ns:NS-OpenGL-Pixel-Format) 
+                          (if (full-scene-anti-aliasing Self)
+			    ;;--- Can't use conditionals inside {} (Sigh)
+                            #+cocotron {#$NSOpenGLPFAColorSize 32 
+                                        #$NSOpenGLPFADoubleBuffer 
+                                        #$NSOpenGLPFADepthSize 32
+                                        0}
+                            #-cocotron {#$NSOpenGLPFAColorSize 32 
+                                        #$NSOpenGLPFADepthSize 32
+                                        #$NSOpenGLPFASampleBuffers 1
+                                        #$NSOpenGLPFASamples 4
+                                        #$NSOpenGLPFANoRecovery
+                                        0}
+                            ;;--- Can't use conditionals inside {} (Sigh)
+                            #+cocotron {#$NSOpenGLPFAColorSize 32 
+                                        #$NSOpenGLPFADoubleBuffer 
+                                        #$NSOpenGLPFADepthSize 32
+                                        0}
+                            #-cocotron {#$NSOpenGLPFAColorSize 32 
+                                        #$NSOpenGLPFADepthSize 32
+                                        #$NSOpenGLPFANoRecovery
+                                        0}))))
+      (unless Pixel-Format (error "Bad OpenGL pixelformat"))
+      (let ((Native-Control   
+             (make-instance 'native-opengl-view
+               :with-frame Frame
+               :pixel-format Pixel-Format
+               :lui-view Self)))
+        ;; sharing  OpenGL context?
+        (let ((View-to-Share (or (and (use-global-glcontext Self) (shared-opengl-view))
+                                 (share-glcontext-of Self))))
+          (when View-to-Share
+            (let ((glContext 
+                   (#/initWithFormat:shareContext: 
+                    (#/alloc ns:ns-opengl-context);(#/openGLContext Native-Control)
+                    (#/pixelFormat native-control) ;; redundant but should be OK
+                    (#/openGLContext (native-view View-to-Share)))))
+              (unless glContext (error "cannot share OpenGLContext of view ~A" View-to-Share))
+              (#/setOpenGLContext: native-control glContext))))
+        (#/release Pixel-Format)
+        Native-Control)))))
 
 
 (defmethod DISPLAY ((Self opengl-view))  
