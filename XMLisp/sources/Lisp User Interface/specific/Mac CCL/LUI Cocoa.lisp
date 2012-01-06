@@ -1,4 +1,4 @@
-;;; MAC CCL Windoinvow
+ ;;; MAC CCL Windoinvow
 ;;; LUI: Lisp User Interface
 ;;; Andri Ioannidou and Alexander Repenning
 ;;; Version: 0.2 11/28/08
@@ -153,6 +153,12 @@
 
 (defmethod ADD-SUBVIEW ((View subview-manager-interface) (Subview subview-manager-interface)) 
   (#/addSubview: (native-view View) (native-view Subview))
+  ;; the subview will now be retained by the view so we can release the subview.
+  ;; This will be a problem if we call add-subview on an object we don't own.  I.E. if the subview was not created using alloc, new..., copy..., mutableCopy... 
+  ;; then this release will likely cause a crash
+  #-cocotron
+  ;;For now this causes a crash windows, so until Christoper Lloyd fixes this we will have to live the context leak on Windows.
+  (#/release (native-view Subview))
   (setf (part-of Subview) View))
   
 
@@ -174,20 +180,22 @@
 
 
 (defmethod MAP-SUBVIEWS ((Self subview-manager-interface) Function &rest Args)
-  (let ((Subviews (#/subviews (native-view Self))))
-    (dotimes (i (#/count Subviews))
-      (apply Function (lui-view (#/objectAtIndex: Subviews i)) Args))))
+  (ccl::with-autorelease-pool
+    (let ((Subviews (#/subviews (native-view Self))))
+      (dotimes (i (#/count Subviews))
+        (apply Function (lui-view (#/objectAtIndex: Subviews i)) Args)))))
 
 
 (defmethod SUBVIEWS ((Self subview-manager-interface))
-  (when (native-view Self)              ;Allows tracing MAKE-NATIVE-OBJECT
-    (let* ((Subviews (#/subviews (native-view Self)))
-           (Count (#/count Subviews))
-           (Subview-List nil))
-      (dotimes (i Count Subview-List)
-        ;; If the subview does not have a slot matching lui-view it will trigger an error, so ignore that subview and don't push it.  
-        (when (slot-exists-p (#/objectAtIndex: Subviews (- Count 1 i)) 'lui-view)
-          (push (lui-view (#/objectAtIndex: Subviews (- Count 1 i))) Subview-List))))))
+  (ccl::with-autorelease-pool
+    (when (native-view Self)              ;Allows tracing MAKE-NATIVE-OBJECT
+      (let* ((Subviews (#/subviews (native-view Self)))
+             (Count (#/count Subviews))
+             (Subview-List nil))
+        (dotimes (i Count Subview-List)
+          ;; If the subview does not have a slot matching lui-view it will trigger an error, so ignore that subview and don't push it.  
+          (when (slot-exists-p (#/objectAtIndex: Subviews (- Count 1 i)) 'lui-view)
+            (push (lui-view (#/objectAtIndex: Subviews (- Count 1 i))) Subview-List)))))))
 
 
 (defmethod SUPERVIEW ((Self subview-manager-interface))
@@ -225,8 +233,9 @@
 
 
 (defmethod SET-POSITION :after ((Self view) X Y)
-  (ns:with-ns-point (Point X Y)
-    (#/setFrameOrigin: (native-view Self) Point)))
+  (ccl::with-autorelease-pool
+    (ns:with-ns-point (Point X Y)
+      (#/setFrameOrigin: (native-view Self) Point))))
 
 
 (defmethod MAKE-NATIVE-OBJECT ((Self view))
@@ -251,10 +260,11 @@
 
 
 (defmethod WINDOW ((Self view)) 
+  (ccl::with-autorelease-pool
   (let ((ns-window (#/window (native-view Self))))
     (if (%null-ptr-p ns-window)
       (return-from WINDOW nil)
-      (lui-window ns-window))))
+      (lui-window ns-window)))))
 
 
 (defvar *View-Full-Screen-Restore-Sizes* (make-hash-table))
@@ -693,14 +703,6 @@
   )
 
 
-#| 
-(objc:defmethod (#/displayIfNeeded :void) ((Self native-window))
-  (call-next-method)
-  (display (lui-window Self))
-  (print "displayIfNeeded"))
-
-|#
-
 ;__________________________________
 ; Window-delegate                   |
 ;__________________________________/
@@ -1006,23 +1008,23 @@
   Return a LUI window at screen position x, y.
   If there is no window return nil
   If there are multiple windows return the topmost one"
-  (multiple-value-bind (x y) (lui-screen-coordinate screen-x screen-y)
-    (let ((Lui-Windows nil)
-          (All-Windows (#/windows (#/sharedApplication ns::ns-application))))
-      (dotimes (i (#/count All-Windows) (first (sort Lui-Windows #'< :key #'(lambda (w) (ordered-window-index (native-window w))))))
-        (let ((Window (#/objectAtIndex: All-Windows i)))
-          (when (and 
-                 (#/isVisible Window)
-                 (slot-exists-p Window 'lui-window)
-                 (if Type 
-                   (subtypep (type-of (lui-window Window)) (find-class Type))
-                   t))
-            (let ((Frame (#/frame Window)))
-              (when (and (<= (pref Frame <NSR>ect.origin.x) x (+ (pref Frame <NSR>ect.origin.x) (pref Frame <NSR>ect.size.width)))
-                         (<= (pref Frame <NSR>ect.origin.y) y (+ (pref Frame <NSR>ect.origin.y) (pref Frame <NSR>ect.size.height))))
-                (push (lui-window Window) Lui-Windows)))))))))
+  (ccl::with-autorelease-pool
+    (multiple-value-bind (x y) (lui-screen-coordinate screen-x screen-y)
+      (let ((Lui-Windows nil)  
+            (All-Windows (#/windows (#/sharedApplication ns::ns-application))))
+        (dotimes (i (#/count All-Windows) (first (sort Lui-Windows #'< :key #'(lambda (w) (ordered-window-index (native-window w))))))
+          (let ((Window (#/objectAtIndex: All-Windows i)))
+            (when (and 
+                   (#/isVisible Window)
+                   (slot-exists-p Window 'lui-window)
+                   (if Type 
+                     (subtypep (type-of (lui-window Window)) (find-class Type))
+                     t))
+              (let ((Frame (#/frame Window)))
+                (when (and (<= (pref Frame <NSR>ect.origin.x) x (+ (pref Frame <NSR>ect.origin.x) (pref Frame <NSR>ect.size.width)))
+                           (<= (pref Frame <NSR>ect.origin.y) y (+ (pref Frame <NSR>ect.origin.y) (pref Frame <NSR>ect.size.height))))
+                  (push (lui-window Window) Lui-Windows))))))))))
 
-;; (find-window-at-screen-position 10 100)
 
 ;__________________________________
 ; NATIVE-WINDOW-VIEW                |
@@ -2584,7 +2586,6 @@
   "This mthod will increment the determinate progress indicator by the given amount double"
   (#/incrementBy: (native-view self) double))
 
-       
 ;__________________________________
 ; IMAGE                            |
 ;__________________________________/
