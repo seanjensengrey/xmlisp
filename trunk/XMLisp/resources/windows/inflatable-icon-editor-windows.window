@@ -32,27 +32,28 @@
      </row>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="Ceiling"/>
-        <slider tooltip="Ceiling slider: create a plane that defines the maximum altitute for the inflation. Ceilings can be defined for the entire icon or only for a selection." action="adjust-ceiling-action" name="ceiling_slider" value="1.0" max-value="2.0" flex="1"/>
+        <slider tooltip="Ceiling slider: create a plane that defines the maximum altitute for the inflation. Ceilings can be defined for the entire icon or only for a selection." action="adjust-ceiling-action" name="ceiling_slider" value="1.0" max-value="2.0" flex="1" tick-marks="2"/>
         <label name="ceilingtext" align="right" width="38" text="1.0"/>
       </row>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="Noise"/>
-        <slider tooltip="Noise slider: add noise to the inflation for the entire icon or area defined in the 2D selection." action="adjust-noise-action" name="noise_slider" max-value="0.2" flex="1" />
+        <slider tooltip="Noise slider: add noise to the inflation for the entire icon or area defined in the 2D selection." action="adjust-noise-action" name="noise_slider" max-value="0.2" flex="1" tick-marks="2"/>
         <label name="noise-text" align="right" width="38" text="0.0"/>
       </row>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="Smooth"/>
-        <slider tooltip="Smoothness slider: ???smoothen out the noise in discrete steps???" action="adjust-smooth-action"  max-value="5" flex="1"  name="smooth_slider"/>
+        <slider tooltip="Smoothness slider: ???smoothen out the noise in discrete steps???" action="adjust-smooth-action"  max-value="5" flex="1"  name="smooth_slider" tick-marks="2"/>
         <label name="smooth-text" align="right" width="38" text="0.0"/>
       </row>
       <row align="center" minimize="vertical" valign="middle">
-        <bevel-button tooltip="Turn your inflated icon into a flat one. Flat icons will render much faster." name="flatten-button" text="Flatten" width="64" height="24" action="edit-icon-flatten-action"/>
+        <bevel-button tooltip="Clear the icon in the 2D Editor." text="Clear" width="64" height="32" action="CLEAR-ACTION" />
+        <bevel-button tooltip="Turn your inflated icon into a flat one. Flat icons will render much faster." name="flatten-button" text="Flatten" width="64" height="32" action="edit-icon-flatten-action"/>
       </row>
       <spacer height="15"/>
       <label width="65" text="Geometry" align="center"/>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="z offset"/>
-        <slider tooltip="Z-offset: distance from the grid in the world at which the shape will be drawn." action="adjust-z-offset-action" min-value="-1.0" max-value="1.0" flex="1" name="z_slider"/>
+        <slider tooltip="Z-offset: distance from the grid in the world at which the shape will be drawn." action="adjust-z-offset-action" min-value="-1.0" max-value="1.0" flex="1" name="z_slider" tick-marks="2"/>
         <label name="z-offset-text" align="right" width="38" text="0.0"/>
       </row>
       <check-box tooltip="Click to make the 3D icon upright." name="upright" text="upright" action="upright-action"/>
@@ -68,7 +69,7 @@
       </row>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="distance"/>
-        <slider tooltip="Distance: use in conjunction with the Surfaces option to put some distance between the front and back surfaces (whether connected or unconnected) and the cube surfaces." action="adjust-distance-action" min-value="-.2" max-value="1.0" flex="1" name="distance-slider"/>
+        <slider tooltip="Distance: use in conjunction with the Surfaces option to put some distance between the front and back surfaces (whether connected or unconnected) and the cube surfaces." action="adjust-distance-action" min-value="-.2" max-value="1.0" flex="1" name="distance-slider" tick-marks="2"/>
         <label name="distance-text" align="right" width="38" text="0.0"/>
       </row>
     </column>
@@ -84,8 +85,9 @@
   <spacer height="15"/>
   
   <row minimize="vertical" align="right">
-    <button tooltip="Clear the icon in the 2D Editor." text="Clear" width="70" action="CLEAR-ACTION" />
+    <button text="Cancel" action="edit-icon-cancel-action"/>
     <button tooltip="Save the inflatable icon and close the editor. This will also update shapes of this type in the world, if any." text="Save" width="70" action="EDIT-ICON-SAVE-ACTION" default-button="true"/>
+    <spacer width="22"/>
   </row>
   </column>
 </inflatable-icon-editor-window>
