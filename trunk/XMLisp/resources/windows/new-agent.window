@@ -37,12 +37,19 @@
           <cube texture="crate.png"/>
         </3d-agent-preview-view>
       </column>
+      <spacer width="4"/>
+      <image-button-cluster>
+        <spacer height="15"/>
+        <image-button tooltip="Pan: click and drag to move the camera horizontally in the 3D Editor." name="pan button" action="camera-pan-action" image="pan-button.png"/> 
+        <image-button tooltip="Zoom: click and drag to zoom in and out, that is move the camera closer or further away from the inflatable icon in the 3D Editor." name="zoom button" action="camera-zoom-action" image="zoom-button.png"/> 
+        <image-button tooltip="Rotate: click and drag to rotate the camera around the inflatable icon in the 3D Editor." name="rotate button" action="camera-rotate-action" image="rotate-button.png"/> 
+      </image-button-cluster>
     </row>
     <spacer height="10"/>
     <row valign="middle" width="700"  minimize="vertical">
       <spacer width="85"/>
       <label align="left" name="explanation-text" width="350" text=""/>
-      <spacer width="398"/>
+      <spacer width="378"/>
       <button text="Cancel" action="cancel-action"/>
       <button text="OK" action="OK-action" default-button="true" start-disabled="true" name="ok-button"/>
     </row>
