@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<edit-shape-window title="Agent Shape Browser" width="1000" height="360">
+<edit-shape-window title="Agent Shape Browser" width="1022" height="360">
   <column align="stretch" valign="stretch">
     <row align="stretch" valign="stretch" vflex="1">
       <column width="90" vflex="1" align="stretch" valign="stretch" > 
@@ -22,7 +22,6 @@
             <node node-name="Tile" node-path="lui:resources;Shape Textures;"  image-path="lui:resources;images;tile.gif" allowed-file-types="directories">
               <node node-name="Custom Texture..."/>
             </node>
-
             <node node-name="Inflatable Icon" node-path="lui:resources;templates;shapes;inflatable icons;" image-path="lui:resources;images;ladybug.gif" allowed-file-types="directories"/>
           </browser>
         </column>
@@ -33,6 +32,13 @@
         <3d-agent-preview-view vflex="1"  name="shape-preview">
         </3d-agent-preview-view>
       </column>
+      <spacer width="4"/>
+      <image-button-cluster>
+        <spacer height="15"/>
+        <image-button tooltip="Pan: click and drag to move the camera horizontally in the 3D Editor." name="pan button" action="camera-pan-action" image="pan-button.png"/> 
+        <image-button tooltip="Zoom: click and drag to zoom in and out, that is move the camera closer or further away from the inflatable icon in the 3D Editor." name="zoom button" action="camera-zoom-action" image="zoom-button.png"/> 
+        <image-button tooltip="Rotate: click and drag to rotate the camera around the inflatable icon in the 3D Editor." name="rotate button" action="camera-rotate-action" image="rotate-button.png"/> 
+      </image-button-cluster>
     </row>
     <spacer height="10"/>
     <row valign="middle" width="700"  minimize="vertical">
