@@ -6,9 +6,9 @@
 ;*********************************************************************
 ;* Author       : Alexander Repenning, alexander@agentsheets.com     *
 ;*                http://www.agentsheets.com                         *
-;* Copyright    : (c) 1996-2011, AgentSheets Inc.                    *
+;* Copyright    : (c) 1996-2012, AgentSheets Inc.                    *
 ;* Filename     : XMLisp.lisp                                        *
-;* Last Update  : 05/19/11                                           *
+;* Last Update  : 01/07/12                                           *
 ;* Version      :                                                    *
 ;*    1.0       : 09/19/04                                           *
 ;*    1.1       : 09/30/04 encode/decode strings in XML              *
@@ -146,7 +146,7 @@
           xml-printable-as-attribute-value-p xml-printable-as-subelement-p map-object print-slot-with-name-p
           print-slot-value-as-attribute print-slot-name-value-type-as-attribute print-slot-value-as-subelement print-slots
           print-typed-attribute-value print-typed-subelement-value
-          print-default-value-attributes-p
+          print-default-value-attributes-p print-default-value-attribute-p
           slot-name->attribute-name
           synoptic-xml-object-indentity-clues
           ;; reading
@@ -165,11 +165,12 @@
           ;; MOP goodies
           most-specific-class
           ;; names
-          xml-tag-name-symbol
+          xml-tag-name-symbol plural-name
           ;; variables
           *xmlisp-packages*
           *fallback-class-name-for-element-name-hook*
-          *XMLisp-Print-Synoptic*
+          *XMLisp-Print-Synoptic* *XMLisp-Pretty-Print*
+          *XMLisp-Default-Case-Converter*
           ;; types
           path string-or-null integer-or-null
           ))
@@ -180,6 +181,10 @@
 (defvar *XMLisp-Print-Verbose* nil "Variable for printing debugging messages. If true, then the messages are printed. If nil, then the messages are not printed.")
 
 (defvar *XMLisp-Print-Synoptic* nil "If non nil use an abreviated, but non readable, version of XML serialization")
+
+(defvar *XMLisp-Pretty-Print* t "If non nil print with proper indentation")
+
+(defvar *XMLisp-Default-Case-Converter* #'string-downcase "If non nil will be called instead of converting the case based on *readtable* case")
 
 (defparameter *Fallback-Class-Name-For-Element-Name-Hook* nil "Function to call to get element name if there is no class to match")
 
@@ -681,6 +686,8 @@
 (defgeneric PRINT-DEFAULT-VALUE-ATTRIBUTES-P (Xml-Serializer)
   (:documentation "If true print attributes that have same value as :initform. Good idea for large sets with highly redundant information. Bad idea if value if :initform changes later"))
 
+(defgeneric PRINT-DEFAULT-VALUE-ATTRIBUTE-P (Xml-Serializer Slot)
+  (:documentation "If true print attribute that has same value as :initform. Can be used in the case a specific attribute of an XML element is wanted to be print regardsless of the value."))
 
 (defgeneric SYNOPTIC-XML-OBJECT-INDENTITY-CLUES (Xml-Serializer)
   (:documentation "String that could reveal the identity of an XML object"))
@@ -756,7 +763,7 @@
 
 
 (defmethod XML-TAG-NAME-STRING ((Self xml-serializer))
-  (string-downcase (symbol-name (xml-tag-name-symbol Self))))
+  (xmlisp-symbol-name (symbol-name (xml-tag-name-symbol Self))))
 
 
 ;; map objects into their components
@@ -845,6 +852,11 @@
 (defmethod PRINT-DEFAULT-VALUE-ATTRIBUTES-P ((Self xml-serializer))
   ;; lean towards sparse representations
   nil) 
+
+(defmethod PRINT-DEFAULT-VALUE-ATTRIBUTE-P ((Self xml-serializer) Slot)
+  (declare (ignore Slot))
+  ;; lean towards sparse representations
+  nil)
 
 ;; finished reading
 
@@ -1284,8 +1296,18 @@
 ; Symbol functions            |
 ;_____________________________
 
-(defun XMLISP-SYMBOL-NAME (Symbol)
-  (string-downcase (symbol-name Symbol)))
+(defun XMLISP-SYMBOL-NAME (Symbol-Name)
+  (if *XMLisp-Default-Case-Converter*
+      (funcall *XMLisp-Default-Case-Converter* Symbol-Name)
+      (ecase (readtable-case *readtable*)
+        (:upcase (string-downcase Symbol-Name))
+        (:downcase (string-downcase Symbol-Name))
+        (:preserve Symbol-Name)
+        (:invert
+         (cond
+           ((every #'upper-case-p Symbol-Name) (string-downcase Symbol-Name))
+           ((every #'lower-case-p Symbol-Name) (string-upcase Symbol-Name))
+           (t Symbol-Name))))))
 
 
 (defun READTABLE-STRING (Name) "
@@ -1948,12 +1970,13 @@
 
 
 (defun PRINT-XML-INDENT (Stream &optional (Level *XML-Tab-Level*))
-  (dotimes (I Level)
-    (princ "  " Stream)))
+  (when *XMLisp-Pretty-Print*
+    (dotimes (I Level)
+      (princ "  " Stream))))
 
 
 (defmethod PRINT-SLOT-NAME-VALUE-TYPE-AS-ATTRIBUTE ((Self xml-serializer) Name Value Type Stream)
-  (format Stream " ~A=" (string-downcase (symbol-name Name)))
+  (format Stream " ~A=" (xmlisp-symbol-name (symbol-name Name)))
   (print-typed-attribute-value Value Type Stream))
 
 
@@ -1971,6 +1994,7 @@
     (let ((Value (slot-value Self (slot-definition-name slot-definition))))
       ;; make sure there is a meaninful way to print the value
       (when (or (print-default-value-attributes-p Self)
+                (print-default-value-attribute-p Self (slot-definition-name slot-definition))
                 (not (equal Value (slot-definition-initform slot-definition))))
         (print-slot-value-as-attribute Self slot-definition Stream)))))
 
@@ -2024,7 +2048,7 @@
 (defmethod PRINT-ACCESSOR-VALUES-AS-ATTRIBUTES ((Self xml-serializer) Accessor-Values Stream)
   (dolist (Accessor-Value Accessor-Values)
     ;; we have little meta information: no type, initform etc.
-    (format Stream " ~A=" (string-downcase (first Accessor-Value)))
+    (format Stream " ~A=" (xmlisp-symbol-name (first Accessor-Value)))
     (print-typed-attribute-value (rest Accessor-Value) t Stream)))
 
 
