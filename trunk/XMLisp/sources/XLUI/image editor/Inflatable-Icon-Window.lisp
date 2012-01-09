@@ -35,7 +35,7 @@
 (defvar *transparent-ceiling-update-lock* nil "Lock used to prevent annimation of ceilling fading to interfere with closing window")
                          
 
-(defclass INFLATABLE-ICON-EDITOR-WINDOW (dialog-window)
+(defclass INFLATABLE-ICON-EDITOR-WINDOW (application-window)
   ((smoothing-cycles :accessor smoothing-cycles :initform 0 :initarg :smoothing-cycles)
    (selected-tool :accessor selected-tool :initform nil :type symbol :initarg :selected-tool :documentation "the name of the currently selected tool")
    (selected-camera-tool :accessor selected-camera-tool :initform nil :type symbol :initarg :selected-camera-tool :documentation "the name of the currently selected camera tool")
@@ -1149,11 +1149,11 @@
 
 
 (defmethod EDIT-ICON-CANCEL-ACTION ((Window inflatable-icon-editor-window) (Button button))
-  ;(close-window-with-warning Window)
-  
+  (window-close Window)
+  #|
   (when (window-should-close window)
     (stop-modal window nil))
-  
+  |#
   )
 
 
@@ -1242,11 +1242,11 @@
     ;; finalize geometry
     (when (save-button-closure-action window)
       (funcall (save-button-closure-action window) (inflatable-icon Model-Editor))))
-  (stop-modal window nil)
-  #|
+  ;(stop-modal window nil)
+  
   (when close-window 
     (window-close window))
-  |#
+  
   )
 
 
