@@ -494,7 +494,8 @@
   ((inflatable-icon :accessor inflatable-icon :initarg :inflatable-icon))
   (:default-initargs
     :use-global-glcontext t
-    :inflatable-icon (make-instance 'inflatable-icon :auto-compile nil))
+    :inflatable-icon (make-instance 'inflatable-icon :auto-compile nil)
+    :reuse-opengl-context-p t)
   (:documentation "3d inflated icon editor"))
 
 
