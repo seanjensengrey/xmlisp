@@ -163,8 +163,9 @@
    (is-vertical-line-on :accessor is-vertical-line-on :initform nil :documentation "True if vertical line is on, false oterhwise")
    (tolerance :accessor tolerance :initform 0 :documentation "This is the maximum allowed tolerance with the magic wand")
    (pixels-visited-by-flood-fill :accessor pixels-visited-by-flood-fill :initform nil :documentation "a list of (col row) pairs visited by the flood-fill algorithm")
-   (flood-fill-queue :accessor flood-fill-queue :initform nil)
-   )
+   (flood-fill-queue :accessor flood-fill-queue :initform nil))
+  (:default-initargs
+      :reuse-opengl-context-p t)
   (:documentation "Simple image editor."))
 
 
