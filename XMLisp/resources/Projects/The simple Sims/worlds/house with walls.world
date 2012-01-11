@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
-<world width="1610" height="528">
+<world width="1069" height="322">
   <light-source x="10.0" y="5.0" z="5.0" name="NIL">
     <ambient red="0.0" green="0.0" blue="0.0"/>
     <diffuse red="1.0" green="1.0" blue="1.0"/>
     <specular red="1.0" green="1.0" blue="1.0"/>
   </light-source>
   <background-color red="0.0" green="0.0" blue="0.0"/>
-  <camera eye-x="5.657097429699689D0" eye-y="0.07546986902998842D0" eye-z="8.651383361809755D0" center-x="5.565581321716309D0" center-y="5.561300754547119D0" center-z="-0.4999106526374817D0" up-x="0.004091221157190586D0" up-y="10.22275723952279D0" up-z="0.4091079539175446D0" fovy="60.0D0" aspect="3.0492424242424243D0" near="0.004999999888241291D0" far="2000.0D0" azimuth="0.010000012814998627D0" zenith="-0.5399999897927046D0"/>
+  <camera eye-x="5.395574023156781" eye-y="-0.10390633351382039" eye-z="8.540300849821538" center-x="5.565581321716309" center-y="5.561300754547119" center-z="-0.4999106526374817" up-x="0.30633011131324384" up-y="10.207935380436808" up-z="0.6134890104915716" fovy="60.0" aspect="3.3198757763975157" near="0.004999999888241291" far="2000.0" azimuth="0.03000001423060894" zenith="0.5600000787526369"/>
   <agent-matrix name="AGENT-MATRIX20100" rows="12" columns="11" layers="1" is-grid-visible="false">
     <plotter_agent col="5" shape-name="PLOTTER" x-turn="0.5" y-turn="0.5"/>
     <carpet_agent row="1" shape-name="CARPET" attributes="(F 0.016481806)" x-turn="0.5" y-turn="0.5"/>

@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
-<world width="1610" height="528">
+<world width="1069" height="322">
   <light-source x="10.0" y="10.4" z="10.0" name="NIL">
     <ambient red="0.0" green="0.0" blue="0.0"/>
     <diffuse red="1.0" green="1.0" blue="1.0"/>
     <specular red="1.0" green="1.0" blue="1.0"/>
   </light-source>
   <background-color red="0.0" green="0.0" blue="0.0"/>
-  <camera eye-x="6.0000001303851604D0" eye-y="6.050000105053186D0" eye-z="14.20000034570694D0" center-x="6.0000001303851604D0" center-y="6.050000105053186D0" center-z="0.0D0" up-x="0.0D0" up-y="1.0D0" up-z="0.0D0" fovy="60.0D0" aspect="3.0492424242424243D0" near="0.005D0" far="2000.0D0" azimuth="0.0D0" zenith="0.0D0"/>
+  <camera eye-x="6.0000001303851604" eye-y="4.915211342914366" eye-z="14.154584567672787" center-x="6.0000001303851604" center-y="6.050000105053186" center-z="0.0" up-x="-1.522521558115028E-15" up-y="12.432331992988239" up-z="-5.551938069927708" fovy="60.0" aspect="3.3198757763975157" near="0.005" far="2000.0" azimuth="0.0" zenith="0.08000000566244125"/>
   <agent-matrix name="AGENT-MATRIX20100" rows="12" columns="11" layers="1" is-grid-visible="false">
     <plotter_agent col="5" shape-name="PLOTTER" x-turn="0.5" y-turn="0.5"/>
     <carpet_agent row="1" shape-name="CARPET" attributes="(F 0.0)" x-turn="0.5" y-turn="0.5"/>

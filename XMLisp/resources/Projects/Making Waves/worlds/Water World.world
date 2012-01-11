@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<world width="890" height="252">
+<world width="990" height="252">
   <background-color red="0.0" green="0.0" blue="0.0"/>
-  <camera eye-x="9.086654383755139D0" eye-y="-10.184994855268636D0" eye-z="13.600347045799863D0" center-x="9.086654383755139D0" center-y="7.2377944230789115D0" center-z="2.609149255525985D0" up-x="0.0D0" up-y="17.2579900854018D0" up-z="9.608143372215471D0" fovy="60.0D0" aspect="3.5317460317460316D0" near="0.005D0" far="2000.0D0" azimuth="0.0D0" zenith="-1.0080000460147858D0"/>
+  <camera eye-x="9.409710568122456" eye-y="-10.907503405045421" eye-z="10.569423153699724" center-x="9.78265439585488" center-y="7.737200303053637" center-z="1.8175118400964363" up-x="0.3187211976031097" up-y="15.933933887394993" up-z="11.66888205952905" fovy="60.0" aspect="3.9285714285714284" near="0.005" far="2000.0" azimuth="0.020000001415610313" zenith="1.132000083103776"/>
   <agent-matrix name="AGENT-MATRIX11508" rows="20" columns="20" layers="1" is-grid-visible="false">
     <ground_agent shape-name="GROUND" attributes="(HEIGHT 0)" x-turn="0.5" y-turn="0.5"/>
     <plotter_agent shape-name="PLOTTER" x-turn="0.5" y-turn="0.5"/>

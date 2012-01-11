@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
-<world width="950" height="367">
+<world width="1050" height="367">
   <background-color red="0.0" green="0.0" blue="0.0"/>
-  <camera eye-x="9.758663177490234D0" eye-y="1.0405805110931396D0" eye-z="16.03241729736328D0" center-x="9.7042236328125D0" center-y="9.25337028503418D0" center-z="-1.056430697441101D0" up-x="-0.0030102021992206573D0" up-y="18.155244827270508D0" up-z="-0.9449151158332825D0" fovy="60.0D0" aspect="2.5885558583106265D0" near="0.004999999888241291D0" far="2000.0D0" azimuth="0.003185674548149109D0" zenith="-0.4480002522468567D0"/>
-  <sky-dome pitch="-90.0" heading="-50.0" size="100.0D0" texture="skyIsland.png"/>
+  <camera eye-x="9.860403099630044" eye-y="-0.03423006527804873" eye-z="15.47226232504346" center-x="9.7042236328125" center-y="9.25337028503418" center-z="-1.056430697441101" up-x="-0.30564496737348856" up-y="18.17593800192367" up-z="0.21814904339744245" fovy="60.0" aspect="2.861035422343324" near="0.004999999888241291" far="2000.0" azimuth="-0.016814326867461205" zenith="0.5119998063892126"/>
   <agent-matrix name="AGENT-MATRIX11508" rows="20" columns="20" layers="1" is-grid-visible="false">
     <street_agent shape-name="FLOOR_TILE" attributes="(DESTINATION 0.0 TRAFFIC 0.007948289)" x-turn="0.5" y-turn="0.5"/>
     <building_agent shape-name="COMMERCIAL_CENTER" attributes="(DESTINATION 0 TRAFFIC 0.007948289)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
@@ -609,7 +608,7 @@
     <street_agent row="18" col="16" shape-name="HORIZONTAL_STREET" attributes="(DESTINATION 4.395633E-9 TRAFFIC 3.7892437)" x-turn="0.5" y-turn="0.5"/>
     <street_agent row="18" col="17" shape-name="TURN_STREET_BL" attributes="(DESTINATION 1.1739293E-9 TRAFFIC 3.7734323)" x-turn="0.5" y-turn="0.5"/>
     <car_agent row="18" col="17" shape-name="SMALL_CAR" x-turn="0.5" y-turn="0.5">
-      <agent-tracking-camera eye-x="17.667806496898578D0" eye-y="18.50806032406397D0" eye-z="0.31999993324279785D0" center-x="17.5D0" center-y="18.5D0" center-z="0.31999993324279785D0" up-x="0.0D0" up-y="0.0D0" up-z="1.0D0" fovy="100.0D0" aspect="2.5885558583106265D0" near="0.005D0" far="2000.0D0" azimuth="1.5707963267948966D0" zenith="0.04799655449487221D0" distance="0.16799997" elevation="0.29999992" camera-rotation-offset="2.75"/>
+      <agent-tracking-camera eye-x="17.667806496898578" eye-y="18.50806032406397" eye-z="0.31999993324279785" center-x="17.5" center-y="18.5" center-z="0.31999993324279785" up-x="0.0" up-y="0.0" up-z="1.0" fovy="100.0" aspect="2.861035422343324" near="0.005" far="2000.0" azimuth="1.5707963267948966" zenith="0.04799655449487221" distance="0.16799997" elevation="0.29999992" camera-rotation-offset="2.75"/>
     </car_agent>
     <street_agent row="18" col="18" shape-name="FLOOR_TILE" attributes="(DESTINATION 3.1258787E-10 TRAFFIC 2.687712)" x-turn="0.5" y-turn="0.5"/>
     <building_agent row="18" col="18" shape-name="PARKING" attributes="(DESTINATION 0 TRAFFIC 2.687712)" x-turn="0.5" y-turn="0.5"/>
@@ -662,4 +661,5 @@
     <building_agent row="19" col="19" shape-name="SKYSCRAPER" attributes="(DESTINATION 0 TRAFFIC 0.37877607)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <trafficplotter_agent row="19" col="19" shape-name="BALL" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
   </agent-matrix>
+  <sky-dome size="100.0" texture="sky_and_clouds.jpg"/>
 </world>

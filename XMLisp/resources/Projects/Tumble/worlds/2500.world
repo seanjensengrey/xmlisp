@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<world width="787" height="304">
+<world width="887" height="304">
   <background-color red="0.0" green="0.0" blue="0.0"/>
-  <camera eye-x="25.627735737266764D0" eye-y="-2.1845192659714385D0" eye-z="30.248904695322587D0" center-x="25.627735737266764D0" center-y="11.868063286584459D0" center-z="8.611784748617152D0" up-x="0.0D0" up-y="24.666948425968364D0" up-z="1.8783063324385054D0" fovy="60.0D0" aspect="2.588815789473684D0" near="0.005D0" far="2000.0D0" azimuth="0.0D0" zenith="-0.5760000199079514D0"/>
+  <camera eye-x="25.305943247571577" eye-y="-4.219414718716926" eye-z="30.043759440662775" center-x="25.627735737266764" center-y="11.868063286584459" center-z="8.611784748617152" up-x="0.508590942670697" up-y="25.42615463667459" up-z="3.6876244944576158" fovy="60.0" aspect="2.9177631578947367" near="0.005" far="2000.0" azimuth="0.020000001415610313" zenith="0.6440000645816326"/>
   <agent-matrix name="AGENT-MATRIX11508" rows="50" columns="50" layers="1">
     <agent_agent shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent col="1" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
