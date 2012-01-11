@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
-<world width="1191" height="461">
+<world width="954" height="306">
   <background-color red="0.0" green="0.0" blue="0.0"/>
-  <camera eye-x="2.659904472529888D0" eye-y="-3.2957987921889904D0" eye-z="7.831483399161776D0" center-x="2.659904472529888D0" center-y="5.0413839680496615D0" center-z="-0.4624284378795549D0" up-x="4.932008934588339D-8" up-y="10.811670303344727D0" up-z="3.202805280685425D0" fovy="60.0D0" aspect="2.58351409978308D0" near="0.004999999888241291D0" far="2000.0D0" azimuth="0.0D0" zenith="-0.7879999279975891D0"/>
+  <camera eye-x="2.9871923859220986" eye-y="-1.1201450577683365" eye-z="9.550945050881968" center-x="2.8638636773766675" center-y="5.0454636990740775" center-z="-0.4624284378795549" up-x="-0.22520207532794767" up-y="11.25859424036364" up-z="0.5860939799379263" fovy="60.0" aspect="3.1176470588235294" near="0.004999999888241291" far="2000.0" azimuth="-0.020000014454126358" zenith="0.552000142633915"/>
   <agent-matrix name="AGENT-MATRIX11237" rows="6" columns="5" layers="6" is-grid-visible="false" layer-height="1.0">
     <nebuchadnezzar_agent shape-name="NEBUCHADNEZZAR" x-turn="0.5" y-turn="0.5">
-      <agent-tracking-camera eye-x="0.5075915755913406D0" eye-y="0.15208318220912687D0" eye-z="0.9250001907348633D0" center-x="0.5D0" center-y="0.5D0" center-z="0.9250001907348633D0" up-x="0.0D0" up-y="0.0D0" up-z="1.0D0" fovy="100.0D0" aspect="2.58351409978308D0" near="0.005D0" far="2000.0D0" azimuth="1.5707963267948966D0" zenith="-1.5489797007419974D0" distance="0.34799963" elevation="0.9250002" camera-rotation-offset="-88.75"/>
+      <agent-tracking-camera eye-x="0.5075915755913406" eye-y="0.15208318220912687" eye-z="0.9250001907348633" center-x="0.5" center-y="0.5" center-z="0.9250001907348633" up-x="0.0" up-y="0.0" up-z="1.0" fovy="100.0" aspect="3.1176470588235294" near="0.005" far="2000.0" azimuth="1.5707963267948966" zenith="-1.5489797007419974" distance="0.34799963" elevation="0.9250002" camera-rotation-offset="-88.75"/>
     </nebuchadnezzar_agent>
     <counter_agent col="4" layer="5" shape-name="COUNTER" x-turn="0.5" y-turn="0.5"/>
     <matrix_agent row="1" shape-name="MATRIX" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>

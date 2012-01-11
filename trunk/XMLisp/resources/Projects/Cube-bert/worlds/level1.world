@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<world width="2560" height="1440">
+<world width="1005" height="350">
   <background-color red="0.0" green="0.0" blue="0.0"/>
-  <camera eye-x="20.352998751858152D0" eye-y="1.6849723360576547D0" eye-z="13.539723460315546D0" center-x="10.71098642251707D0" center-y="11.332805004946419D0" center-z="0.4589435695904719D0" up-x="-8.103071900890512D0" up-y="8.31464133053349D0" up-z="10.30681948124576D0" fovy="60.0D0" aspect="2.840909004211426D0" near="0.005D0" far="2000.0D0" azimuth="-0.01000002622604379D0" zenith="-1.3920001406222582D0"/>
+  <camera eye-x="20.037827894382698" eye-y="1.7142171749078923" eye-z="13.7874347006286" center-x="10.71098642251707" center-y="11.332805004946419" center-z="0.4589435695904719" up-x="-12.095059772879358" up-y="12.473396817769137" up-z="5.14697672764261" fovy="60.0" aspect="2.8714285714285714" near="0.005" far="2000.0" azimuth="-0.7700000800192357" zenith="0.7880000192672014"/>
   <agent-matrix name="AGENT-MATRIX11508" rows="20" columns="20" layers="1">
     <agent_agent row="1" col="11" shape-name="CUBE" color="E60000FF" attributes="(P 0.53820217)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <snake_agent row="1" col="11" shape-name="SNAKE" x-turn="0.5" y-turn="0.5"/>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<world width="1610" height="528">
+<world width="1069" height="322">
   <light-source x="10.0" y="5.0" z="5.0" name="NIL">
     <ambient red="0.0" green="0.0" blue="0.0"/>
     <diffuse red="1.0" green="1.0" blue="1.0"/>
@@ -11,8 +11,8 @@
     <specular red="1.0" green="1.0" blue="1.0"/>
   </light-source>
   <background-color red="0.0" green="0.0" blue="0.0"/>
-  <camera eye-x="5.740778137818892D0" eye-y="-1.938512800560634D0" eye-z="4.0189860019065495D0" center-x="5.701692581176758D0" center-y="6.389913558959961D0" center-z="0.11056053638458252D0" up-x="0.05211258146216684D0" up-y="7.117549466915578D0" up-z="5.211084552938324D0" fovy="60.0D0" aspect="3.0492424242424243D0" near="0.004999999888241291D0" far="2000.0D0" azimuth="0.009999999776482582D0" zenith="-1.132000045850873D0"/>
-  <sky-dome roll="-60.0" size="100.0D0" texture="sky_and_clowds.jpg"/>
+  <camera eye-x="5.775330230462189" eye-y="-0.9736074453683718" eye-z="5.625371398205619" center-x="5.701692581176758" center-y="6.389913558959961" center-z="0.11056053638458252" up-x="-0.08025580774491055" up-y="8.025314927671106" up-z="3.661353256656863" fovy="60.0" aspect="3.3198757763975157" near="0.004999999888241291" far="2000.0" azimuth="-0.009999997913837433" zenith="0.9280000906437635"/>
+  <sky-dome roll="-60.0" size="100.0" texture="sky_and_clowds.jpg"/>
   <agent-matrix name="AGENT-MATRIX20100" rows="12" columns="11" layers="1" is-grid-visible="false">
     <plotter_agent col="5" shape-name="PLOTTER" x-turn="0.5" y-turn="0.5"/>
     <carpet_agent row="1" shape-name="CARPET" attributes="(F 0.016481806)" x-turn="0.5" y-turn="0.5"/>

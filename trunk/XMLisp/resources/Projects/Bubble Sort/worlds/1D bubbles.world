@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
-<world width="1100" height="478">
+<world width="988" height="333">
   <light-source x="5.0" y="12.0" z="7.0" name="NIL">
     <ambient red="1.0" green="1.0" blue="1.0"/>
     <diffuse red="1.0" green="1.0" blue="1.0"/>
     <specular red="0.0" green="0.0" blue="0.0"/>
   </light-source>
   <background-color red="0.0" green="0.0" blue="0.0"/>
-  <camera eye-x="20.652926308814486D0" eye-y="1.3025103807054121D0" eye-z="18.452712172530862D0" center-x="20.183661270062487D0" center-y="8.549359911092699D0" center-z="-0.7944748811822706D0" up-x="-0.041161977985735676D0" up-y="11.983838400022528D0" up-z="-1.6882832181559557D0" fovy="60.0D0" aspect="2.301255230125523D0" near="0.005D0" far="2000.0D0" azimuth="0.024376138113439083D0" zenith="-0.3600000236183405D0"/>
+  <camera eye-x="20.176324126382305" eye-y="6.872749098385986" eye-z="-21.29764950420902" center-x="20.183661270062487" center-y="8.549359911092699" center-z="-0.7944748811822706" up-x="-0.0721278111726174" up-y="-16.481927215836745" up-z="10.836094957472017" fovy="60.0" aspect="2.966966966966967" near="0.005" far="2000.0" azimuth="0.004376147873699665" zenith="3.0600001867860556"/>
   <agent-matrix name="AGENT-MATRIX11508" rows="20" columns="40" layers="1">
     <bubble_agent shape-name="BUBBLE" color="15E4E9FF" attributes="(VALUE 914)" x-turn="0.5" y-turn="0.5"/>
     <bubble_agent col="1" shape-name="BUBBLE" color="8E6E70FF" attributes="(VALUE 441)" x-turn="0.5" y-turn="0.5"/>

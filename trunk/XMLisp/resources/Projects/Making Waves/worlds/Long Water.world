@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<world width="890" height="252">
+<world width="990" height="252">
   <background-color red="0.0" green="0.0" blue="0.0"/>
-  <camera eye-x="38.61278257244769D0" eye-y="-12.611601179398711D0" eye-z="19.323712280691932D0" center-x="38.61278257244769D0" center-y="5.133321829887137D0" center-z="-0.42521761342815056D0" up-x="0.0D0" up-y="24.775451676823444D0" up-z="5.8533003060652895D0" fovy="60.0D0" aspect="3.5317460317460316D0" near="0.005D0" far="2000.0D0" azimuth="0.0D0" zenith="-0.7320000287145376D0"/>
+  <camera eye-x="38.18150623855452" eye-y="-16.42761808603676" eye-z="15.061628264093" center-x="38.61278257244769" center-y="5.133321829887137" center-z="-0.42521761342815056" up-x="0.4588740084165877" up-y="22.94063955500933" up-z="11.027267191609013" fovy="60.0" aspect="3.9285714285714284" near="0.005" far="2000.0" azimuth="0.020000001415610313" zenith="0.9480000864714384"/>
   <agent-matrix name="AGENT-MATRIX11508" rows="5" columns="80" layers="1" is-grid-visible="false">
     <ground_agent shape-name="GROUND" attributes="(HEIGHT 0)" x-turn="0.5" y-turn="0.5"/>
     <ground_agent shape-name="GROUND" attributes="(HEIGHT 0)" x-turn="0.5" y-turn="0.5"/>

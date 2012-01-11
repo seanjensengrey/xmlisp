@@ -1,13 +1,12 @@
 <?xml version="1.0"?>
-<world width="1344" height="528">
-  <light-source x="10.0" y="10.4" z="10.0">
+<world width="956" height="300">
+  <light-source x="10.0" y="10.4" z="10.0" name="NIL">
     <ambient red="0.0" green="0.0" blue="0.0"/>
     <diffuse red="1.0" green="1.0" blue="1.0"/>
     <specular red="1.0" green="1.0" blue="1.0"/>
   </light-source>
   <background-color red="0.0" green="0.0" blue="0.0"/>
-  <camera eye-x="4.790711741694858D0" eye-y="4.271550703132152D0" eye-z="9.097386418494956D0" center-x="4.688716706154752D0" center-y="4.353149638506816D0" center-z="-1.101777377781551D0" up-x="-0.04620026274473948D0" up-y="8.620240379186713D0" up-z="-4.619872375840529D0" fovy="60.0D0" aspect="2.5454545454545454D0" near="0.004999999888241291D0" far="2000.0D0" azimuth="0.009999999776482582D0" zenith="-0.007999980822205544D0"/>
-  <sky-dome size="100.0D0" texture="skyIsland.png"/>
+  <camera eye-x="4.790711741694858" eye-y="4.271550703132152" eye-z="9.097386418494956" center-x="4.688716706154752" center-y="4.353149638506816" center-z="-1.101777377781551" up-x="-0.04620026274473948" up-y="8.620240379186713" up-z="-4.619872375840529" fovy="60.0" aspect="3.1866666666666665" near="0.004999999888241291" far="2000.0" azimuth="0.009999999776482582" zenith="-0.007999980822205544"/>
   <agent-matrix name="AGENT-MATRIX11508" rows="9" columns="9" layers="1" is-grid-visible="false">
     <wall_agent shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <wall_agent col="1" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
@@ -94,4 +93,5 @@
     <wall_agent row="8" col="6" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <wall_agent row="8" col="7" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
   </agent-matrix>
+  <sky-dome size="100.0" texture="sky_and_clouds.jpg"/>
 </world>

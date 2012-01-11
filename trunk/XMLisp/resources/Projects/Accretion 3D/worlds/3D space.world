@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<world width="1011" height="439">
+<world width="1111" height="439">
   <background-color red="0.0" green="0.0" blue="0.0"/>
-  <camera eye-x="11.531023150887666D0" eye-y="-15.712668479010262D0" eye-z="16.935019608640275D0" center-x="11.5310231110365D0" center-y="17.139526838069216D0" center-z="6.237553510577526D0" up-x="8.466306570258383D-8" up-y="24.103685766916847D0" up-z="22.72656864823105D0" fovy="60.0D0" aspect="2.3029612756264237D0" near="0.005D0" far="2000.0D0" azimuth="3.725290298461914D-9" zenith="-1.2560000661760569D0"/>
+  <camera eye-x="10.881203942893764" eye-y="-15.347090973001457" eye-z="17.980633017967467" center-x="11.5310231110365" center-y="17.139526838069216" center-z="6.237553510577526" up-x="0.49633646252516195" up-y="24.813507748377102" up-z="21.943747934439724" fovy="60.0" aspect="2.530751708428246" near="0.005" far="2000.0" azimuth="0.020000005140900612" zenith="1.2240000907331705"/>
   <agent-matrix name="AGENT-MATRIX11508" rows="20" columns="20" layers="20" is-grid-visible="false" layer-height="1.0">
     <particle_fading_agent col="2" layer="14" shape-name="PARTICLE_FADING" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <particle_fading_agent col="3" layer="18" shape-name="PARTICLE_FADING" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
