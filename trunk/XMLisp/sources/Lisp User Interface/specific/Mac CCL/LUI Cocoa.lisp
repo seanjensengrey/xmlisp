@@ -2308,6 +2308,64 @@
 
 
 ;__________________________________
+; JOG BUTTON                       |
+;__________________________________/
+
+(defclass NATIVE-JOG-BUTTON (native-button-image)
+  ((lui-view :accessor lui-view :initarg :lui-view))
+  (:metaclass ns:+ns-object))
+
+
+(defmethod make-native-object ((Self jog-button-control))
+  (let ((Native-Control (make-instance 'native-jog-button :lui-view Self)))
+    (let ((NS-Image (#/alloc ns:ns-image)))
+      (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+        (let ((Path (native-path "lui:resources;buttons;" (image Self))))
+          (unless (probe-file Path) (error "no such image file for button ~A" (image Self)))
+          (#/initWithContentsOfFile: NS-Image  (native-string (native-path "lui:resources;buttons;" (image Self))))
+          (#/initWithFrame: Native-Control Frame)
+          (#/setButtonType: Native-Control #$NSMomentaryLightButton)   
+          (#/setButtonType: Native-Control #$NSMomentaryPushInButton)
+          (#/setImagePosition: Native-Control #$NSImageOnly)
+          (#/setImage: Native-Control NS-Image)
+          ;(#/setBezelStyle: Native-Control #$NSRegularSquareBezelStyle)
+          (#/setBezelStyle: Native-Control #$NSThickerSquareBezelStyle)
+          (#/setTitle: Native-Control (native-string (text Self)))))
+      Native-Control)))
+
+
+(objc:defmethod (#/mouseDown: :void) ((self native-jog-button) event)
+  ;; NSslider runs its own event loop on mouse down -> no mouseUp or mouseDragged events
+  ;; http://www.cocoabuilder.com/archive/cocoa/157955-nsslider-mouseup.html
+  ;; setup slide action to call lui action but also a thread that lives as long as the mouse is down
+  (setf (is-jog-active (lui-view Self)) t)
+  (process-run-function
+     '(:name "Jog Button Thread" )
+     #'(lambda ()
+         ;; start jog in separate thread to avoid delay of slider knob move
+         (start-jog (lui-view Self))
+         ;; as long as mouse is down keep running control action at interval frequency
+         (loop
+           (unless (is-jog-active (lui-view Self))   (return))
+           (catch-errors-nicely ("user is moving jog dial")
+            ;; better to activate the action in the main thread!!
+             #-cocotron
+             (in-main-thread ()
+              (#/activateAction (#/target Self));)
+              (sleep (action-interval (lui-view Self))))
+             #+cocotron
+             (progn
+              (#/activateAction (#/target Self));)
+              (sleep (action-interval (lui-view Self))))
+             )
+           )))
+  ;; this actually does the mouse tracking until mouse up
+  (call-next-method Event)
+   ;; mouse is up
+  (stop-jog (lui-view Self)))
+
+
+;__________________________________
 ; LABEL                            |
 ;__________________________________/
 
@@ -2775,7 +2833,7 @@
          (g #>CGFloat)
          (b #>CGFloat)
          (a #>CGFloat))
-    (#/getRed:green:blue:alpha: (#/color (Native-View self)) r g b a)
+    (#/getRed:green:blue:alpha: (#/colorUsingColorSpaceName: (#/color (Native-View self)) (native-string "NSCalibratedRGBColorSpace")) r g b a)
     (truncate (* (pref r #>CGFloat) 255))))
 
 
@@ -2784,7 +2842,7 @@
          (g #>CGFloat)
          (b #>CGFloat)
          (a #>CGFloat))
-    (#/getRed:green:blue:alpha: (#/color (Native-View self)) r g b a)
+    (#/getRed:green:blue:alpha: (#/colorUsingColorSpaceName: (#/color (Native-View self)) (native-string "NSCalibratedRGBColorSpace")) r g b a)
     (truncate (* (pref g #>CGFloat) 255))))
 
 
@@ -2793,7 +2851,7 @@
          (g #>CGFloat)
          (b #>CGFloat)
          (a #>CGFloat))
-    (#/getRed:green:blue:alpha: (#/color (Native-View self)) r g b a)
+    (#/getRed:green:blue:alpha: (#/colorUsingColorSpaceName: (#/color (Native-View self)) (native-string "NSCalibratedRGBColorSpace")) r g b a)
     (truncate (* (pref b #>CGFloat) 255))))
 
 
@@ -2802,7 +2860,7 @@
          (g #>CGFloat)
          (b #>CGFloat)
          (a #>CGFloat))
-    (#/getRed:green:blue:alpha: (#/color (Native-View self)) r g b a)
+    (#/getRed:green:blue:alpha: (#/colorUsingColorSpaceName: (#/color (Native-View self)) (native-string "NSCalibratedRGBColorSpace")) r g b a)
     (truncate (* (pref a #>CGFloat) 255))))
 
 
