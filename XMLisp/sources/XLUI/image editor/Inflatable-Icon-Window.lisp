@@ -810,8 +810,6 @@
   (ccl::with-autorelease-pool 
     (enable (view-named Window "flatten-button"))
     (when (and (< (pressure-per-cycle button) (max-pressure-per-cycle button)) (>= (get-internal-real-time) (+ (initial-time button) (* (pressure-ramp-delay button) internal-time-units-per-second))))
-      (print "RAMPING!")
-      (print (pressure-per-cycle button))
       (setf (pressure-per-cycle button) (+ (pressure-per-cycle button) (pressure-ramp-per-cycle button))))
     (set-document-editted Window :mark-as-editted t)
     (let ((Pressure (if (equal (name Button) "inflate") (pressure-per-cycle button) (* -1 (pressure-per-cycle button)))))
@@ -833,9 +831,7 @@
           (incf (pressure (inflatable-icon Model-Editor)) (* 0.02 Pressure))
           (update-inflation Window)
           (setf (is-flat (inflatable-icon Model-Editor)) nil)
-          (setf (text Text-View) (format nil "~4,2F" (* 100 (pressure (inflatable-icon Model-Editor))))))
-       
-        ))))
+          (setf (text Text-View) (format nil "~4,2F" (* 100 (pressure (inflatable-icon Model-Editor))))))))))
 
 
 ;*************************************************
