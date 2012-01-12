@@ -35,7 +35,7 @@
 (defvar *transparent-ceiling-update-lock* nil "Lock used to prevent annimation of ceilling fading to interfere with closing window")
                          
 
-(defclass INFLATABLE-ICON-EDITOR-WINDOW (application-window)
+(defclass INFLATABLE-ICON-EDITOR-WINDOW (dialog-window)
   ((smoothing-cycles :accessor smoothing-cycles :initform 0 :initarg :smoothing-cycles)
    (selected-tool :accessor selected-tool :initform nil :type symbol :initarg :selected-tool :documentation "the name of the currently selected tool")
    (selected-camera-tool :accessor selected-camera-tool :initform nil :type symbol :initarg :selected-camera-tool :documentation "the name of the currently selected camera tool")
@@ -51,6 +51,7 @@
    (transparent-ceiling-update-frequency :accessor transparent-ceiling-update-frequency :initform .02 :documentation "How often in seconds the transparency value will be udpated")
    (transparent-ceiling-should-fade :accessor transparent-ceiling-should-fade :initform nil :documentation "Fade will not begin until this is set.")
    (transparent-ceiling-update-process :accessor transparent-ceiling-update-process :initform nil :documentation "This process will update the transparency of the ceiling to cause a fade out when it is not used")
+   (ceiling-process-should-stop-and-close-window-p :accessor ceiling-process-should-stop-and-close-window-p :initform nil :documentation "If true the ceiling update process should stop and then close the window")
    (command-manager :reader command-manager :initform (make-instance 'inflatable-icon-command-manager))
    (save-button-closure-action :accessor save-button-closure-action :initform nil :initarg :save-button-closure-action ))
   (:default-initargs
@@ -160,6 +161,7 @@
 
 
 (defmethod WINDOW-SHOULD-CLOSE ((Self inflatable-icon-editor-window))
+  (ccl::with-lock-grabbed ((transparent-ceiling-update-lock))
   (when (window-needs-saving-p self)
     (let ((cancelled t)
           (yes-no-return-val nil))
@@ -179,8 +181,18 @@
         ;; This will close the window
         (edit-icon-save-action self (make-instance 'button) :close-window nil) )
        (t
-        (return-from window-should-close t)))))
-  t)
+        (cond
+         ((transparent-ceiling-update-process self)
+          (setf (ceiling-process-should-stop-and-close-window-p self) t)
+          (return-from window-should-close nil))
+         (t
+          (return-from window-should-close t)))))))
+    (cond
+     ((transparent-ceiling-update-process self)
+      (setf (ceiling-process-should-stop-and-close-window-p self) t)
+      nil)
+      (t
+       t))))
   
 #|
 (defmethod WINDOW-CLOSE ((Self inflatable-icon-editor-window))
@@ -282,20 +294,24 @@
           (setf *ceiling-update-thread-should-stop* nil)
           (setf (transparent-ceiling-update-process self)
          
-                (lui::process-run-function
-                 '(:name "transparent ceiling update process")
-                 #'(lambda ()
-                     (loop
-                       (catch-errors-nicely ("inflatable ceilling is animating")
-                         (when *Ceiling-Update-Thread-Should-Stop*  (return))
-                         (unless (or (transparent-ceiling-should-fade self)
-                                     (not (timer-due-p self (truncate (* 2.0 internal-time-units-per-second)))))
-                           (setf (transparent-ceiling-should-fade self) t))
-                         (when (transparent-ceiling-should-fade self)
-                           (ccl::with-lock-grabbed ((transparent-ceiling-update-lock))
-                             
-                             (update-ceiling-transparency self)))
-                         (sleep .04)))))))))))
+                       (lui::process-run-function
+         '(:name "transparent ceiling update process")
+         #'(lambda ()
+             (loop
+               (catch-errors-nicely ("inflatable ceilling is animating")
+                 (when *Ceiling-Update-Thread-Should-Stop*  (return))
+                 (when (ceiling-process-should-stop-and-close-window-p self) (stop-modal self nil) (return))
+                 (unless (or (transparent-ceiling-should-fade self)
+                             (not (timer-due-p self (truncate (* 2.0 internal-time-units-per-second)))))
+                   (setf (transparent-ceiling-should-fade self) t))
+                 (when (transparent-ceiling-should-fade self)
+                   (ccl::with-lock-grabbed ((transparent-ceiling-update-lock))
+                     (update-ceiling-transparency self)))
+                 (sleep .04)))))
+                       )
+          
+          ;(when (ceiling-process-should-stop-and-close-window-p self) (close-with-no-questions-asked self))
+          )))))
 
 
 (defmethod LOAD-IMAGE-FROM-FILE ((Self inflatable-icon-editor-window) Pathname)
@@ -527,10 +543,13 @@
                    (find-package :xlui))
         
         |#
-        (duplicate <camera eye-x="0.01672404926864841" eye-y="-1.045163833187696" eye-z="0.8363329886907853" center-x="0.0" center-y="0.0" center-z="0.0" up-x="-0.018947526097554894" up-y="1.1841192696477165" up-z="0.49512727839531756" fovy="60.0" aspect="1.0" near="0.004999999888241291" far="2000.0" azimuth="-0.01600000075995922"  zenith="0.8960000369697809"/>
+       (duplicate <camera eye-x="-0.6211211173151155" eye-y="1.1633405705811566" eye-z="1.503611410725895" 
+                   center-x="0.0" center-y="0.0" center-z="0.0" 
+                   up-x="0.881440029667134" up-y="-1.6509098120484733" up-z="0.418499485826859149" fovy="60.0" 
+                   near="0.005" far="2000.0" azimuth="-3.6320001408457756" zenith="0.7200000360608101"/>
                    (find-package :xlui))
         
-        )
+       )
   (setf (view (camera Self)) Self))
 
 
@@ -754,25 +773,69 @@
 ;  Specialized Controls                          *
 ;*************************************************
 
-(defclass INFLATION-JOG-SLIDER (jog-slider)
-  ()
+(defclass INFLATION-JOG-BUTTON (jog-button)
+  ((initial-time :accessor initial-time :initform nil :documentation "The time when this jog button was lasted started")
+   (pressure-ramp-delay :accessor pressure-ramp-delay :initform .25 :documentation "The number of seconds before the pressure will begin to ramp up")
+   (initial-pressure-per-cycle :accessor initial-pressure-per-cycle :initform .001 :documentation "The amount the pressure will be incremented or decremented by each cycle before the ramp begins")
+   (pressure-per-cycle :accessor pressure-per-cycle :initform nil :documentation "The amount that the pressure is actually increased by each cycle")
+   (max-pressure-per-cycle :accessor max-pressure-per-cycle :initform .2 :documentation "The max amount the pressure per cycle can ramp up too")
+   (pressure-ramp-per-cycle :accessor pressure-ramp-per-cycle :initform .0025 :documentation "the speed at which the pressure-per-cycle will increase each cycle after the reaching the pressure ramp delay")
+   )
   (:documentation "Used to adjust inflation. During adjustment play inflation sound"))
 
 
-(defmethod START-JOG ((Self inflation-jog-slider))
+(defmethod START-JOG ((Self inflation-jog-button))
   (call-next-method)
+  (setf (initial-time self) (get-internal-real-time))
+  (setf (pressure-per-cycle self) (initial-pressure-per-cycle self))
   ;; the sound is kind of annoying, especially on Windows where we cannot set the volume
   ;#-cocotron
   ;(play-sound "whiteNoise.mp3" :loops t)
   )
 
 
-(defmethod STOP-JOG ((Self inflation-jog-slider))
+(defmethod STOP-JOG ((Self inflation-jog-button))
   (call-next-method)
   ;; the sound is kind of annoying, especially on Windows where we cannot set the volume
   ;#-cocotron
   ;(stop-sound "whiteNoise.mp3")
+  ;(setf (text (view-named (window self) 'pressuretext)) (format nil "0.0"))
   )
+
+(defmethod ADJUST-PRESSURE-ACTION ((Window inflatable-icon-editor-window) (Button inflation-jog-button) &optional do-not-display)
+  #|
+  (unless (lui::is-jog-active button)
+    (return-from adjust-pressure-action))
+  |#
+  (ccl::with-autorelease-pool 
+    (enable (view-named Window "flatten-button"))
+    (when (and (< (pressure-per-cycle button) (max-pressure-per-cycle button)) (>= (get-internal-real-time) (+ (initial-time button) (* (pressure-ramp-delay button) internal-time-units-per-second))))
+      (print "RAMPING!")
+      (print (pressure-per-cycle button))
+      (setf (pressure-per-cycle button) (+ (pressure-per-cycle button) (pressure-ramp-per-cycle button))))
+    (set-document-editted Window :mark-as-editted t)
+    (let ((Pressure (if (equal (name Button) "inflate") (pressure-per-cycle button) (* -1 (pressure-per-cycle button)))))
+      ;; audio feedback
+      #-cocotron
+      (set-volume "whiteNoise.mp3" (abs Pressure))
+      ;; model update
+      (let ((Text-View (view-named Window 'pressuretext)))
+        ;; update label
+        (cond 
+         ((lui::is-jog-active button)
+          (setf (text Text-View) (format nil "~4,2F" Pressure)))
+         (t
+          (setf (text Text-View) (format nil "0.0"))))
+        (unless do-not-display
+          (display Text-View))   
+        ;; update model editor
+        (let ((Model-Editor (view-named Window 'model-editor)))
+          (incf (pressure (inflatable-icon Model-Editor)) (* 0.02 Pressure))
+          (update-inflation Window)
+          (setf (is-flat (inflatable-icon Model-Editor)) nil)
+          (setf (text Text-View) (format nil "~4,2F" (* 100 (pressure (inflatable-icon Model-Editor))))))
+       
+        ))))
 
 
 ;*************************************************
@@ -919,7 +982,7 @@
 (defmethod SET-DOCUMENT-EDITTED :AFTER ((Self inflatable-icon-editor-window)  &key (mark-as-editted t) )
   (setf (window-needs-saving-p (window self)) mark-as-editted))
 
-
+#|
 ;; Content Actions
 (defmethod ADJUST-PRESSURE-ACTION ((Window inflatable-icon-editor-window) (Slider inflation-jog-slider) &optional do-not-display)
   (ccl::with-autorelease-pool
@@ -940,9 +1003,12 @@
           (incf (pressure (inflatable-icon Model-Editor)) (* 0.02 Pressure))
           (update-inflation Window)
           (setf (is-flat (inflatable-icon Model-Editor)) nil))))))
+|#
 
 
-(defmethod ADJUST-CEILING-ACTION ((Window inflatable-icon-editor-window) (Slider slider) &key (draw-transparent-ceiling t))
+
+
+(defmethod ADJUST-CEILING-ACTION ((Window inflatable-icon-editor-window) (Slider slider) &key (update-inflation t) (draw-transparent-ceiling t))
   (when draw-transparent-ceiling
     (setf (ceiling-transparency window) (transparent-ceiling-starting-alpha window))
     (setf (transparent-ceiling-should-fade window) nil)
@@ -955,13 +1021,18 @@
              (loop
                (catch-errors-nicely ("inflatable ceilling is animating")
                  (when *Ceiling-Update-Thread-Should-Stop*  (return))
+                 (when (ceiling-process-should-stop-and-close-window-p window) (stop-modal window nil) (return))
                  (unless (or (transparent-ceiling-should-fade window)
                              (not (timer-due-p window (truncate (* 2.0 internal-time-units-per-second)))))
                    (setf (transparent-ceiling-should-fade window) t))
                  (when (transparent-ceiling-should-fade window)
                    (ccl::with-lock-grabbed ((transparent-ceiling-update-lock))
                      (update-ceiling-transparency window)))
-                 (sleep .04))))))))
+                 (sleep .04)))))
+         
+        )
+      ;(when (ceiling-process-should-stop-and-close-window-p window) (close-with-no-questions-asked window))
+      ))
   (let ((Ceiling (value Slider)))
     (set-document-editted Window :mark-as-editted t)
     (let ((Text-View (view-named Window 'ceilingtext)))
@@ -972,8 +1043,8 @@
       (let ((Model-Editor (view-named Window 'model-editor)))
         (setf (ceiling-value (inflatable-icon Model-Editor)) Ceiling)
         (setf (max-value (inflatable-icon Model-Editor)) (+ Ceiling (value (view-named window "z_slider")) ))
-        (update-inflation Window))))
-  ;;Wicked cocotron hack to get the inflated icon editor to update
+        (when update-inflation
+          (update-inflation Window)))))
   )
 
 
@@ -1034,7 +1105,7 @@
       ;; update model editor
       (let* ((Model-Editor (view-named Window 'model-editor)))
         (setf (dz (inflatable-icon Model-Editor)) Offset)
-        (adjust-ceiling-action window (view-named window "ceiling_slider"))
+        (adjust-ceiling-action window (view-named window "ceiling_slider") :update-inflation nil)
         (display Model-Editor)))))
 
 
@@ -1110,7 +1181,7 @@
     (setf (value (view-named window "distance-slider")) .5)
     (adjust-distance-action window (view-named window "distance-slider") t)
     (adjust-z-offset-action window (view-named window "z_slider") )
-    (adjust-ceiling-action window (view-named window "ceiling_slider"))
+    (adjust-ceiling-action window (view-named window "ceiling_slider") :update-inflation nil)
     (setf (surfaces (inflatable-icon Model-Editor)) 'cube)
     (display Model-Editor)))
 
@@ -1123,13 +1194,14 @@
       (setf (value (view-named Window "distance-slider")) 0.0)
       (setf (distance (inflatable-icon (view-named Window 'model-editor))) 0.0))
     ;; update GUI: pressure is 0.0
-    (setf (value (view-named Window 'pressure_slider)) 0.0)
-    (setf (text (view-named Window 'pressuretext)) "0.0")
+    ;(setf (value (view-named Window 'pressure_slider)) 0.0)
+    ;(setf (text (view-named Window 'pressuretext)) "0.0")
     (setf (pressure (inflatable-icon (view-named Window 'model-editor))) 0.0)
     ;; enable flat texture optimization
     (setf (is-flat (inflatable-icon (view-named Window 'model-editor))) t)
     (change-icon-action Window (view-named Window 'icon-editor))
     (update-texture-from-image (inflatable-icon (view-named Window 'model-editor)))
+    (setf (text (view-named window 'pressuretext)) (format nil "0.0" ))
     (disable button)
     ;; update for user
     (display Model-Editor)))
@@ -1149,11 +1221,11 @@
 
 
 (defmethod EDIT-ICON-CANCEL-ACTION ((Window inflatable-icon-editor-window) (Button button))
-  (window-close Window)
-  #|
+  ;(window-close Window)
+  
   (when (window-should-close window)
     (stop-modal window nil))
-  |#
+  
   )
 
 
@@ -1242,11 +1314,12 @@
     ;; finalize geometry
     (when (save-button-closure-action window)
       (funcall (save-button-closure-action window) (inflatable-icon Model-Editor))))
-  ;(stop-modal window nil)
-  
+  (when (window-should-close window)
+    (stop-modal window nil))
+  #|
   (when close-window 
     (window-close window))
-  
+  |#
   )
 
 
