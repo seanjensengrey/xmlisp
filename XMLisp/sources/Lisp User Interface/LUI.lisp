@@ -595,7 +595,7 @@ Call with most important parameters. Make other paramters accessible through *Cu
    (hidden-p :accessor hidden-p :initform nil :documentation "This predicate will tell you if the view is currently hidden or not, should only be set by set-hidden")
    (use-custom-window-controller :accessor use-custom-window-controller :initform nil :initarg :use-custom-window-controller :documentation "Tells the window creating whether or not it should use a custom window controller or the default ccl controller")
    (background-color :accessor background-color :initarg :background-color :initform nil :documentation "the color used as a background for the window in the form (Red Green Blue Alpha)")
-    #+cocotron (show-main-menu-on-windows :accessor show-main-menu-on-windows :initform nil :initarg :show-main-menu-on-windows :documentation "Should this window should a main menu on Windows?")
+    #+cocotron (show-main-menu-on-windows :accessor show-main-menu-on-windows :initform t :initarg :show-main-menu-on-windows :documentation "Should this window should a main menu on Windows?")
    (is-modal-p :accessor is-modal-p :initform nil :documentation "True if this window is currently running modally")
    )
   (:documentation "a window that can contain views, coordinate system: topleft = 0, 0")
@@ -1192,6 +1192,41 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defmethod IMAGE-CLUSTER-ACTION ((window window) (self Radio-Button-Control))
   ;; do nothing
+  )
+
+;__________________________________
+; JOG-BUTTON                       |
+;__________________________________/
+
+(defclass JOG-BUTTON-CONTROL (image-button-control)
+  ((stop-value :accessor stop-value :initform 0.0 :type float :initarg :stop-value :documentation "The value of jog dial when not operated by user")
+   (action-interval :accessor action-interval :initform 0.1 :type float :documentation "time in seconds between two calls to action when jog is active")
+   (is-jog-active :accessor is-jog-active :initform nil))
+  (:documentation "Unlike a regular slider a JOG slider keeps calling its control action as long as the mouse is down even if the knob is no longer moved. After mouse up the value of slide returns to stop value"))
+
+
+(defgeneric START-JOG (jog-button-control)
+  (:documentation "Called when user is starting Jog."))
+
+
+(defgeneric STOP-JOG (jog-button-control)
+  (:documentation "Called when user is done with Jog. Default action sets slides value to stop-value"))
+
+
+;__________________________________
+; default implementation           |
+;__________________________________/
+
+(defmethod START-JOG ((Self jog-button-control))
+  ;; nothing
+  )
+
+
+(defmethod STOP-JOG ((Self jog-button-control))
+  (print "STOP JOg")
+  ;; reset slider to stop value
+  (setf (is-jog-active Self) nil)
+  ;(setf (value Self) (stop-value Self))
   )
 
 
