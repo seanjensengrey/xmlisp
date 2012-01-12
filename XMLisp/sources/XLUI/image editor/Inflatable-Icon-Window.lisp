@@ -537,19 +537,7 @@
   (glAlphaFunc GL_GREATER 0.1)
   (glEnable GL_ALPHA_TEST)
   ;; top down 45 degree angle view
-  (setf (camera Self)
-        #|
-        (duplicate <camera eye-x="0.0" eye-y="0.89" eye-z="1.0" center-x="0.0" center-y="0.0" center-z="0.0" up-x="0.0" up-y="0.5726468643072211" up-z="-1.5649032618904695" fovy="60.0" aspect="1.0" near="0.004999999888241291" far="2000.0" azimuth="0.0" zenith="0.7200000286102295"/>
-                   (find-package :xlui))
-        
-        |#
-       (duplicate <camera eye-x="-0.6211211173151155" eye-y="1.1633405705811566" eye-z="1.503611410725895" 
-                   center-x="0.0" center-y="0.0" center-z="0.0" 
-                   up-x="0.881440029667134" up-y="-1.6509098120484733" up-z="0.418499485826859149" fovy="60.0" 
-                   near="0.005" far="2000.0" azimuth="-3.6320001408457756" zenith="0.7200000360608101"/>
-                   (find-package :xlui))
-        
-       )
+ 
   (setf (view (camera Self)) Self))
 
 
@@ -561,9 +549,27 @@
     (setf (altitudes (inflatable-icon Self))
           (make-array (list (img-height Icon-Editor) (img-width Icon-Editor))
                       :element-type 'short-float
-                      :initial-element 0s0))))
+                      :initial-element 0s0))
+    
+    ))
   
-  
+(defmethod INITIALIZE-INSTANCE :after ((Self inflated-icon-editor) &rest Args)
+  (when (camera self)
+      (setf (camera Self)
+            #|
+            (duplicate <camera eye-x="0.0" eye-y="0.89" eye-z="1.0" center-x="0.0" center-y="0.0" center-z="0.0" up-x="0.0" up-y="0.5726468643072211" up-z="-1.5649032618904695" fovy="60.0" aspect="1.0" near="0.004999999888241291" far="2000.0" azimuth="0.0" zenith="0.7200000286102295"/>
+            (find-package :xlui))
+            
+            |#
+            (duplicate <camera eye-x="-0.6211211173151155" eye-y="1.1633405705811566" eye-z="1.503611410725895" 
+                       center-x="0.0" center-y="0.0" center-z="0.0" 
+                       up-x="0.881440029667134" up-y="-1.6509098120484733" up-z="0.418499485826859149" fovy="60.0" 
+                       near="0.005" far="2000.0" azimuth="-3.6320001408457756" zenith="0.7200000360608101"/>
+                       (find-package :xlui))
+            
+            )))
+
+
 (defmethod DRAW-SKY-BOX ((Self inflated-icon-editor))
   (glpushmatrix)
   (glenable gl_texture_2d)
@@ -803,10 +809,6 @@
   )
 
 (defmethod ADJUST-PRESSURE-ACTION ((Window inflatable-icon-editor-window) (Button inflation-jog-button) &optional do-not-display)
-  #|
-  (unless (lui::is-jog-active button)
-    (return-from adjust-pressure-action))
-  |#
   (ccl::with-autorelease-pool 
     (enable (view-named Window "flatten-button"))
     (when (and (< (pressure-per-cycle button) (max-pressure-per-cycle button)) (>= (get-internal-real-time) (+ (initial-time button) (* (pressure-ramp-delay button) internal-time-units-per-second))))
