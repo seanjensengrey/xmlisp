@@ -2,6 +2,7 @@
 <inflatable-icon-editor-window title="Shape Editor:" width="1020" height="400" min-width="771" selected-tool="draw">
   <column align="stretch" valign="stretch">
   <row align="stretch" valign="stretch" vflex="1">
+     <column minimize="horizontal">
     <image-button-cluster selected-button="draw button">
      <image-button tooltip="Draw Tool: click in the 2D Icon Editor to draw pixels of the selected drawing color."  name="draw button" action="draw-tool-action" image="draw-button.png"/> 
      <image-button tooltip="Erase Tool: click in the 2D Icon Editor to erase pixels." name="erase button" action="erase-tool-action" image="erase-button.png"/> 
@@ -14,38 +15,42 @@
      <spacer height="10"/>
      <color-well-button name="color well" action="pick-color-action" color="000000"/>
     </image-button-cluster>
-    <spacer width="5"/>
-    <icon-editor tooltip="2D Icon Editor: a 32x32 pixel canvas for creating the 2D icon to be inflated." name="icon-editor" flex="1" action="change-icon-action"/>
-    <spacer width="5"/>
+    <spacer height="10"/>
     <image-button-cluster name="mirror-cluster" selected-button="mirror-none-button">
      <image-button tooltip="No Mirroring." name="mirror-none-button" action="mirror-none-action" image="mirror-none-button.png" /> 
      <image-button tooltip="Mirror Horizontally: the top half of your 2D icon will be mirrored at the bottom." name="mirror-horizontally-button" action="mirror-horizontally-action" image="mirror-horizontally-button.png"/> 
      <image-button tooltip="Mirror Vertically: the left half of your 2D icon will be mirrored on the right." name="mirror-vertically-button" action="mirror-vertically-action" image="mirror-vertically-button.png"/> 
      <image-button tooltip="Mirror Horizontally and Vertically: the top left quadrant of your 2D icon will be mirrored in the other three quadrants." name="mirror-both-button" action="mirror-both-action" image="mirror-both-button.png"/> 
     </image-button-cluster>
+    </column>
+    <spacer width="5"/>
+    <icon-editor tooltip="2D Icon Editor: a 32x32 pixel canvas for creating the 2D icon to be inflated." name="icon-editor" flex="1" action="change-icon-action"/>
+    <spacer width="15"/>
     <column width="250" valign="top" align="stretch">
       <label width="65" text="Inflation" align="center"/>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="Pressure"/>
-        <inflation-jog-slider tooltip="Pressure jog dial: drag and hold to inflate or deflate the pixels selected in the 2D Icon Editor." action="adjust-pressure-action" name="pressure_slider" value="0.0" min-value="-0.1" max-value="0.1" flex="1"/>
-        <label name="pressuretext" align="right" width="38" text="0.0"/>
+        <inflation-jog-button height="64" width="64" tooltip="Pressure jog Button: press and hold to inflate the pixels selected in the 2D Icon Editor." action="adjust-pressure-action" image="big-minus.png" name="deflate" flex="1"/>
+        <inflation-jog-button height="64" width="64" tooltip="Pressure jog Button: press and hold to deflate the pixels selected in the 2D Icon Editor." action="adjust-pressure-action" image="big-plus.png" name="inflate" flex="1"/>
+        <label name="pressuretext" align="right" width="43" text="0.0"/>
      </row>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="Ceiling"/>
-        <slider tooltip="Ceiling slider: create a plane that defines the maximum altitute for the inflation. Ceilings can be defined for the entire icon or only for a selection." action="adjust-ceiling-action" name="ceiling_slider" value="1.0" max-value="2.0" flex="1" tick-marks="2"/>
+        <slider tooltip="Ceiling slider: create a plane that defines the maximum altitute for the inflation. Ceilings can be defined for the entire icon or only for a selection." action="adjust-ceiling-action" name="ceiling_slider" value="1.0" max-value="2.0" flex="1"/>
         <label name="ceilingtext" align="right" width="38" text="1.0"/>
       </row>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="Noise"/>
-        <slider tooltip="Noise slider: add noise to the inflation for the entire icon or area defined in the 2D selection." action="adjust-noise-action" name="noise_slider" max-value="0.2" flex="1" tick-marks="2"/>
+        <slider tooltip="Noise slider: add noise to the inflation for the entire icon or area defined in the 2D selection." action="adjust-noise-action" name="noise_slider" max-value="0.2" flex="1" />
         <label name="noise-text" align="right" width="38" text="0.0"/>
       </row>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="Smooth"/>
-        <slider tooltip="Smoothness slider: ???smoothen out the noise in discrete steps???" action="adjust-smooth-action"  max-value="5" flex="1"  name="smooth_slider" tick-marks="2"/>
+        <slider tooltip="Smoothness slider: ???smoothen out the noise in discrete steps???" action="adjust-smooth-action"  max-value="5" flex="1"  name="smooth_slider" />
         <label name="smooth-text" align="right" width="38" text="0.0"/>
       </row>
       <row align="center" minimize="vertical" valign="middle">
+        <spacer width="25"/>
         <bevel-button tooltip="Clear the icon in the 2D Editor." text="Clear" width="64" height="32" action="CLEAR-ACTION" />
         <bevel-button tooltip="Turn your inflated icon into a flat one. Flat icons will render much faster." name="flatten-button" text="Flatten" width="64" height="32" action="edit-icon-flatten-action"/>
       </row>
@@ -53,7 +58,7 @@
       <label width="65" text="Geometry" align="center"/>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="z offset"/>
-        <slider tooltip="Z-offset: distance from the grid in the world at which the shape will be drawn." action="adjust-z-offset-action" min-value="-1.0" max-value="1.0" flex="1" name="z_slider" tick-marks="2"/>
+        <slider tooltip="Z-offset: distance from the grid in the world at which the shape will be drawn." action="adjust-z-offset-action" min-value="-1.0" max-value="1.0" flex="1" name="z_slider" />
         <label name="z-offset-text" align="right" width="38" text="0.0"/>
       </row>
       <check-box tooltip="Click to make the 3D icon upright." name="upright" text="upright" action="upright-action"/>
@@ -69,11 +74,12 @@
       </row>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="distance"/>
-        <slider tooltip="Distance: use in conjunction with the Surfaces option to put some distance between the front and back surfaces (whether connected or unconnected) and the cube surfaces." action="adjust-distance-action" min-value="-.2" max-value="1.0" flex="1" name="distance-slider" tick-marks="2"/>
+        <slider tooltip="Distance: use in conjunction with the Surfaces option to put some distance between the front and back surfaces (whether connected or unconnected) and the cube surfaces." action="adjust-distance-action" min-value="-.2" max-value="1.0" flex="1" name="distance-slider" />
         <label name="distance-text" align="right" width="38" text="0.0"/>
       </row>
     </column>
-    <spacer width="5"/>
+
+    <spacer width="15"/>
    <inflated-icon-editor tooltip="3D Editor: the 3D object (inflatable icon) resulting from the inflation process." name="model-editor" flex="1"/>
     <spacer width="5"/>
     <image-button-cluster>
@@ -83,7 +89,6 @@
     </image-button-cluster>
   </row>
   <spacer height="15"/>
-  
   <row minimize="vertical" align="right">
     <button text="Cancel" action="edit-icon-cancel-action"/>
     <button tooltip="Save the inflatable icon and close the editor. This will also update shapes of this type in the world, if any." text="Save" width="70" action="EDIT-ICON-SAVE-ACTION" default-button="true"/>
@@ -91,4 +96,3 @@
   </row>
   </column>
 </inflatable-icon-editor-window>
-
