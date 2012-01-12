@@ -45,24 +45,6 @@
 
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-(defmacro WITH-GLCONTEXT-OF-NATIVE-VIEW (View &rest Forms)
-  "Should only be used in the rare cases where a native-control has not been fully initialized, normally only called from make-native-object"
-  (let ((GLContext (gensym "glcontext"))
-        (CGLContext (gensym "cglcontext")))
-    `(let* ((,GLContext (#/openGLContext ,view))
-            (,CGLContext (#/CGLContextObj ,GLContext)))
-       (unwind-protect
-           (progn
-             (#_CGLLockContext ,CGLContext)
-             (#/makeCurrentContext ,GLContext)
-             (progn ,@Forms))
-         #+cocotron (#/flushBuffer ,GLContext)
-         #-cocotron (glFlush)  ;;; no double buffering required for OS X Cocoa
-         (#/clearCurrentContext ns:ns-opengl-context)
-         (#_CGLUnlockContext  ,CGLContext))))))
-
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
 (defmacro WITH-GLCONTEXT-NO-FLUSH (View &rest Forms)
   (let ((GLContext (gensym "glcontext"))
         (CGLContext (gensym "cglcontext")))
@@ -208,8 +190,6 @@
             ;; should we release the current glcontent before we assign a new one??
             ;; reuse
             (#/setOpenGLContext: Native-Control (gethash (type-of Self) (reusable-glcontext Self)))
-            (with-glcontext-of-native-view native-control
-              (prepare-opengl (lui-view native-control)))
             ;; perhaps some reinitialization needed here...
             )
            ;; NEW
