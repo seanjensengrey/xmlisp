@@ -595,7 +595,7 @@ Call with most important parameters. Make other paramters accessible through *Cu
    (hidden-p :accessor hidden-p :initform nil :documentation "This predicate will tell you if the view is currently hidden or not, should only be set by set-hidden")
    (use-custom-window-controller :accessor use-custom-window-controller :initform nil :initarg :use-custom-window-controller :documentation "Tells the window creating whether or not it should use a custom window controller or the default ccl controller")
    (background-color :accessor background-color :initarg :background-color :initform nil :documentation "the color used as a background for the window in the form (Red Green Blue Alpha)")
-    #+cocotron (show-main-menu-on-windows :accessor show-main-menu-on-windows :initform t :initarg :show-main-menu-on-windows :documentation "Should this window should a main menu on Windows?")
+    #+cocotron (show-main-menu-on-windows :accessor show-main-menu-on-windows :initform nil :initarg :show-main-menu-on-windows :documentation "Should this window should a main menu on Windows?")
    (is-modal-p :accessor is-modal-p :initform nil :documentation "True if this window is currently running modally")
    )
   (:documentation "a window that can contain views, coordinate system: topleft = 0, 0")
@@ -1223,7 +1223,6 @@ after any of the window controls calls stop-modal close window and return value.
 
 
 (defmethod STOP-JOG ((Self jog-button-control))
-  (print "STOP JOg")
   ;; reset slider to stop value
   (setf (is-jog-active Self) nil)
   ;(setf (value Self) (stop-value Self))
