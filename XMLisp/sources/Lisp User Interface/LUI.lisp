@@ -485,6 +485,10 @@ Call with most important parameters. Make other paramters accessible through *Cu
   (get-tooltip (find-view-at-screen-position x (- (Screen-height nil) y)) x (- (Screen-height nil) y)))
 
 
+(defmethod GET-TOOLTIP-OF-MOST-SPECIFIC-VIEW-AT-SCREEN-POSITION ((Self view) x y)
+  (get-tooltip (find-most-specific-view-at-screen-position x (- (Screen-height nil) y)) x (- (Screen-height nil) y)))
+
+
 (defmethod GET-TOOLTIP ((Self view) x y)
   (declare (ignore x y))
   (tooltip self))
