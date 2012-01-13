@@ -123,7 +123,6 @@
       (#.(key-name->code "I")
          (invert-selection Icon-Editor))))
    ((lui::alt-key-p)
-    
     (case (key-code Event)
       #|
       (37
@@ -781,6 +780,7 @@
 
 (defclass INFLATION-JOG-BUTTON (jog-button)
   ((initial-time :accessor initial-time :initform nil :documentation "The time when this jog button was lasted started")
+   (time-of-last-text-update :accessor time-of-last-text-update :initform nil :documentation "The last time the pressure text was updated")
    (pressure-ramp-delay :accessor pressure-ramp-delay :initform .25 :documentation "The number of seconds before the pressure will begin to ramp up")
    (initial-pressure-per-cycle :accessor initial-pressure-per-cycle :initform .001 :documentation "The amount the pressure will be incremented or decremented by each cycle before the ramp begins")
    (pressure-per-cycle :accessor pressure-per-cycle :initform nil :documentation "The amount that the pressure is actually increased by each cycle")
@@ -802,6 +802,7 @@
 
 (defmethod STOP-JOG ((Self inflation-jog-button))
   (call-next-method)
+  (setf (time-of-last-text-update self)  nil)
   ;; the sound is kind of annoying, especially on Windows where we cannot set the volume
   ;#-cocotron
   ;(stop-sound "whiteNoise.mp3")
@@ -821,11 +822,7 @@
       ;; model update
       (let ((Text-View (view-named Window 'pressuretext)))
         ;; update label
-        (cond 
-         ((lui::is-jog-active button)
-          (setf (text Text-View) (format nil "~4,2F" Pressure)))
-         (t
-          (setf (text Text-View) (format nil "0.0"))))
+        
         (unless do-not-display
           (display Text-View))   
         ;; update model editor
@@ -833,7 +830,9 @@
           (incf (pressure (inflatable-icon Model-Editor)) (* 0.02 Pressure))
           (update-inflation Window)
           (setf (is-flat (inflatable-icon Model-Editor)) nil)
-          (setf (text Text-View) (format nil "~4,2F" (* 100 (pressure (inflatable-icon Model-Editor))))))))))
+          (when  #-cocotron t #+cocotron (or (not (time-of-last-text-update button)) (>= (get-internal-real-time) (+ (time-of-last-text-update button) (* .155 internal-time-units-per-second))))
+            (setf (time-of-last-text-update button)  (get-internal-real-time))
+            (setf (text Text-View) (format nil "~4,2F" (* 1000 (pressure (inflatable-icon Model-Editor)))))))))))
 
 
 ;*************************************************
@@ -1282,6 +1281,7 @@
       ;; update label
       (setf (text Text-View) (format nil "~A" 0.0))
       (display Text-View))
+    (edit-icon-flatten-action window (view-named window "flatten-button"))
     (clear-selection (view-named window 'icon-editor))
     (display Model-Editor)))
 
