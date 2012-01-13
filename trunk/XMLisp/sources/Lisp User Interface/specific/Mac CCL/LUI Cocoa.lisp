@@ -384,7 +384,7 @@
 
 
 (objc:defmethod (#/description :id) ((self tooltip-delegate) )
-  (native-string (get-tooltip-of-view-at-screen-position (lui-view Self) (ns:ns-point-x (#/mouseLocation ns:ns-event )) (ns:ns-point-y (#/mouseLocation ns:ns-event )))))
+  (native-string (get-tooltip-of-most-specific-view-at-screen-position (lui-view Self) (ns:ns-point-x (#/mouseLocation ns:ns-event )) (ns:ns-point-y (#/mouseLocation ns:ns-event )))))
 
 
 (defmethod ENABLE-TOOLTIPS ((Self view))
