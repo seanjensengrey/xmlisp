@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<inflatable-icon-editor-window title="Shape Editor:" width="1020" height="400" min-width="771" selected-tool="draw">
+<inflatable-icon-editor-window title="Inflatable Icon:" width="1020" height="400" min-width="771" selected-tool="draw">
   <column align="stretch" valign="stretch">
   <row align="stretch" valign="stretch" vflex="1">
      <column minimize="horizontal">
