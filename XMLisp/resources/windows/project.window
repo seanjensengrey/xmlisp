@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <project-window title="" track-mouse="true" x="100" y="50" width="1200" height="600" margin="0" min-width="1000">
   <row align="stretch" valign="stretch" >
-    <column align="left" valign="stretch" vflex="1"   width="150">
-      <row valign="middle" align="center" height="32" width="150" src="gradient-transparent.png">
+    <column align="left" valign="stretch" vflex="1"   width="170">
+      <row valign="middle" align="center" height="32" width="170" src="gradient-transparent.png">
         <label text="Agents" tooltip="Agent Gallery" width="60" />
       </row>
-      <img width="150" vflex="30" src="gallery-directions.png" name="gallery directions"/>
-      <scroll-box tooltip="Agents" has-horizontal-scroller="false" vflex="1"  name="agent-scroll-box" color="D6DDE5" width="150">
-        <agent-gallery tooltip="Agents" name="agent-gallery" selected-group-changed-action="SWITCH-TO-BEHAVIOR" vflex="1" width="150"/>
+      <img width="170" vflex="30" src="gallery-directions.png" name="gallery directions"/>
+      <scroll-box tooltip="Agents" has-horizontal-scroller="false" vflex="1"  name="agent-scroll-box" color="D6DDE5" width="170">
+        <agent-gallery tooltip="Agents" name="agent-gallery" selected-group-changed-action="SWITCH-TO-BEHAVIOR" vflex="1" width="170"/>
       </scroll-box>
-      <row align="center"  valign="stretch" height="24" width="150" src="gradient-transparent.png">
+      <row align="center"  valign="stretch" height="24" width="170" src="gradient-transparent.png">
         <bevel-button bezel-style="square" tooltip="Add a new agent" text="+ Agent" name="new-agent-button" action="add-agent-action" width="65" height="24" />
         <bevel-button bezel-style="square" tooltip="Add a new shape" text="+ Shape" start-disabled="true"  name="new-shape-button" action="add-shape-action" width="65" height="24" />
         <bevel-button bezel-style="square" tooltip="Delete selected agent or shape" start-disabled="true" name="delete agent button" text="-" width="30" height="24" action="delete-selected-agent" />
