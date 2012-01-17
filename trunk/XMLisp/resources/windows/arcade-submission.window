@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<arcade-dialog title="Submit to Arcade" margin="0" width="680" height="490" background-color="EDEDEDFF">
+<arcade-dialog title="Submit to Arcade" margin="0" width="680" height="520" background-color="EDEDEDFF">
     <column align="stretch" valign="stretch">
       <spacer height="20" />
       <row align="stretch" valign="stretch" flex="1" height="25">
@@ -16,7 +16,7 @@
       </row>
       <spacer height="8"/>
       <row align="stretch" valign="stretch" flex="1" width="320" height="210">
-         <spacer width="20"/>
+         <spacer width="23"/>
          <column align="right" valign="stretch" width="80">
             <label text="Author:" width="50" size="10" bold="true" />
             <spacer height="16"/>
@@ -48,17 +48,20 @@
          <spacer width="20"/>
       </row>
       <spacer height="8"/>
-      <row align="stretch" valign="stretch" height="55" width="320">
-         <spacer width="20"/>
-          <column align="right" valign="stretch" width="80"> 
+      <row align="stretch" valign="stretch" height="85" width="320">
+          <column align="right" valign="stretch" width="104"> 
             <label text="Login:" width="44" size="10" bold="true"/>
             <spacer height="16"/>
             <label text="Password:" width="64" size="10" bold="true"/>
+            <spacer height="16"/>
+            <label text="Assignment Key:" width="98" size="10" bold="true"/>
          </column>
          <column align="stretch" valign="stretch" vflex="1" flex="1"> 
            <editable-text text="enter your arcade login" name="login" size="10" flex="1"/>
            <spacer height="8"/>
            <editable-text text="" secure="true" name="password" size="10" flex="1" />
+           <spacer height="8"/>
+           <editable-text name="assignment-key" size="10" flex="1" />
          </column>
          <spacer width="20"/>
          <column align="stretch" valign="stretch" width="320" >
