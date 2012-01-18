@@ -2335,30 +2335,20 @@
 
 
 (objc:defmethod (#/mouseDown: :void) ((self native-jog-button) event)
-  ;; NSslider runs its own event loop on mouse down -> no mouseUp or mouseDragged events
-  ;; http://www.cocoabuilder.com/archive/cocoa/157955-nsslider-mouseup.html
-  ;; setup slide action to call lui action but also a thread that lives as long as the mouse is down
   (setf (is-jog-active (lui-view Self)) t)
   (process-run-function
-     '(:name "Jog Button Thread" )
-     #'(lambda ()
-         ;; start jog in separate thread to avoid delay of slider knob move
-         (start-jog (lui-view Self))
-         ;; as long as mouse is down keep running control action at interval frequency
-         (loop
-           (unless (is-jog-active (lui-view Self))   (return))
-           (catch-errors-nicely ("user is moving jog dial")
-            ;; better to activate the action in the main thread!!
-             #-cocotron
-             (in-main-thread ()
-              (#/activateAction (#/target Self));)
-              (sleep (action-interval (lui-view Self))))
-             #+cocotron
-             (progn
-              (#/activateAction (#/target Self));)
-              (sleep (action-interval (lui-view Self))))
-             )
-           )))
+   '(:name "Jog Button Thread" )
+   #'(lambda ()
+       ;; start jog in separate thread to avoid delay of slider knob move
+       (start-jog (lui-view Self))
+       ;; as long as mouse is down keep running control action at interval frequency
+       (loop
+         (unless (is-jog-active (lui-view Self))  (return))
+         (catch-errors-nicely ("user is pressing button")
+                              ;; better to activate the action in the main thread!!
+           (in-main-thread ()
+             (#/activateAction (#/target Self)))
+           (sleep (action-interval (lui-view Self)))))))
   ;; this actually does the mouse tracking until mouse up
   (call-next-method Event)
    ;; mouse is up
