@@ -5,11 +5,11 @@
       <agent-hyper-cube segments="8"/>
     </agentcube-view>
     <row minimize="vertical" align="center">
-      <label name="agentcubes name" text="AgentCubes" width="125" height="25" size="20.0"/>/>
+      <label name="agentcubes name" text="AgentCubes" width="125" height="25" size="20.0"/>
     </row>
     <row minimize="vertical" align="center">
-      <label text="Version" width="100" align="right" height="25" size="14.0"/>/>
-      <label name="agentcubes version" text="" width="80" height="25" size="14.0"/>/>
+      <label text="Version" width="100" align="right" height="25" size="14.0"/>
+      <label name="agentcubes version" text="" width="80" height="25" size="14.0"/>
     </row>
     <spacer height="20"/>
     <row minimize="vertical" align="left">
