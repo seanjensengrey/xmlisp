@@ -577,7 +577,7 @@
   (use-texture Self "floorTile.png")
   (gltexparameteri gl_texture_2d gl_texture_wrap_s gl_repeat)
   (gltexparameteri gl_texture_2d gl_texture_wrap_t gl_repeat)
-  (glRotatef 90s0 0.s0 0.0s0 0.0s0)
+  (glRotatef 90.0 1.0 0.0 0.0)
   (glbegin gl_quads)
   ;; floor
   (glnormal3f 0.0 1.0 0.0)
@@ -1443,7 +1443,8 @@
      (display Window)
      (make-key-window Window )
      (initialize-gui-components Window (inflatable-icon Inflated-Icon-Editor))
-     (show window))))
+     (catch :cancel
+       (show window)))))
 
 
 (defmethod INITIALIZE-GUI-COMPONENTS ((Self inflatable-icon-editor-window) Inflatable-Icon)
