@@ -1428,7 +1428,8 @@
      (display Window)
      (display (view-named Window "icon-editor"))
      (make-key-window Window )
-     (initialize-gui-components Window (inflatable-icon Inflated-Icon-Editor)))))
+     (initialize-gui-components Window (inflatable-icon Inflated-Icon-Editor))
+     window)))
 
 
 (defmethod INITIALIZE-GUI-COMPONENTS ((Self inflatable-icon-editor-window) Inflatable-Icon)
