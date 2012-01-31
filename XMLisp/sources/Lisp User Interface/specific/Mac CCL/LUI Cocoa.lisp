@@ -156,8 +156,6 @@
   ;; the subview will now be retained by the view so we can release the subview.
   ;; This will be a problem if we call add-subview on an object we don't own.  I.E. if the subview was not created using alloc, new..., copy..., mutableCopy... 
   ;; then this release will likely cause a crash
-  #-cocotron
-  ;;For now this causes a crash windows, so until Christoper Lloyd fixes this we will have to live the context leak on Windows.
   (#/release (native-view Subview))
   (setf (part-of Subview) View))
   
@@ -259,7 +257,9 @@
   (subviews-swapped (window View) Old-Subview New-Subview))
 
 
-(defmethod WINDOW ((Self view)) 
+(defmethod WINDOW ((Self view))
+  (unless (native-view Self)
+    (return-from window nil))
   (ccl::with-autorelease-pool
   (let ((ns-window (#/window (native-view Self))))
     (if (%null-ptr-p ns-window)
@@ -569,15 +569,17 @@
               (#/lineToPoint: triangle point1)
               (#/lineToPoint: triangle point2)
               (#/lineToPoint: triangle point)
-            (#/fill triangle)
+              (#/fill triangle)
               (#/moveToPoint: triangle2 point1)
-            (#/lineToPoint: triangle2 point2)
+              (#/lineToPoint: triangle2 point2)
               (#/lineToPoint: triangle2 point3)
               (#/lineToPoint: triangle2 point1)
               (when (native-color Self)
-              (#/set (native-color Self)))
+                (#/set (native-color Self)))
               (#/fill triangle2))))))
-    (call-next-method)))
+    (call-next-method))
+  (#/set (#/colorWithDeviceRed:green:blue:alpha: ns:ns-color 0.0 0.0 0.0 1.0))
+  (#/strokeRect: ns:ns-bezier-path (#/frame (native-view self))))
 
 
 (defmethod SET-COLOR ((Self color-palette-view) &key (Red 0.0) (Green 0.0) (Blue 0.0) (Alpha 1.0))
@@ -792,8 +794,6 @@
         ;; content view
         (#/setContentView: Window (#/autorelease (native-view Self)))
         (#/setTitle: Window (native-string (title Self)))
-        (if (use-custom-window-controller self)
-          (#/setWindowController: Window (window-controller)))
         (ns:with-ns-size (minSize (min-width self) (min-height self))
           (#/setMinSize: Window minSize))
         (ns:with-ns-size (Position (x Self) (- (screen-height Self)  (y Self)))
@@ -874,8 +874,10 @@
 
 (defmethod SET-DOCUMENT-EDITTED ((self window) &key (mark-as-editted t))
   (if mark-as-editted
-    (#/setDocumentEdited: (native-window self) #$YES)
-    (#/setDocumentEdited: (native-window self) #$NO)))
+    (when (not (#/isDocumentEdited (native-window self)))
+      (#/setDocumentEdited: (native-window self) #$YES))
+    (when (#/isDocumentEdited (native-window self))
+      (#/setDocumentEdited: (native-window self) #$NO))))
 
 
 (defvar *Run-Modal-Return-Value* nil "shared valued used to return the run modal values")
@@ -914,6 +916,14 @@
 (defmethod STOP-MODAL ((Self t) Return-Value)
   ;; special stop-modal to stop without a window
   (setq *Run-Modal-Return-Value* Return-Value)
+  (#/stopModal (#/sharedApplication ns:ns-application)))
+
+
+(defmethod PAUSE-MODAL ((Self window))
+  (#/stopModal (#/sharedApplication ns:ns-application)))
+
+
+(defmethod RESUME-MODAL ((Self window))
   (#/stopModal (#/sharedApplication ns:ns-application)))
 
 
@@ -2294,12 +2304,14 @@
          (start-jog (lui-view Self))
          ;; as long as mouse is down keep running control action at interval frequency
          (loop
-           (unless (is-jog-active (lui-view Self))   (return))
+           (unless (is-jog-active (lui-view Self))  (return))
            (catch-errors-nicely ("user is moving jog dial")
             ;; better to activate the action in the main thread!!
                                 (in-main-thread ()
               (#/activateAction (#/target Self));)
-              (sleep (action-interval (lui-view Self))))))))
+              (sleep (action-interval (lui-view Self))))))
+         
+         ))
   ;; this actually does the mouse tracking until mouse up
   (call-next-method Event)
  
@@ -2343,15 +2355,20 @@
        (start-jog (lui-view Self))
        ;; as long as mouse is down keep running control action at interval frequency
        (loop
-         (unless (is-jog-active (lui-view Self))  (return))
+         (unless (is-jog-active (lui-view Self))  (print "return") (return))
          (catch-errors-nicely ("user is pressing button")
-                              ;; better to activate the action in the main thread!!
+           ;; better to activate the action in the main thread!!
            (in-main-thread ()
              (#/activateAction (#/target Self)))
            (sleep (action-interval (lui-view Self)))))))
   ;; this actually does the mouse tracking until mouse up
-  (call-next-method Event)
-   ;; mouse is up
+  ;(call-next-method Event)
+  ;; mouse is up
+  ;(stop-jog (lui-view Self))
+  )
+
+
+(objc:defmethod (#/mouseUp: :void) ((self native-jog-button) event)
   (stop-jog (lui-view Self)))
 
 
@@ -2423,7 +2440,6 @@
         (:center (#/alignCenter: Native-Control Native-Control))
         (:right (#/alignRight: Native-Control Native-Control))
         (:justified (#/alignJustified: Native-Control Native-Control))) |# )
-    
     Native-Control))
 
 
@@ -2708,50 +2724,44 @@
 ; IMAGE                            |
 ;__________________________________/
 
-(defclass native-clickable-image (ns:ns-image-view)
-  ((lui-view :accessor lui-view :initarg :lui-view))
+(defclass native-clickable-image (ns:ns-control)
+  ((lui-view :accessor lui-view :initarg :lui-view)
+   (native-image :accessor native-image :initform nil :documentation "this control's native-image")
+   )
   (:metaclass ns:+ns-object))
 
 
 (defmethod make-native-object ((Self clickable-image-control))
   (let ((Native-Control (make-instance 'native-clickable-image :lui-view Self))) 
     ;; no problem if there is no source, just keep an empty view
-    (cond
-     ;; in most cases there should be an image source
-     ((src Self)
-      ;; consider caching image with the same file, there is a good chance
-      ;; that some image files, e.g., buttons are used frequently
-      (ccl::with-autorelease-pool
-          (let ((Image #-cocotron (#/autorelease (#/initByReferencingFile: (#/alloc ns:ns-image) (native-string (source Self))))
-                       #+cocotron (#/initWithContentsOfFile: (#/alloc ns:ns-image) (native-string (source Self)))))
-            (unless #-cocotron (#/isValid Image)
-              #+cocotron (not (ccl:%null-ptr-p Image))
-              (error "cannot create image from file ~S" (source Self)))
-            ;; if size 0,0 use original size
-            (when (and (zerop (width Self)) (zerop (height Self)))
-              (let ((Size (#/size Image)))
-                (setf (width Self) (rref Size <NSS>ize.width))
-                (setf (height Self) (rref Size <NSS>ize.height))))
-            (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
-              (#/initWithFrame: Native-Control Frame)
-              (cond
-               ((downsample self)
-                (ns:with-ns-size (Size (width Self) (height Self))
-                  (let ((resized-image  (#/initWithSize: (#/alloc ns:ns-image) size)))
-                    (ns:with-ns-rect (orig-rect 0 0 (NS:NS-SIZE-WIDTH (#/size Image)) (NS:NS-SIZE-HEIGHT (#/size Image)))
-                      (#/lockFocus resized-image)
-                      (#/drawInRect:fromRect:operation:fraction: image Frame orig-rect #$NSCompositeCopy 1.0)
-                      (#/unlockFocus resized-image)
-                      (#/setImage: Native-Control resized-image)))))
-               (t
-                (#/setImage: Native-Control image))))
-            (if (scale-proportionally self)
-              (#/setImageScaling: Native-Control #$NSScaleProportionally)
-              (#/setImageScaling: Native-Control #$NSScaleToFit)))))
-     (t
-      (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
-        (#/initWithFrame: Native-Control Frame))))
+    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+      (#/initWithFrame: Native-Control Frame))
+    (ccl::with-autorelease-pool
+        (let ((Image #-cocotron (#/retain (#/initByReferencingFile: (#/alloc ns:ns-image) (native-string (source Self))))
+                     #+cocotron (#/initWithContentsOfFile: (#/alloc ns:ns-image) (native-string (source Self)))))
+          (unless #-cocotron (#/isValid Image)
+            #+cocotron (not (ccl:%null-ptr-p Image))
+            (error "cannot create image from file ~S" (source Self)))
+          ;; if size 0,0 use original size
+          (when (and (zerop (width Self)) (zerop (height Self)))
+            (let ((Size (#/size Image)))
+              (setf (width Self) (rref Size <NSS>ize.width))
+              (setf (height Self) (rref Size <NSS>ize.height))))
+          (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+            (#/initWithFrame: Native-Control Frame)
+            (cond
+             ((downsample self)
+              (ns:with-ns-size (Size (width Self) (height Self))
+                (let ((resized-image  (#/initWithSize: (#/alloc ns:ns-image) size)))
+                  (ns:with-ns-rect (orig-rect 0 0 (NS:NS-SIZE-WIDTH (#/size Image)) (NS:NS-SIZE-HEIGHT (#/size Image)))
+                    (#/lockFocus resized-image)
+                    (#/drawInRect:fromRect:operation:fraction: image Frame orig-rect #$NSCompositeCopy 1.0)
+                    (#/unlockFocus resized-image)
+                    (setf (native-image Native-Control) resized-image)))))
+             (t
+              (setf (native-image Native-Control) image))))))
     Native-Control))
+
 
 (objc:defmethod (#/isFlipped :<BOOL>) ((Self native-clickable-image))
   ;; Flip to coordinate system to 0, 0 = upper left corner
@@ -2761,6 +2771,25 @@
 (objc:defmethod (#/acceptsFirstResponder :<BOOL>) ((Self native-clickable-image))
   ;; Flip to coordinate system to 0, 0 = upper left corner
   #$YES)
+
+(objc:defmethod (#/mouseDown: :void) ((self native-clickable-image) event)
+  (let ((mouse-loc (#/locationInWindow event)));(#/locationInWindow event)))    
+    (multiple-value-bind (test-x test-y)
+                             (convert-from-window-coordinates-to-view-coordinates (lui-view self) (truncate (pref mouse-loc :<NSP>oint.x))(truncate (pref mouse-loc :<NSP>oint.y)))
+      (view-left-mouse-down-event-handler (lui-view self)  (truncate test-x)(truncate (- (height (lui-view self)) test-y))))))
+
+#|
+(objc:defmethod (#/mouseDragged: :void) ((self native-clickable-image) event)
+  (let ((mouse-loc (#/locationInWindow event)));(#/locationInWindow event)))    
+    (multiple-value-bind (test-x test-y)
+                             (convert-from-window-coordinates-to-view-coordinates (lui-view self) (truncate (pref mouse-loc :<NSP>oint.x))(truncate (pref mouse-loc :<NSP>oint.y)))
+      (view-left-mouse-dragged-event-handler (lui-view self)  (truncate test-x)(truncate (- (height (lui-view self)) test-y)) (truncate (#/deltaX Event)) (truncate (#/deltaY Event))))))
+|#
+
+(objc:defmethod (#/drawRect: :void) ((self native-clickable-image) (rect :<NSR>ect))
+  (ns:with-ns-rect (Frame (NS:NS-RECT-X rect) (NS:NS-RECT-Y rect) (- (NS:NS-RECT-WIDTH rect) 1)(NS:NS-RECT-HEIGHT rect))
+    (#/drawInRect:fromRect:operation:fraction: (native-image self) frame #$NSZeroRect #$NSCompositeCopy 1.0)))
+
 #|
 (objc:defmethod (#/mouseDown: :void) ((self native-clickable-image) event)
   (let* ((mouse-loc (#/locationInWindow event))
@@ -2823,7 +2852,7 @@
          (g #>CGFloat)
          (b #>CGFloat)
          (a #>CGFloat))
-    (#/getRed:green:blue:alpha: (#/colorUsingColorSpaceName: (#/color (Native-View self)) (native-string "NSCalibratedRGBColorSpace")) r g b a)
+    (#/getRed:green:blue:alpha:  (#/color (Native-View self)) r g b a)
     (truncate (* (pref r #>CGFloat) 255))))
 
 
@@ -2832,7 +2861,7 @@
          (g #>CGFloat)
          (b #>CGFloat)
          (a #>CGFloat))
-    (#/getRed:green:blue:alpha: (#/colorUsingColorSpaceName: (#/color (Native-View self)) (native-string "NSCalibratedRGBColorSpace")) r g b a)
+    (#/getRed:green:blue:alpha:  (#/color (Native-View self)) r g b a)
     (truncate (* (pref g #>CGFloat) 255))))
 
 
@@ -2841,7 +2870,7 @@
          (g #>CGFloat)
          (b #>CGFloat)
          (a #>CGFloat))
-    (#/getRed:green:blue:alpha: (#/colorUsingColorSpaceName: (#/color (Native-View self)) (native-string "NSCalibratedRGBColorSpace")) r g b a)
+    (#/getRed:green:blue:alpha:  (#/color (Native-View self)) r g b a)
     (truncate (* (pref b #>CGFloat) 255))))
 
 
@@ -2850,7 +2879,7 @@
          (g #>CGFloat)
          (b #>CGFloat)
          (a #>CGFloat))
-    (#/getRed:green:blue:alpha: (#/colorUsingColorSpaceName: (#/color (Native-View self)) (native-string "NSCalibratedRGBColorSpace")) r g b a)
+    (#/getRed:green:blue:alpha:  (#/color (Native-View self)) r g b a)
     (truncate (* (pref a #>CGFloat) 255))))
 
 
