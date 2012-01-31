@@ -29,14 +29,14 @@
   (:documentation "Stop all sounds from playing"))
 
 
-(defmethod PLAY-SOUND ((Name string) &key Loops)
+(defmethod PLAY-SOUND ((Name string) &key Loops (path nil))
   #+cocotron (declare (ignore Loops))
   (ccl::with-autorelease-pool
     (let ((Sound (or (gethash Name *Sounds*)
                      (let ((New-Sound
                             (#/initWithContentsOfFile:byReference: 
                              (#/alloc ns:ns-sound) 
-                             (native-string (native-path "lui:resources;sounds;" Name))
+                             (native-string (if path path (native-path "lui:resources;sounds;" Name)))
                              #$YES)))
                        ;; (print "loading sound")
                        (unless (%null-ptr-p New-Sound)
