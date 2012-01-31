@@ -110,6 +110,9 @@
 (defgeneric INITIALIZE-CAMERA (opengl-view)
   (:documentation "Initialize camera. Typically called as part of prepare-opengl"))
 
+(defgeneric DO-MAKE-NATIVE-OBJECT (opengl-view)
+  (:documentation "Most of opengl-views do want to make their native object but it some cases they may not want to. "))
+
 ;**************************
 ;* default implementation *
 ;**************************
@@ -190,6 +193,10 @@
 (defmethod INITIALIZE-CAMERA ((Self opengl-view))
   ; do nothing
   )
+
+
+(defmethod DO-MAKE-NATIVE-OBJECT ((Self opengl-view))
+  t)
 
 
 (defmethod VIEW-DID-END-RESIZE ((Self opengl-view))
