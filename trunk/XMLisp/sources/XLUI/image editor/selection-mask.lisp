@@ -192,8 +192,8 @@
   (let ((row (- (height Self) 0)))
     (dotimes (i (height Self))
       (dotimes (Col (width Self))
-        (unless (or (equal Row 32) (equal (- Row 1) -1)
-          (setf (aref (pixels Self) Col Row) (aref (pixels Self) Col (- Row 1)))))
+        (unless  (or  (equal Row 32) (equal (- Row 1) -1))
+          (setf (aref (pixels Self) Col Row) (aref (pixels Self) Col (- Row 1))))
         (setf (aref (pixels Self) Col 0) 0))
       (decf row))))
 
@@ -206,7 +206,7 @@
   (dotimes (Row (height Self))
     (dotimes (Col (width Self))
       (unless (equal (+ 1 col) (width self))
-        (setf (aref (pixels Self) Col Row) (aref (pixels Self) (+ 1 Col) Row))
+        (setf (aref (pixels Self) (- (width Self) Col) Row) (aref (pixels Self) (+ 1 (- (width Self) Col)) Row))
       ))
     (setf (aref (pixels Self) 31 Row) 0)))
 
