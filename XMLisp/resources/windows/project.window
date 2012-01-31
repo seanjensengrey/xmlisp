@@ -53,7 +53,7 @@
       <row name="world-row" align="stretch"  valign="stretch" flex="1" vflex="1">
         <column align="stretch" valign="stretch" flex="1" vflex="1">
           <row align="stretch"   valign="stretch" vflex="5" flex="1">
-            <world full-scene-anti-aliasing="true" flex="7" vflex="5" tooltip="The world" name="the world">
+            <world full-scene-anti-aliasing="true" flex="7" vflex="5" name="the world" do-make-native-object="true">
               <background-color red="0.5" green="0.5" blue="0.5"/>
               <camera/>
               <text-3d tooltip="Click the '+' button" text="Click the '+' button" x="-3.0" y="0.2" size="4.0"/>
