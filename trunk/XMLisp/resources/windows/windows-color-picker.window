@@ -1,38 +1,43 @@
-<windows-color-picker title="Pick a color" height="220" width="500">
+<windows-color-picker title="Pick a color" height="478" width="763">
  <column align="stretch"  valign="stretch">
   <row align="stretch" vflex="1" valign="stretch">
-    <column align="left" width="337"  vflex="1" valign="stretch">
-      <row minimize="vertical" vflex="1" align="stretch">
-         <label text="red" align="right" width="50"/>
-         <slider name="red" action="adjust-color-action" max-value="1.0" tick-marks="10" width="256"/>
-         <label text="0.0" name="red label" width="40"/>
+    <column align="left" width="430"  vflex="1" valign="stretch">
+      <windows-color-picker-wheel  height="268" width="430" src="color-swatch.png"/>
+       <spacer height="8"/>
+      <row minimize="vertical" width="430" vflex="1" align="left">
+         <label text="Red" align="left" width="50"/>
+         <slider name="red" action="adjust-color-action" max-value="1.0" tick-marks="10" width="340"/>
+         <label text="0.0" align="right" name="red label" width="40"/>
       </row>
       <spacer height="8"/>
       <row minimize="vertical" align="stretch">
-         <label text="green" align="right" width="50"/>
-         <slider name="green" action="adjust-color-action" max-value="1.0" tick-marks="10" width="256"/>
-         <label text="0.0" name="green label" width="40"/>
+         <label text="Green" align="left" width="50"/>
+         <slider name="green" action="adjust-color-action" max-value="1.0" tick-marks="10" width="340"/>
+         <label text="0.0" align="right" name="green label" width="40"/>
       </row>
       <spacer height="8"/>
       <row minimize="vertical" align="stretch">
-         <label text="blue" align="right" width="50"/>
-         <slider name="blue" action="adjust-color-action" max-value="1.0" tick-marks="10" width="256"/>
-         <label text="0.0" name="blue label" width="40"/>
+         <label text="Blue" align="left" width="50"/>
+         <slider name="blue" action="adjust-color-action" max-value="1.0" tick-marks="10" width="340"/>
+         <label text="0.0" align="right" name="blue label" width="40"/>
       </row>
       <spacer height="8"/>
       <row minimize="vertical" align="stretch">
-         <label text="alpha" align="right" width="50"/>
-         <slider name="alpha" action="adjust-color-action" value="1.0" max-value="1.0" tick-marks="10" width="256"/>
-         <label text="1.0" name="alpha label" width="40"/>
+         <label text="Alpha" align="left" width="50"/>
+         <slider name="alpha" action="adjust-color-action" value="1.0" max-value="1.0" tick-marks="10" width="340"/>
+         <label text="1.0" align="right" name="alpha label" width="40"/>
       </row>
     </column>
     <spacer/>
-    <color-palette name="color well" vflex="1" flex="1"/>
+    <column align="right" width="268"  vflex="1" valign="stretch">
+      <color-palette name="color well" height="268" width="268"/>
+    </column>
     </row>
-    <spacer/>
-    <row align="right" minimize="vertical">
+
+    <row minimize="vertical" align="right" >
       <button text="Cancel" action="cancel-action"/>
-      <button text="OK" action="ok-action"/>
+      <button text="OK" action="ok-action" default-button="true"/>
     </row>
+
   </column>
 </windows-color-picker>
