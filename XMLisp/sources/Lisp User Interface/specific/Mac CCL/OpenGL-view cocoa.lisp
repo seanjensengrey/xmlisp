@@ -152,6 +152,9 @@
   
  
 (defmethod MAKE-NATIVE-OBJECT ((Self opengl-view))
+  ;; If do-mak-native-object is not set this view will not have a native-object.  I.E. it will never be displayed.
+  (unless (do-make-native-object self)
+    (return-from make-native-object nil))
   (in-main-thread ()
   (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
     (let ((Pixel-Format (#/initWithAttributes: 
