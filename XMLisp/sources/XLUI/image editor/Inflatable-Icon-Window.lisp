@@ -35,7 +35,7 @@
 (defvar *transparent-ceiling-update-lock* nil "Lock used to prevent annimation of ceilling fading to interfere with closing window")
                          
 
-(defclass INFLATABLE-ICON-EDITOR-WINDOW (dialog-window)
+(defclass INFLATABLE-ICON-EDITOR-WINDOW (application-window)
   ((smoothing-cycles :accessor smoothing-cycles :initform 0 :initarg :smoothing-cycles)
    (selected-tool :accessor selected-tool :initform nil :type symbol :initarg :selected-tool :documentation "the name of the currently selected tool")
    (selected-camera-tool :accessor selected-camera-tool :initform nil :type symbol :initarg :selected-camera-tool :documentation "the name of the currently selected camera tool")
@@ -56,8 +56,6 @@
    (save-button-closure-action :accessor save-button-closure-action :initform nil :initarg :save-button-closure-action ))
   (:default-initargs
       :track-mouse t
-    :use-custom-window-controller t
-    :do-show-app-window-immediately nil
     :resizable t
     )
   (:documentation "Editor used to create inflatable icons"))
@@ -299,7 +297,7 @@
              (loop
                (catch-errors-nicely ("inflatable ceilling is animating")
                  (when *Ceiling-Update-Thread-Should-Stop*  (return))
-                 (when (ceiling-process-should-stop-and-close-window-p self) (stop-modal self nil) (return))
+                 (when (ceiling-process-should-stop-and-close-window-p self) (return))
                  (unless (or (transparent-ceiling-should-fade self)
                              (not (timer-due-p self (truncate (* 2.0 internal-time-units-per-second)))))
                    (setf (transparent-ceiling-should-fade self) t))
@@ -509,8 +507,7 @@
   ((inflatable-icon :accessor inflatable-icon :initarg :inflatable-icon))
   (:default-initargs
     :use-global-glcontext t
-    :inflatable-icon (make-instance 'inflatable-icon :auto-compile nil)
-    :reuse-opengl-context-p t)
+    :inflatable-icon (make-instance 'inflatable-icon :auto-compile nil))
   (:documentation "3d inflated icon editor"))
 
 
@@ -1018,7 +1015,7 @@
              (loop
                (catch-errors-nicely ("inflatable ceilling is animating")
                  (when *Ceiling-Update-Thread-Should-Stop*  (return))
-                 (when (ceiling-process-should-stop-and-close-window-p window) (stop-modal window nil) (return))
+                 (when (ceiling-process-should-stop-and-close-window-p window) (return))
                  (unless (or (transparent-ceiling-should-fade window)
                              (not (timer-due-p window (truncate (* 2.0 internal-time-units-per-second)))))
                    (setf (transparent-ceiling-should-fade window) t))
@@ -1215,17 +1212,8 @@
     (window-close Self)))
 
 
-
-
 (defmethod EDIT-ICON-CANCEL-ACTION ((Window inflatable-icon-editor-window) (Button button))
-  ;(window-close Window)
-  
-  (when (window-should-close window)
-    (stop-modal window nil))
-  
-  )
-
-
+  (window-close Window))
 
 
 (defmethod CLEAR-ACTION ((Window inflatable-icon-editor-window) (Button bevel-button))
@@ -1294,6 +1282,7 @@
   (let ((shape-manager (load-object (make-pathname :name "index" :type "shape"  :directory (pathname-directory (file window))):package (find-package :xlui)))
         (Model-Editor (view-named Window 'model-editor)))
     (compute-depth (inflatable-icon Model-Editor))
+    
     (let ((image-editor (view-named window 'icon-editor))
           (colors  ""))
       (dotimes (Column  (Columns (inflatable-icon Model-Editor)))
@@ -1307,18 +1296,14 @@
       (setf (colors (inflatable-icon Model-Editor)) colors))
     ;(window-save Window)
     (setf (shape shape-manager) (inflatable-icon Model-Editor)) 
+    ;  (lui::dump-buffer (image (shape shape-manager)) 32 32)
     (save shape-manager))
   (let ((Model-Editor (view-named Window 'model-editor)))
     ;; finalize geometry
     (when (save-button-closure-action window)
-      (funcall (save-button-closure-action window) (inflatable-icon Model-Editor))))
-  (when (window-should-close window)
-    (stop-modal window nil))
-  #|
+      (funcall (save-button-closure-action window) (inflatable-icon Model-Editor))))  
   (when close-window 
-    (window-close window))
-  |#
-  )
+    (window-close window)))
 
 
 ;___________________________________________
@@ -1441,10 +1426,9 @@
      ;; wrap up
      (setf (file window) pathname)
      (display Window)
+     (display (view-named Window "icon-editor"))
      (make-key-window Window )
-     (initialize-gui-components Window (inflatable-icon Inflated-Icon-Editor))
-     (catch :cancel
-       (show window)))))
+     (initialize-gui-components Window (inflatable-icon Inflated-Icon-Editor)))))
 
 
 (defmethod INITIALIZE-GUI-COMPONENTS ((Self inflatable-icon-editor-window) Inflatable-Icon)
