@@ -15,7 +15,7 @@
   (:default-initargs 
       :min-width 50
       :min-height 50
-      :do-show-immediately nil))
+      :do-show-immediately t))
 
 
 (defmethod REGISTER-NAMED-VIEW-IN-WINDOW ((View view) (Window application-window))
