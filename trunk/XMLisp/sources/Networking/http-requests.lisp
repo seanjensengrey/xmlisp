@@ -1,6 +1,7 @@
 (in-package :ccl)
 
 ;; good tool to experiment with headers: http://web-sniffer.net/
+;; http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.6
 
 
 (defun HTTP-STATUS-CODE-EXPLANATION (Status-Code)
@@ -131,23 +132,28 @@
   (:documentation "implemented by the specific http-request: returns the http command to be issued"))
 
 
-(defun READ-CR-LF-TERMINATED-LINE (Stream)
-  (let ((Line-Ending #.(format nil "~C~C" #\Return #\Newline))
-        (i 0))
-    (with-output-to-string (Line)
+(defun READ-UNTIL (Stream String &key (Include-String nil)) "
+  Read from <stream> until <string>. Return everything read as string"
+  (let ((i 0))
+    (with-output-to-string (Out)
       (loop
-        (let ((Char (read-char Stream)))
+        (let ((Char (or (read-char Stream nil nil) (return))))
+          (when Include-String (princ Char Out))
           (cond
            ;; partial match
-           ((char= Char (char Line-Ending i))
+           ((char= Char (char String i))
             (incf i)
             ;; full match
-            (when (= i (length Line-Ending))
+            (when (= i (length String))
               (return t)))
            ;; no match
            (t 
             (setq i 0)
-            (princ Char Line))))))))
+            (unless Include-String (princ Char Out)))))))))
+  
+
+(defun READ-CR-LF-TERMINATED-LINE (Stream)
+  (read-until Stream #.(format nil "~C~C" #\Return #\Newline)))
 
 
 (defmethod PARSE-RESPONSE-HEADER (Stream) "
@@ -173,10 +179,11 @@
       (read Value))))
 
 
- (defmethod ISSUE-HTTP-REQUEST ((Self http-request) &key Progress-Window) "
-  in:  Self http-request, &key Progress-Window 
+(defmethod ISSUE-HTTP-REQUEST ((Self http-request) &key Progress-Window Reader-Function) "
+  in:  Self http-request, &key Progress-Window; Reader-Function lambda (Stream Status-Code Length).
   out: Response-Content string, Status-Code int, Response-Header association list (<Name-String> <Value-String>)
-  Return the content of a web page and status information."
+  If no Reader-Function is provided then return the content of a web page as string and status information.
+  If there is a Reader-Function pass it the Stream Status-Code (hopefully 200) and the Length. The reader function should try to avoid reading beyond the length to abvoid long timeouts."
   (handler-case 
       (with-open-socket (Stream :remote-host (host Self)
                                 :remote-port (port Self))
@@ -184,21 +191,39 @@
         (http-command Self Stream :progress-window Progress-Window)
         (let ((Response-Header (parse-response-header Stream)))
           (let ((Content-Info (find "Content-Length" Response-Header :key #'first :test #'string-equal)))
-            (unless Content-Info (error "cannot determine content length of HTTP response"))
-            (let ((Content-Length (read-from-string (second Content-Info))))
-              ;;(format t "~%content length = ~A" Content-Length)
-              (values
-               (with-output-to-string (Response)
-                 ;; read the exact number of chars indicated by the header. Even just reading on char more will case a very long timeout
-                 (dotimes (i Content-Length)
-                   (let ((Char (read-char Stream)))
-                     (princ Char Response))))
-               (http-response-header-status-code Response-Header)
-               Response-Header)))))
-    (t (Condition) (lui::standard-alert-dialog 
-                    "Cannot open network connection. Please try again later."
-                    :explanation-text (format nil "~A" Condition))
-       nil)))
+            (cond
+             ;; can determine Content-Length:
+             (Content-Info
+              (let ((Content-Length (read-from-string (second Content-Info))))
+                (unless Content-Length (error "cannot determine content length of HTTP response"))
+                ;;(format t "~%content length = ~A" Content-Length)
+                (if Reader-Function
+                  (funcall Reader-Function Stream (http-response-header-status-code Response-Header) Content-Length)
+                  (values
+                   (with-output-to-string (Response)
+                     ;; read the exact number of chars indicated by the header. Even just reading on char more will case a very long timeout
+                     (dotimes (i Content-Length)
+                       (let ((Char (read-char Stream)))
+                         (princ Char Response))))
+                   (http-response-header-status-code Response-Header)
+                   Response-Header))))
+             ;; NO content length info: may need to read until end of stream. This can be slow
+             ;; best strategy would be to test if there is a Trasfer-Encodind: chunked and then implement chunk based reading
+             ;; http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.6
+             (t
+              (when (string-equal "chunked" (second (find "Transfer-Encoding" Response-Header :key #'first :test #'string-equal)))
+                (warn "~%Warning: Reading from HTTP server without proper chunking."))
+              (if Reader-Function
+                  (funcall Reader-Function Stream (http-response-header-status-code Response-Header) -1)  ;; signify problem of not knowing length
+                (values
+                 (read-until Stream "</html>" :include-string t)  ;; avoid running into end of stream timeout by locating what SHOULD be the end of any html page
+                 (http-response-header-status-code Response-Header)
+                 Response-Header)))))))
+    (error (Condition) 
+           (lui::standard-alert-dialog 
+            "Cannot open network connection. Please try again later."
+            :explanation-text (format nil "~A" Condition))
+           nil)))
 
 ;***********************************
 ;    HTTP-GET-REQUEST              *
@@ -225,14 +250,20 @@
   (force-output Stream))
 
 
-(defun HTTP-GET (Url &key Progress-Window)
+(defun HTTP-GET (Url &key Progress-Window Reader-Function) "
+  in: URL string; &key Progress-Window window; Reader-Function lambda (Stream Status-Code Length).
+  out: String string.
+  If there is a <Reader-Function> return its return value."
   (multiple-value-bind (Server Port Path-To-Web-Page)
                        (parse-url Url)
-      (issue-http-request (make-instance 'http-get-request
-                            :host Server
-                            :port Port
-                            :path-to-web-page Path-To-Web-Page
-                            :progress-window Progress-Window))))
+      (issue-http-request 
+       (make-instance 'http-get-request
+         :host Server
+         :port Port
+         :path-to-web-page Path-To-Web-Page
+         :progress-window Progress-Window)
+       :reader-function Reader-Function)))
+                          
 
 
 ;***********************************
