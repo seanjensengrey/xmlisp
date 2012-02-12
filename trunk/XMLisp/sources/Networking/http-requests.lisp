@@ -214,7 +214,7 @@
               (when (string-equal "chunked" (second (find "Transfer-Encoding" Response-Header :key #'first :test #'string-equal)))
                 (warn "~%Warning: Reading from HTTP server without proper chunking."))
               (if Reader-Function
-                  (funcall Reader-Function Stream (http-response-header-status-code Response-Header) -1)  ;; signify problem of not knowing length
+                  (funcall Reader-Function Stream (http-response-header-status-code Response-Header) 1000000)  ;; signify problem of not knowing length
                 (values
                  (read-until Stream "</html>" :include-string t)  ;; avoid running into end of stream timeout by locating what SHOULD be the end of any html page
                  (http-response-header-status-code Response-Header)
