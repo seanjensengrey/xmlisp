@@ -291,6 +291,13 @@
 (defparameter *infix-readtable* (copy-readtable nil))
 (defparameter *normal-readtable* (copy-readtable nil))
 
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+(defmacro infix-error (format-string &rest args)
+  `(let ((*readtable* *normal-readtable*)) 
+     (error ,format-string ,@args))))
+
+
 (defun infix-reader (stream subchar arg)
   ;; Read either #I(...) or #I"..."
   (declare (ignore arg subchar))
@@ -318,10 +325,6 @@
       (with-input-from-string (stream (concatenate 'string "#I(" string ")"))
 	(read stream))
       string))
-
-(defmacro infix-error (format-string &rest args)
-  `(let ((*readtable* *normal-readtable*)) 
-     (error ,format-string ,@args)))
 
 (defun read-infix (stream)
   (let* ((result (gather-superiors '\) stream)) ; %infix-end-token%
