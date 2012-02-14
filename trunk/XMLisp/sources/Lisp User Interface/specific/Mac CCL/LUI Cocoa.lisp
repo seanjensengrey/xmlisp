@@ -800,7 +800,7 @@
           (#/setFrameTopLeftPoint: (native-window Self) Position))
         (when (floating-p self)
           ;; #$kCGFloatingWindowLevelKey undefined on Cocotron so for now just use magic number 5 :(  
-          (#/setLevel: Window #-cocoron #$kCGFloatingWindowLevelKey #+cocotron 5))
+          (#/setLevel: Window #-cocotron #$kCGFloatingWindowLevelKey #+cocotron 5))
         ;; set background color
         (when (and (background-color Self) (= (length (background-color Self)) 8)) ;; we hope it's a string of hex numbers!
           (multiple-value-bind (r g b a)
