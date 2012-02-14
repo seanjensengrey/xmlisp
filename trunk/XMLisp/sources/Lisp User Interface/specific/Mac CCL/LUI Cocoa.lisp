@@ -798,6 +798,9 @@
           (#/setMinSize: Window minSize))
         (ns:with-ns-size (Position (x Self) (- (screen-height Self)  (y Self)))
           (#/setFrameTopLeftPoint: (native-window Self) Position))
+        (when (floating-p self)
+          ;; #$kCGFloatingWindowLevelKey undefined on Cocotron so for now just use magic number 5 :(  
+          (#/setLevel: Window #-cocoron #$kCGFloatingWindowLevelKey #+cocotron 5))
         ;; set background color
         (when (and (background-color Self) (= (length (background-color Self)) 8)) ;; we hope it's a string of hex numbers!
           (multiple-value-bind (r g b a)
@@ -3199,16 +3202,17 @@
     (let ((Pop-up (make-instance 'popup-button-control  :container container :width (+ text-buffer (truncate (ns:ns-size-width (#/sizeWithAttributes: (lui::native-string longest-string) nil)))) :height 1 :x   (- (rational (NS:NS-POINT-X (#/mouseLocation ns:ns-event)))(x window))  :y   (-  (- (NS:NS-RECT-HEIGHT (#/frame (#/mainScreen ns:ns-screen)))(NS:NS-POINT-Y (#/mouseLocation ns:ns-event)))(y window))  )))
     (dolist (String list)
       (add-item Pop-Up String nil))
-    (if item-addition-action-string-list
-      (add-item Pop-Up (first item-addition-action-string-list) (second item-addition-action-string-list)))
+      (if item-addition-action-string-list
+        (add-item Pop-Up (first item-addition-action-string-list) (second item-addition-action-string-list)))
     (add-subviews window Pop-up)
     (if selected-item
       (#/selectItemWithTitle: (native-view pop-up) (native-string selected-item))
       (#/selectItemWithTitle: (native-view pop-up) nil))
     ;(#/setTransparent: (native-view Pop-Up) #$YES)
     (#/performClick:  (native-view Pop-up) +null-ptr+)
-    (#/removeFromSuperview (native-view Pop-up))
-      (unless (%null-ptr-p (#/titleOfSelectedItem (native-view Pop-Up)))
-      (ccl::lisp-string-from-nsstring  (#/titleOfSelectedItem (native-view Pop-Up)))))))
+      (let ((title (#/titleOfSelectedItem (native-view Pop-Up))))
+        (#/removeFromSuperview (native-view Pop-up))
+        (unless (%null-ptr-p title)
+          (ccl::lisp-string-from-nsstring  title))))))
 
 
