@@ -588,6 +588,7 @@ Call with most important parameters. Make other paramters accessible through *Cu
    (resizable :accessor resizable :initform t :initarg :resizable :type boolean :documentation "has resize control")
    (closeable :accessor closeable :initform t :initarg :closeable :type boolean :documentation "has close control")
    (borderless :accessor borderless :initform nil :initarg :borderless :type boolean :documentation "has border including title and other decoration")
+   (floating-p :accessor floating-p :initform nil :initarg :floating-p :type boolean :documentation "Is the a floating window?")
    (window-needs-saving-p :accessor window-needs-saving-p :initform nil :type boolean :documentation "true if window contains objects that neeed saving")
    (full-screen :accessor full-screen :initform nil :initarg :full-screen :type boolean :documentation "is in full screen mode")
    (do-show-immediately :accessor do-show-immediately :initarg :do-show-immediately :initform t :documentation "if true will show window when creating instance")
