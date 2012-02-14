@@ -639,7 +639,9 @@
        (+ y (window-y Self) (y (window Self))))))
    ;; NOT dragging (probably camera control)
    (t
-    (call-next-method))))
+    ;(call-next-method)
+    )
+   ))
 
 
 (defmethod VIEW-LEFT-MOUSE-UP-EVENT-HANDLER ((Self agent-3d-view) X Y)
@@ -1097,6 +1099,11 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
 
 
 (defmethod MOUSECLICK-TRIGGER-EVENT-HANDLER ((Self agent-3d))
+  ;; do nothing
+  nil)
+
+
+(defmethod HAND-TOOL-EVENT-HANDLER ((Self agent-3d))
   ;; do nothing
   nil)
 
