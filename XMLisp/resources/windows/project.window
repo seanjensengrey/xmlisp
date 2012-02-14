@@ -33,6 +33,7 @@
           <image-button name="draw button"  tooltip="Draw agent tool" start-disabled="true" action="draw-tool-action" image="draw-button.png"/>
           <image-button name="volume insert button" tooltip="Multi agent insert" start-disabled="true" action="volume-insert-tool-action" image="select-rect-button.png"/>
           <image-button name="erase button" tooltip="Erase agent tool" start-disabled="true" action="erase-tool-action" image="erase-button.png"/> 
+          <image-button name="hand button" tooltip="Hand tool" start-disabled="true" action="hand-tool-action" image="hand-button.png"/> 
           <spacer width="10"/>
           <image-button name="rotate button" tooltip="Rotate" start-disabled="true" action="rotate-tool-action" image="rotate-button.png"/>
           <image-button name="pan button"    tooltip="Pan" start-disabled="true" action="pan-tool-action" image="pan-button.png"/>
@@ -43,7 +44,7 @@
         <image-button name="full-screen-button" tooltip="Switch to full screen (escape will exit full screen)" start-disabled="true" action="full-screen-action" image="fullscreen2.png"/>  
         <spacer width="8"/>
         <image-button name="reload button" tooltip="Reload the world" start-disabled="true" action="reload-tool-action"  image="reload-button.png"/> 
-        <bevel-button bezel-style="square" tooltip="Clear the world" text="Clear" start-disabled="true" name="clear-button" action="clear-tool-action" width="65" height="24" />
+        <bevel-button bezel-style="square" tooltip="Clear the world" text="Clear" start-disabled="true" name="clear-button" action="clear-tool-action" width="45" height="24" />
         <label width="35" tooltip="Slow animation speed" text="slow"/>
         <slider value="0.25" tooltip="Adjust animation speed" start-disabled="true" name="speed-slider" max-value="0.5" min-value="0.0" action="speed-slider-action"  tick-marks="2"/>
         <label width="35" tooltip="Fast animation speed" text="fast"/>
