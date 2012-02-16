@@ -715,6 +715,10 @@
 	      :documentation "delegate object receiving window events"))
 
 
+(objc:defmethod (#/windowDidResignKey: :void) ((self window-delegate) Notification)
+  (window-lost-focus (lui-window Self)))
+
+
 (objc:defmethod (#/windowDidResize: :void) ((self window-delegate) Notification)
   (declare (ignore Notification))
   ;; only the size of the content view
