@@ -37,6 +37,7 @@
     <row minimize="vertical" align="right" >
       <button text="Cancel" action="cancel-action"/>
       <button text="OK" action="ok-action" default-button="true"/>
+      <spacer width="16"/>
     </row>
 
   </column>
