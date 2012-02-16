@@ -24,7 +24,7 @@
     </image-button-cluster>
     </column>
     <spacer width="5"/>
-    <icon-editor tooltip="2D Icon Editor: a 32x32 pixel canvas for creating the 2D icon to be inflated." name="icon-editor" flex="1" action="change-icon-action"/>
+    <icon-editor name="icon-editor" flex="1" action="change-icon-action"/>
     <spacer width="15"/>
     <column width="250" valign="top" align="stretch">
       <label width="65" text="Inflation" align="center"/>
@@ -80,7 +80,7 @@
     </column>
 
     <spacer width="15"/>
-   <inflated-icon-editor tooltip="3D Editor: the 3D object (inflatable icon) resulting from the inflation process." name="model-editor" flex="1"/>
+   <inflated-icon-editor  name="model-editor" flex="1"/>
     <spacer width="5"/>
     <image-button-cluster>
       <image-button tooltip="Pan: click and drag to move the camera horizontally in the 3D Editor." name="pan button" action="camera-pan-action" image="pan-button.png"/> 
