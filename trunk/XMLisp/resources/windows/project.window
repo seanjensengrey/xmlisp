@@ -33,7 +33,7 @@
           <image-button name="draw button"  tooltip="Draw agent tool" start-disabled="true" action="draw-tool-action" image="draw-button.png"/>
           <image-button name="volume insert button" tooltip="Multi agent insert" start-disabled="true" action="volume-insert-tool-action" image="select-rect-button.png"/>
           <image-button name="erase button" tooltip="Erase agent tool" start-disabled="true" action="erase-tool-action" image="erase-button.png"/> 
-          <image-button name="hand button" tooltip="Hand tool" start-disabled="true" action="hand-tool-action" image="hand-button.png"/> 
+          <image-button name="hand button" tooltip="Hand tool: Use with custom methods that have on-hand-tool trigger" start-disabled="true" action="hand-tool-action" image="hand-button.png"/> 
           <spacer width="10"/>
           <image-button name="rotate button" tooltip="Rotate" start-disabled="true" action="rotate-tool-action" image="rotate-button.png"/>
           <image-button name="pan button"    tooltip="Pan" start-disabled="true" action="pan-tool-action" image="pan-button.png"/>
