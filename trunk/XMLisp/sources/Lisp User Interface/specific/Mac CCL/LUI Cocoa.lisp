@@ -2358,7 +2358,7 @@
        (start-jog (lui-view Self))
        ;; as long as mouse is down keep running control action at interval frequency
        (loop
-         (unless (is-jog-active (lui-view Self))  (print "return") (return))
+         (unless (is-jog-active (lui-view Self))  (return))
          (catch-errors-nicely ("user is pressing button")
            ;; better to activate the action in the main thread!!
            (in-main-thread ()
@@ -2902,7 +2902,6 @@
 
 (objc:defmethod (#/drawRect: :void) ((self native-color-well-button) (rect :<NSR>ect))
   (call-next-method rect)
-  (NS:NS-RECT-WIDTH rect)
   (ns:with-ns-rect (Frame (+ (NS:NS-RECT-X rect)  (* .25 (NS:NS-RECT-WIDTH rect))) (+ (NS:NS-RECT-Y rect)  (* .25 (NS:NS-RECT-HEIGHT rect))) (* .5 (NS:NS-RECT-WIDTH rect)) (* .5 (NS:NS-RECT-HEIGHT rect)))
     (#/set (native-color self))
     (#/fillRect: ns:ns-bezier-path frame)))
