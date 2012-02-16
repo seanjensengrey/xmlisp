@@ -74,6 +74,7 @@
 (objc:defmethod (#/dealloc :void) ((Self native-opengl-view))
   (unless (reuse-opengl-context-p (lui-view self))
     (#/release (#/openGLContext self)))
+  (objc:remove-lisp-slots self)
   (call-next-method))
 
 
