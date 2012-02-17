@@ -610,6 +610,7 @@
 
   
 (defmethod CLOSE-WITH-NO-QUESTIONS-ASKED ((Self Window))
+  (window-will-close self nil)
   (#/close (native-window Self)))
 
 
@@ -2365,9 +2366,12 @@
          (unless (is-jog-active (lui-view Self))  (return))
          (catch-errors-nicely ("user is pressing button")
            ;; better to activate the action in the main thread!!
+                              
            (in-main-thread ()
-             (#/activateAction (#/target Self)))
-           (sleep (action-interval (lui-view Self)))))))
+             (#/activateAction (#/target Self))
+                              
+                              
+           (sleep (action-interval (lui-view Self))))))))
   ;; this actually does the mouse tracking until mouse up
   ;(call-next-method Event)
   ;; mouse is up
