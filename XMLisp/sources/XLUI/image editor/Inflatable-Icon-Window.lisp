@@ -802,7 +802,7 @@
   ;(setf (text (view-named (window self) 'pressuretext)) (format nil "0.0"))
   )
 
-(defmethod ADJUST-PRESSURE-ACTION ((Window inflatable-icon-editor-window) (Button inflation-jog-button) &optional do-not-display)
+(defmethod ADJUST-PRESSURE-ACTION ((Window inflatable-icon-editor-window) (Button inflation-jog-button))
   (ccl::with-autorelease-pool 
     (enable (view-named Window "flatten-button"))
     (when (and (< (pressure-per-cycle button) (max-pressure-per-cycle button)) (>= (get-internal-real-time) (+ (initial-time button) (* (pressure-ramp-delay button) internal-time-units-per-second))))
@@ -815,10 +815,6 @@
       ;; model update
       (let ((Text-View (view-named Window 'pressuretext)))
         ;; update label
-        #|
-        (unless do-not-display
-          (display Text-View))
-        |#
         ;; update model editor
         (let ((Model-Editor (view-named Window 'model-editor)))
           (incf (pressure (inflatable-icon Model-Editor)) (* 0.02 Pressure))
@@ -826,7 +822,6 @@
           (setf (is-flat (inflatable-icon Model-Editor)) nil)
           (when  #-cocotron t #+cocotron (or (not (time-of-last-text-update button)) (>= (get-internal-real-time) (+ (time-of-last-text-update button) (* .155 internal-time-units-per-second))))
             (setf (time-of-last-text-update button)  (get-internal-real-time))
-         
             (setf (text Text-View) (format nil "~4,2F" (* 1000 (pressure (inflatable-icon Model-Editor)))))))))))
 
 
