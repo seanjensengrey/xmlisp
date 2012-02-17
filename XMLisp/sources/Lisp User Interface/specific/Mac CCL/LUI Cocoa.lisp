@@ -717,6 +717,7 @@
 
 
 (objc:defmethod (#/windowDidResignKey: :void) ((self window-delegate) Notification)
+  (declare (ignore Notification))
   (window-lost-focus (lui-window Self)))
 
 
@@ -2355,6 +2356,7 @@
 
 
 (objc:defmethod (#/mouseDown: :void) ((self native-jog-button) event)
+  (declare (ignore event))
   (setf (is-jog-active (lui-view Self)) t)
   (process-run-function
    '(:name "Jog Button Thread" )
@@ -2380,6 +2382,7 @@
 
 
 (objc:defmethod (#/mouseUp: :void) ((self native-jog-button) event)
+  (declare (ignore event))
   (stop-jog (lui-view Self)))
 
 
