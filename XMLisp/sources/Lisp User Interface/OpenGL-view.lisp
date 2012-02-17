@@ -39,7 +39,6 @@
    (render-mode :accessor render-mode :initform :render :type keyword :documentation "value: :render :select or :feedback")
    (camera-type :reader camera-type :initarg :camera-type :initform 'camera)
    (reusable-glcontext :accessor reusable-glcontext :initform (make-hash-table) :allocation :class :documentation "A one-at-a-time reusable opengl contexts usable only in modal windows with a single opengl view of one class at a time")
-   (reuse-opengl-context-p :accessor reuse-opengl-context-p :initform nil :initarg :reuse-opengl-context-p :type boolean :documentation "If true reuse the opengl stored in the hash table if one is present.")
    (animation-stop-function :accessor animation-stop-function :initform nil :documentation "If there is a stop-function then the animation of this view will be finished, and the stop-function called with the view (in the animation thread)" )
    #+cocotron (first-time-drawing :accessor first-time-drawing :initform t :documentation "T if this view has not been draw yet"))
   (:documentation "OpenGL View"))
