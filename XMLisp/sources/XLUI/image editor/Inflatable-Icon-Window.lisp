@@ -105,7 +105,7 @@
   (declare (ftype function redo-command undo-command))
   (let ((Icon-Editor (view-named Self 'icon-editor))
         (Inflatable-Icon (inflatable-icon (or (view-named (window self) 'model-editor) (error "model editor missing")))))
-  (cond
+    (cond
    ((and (command-key-p) (shift-key-p))
       (case (key-code Event)
         (#.(key-name->code "Z")
@@ -290,25 +290,21 @@
         (unless (transparent-ceiling-update-process self)
           (setf *ceiling-update-thread-should-stop* nil)
           (setf (transparent-ceiling-update-process self)
-         
-                       (lui::process-run-function
+          (lui::process-run-function
          '(:name "transparent ceiling update process")
          #'(lambda ()
              (loop
                (catch-errors-nicely ("inflatable ceilling is animating")
                  (when *Ceiling-Update-Thread-Should-Stop*  (return))
-                 (when (ceiling-process-should-stop-and-close-window-p self) (return))
+                 (when (ceiling-process-should-stop-and-close-window-p self)  (return))
                  (unless (or (transparent-ceiling-should-fade self)
                              (not (timer-due-p self (truncate (* 2.0 internal-time-units-per-second)))))
                    (setf (transparent-ceiling-should-fade self) t))
                  (when (transparent-ceiling-should-fade self)
                    (ccl::with-lock-grabbed ((transparent-ceiling-update-lock))
                      (update-ceiling-transparency self)))
-                 (sleep .04)))))
-                       )
-          
-          ;(when (ceiling-process-should-stop-and-close-window-p self) (close-with-no-questions-asked self))
-          )))))
+                 (sleep .04)))
+             (when (ceiling-process-should-stop-and-close-window-p self) (close-with-no-questions-asked self))))))))))
 
 
 (defmethod LOAD-IMAGE-FROM-FILE ((Self inflatable-icon-editor-window) Pathname)
@@ -819,9 +815,10 @@
       ;; model update
       (let ((Text-View (view-named Window 'pressuretext)))
         ;; update label
-        
+        #|
         (unless do-not-display
-          (display Text-View))   
+          (display Text-View))
+        |#
         ;; update model editor
         (let ((Model-Editor (view-named Window 'model-editor)))
           (incf (pressure (inflatable-icon Model-Editor)) (* 0.02 Pressure))
@@ -829,6 +826,7 @@
           (setf (is-flat (inflatable-icon Model-Editor)) nil)
           (when  #-cocotron t #+cocotron (or (not (time-of-last-text-update button)) (>= (get-internal-real-time) (+ (time-of-last-text-update button) (* .155 internal-time-units-per-second))))
             (setf (time-of-last-text-update button)  (get-internal-real-time))
+         
             (setf (text Text-View) (format nil "~4,2F" (* 1000 (pressure (inflatable-icon Model-Editor)))))))))))
 
 
@@ -1015,18 +1013,15 @@
              (loop
                (catch-errors-nicely ("inflatable ceilling is animating")
                  (when *Ceiling-Update-Thread-Should-Stop*  (return))
-                 (when (ceiling-process-should-stop-and-close-window-p window) (return))
+                 (when (ceiling-process-should-stop-and-close-window-p window)  (return))
                  (unless (or (transparent-ceiling-should-fade window)
                              (not (timer-due-p window (truncate (* 2.0 internal-time-units-per-second)))))
                    (setf (transparent-ceiling-should-fade window) t))
                  (when (transparent-ceiling-should-fade window)
                    (ccl::with-lock-grabbed ((transparent-ceiling-update-lock))
                      (update-ceiling-transparency window)))
-                 (sleep .04)))))
-         
-        )
-      ;(when (ceiling-process-should-stop-and-close-window-p window) (close-with-no-questions-asked window))
-      ))
+                 (sleep .04)))
+            (when (ceiling-process-should-stop-and-close-window-p window) (close-with-no-questions-asked window)))))))
   (let ((Ceiling (value Slider)))
     (set-document-editted Window :mark-as-editted t)
     (let ((Text-View (view-named Window 'ceilingtext)))
@@ -1038,8 +1033,7 @@
         (setf (ceiling-value (inflatable-icon Model-Editor)) Ceiling)
         (setf (max-value (inflatable-icon Model-Editor)) (+ Ceiling (value (view-named window "z_slider")) ))
         (when update-inflation
-          (update-inflation Window)))))
-  )
+          (update-inflation Window))))))
 
 
 (defmethod UPDATE-CEILING-TRANSPARENCY ((Self inflatable-icon-editor-window))
