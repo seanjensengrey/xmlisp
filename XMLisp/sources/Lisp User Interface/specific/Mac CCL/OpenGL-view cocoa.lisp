@@ -72,8 +72,7 @@
 
 
 (objc:defmethod (#/dealloc :void) ((Self native-opengl-view))
-  (unless (reuse-opengl-context-p (lui-view self))
-    (#/release (#/openGLContext self)))
+  (#/release (#/openGLContext self))
   (objc:remove-lisp-slots self)
   (call-next-method))
 
@@ -188,18 +187,7 @@
                :pixel-format Pixel-Format
                :lui-view Self)))
         ;; sharing  OpenGL context?
-       (cond 
-           ;; REUSE!
-           ((and (gethash (type-of Self) (reusable-glcontext Self)) (reuse-opengl-context-p self))
-            ;; should we release the current glcontent before we assign a new one??
-            ;; reuse
-            (#/setOpenGLContext: Native-Control (gethash (type-of Self) (reusable-glcontext Self)))
-            ;; perhaps some reinitialization needed here...
-            )
-           ;; NEW
-           (t
-            ;; sharing  OpenGL context?
-            (let ((View-to-Share (or (and (lui::use-global-glcontext Self) (lui::shared-opengl-view))
+       (let ((View-to-Share (or (and (lui::use-global-glcontext Self) (lui::shared-opengl-view))
                                      (lui::share-glcontext-of Self))))
               (when View-to-Share
                 (let ((glContext 
@@ -209,8 +197,6 @@
                         (#/openGLContext (lui::native-view View-to-Share)))))
                   (unless glContext (error "cannot share OpenGLContext of view ~A" View-to-Share))
                   (#/setOpenGLContext: Native-Control glContext))))
-            ;; use a reusable
-            (setf (gethash (type-of Self) (reusable-glcontext Self)) (#/openGLContext Native-Control))))
         (#/release Pixel-Format)
         Native-Control)))))
 
