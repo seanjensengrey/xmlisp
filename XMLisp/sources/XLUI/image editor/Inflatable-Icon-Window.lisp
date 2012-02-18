@@ -285,6 +285,7 @@
         (display Model-Editor))
       ;(adjust-ceiling-action self (view-named self "ceiling_slider"))
       (when (>= (maximum-altitude inflatable-icon) (ceiling-value Inflatable-Icon))
+        (setf (ceiling-process-should-stop-and-close-window-p self) nil)
         (setf (ceiling-transparency self) (transparent-ceiling-starting-alpha self))
         (setf (transparent-ceiling-should-fade self) nil)
         (unless (transparent-ceiling-update-process self)
@@ -541,25 +542,17 @@
     (setf (altitudes (inflatable-icon Self))
           (make-array (list (img-height Icon-Editor) (img-width Icon-Editor))
                       :element-type 'short-float
-                      :initial-element 0s0))
-    
-    ))
+                      :initial-element 0s0))))
   
 (defmethod INITIALIZE-INSTANCE :after ((Self inflated-icon-editor) &rest Args)
+  (declare (ignore Args))
   (when (camera self)
-      (setf (camera Self)
-            #|
-            (duplicate <camera eye-x="0.0" eye-y="0.89" eye-z="1.0" center-x="0.0" center-y="0.0" center-z="0.0" up-x="0.0" up-y="0.5726468643072211" up-z="-1.5649032618904695" fovy="60.0" aspect="1.0" near="0.004999999888241291" far="2000.0" azimuth="0.0" zenith="0.7200000286102295"/>
-            (find-package :xlui))
-            
-            |#
-            (duplicate <camera eye-x="-0.6211211173151155" eye-y="1.1633405705811566" eye-z="1.503611410725895" 
-                       center-x="0.0" center-y="0.0" center-z="0.0" 
-                       up-x="0.881440029667134" up-y="-1.6509098120484733" up-z="0.418499485826859149" fovy="60.0" 
-                       near="0.005" far="2000.0" azimuth="-3.6320001408457756" zenith="0.7200000360608101"/>
-                       (find-package :xlui))
-            
-            )))
+    (setf (camera Self)
+          (duplicate <camera eye-x="-0.6211211173151155" eye-y="1.1633405705811566" eye-z="1.503611410725895" 
+                     center-x="0.0" center-y="0.0" center-z="0.0" 
+                     up-x="0.881440029667134" up-y="-1.6509098120484733" up-z="0.418499485826859149" fovy="60.0" 
+                     near="0.005" far="2000.0" azimuth="-3.6320001408457756" zenith="0.7200000360608101"/>
+                     (find-package :xlui)))))
 
 
 (defmethod DRAW-SKY-BOX ((Self inflated-icon-editor))
