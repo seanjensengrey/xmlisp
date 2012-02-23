@@ -1,98 +1,108 @@
 <?xml version="1.0"?>
-<world width="887" height="304">
+<world width="867" height="304">
   <background-color red="0.0" green="0.0" blue="0.0"/>
-  <camera eye-x="4.628865360085811" eye-y="-2.3068460326890277" eye-z="9.728317012715053" center-x="4.249999832361937" center-y="4.000000048428774" center-z="0.0" up-x="-0.6650347723629954" up-y="11.070608543043537" up-z="0.8445100854956973" fovy="60.0" aspect="2.9177631578947367" near="0.005" far="2000.0" azimuth="-0.06000000238418579" zenith="0.5760000459849834"/>
+  <camera eye-x="4.628865360085811" eye-y="-2.3068460326890277" eye-z="9.728317012715053" center-x="4.249999832361937" center-y="4.000000048428774" center-z="0.0" up-x="-0.6650347723629954" up-y="11.070608543043537" up-z="0.8445100854956973" fovy="60.0" aspect="2.851973684210526" near="0.005" far="2000.0" azimuth="-0.06000000238418579" zenith="0.5760000459849834"/>
   <sky-dome roll="-60.0" size="100.0" texture="sky_and_clowds.jpg"/>
   <agent-matrix name="AGENT-MATRIX11743" layers="1" layer-height="10.0">
+    <agent_agent shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent col="1" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent col="2" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent col="3" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent col="4" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent col="4" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent col="4" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent col="6" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent col="5" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent col="6" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent col="7" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent col="8" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent col="9" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="1" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="1" col="1" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="1" col="2" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="1" col="3" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="1" col="3" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="1" col="3" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="1" col="3" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="1" col="4" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="1" col="5" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="1" col="5" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="1" col="5" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="1" col="6" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="1" col="6" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="1" col="7" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="1" col="8" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="1" col="8" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="1" col="9" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="2" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="2" col="1" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="2" col="1" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="2" col="2" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="2" col="2" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="2" col="2" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="2" col="2" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="2" col="3" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="2" col="4" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="2" col="6" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="2" col="5" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="2" col="6" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="2" col="7" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="2" col="7" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="2" col="8" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="2" col="9" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="3" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="3" col="1" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="3" col="1" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="3" col="2" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="3" col="3" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="3" col="4" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="3" col="5" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="3" col="6" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="3" col="7" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="3" col="8" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="3" col="9" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="4" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="4" col="1" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="4" col="1" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="4" col="2" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="4" col="3" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="4" col="3" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="4" col="3" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="4" col="4" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="4" col="4" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="4" col="4" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="4" col="5" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="4" col="6" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="4" col="7" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="4" col="7" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="4" col="7" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="4" col="8" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="4" col="9" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="5" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="5" col="1" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="5" col="2" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="5" col="2" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="5" col="3" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="5" col="4" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="5" col="4" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="5" col="5" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="5" col="6" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="5" col="7" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="5" col="7" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="5" col="8" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="5" col="9" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="6" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="6" col="1" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="6" col="2" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="6" col="3" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="6" col="4" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="6" col="5" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="6" col="6" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="6" col="7" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="6" col="8" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="6" col="9" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="7" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="7" col="1" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="7" col="2" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="7" col="4" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="7" col="3" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="7" col="4" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="7" col="5" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="7" col="5" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="7" col="6" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="7" col="7" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="7" col="8" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="7" col="9" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="8" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="8" col="1" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="8" col="2" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="8" col="5" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="8" col="3" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="8" col="4" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="8" col="5" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="8" col="6" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="8" col="6" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="8" col="7" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="8" col="8" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="8" col="9" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="9" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="9" col="1" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="9" col="2" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="9" col="3" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="9" col="4" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="9" col="5" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="9" col="6" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="9" col="9" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
-    <agent_agent row="9" col="9" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="9" col="7" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <agent_agent row="9" col="8" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="9" col="9" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
   </agent-matrix>
 </world>
