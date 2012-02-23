@@ -141,7 +141,7 @@
       <then/>
     </rule>
   </method>
-  <method comments="do nothing - ideally, forward message to a cube, if one is above me">
+  <method disclosed="true" comments="do nothing - ideally, forward message to a cube, if one is above me">
     <on-mouse-click/>
     <rule>
       <if/>
