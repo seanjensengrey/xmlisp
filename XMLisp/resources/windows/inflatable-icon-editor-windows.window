@@ -4,14 +4,14 @@
   <row align="stretch" valign="stretch" vflex="1">
      <column minimize="horizontal">
     <image-button-cluster selected-button="draw button">
-     <image-button tooltip="Draw Tool: click in the 2D Icon Editor to draw pixels of the selected drawing color."  name="draw button" action="draw-tool-action" image="draw-button.png"/> 
-     <image-button tooltip="Erase Tool: click in the 2D Icon Editor to erase pixels." name="erase button" action="erase-tool-action" image="erase-button.png"/> 
-     <image-button tooltip="Eyedropper Tool: click on a pixel in the 2D Icon Editor to select its color as the drawing color." name="eye dropper button" action="eye-dropper-tool-action" image="eye-dropper-button.png"/> 
-     <image-button tooltip="Paint Bucket Tool: click to fill the continuously colored area or the area within a selection defined with the Marquee tools with the drawing color." name="paint bucket button" action="paint-bucket-tool-action" image="paint-bucket-button.png"/>
-     <image-button tooltip="Magic Wand Tool: click to select all the pixels of the same color as the one clicked on. " name="magic wand button" action="magic-wand-tool-action" image="magic-wand-button.png"/>
-     <image-button tooltip="Rectangular Marquee Tool: click and drag in the 2D Icon Editor to select a rectangular area." name="select rectangle button" action="rect-tool-action" image="select-rect-button.png"/>
-     <image-button tooltip="Elliptical Marquee Tool: click and drag in the 2D Icon Editor to select an elliptical area." name="select ellipse button" action="ellipse-tool-action" image="select-ellipse-button.png"/>
-     <image-button tooltip="Polygonal Marquee Tool: click at different points in the 2D Icon Editor to create a polygonal selection. Double click at the end to close the selection." name="select polygon button" action="polygon-tool-action" image="select-polygon-button.png"/>
+     <image-button tooltip="Draw tool: draw pixels."  name="draw button" action="draw-tool-action" image="draw-button.png"/> 
+     <image-button tooltip="Erase Tool: erase pixels." name="erase button" action="erase-tool-action" image="erase-button.png"/> 
+     <image-button tooltip="Eyedropper Tool: pick up color of pixel." name="eye dropper button" action="eye-dropper-tool-action" image="eye-dropper-button.png"/> 
+     <image-button tooltip="Paint Bucket Tool: flood fill pixels." name="paint bucket button" action="paint-bucket-tool-action" image="paint-bucket-button.png"/>
+     <image-button tooltip="Magic wand Tool: select all adjacent pixels matching color. " name="magic wand button" action="magic-wand-tool-action" image="magic-wand-button.png"/>
+     <image-button tooltip="Rectangular Marquee Tool: click and drag to make rectangular selection." name="select rectangle button" action="rect-tool-action" image="select-rect-button.png"/>
+     <image-button tooltip="Elliptical Marquee Tool: click and drag to make elliptical selection." name="select ellipse button" action="ellipse-tool-action" image="select-ellipse-button.png"/>
+     <image-button tooltip="Polygonal Marquee Tool: click to define points of polygon, double click click to close polygon." name="select polygon button" action="polygon-tool-action" image="select-polygon-button.png"/>
      <spacer height="10"/>
      <color-well-button name="color well" action="pick-color-action" color="000000"/>
     </image-button-cluster>
@@ -30,23 +30,23 @@
       <label width="65" text="Inflation" align="center"/>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="Pressure"/>
-        <inflation-jog-button height="64" width="64" tooltip="Pressure jog Button: press and hold to inflate the pixels selected in the 2D Icon Editor." action="adjust-pressure-action" image="big-minus.png" name="deflate" flex="1"/>
-        <inflation-jog-button height="64" width="64" tooltip="Pressure jog Button: press and hold to deflate the pixels selected in the 2D Icon Editor." action="adjust-pressure-action" image="big-plus.png" name="inflate" flex="1"/>
+        <inflation-jog-button height="64" width="64" tooltip="Deflate selected pixels." action="adjust-pressure-action" image="big-minus.png" name="deflate" flex="1"/>
+        <inflation-jog-button height="64" width="64" tooltip="Inflate selected pixels." action="adjust-pressure-action" image="big-plus.png" name="inflate" flex="1"/>
         <label name="pressuretext" align="right" width="43" text="0.0"/>
      </row>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="Ceiling"/>
-        <slider tooltip="Ceiling slider: create a plane that defines the maximum altitute for the inflation. Ceilings can be defined for the entire icon or only for a selection." action="adjust-ceiling-action" name="ceiling_slider" value="1.0" max-value="2.0" flex="1" tick-marks="1"/>
+        <slider tooltip="Push selected pixels down." action="adjust-ceiling-action" name="ceiling_slider" value="1.0" max-value="2.0" flex="1" tick-marks="1"/>
         <label name="ceilingtext" align="right" width="38" text="1.0"/>
       </row>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="Noise"/>
-        <slider tooltip="Noise slider: add noise to the inflation for the entire icon or area defined in the 2D selection." action="adjust-noise-action" name="noise_slider" max-value="0.2" flex="1" tick-marks="1"/>
+        <slider tooltip="Add noise to selected pixels." action="adjust-noise-action" name="noise_slider" max-value="0.2" flex="1" tick-marks="1"/>
         <label name="noise-text" align="right" width="38" text="0.0"/>
       </row>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="Smooth"/>
-        <slider tooltip="Smoothness slider: ???smoothen out the noise in discrete steps???" action="adjust-smooth-action"  max-value="5" flex="1"  name="smooth_slider" tick-marks="1" />
+        <slider tooltip="If there is noise, make it more or less smooth" action="adjust-smooth-action"  max-value="5" flex="1"  name="smooth_slider" tick-marks="1" />
         <label name="smooth-text" align="right" width="38" text="0.0"/>
       </row>
       <row align="center" minimize="vertical" valign="middle">
@@ -58,10 +58,10 @@
       <label width="65" text="Geometry" align="center"/>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="z offset"/>
-        <slider tooltip="Z-offset: distance from the grid in the world at which the shape will be drawn." action="adjust-z-offset-action" min-value="-1.0" max-value="1.0" flex="1" name="z_slider" tick-marks="1"/>
+        <slider tooltip="Move shape up or down." action="adjust-z-offset-action" min-value="-1.0" max-value="1.0" flex="1" name="z_slider" tick-marks="1"/>
         <label name="z-offset-text" align="right" width="38" text="0.0"/>
       </row>
-      <check-box tooltip="Click to make the 3D icon upright." name="upright" text="upright" action="upright-action"/>
+      <check-box tooltip="Flip shape upright." name="upright" text="upright" action="upright-action"/>
 
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="surfaces"/>
@@ -74,7 +74,7 @@
       </row>
       <row align="stretch" minimize="vertical" valign="middle">
         <label width="65" text="distance"/>
-        <slider tooltip="Distance: use in conjunction with the Surfaces option to put some distance between the front and back surfaces (whether connected or unconnected) and the cube surfaces." action="adjust-distance-action" min-value="-.2" max-value="1.0" flex="1" name="distance-slider" tick-marks="1"/>
+        <slider tooltip="If there are at least two surfaces adjust distance between them." action="adjust-distance-action" min-value="-.2" max-value="1.0" flex="1" name="distance-slider" tick-marks="1"/>
         <label name="distance-text" align="right" width="38" text="0.0"/>
       </row>
     </column>
