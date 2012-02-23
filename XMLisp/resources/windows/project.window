@@ -21,20 +21,20 @@
         <image-button name="add world button" tooltip="Add a new world" action="add-new-world-action"  image="plus-button.png"/>
         <pop-up start-disabled="true" tooltip="Select a world" name="world-name" width="150" height="26" /> 
         <bevel-button bezel-style="square" tooltip="Save the world!" start-disabled="true" text="Save" name="save-button" action="save-the-world-action" width="65" height="24" />
-        <spacer width="10"/>
+        <spacer width="8"/>
         <image-button-row name="simulation tools" selected-button="stop button">
           <image-button name="run button"  tooltip="Run your simulation" start-disabled="true" action="run-action"  image="run-button.png"/> 
           <image-button name="stop button" tooltip="Stop your simulation" start-disabled="true" action="stop-action" image="stop-button.png"/> 
           <image-button name="step button" tooltip="Step your simulation" start-disabled="true" action="step-action" image="step-button.png"/>
         </image-button-row>
-        <spacer width="10"/>
+        <spacer width="8"/>
         <image-button-row name="tool-row" selected-button="arrow button">
           <image-button name="arrow button" tooltip="Arrow/selection tool" start-disabled="true" action="arrow-tool-action" image="arrow-button.png"/>
           <image-button name="draw button"  tooltip="Draw agent tool" start-disabled="true" action="draw-tool-action" image="draw-button.png"/>
           <image-button name="volume insert button" tooltip="Multi agent insert" start-disabled="true" action="volume-insert-tool-action" image="select-rect-button.png"/>
           <image-button name="erase button" tooltip="Erase agent tool" start-disabled="true" action="erase-tool-action" image="erase-button.png"/> 
           <image-button name="hand button" tooltip="Hand tool: Use with custom methods that have on-hand-tool trigger" start-disabled="true" action="hand-tool-action" image="hand-button.png"/> 
-          <spacer width="10"/>
+          <spacer width="8"/>
           <image-button name="rotate button" tooltip="Rotate" start-disabled="true" action="rotate-tool-action" image="rotate-button.png"/>
           <image-button name="pan button"    tooltip="Pan" start-disabled="true" action="pan-tool-action" image="pan-button.png"/>
           <image-button name="zoom button"   tooltip="Zoom" start-disabled="true" action="zoom-tool-action" image="zoom-button.png"/>    
@@ -45,10 +45,11 @@
         <spacer width="8"/>
         <image-button name="reload button" tooltip="Reload the world" start-disabled="true" action="reload-tool-action"  image="reload-button.png"/> 
         <bevel-button bezel-style="square" tooltip="Clear the world" text="Clear" start-disabled="true" name="clear-button" action="clear-tool-action" width="45" height="24" />
+        <spacer width="8"/>
         <label width="35" tooltip="Slow animation speed" text="slow"/>
         <slider value="0.25" tooltip="Adjust animation speed" start-disabled="true" name="speed-slider" max-value="0.5" min-value="0.0" action="speed-slider-action"  tick-marks="2"/>
         <label width="35" tooltip="Fast animation speed" text="fast"/>
-        <spacer width="32"/>
+        <spacer width="8"/>
         <image-button name="info-button" tooltip="Get more information about this project" action="info-button-action" image="info-button.png" />
       </row>
       <row name="world-row" align="stretch"  valign="stretch" flex="1" vflex="1">
