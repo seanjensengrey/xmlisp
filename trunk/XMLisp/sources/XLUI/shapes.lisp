@@ -19,16 +19,16 @@
 
 (in-package :xlui)
 
-(defparameter *FLAT-SHAPE-Z-OFFSET* .02)
+
+(defparameter *FLAT-SHAPE-Z-OFFSET* 0.02 "Default dept of tile")
+
 
 (defclass SHAPE (agent-3d)
   ((depth :accessor depth :initform 1.0 :type float :initarg :depth)
    (turn-height :accessor turn-height :initform 0.0 :initarg :turn-height :type single-float :documentation "height around which shapes will be turned. Default to floor")
    (textures :accessor textures :initform (make-hash-table :test #'equal))
    (texture-path :accessor texture-path :initform nil :initarg :texture-path :documentation "if this value is set the openGLView will look for texture here instead of the default location")
-   (texture :accessor texture :initform nil :initarg :texture :documentation "texture file name")
-   ;; (shade :accessor shade :initform nil :type string-or-null :documentation "used as floor shadow in unit size")
-   ))
+   (texture :accessor texture :initform nil :initarg :texture :documentation "texture file name")))
 
 
 ;_______________________________________
@@ -337,8 +337,6 @@
 
 (defmethod ICON ((Self Cube))
   (texture Self))
-
-
 
 ;_______________________________________
 ;  Box                                  |
