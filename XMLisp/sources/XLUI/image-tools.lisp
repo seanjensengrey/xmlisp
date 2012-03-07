@@ -62,6 +62,9 @@
   in: Pathname pathname.
   out: t if the pathname will comply with openGL requirements I.E. power of 2
        nil with a dialog explaining the situation if it will not"
+  (when (> (count #\. (if (stringp Pathname) Pathname (namestring Pathname))) 1)
+    (standard-alert-dialog "You have selected an invalid file."  :explanation-text "AgentCubes does not support files that have multiple \".\"s, please try agai")
+    (return-from validate-opengl-compliance))
   (multiple-value-bind (width height) (image-file-information Pathname)
     (if (and (power-of-2-p width) (power-of-2-p height))
       (return-from validate-opengl-compliance t)
