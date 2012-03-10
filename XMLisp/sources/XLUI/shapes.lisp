@@ -264,6 +264,9 @@
 
 (defclass CUBE (shape)
   ((size :accessor size :initform 1.0 :type float))
+  (:default-initargs 
+      :depth 1.0
+    :turn-height 0.5)
   (:documentation "Cube agent"))
 
 
