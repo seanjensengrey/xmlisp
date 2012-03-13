@@ -261,10 +261,10 @@
   (unless (native-view Self)
     (return-from window nil))
   (ccl::with-autorelease-pool
-  (let ((ns-window (#/window (native-view Self))))
-    (if (%null-ptr-p ns-window)
-      (return-from WINDOW nil)
-      (lui-window ns-window)))))
+      (let ((ns-window (#/window (native-view Self))))
+        (if (%null-ptr-p ns-window)
+          (return-from WINDOW nil)
+          (lui-window ns-window)))))
 
 
 (defvar *View-Full-Screen-Restore-Sizes* (make-hash-table))
@@ -800,13 +800,15 @@
         ;; content view
         (#/setContentView: Window (#/autorelease (native-view Self)))
         (#/setTitle: Window (native-string (title Self)))
+        (when (use-custom-window-controller self)
+          (#/setWindowController: Window (window-controller)))
         (ns:with-ns-size (minSize (min-width self) (min-height self))
           (#/setMinSize: Window minSize))
         (ns:with-ns-size (Position (x Self) (- (screen-height Self)  (y Self)))
           (#/setFrameTopLeftPoint: (native-window Self) Position))
         (when (floating-p self)
           ;; #$kCGFloatingWindowLevelKey undefined on Cocotron so for now just use magic number 5 :(  
-          (#/setLevel: Window #-cocotron #$kCGFloatingWindowLevelKey #+cocotron 5))
+          (#/setLevel: Window #-cocotron #|#$kCGFloatingWindowLevelKey|#7 #+cocotron 5))
         ;; set background color
         (when (and (background-color Self) (= (length (background-color Self)) 8)) ;; we hope it's a string of hex numbers!
           (multiple-value-bind (r g b a)
