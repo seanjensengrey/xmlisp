@@ -11,13 +11,16 @@
     <erase/>
     <rotate-by droll="90"/>
     <rotate-to Pitch-Angle="270"/>
+    <teleport-action/>
   </category>
   <category tooltip="Time actions" title="time" disclosed="true">
     <wait/>
   </category>
   <category tooltip="Message actions" title="messages" disclosed="true">
     <message/>
+    <delayed-message/>
     <broadcast/>
+    <message-in-stack/>
   </category>
   <category tooltip="Sound and speech actions" title="sound and speech" disclosed="true">
     <play-sound ref="Explode.mp3"/>
@@ -48,5 +51,9 @@
    <category tooltip="World control actions" title="World Control" disclosed="true">
      <switch-to-world/>
      <reload-world/> 
+   </category>
+   <category tooltip="Camera control actions" title="Camera Control" disclosed="true">
+     <switch-to-first-person-camera/> 
+     <switch-to-third-person-camera/> 
    </category>
 </palette>
