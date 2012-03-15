@@ -160,7 +160,7 @@
     <on selector="PUSH_RIGHT"/>
     <rule>
       <if>
-        <see shape="floor_tile">
+        <see shape="FLOOR_TILE Ground">
           <direction dcol="1"/>
         </see>
       </if>
@@ -172,7 +172,7 @@
     </rule>
     <rule>
       <if>
-        <see shape="goal_tile">
+        <see shape="GOAL_TILE Ground">
           <direction dcol="1"/>
         </see>
       </if>
@@ -184,7 +184,7 @@
     </rule>
     <rule>
       <if>
-        <see shape="crate">
+        <see shape="CRATE Crate">
           <direction dcol="1"/>
         </see>
       </if>
@@ -199,7 +199,7 @@
     <on selector="PUSH_LEFT"/>
     <rule>
       <if>
-        <see shape="floor_tile">
+        <see shape="FLOOR_TILE Ground">
           <direction dcol="-1"/>
         </see>
       </if>
@@ -211,7 +211,7 @@
     </rule>
     <rule>
       <if>
-        <see shape="goal_tile">
+        <see shape="GOAL_TILE Ground">
           <direction dcol="-1"/>
         </see>
       </if>
@@ -223,7 +223,7 @@
     </rule>
     <rule>
       <if>
-        <see shape="crate">
+        <see shape="CRATE Crate">
           <direction dcol="-1"/>
         </see>
       </if>
@@ -238,7 +238,7 @@
     <on selector="PUSH_UP"/>
     <rule>
       <if>
-        <see shape="floor_tile">
+        <see shape="FLOOR_TILE Ground">
           <direction drow="1"/>
         </see>
       </if>
@@ -250,7 +250,7 @@
     </rule>
     <rule>
       <if>
-        <see shape="goal_tile">
+        <see shape="GOAL_TILE Ground">
           <direction drow="1"/>
         </see>
       </if>
@@ -262,7 +262,7 @@
     </rule>
     <rule>
       <if>
-        <see shape="crate">
+        <see shape="CRATE Crate">
           <direction drow="1"/>
         </see>
       </if>
@@ -277,7 +277,7 @@
     <on selector="PUSH_DOWN"/>
     <rule>
       <if>
-        <see shape="floor_tile">
+        <see shape="FLOOR_TILE Ground">
           <direction drow="-1"/>
         </see>
       </if>
@@ -289,7 +289,7 @@
     </rule>
     <rule>
       <if>
-        <see shape="goal_tile">
+        <see shape="GOAL_TILE Ground">
           <direction drow="-1"/>
         </see>
       </if>
@@ -301,7 +301,7 @@
     </rule>
     <rule>
       <if>
-        <see shape="crate">
+        <see shape="CRATE Crate">
           <direction drow="-1"/>
         </see>
       </if>

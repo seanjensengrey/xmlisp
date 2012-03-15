@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <behavior comments="I can be pushed around">
-  <method>
+  <method disclosed="true">
     <on selector="PUSH_RIGHT"/>
     <rule>
       <if>
-        <see shape="goal_tile">
+        <see shape="GOAL_TILE Ground">
           <direction dcol="1"/>
         </see>
       </if>
@@ -20,7 +20,7 @@
     </rule>
     <rule>
       <if>
-        <see shape="floor_tile">
+        <see shape="FLOOR_TILE Ground">
           <direction dcol="1"/>
         </see>
       </if>
@@ -62,7 +62,7 @@
     <on selector="PUSH_LEFT"/>
     <rule>
       <if>
-        <see shape="goal_tile">
+        <see shape="GOAL_TILE Ground">
           <direction dcol="-1"/>
         </see>
       </if>
@@ -78,7 +78,7 @@
     </rule>
     <rule>
       <if>
-        <see shape="floor_tile">
+        <see shape="FLOOR_TILE Ground">
           <direction dcol="-1"/>
         </see>
       </if>
@@ -99,11 +99,11 @@
       </then>
     </rule>
   </method>
-  <method>
+  <method disclosed="true">
     <on selector="PUSH_UP"/>
     <rule>
       <if>
-        <see shape="floor_tile">
+        <see shape="FLOOR_TILE Ground">
           <direction drow="1"/>
         </see>
       </if>
@@ -119,7 +119,7 @@
     </rule>
     <rule>
       <if>
-        <see shape="goal_tile">
+        <see shape="GOAL_TILE Ground">
           <direction drow="1"/>
         </see>
       </if>
@@ -140,11 +140,11 @@
       </then>
     </rule>
   </method>
-  <method>
+  <method disclosed="true">
     <on selector="PUSH_DOWN"/>
     <rule>
       <if>
-        <see shape="goal_tile">
+        <see shape="GOAL_TILE Ground">
           <direction drow="-1"/>
         </see>
       </if>
@@ -160,7 +160,7 @@
     </rule>
     <rule>
       <if>
-        <see shape="floor_tile">
+        <see shape="FLOOR_TILE Ground">
           <direction drow="-1"/>
         </see>
       </if>
