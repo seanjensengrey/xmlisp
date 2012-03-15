@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <behavior comments="I am user controlled">
-  <method disclosed="true" comments="navigate with the arrow keys (depending on the camera) and remove matrix cubes to m &#10;ake a maze using space bar (for same layer), shift-space (for layer above), and option/alt&#10; -space (for layer below)">
+  <method disclosed="true" comments="navigate with the arrow keys (depending on the camera) and remove mat&#10;rix cubes to m  ake a maze using space bar (for same layer), shift-space (&#10;for layer above), and option/alt  -space (for layer below)">
     <while-running/>
     <rule>
       <if>
@@ -247,7 +247,7 @@
       </then>
     </rule>
   </method>
-  <method comments="move in z direction, that is between layers">
+  <method disclosed="true" comments="move in z direction, that is between layers">
     <on selector="LIFT"/>
     <rule>
       <if>
@@ -298,7 +298,7 @@
     <rule>
       <if>
         <test expression1="direction" expression2="1"/>
-        <see shape="matrix">
+        <see shape="MATRIX Matrix">
           <direction dcol="-1"/>
         </see>
       </if>
@@ -315,7 +315,7 @@
     <rule>
       <if>
         <test expression1="direction" expression2="2"/>
-        <see shape="matrix">
+        <see shape="MATRIX Matrix">
           <direction drow="-1"/>
         </see>
       </if>
@@ -332,7 +332,7 @@
     <rule>
       <if>
         <test expression1="direction" expression2="3"/>
-        <see shape="matrix">
+        <see shape="MATRIX Matrix">
           <direction dcol="1"/>
         </see>
       </if>
@@ -351,7 +351,7 @@
     <on selector="REMOVE-ABOVE"/>
     <rule>
       <if>
-        <see disclosed="true" shape="matrix" dlayer="1">
+        <see disclosed="true" shape="MATRIX Matrix" dlayer="1">
           <direction/>
         </see>
       </if>
@@ -370,7 +370,7 @@
     <on selector="REMOVE-BELOW"/>
     <rule>
       <if>
-        <see disclosed="true" shape="matrix" dlayer="-1">
+        <see disclosed="true" shape="MATRIX Matrix" dlayer="-1">
           <direction/>
         </see>
       </if>
