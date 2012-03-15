@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <behavior comments="I am user controlled">
-  <method disclosed="true" comments="use the I=invisible and V=visible keyboard input to toggle between seeing the matrix and seeing the pat&#10;h you created. Use F=flat to flatten out the path (to be able to see Nebuchadnezzar)">
+  <method disclosed="true" comments="use the I=invisible and V=visible keyboard input to toggle between seein&#10;g the matrix and seeing the pat h you created. Use F=flat to flatten out th&#10;e path (to be able to see Nebuchadnezzar)">
     <while-running/>
     <rule>
       <if>
@@ -38,7 +38,7 @@
       </then>
     </rule>
   </method>
-  <method comments="make me invisible">
+  <method disclosed="true" comments="make me invisible">
     <when-creating-new-agent/>
     <rule>
       <if/>
