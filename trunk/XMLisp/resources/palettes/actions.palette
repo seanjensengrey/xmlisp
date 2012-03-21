@@ -11,7 +11,7 @@
     <erase/>
     <rotate-by droll="90"/>
     <rotate-to Pitch-Angle="270"/>
-    <teleport-action/>
+    <teleport-to-action/>
   </category>
   <category tooltip="Time actions" title="time" disclosed="true">
     <wait/>
