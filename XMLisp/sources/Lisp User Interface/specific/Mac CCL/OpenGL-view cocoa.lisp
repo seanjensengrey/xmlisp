@@ -391,7 +391,8 @@
                              ;; allow the current animation cycle to be aborted but keep the thread running
                              (case (catch :animation-abort-cycle
                                      (catch-errors-nicely 
-                                      ("running simulation")
+                                      ("running simulation"
+                                       :after-message (stop-animation self))
                                       (cond
                                        ;; at least one view to be animated
                                        ((animated-views Self)
