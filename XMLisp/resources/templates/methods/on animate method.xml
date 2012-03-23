@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<method>
-  <on selector="untitled"/>
+<method disclosed="true">
+  <on  selector="untitled"/>
   <rule>
     <if/>
     <then>
