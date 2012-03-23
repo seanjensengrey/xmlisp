@@ -1103,7 +1103,13 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
   nil)
 
 
-(defmethod HAND-TOOL-EVENT-HANDLER ((Self agent-3d))
+(defmethod HAND-TOOL-CLICK ((Self agent-3d))
+  ;; do nothing
+  nil)
+
+
+
+(defmethod SHIFT-HAND-TOOL-EVENT-HANDLER ((Self agent-3d))
   ;; do nothing
   nil)
 
