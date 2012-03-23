@@ -602,6 +602,7 @@ Call with most important parameters. Make other paramters accessible through *Cu
    (background-color :accessor background-color :initarg :background-color :initform nil :documentation "the color used as a background for the window in the form (Red Green Blue Alpha)")
     #+cocotron (show-main-menu-on-windows :accessor show-main-menu-on-windows :initform nil :initarg :show-main-menu-on-windows :documentation "Should this window should a main menu on Windows?")
    (is-modal-p :accessor is-modal-p :initform nil :documentation "True if this window is currently running modally")
+   (720p-mode-p :accessor 720p-mode-p :initform nil :documentation "If true this window will configured to be displayed well for high res video.")
    )
   (:documentation "a window that can contain views, coordinate system: topleft = 0, 0")
   (:default-initargs 
@@ -753,6 +754,12 @@ after any of the window controls calls stop-modal close window and return value.
   (declare (ignore Old-View New-View))
   ;; do nothing
   )
+
+(defmethod (SETF 720p-mode-p) :after (value (Self window))
+  (when value
+    (let ((menu-height 44))
+      (set-size self 1280 (- 720 menu-height))
+      (set-position self 0 menu-height))))
 
 
 (defmethod MOST-SPECIFIC-VIEW-CONTAINING-POINT ((Self t) x y)
