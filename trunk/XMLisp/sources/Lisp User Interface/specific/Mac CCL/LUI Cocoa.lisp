@@ -681,16 +681,25 @@
 (objc:defmethod (#/constrainFrameRect:toScreen: :<NSR>ect) ((Self native-window) (Rect :<NSR>ect) Screen)
   (declare (ignore Screen))
   ;; a nasty hack to be able move windows above the menu bar
-  (if (full-screen (lui-window Self))
-    (let ((Window-Title-Bar-Height 22))
-      (ns:make-ns-rect 
-       0
-       0
-       (pref (#/frame (#/screen Self)) <NSR>ect.size.width)
-       (+ (pref (#/frame (#/screen Self)) <NSR>ect.size.height) Window-Title-Bar-Height)))
-    Rect))
+  (if (720p-mode-p (lui-window self))
+    (if (full-screen (lui-window Self))
+      (let ((Window-Title-Bar-Height 22))
+        (ns:make-ns-rect
+         0
+         (- (+ (pref (#/frame (#/screen Self)) <NSR>ect.size.height) 0) 720)
+         1280
+         (+ 720 Window-Title-Bar-Height)))
+      Rect)
+    (if (full-screen (lui-window Self))
+      (let ((Window-Title-Bar-Height 22))
+        (ns:make-ns-rect 
+         0
+         0
+         (pref (#/frame (#/screen Self)) <NSR>ect.size.width)
+         (+ (pref (#/frame (#/screen Self)) <NSR>ect.size.height) Window-Title-Bar-Height)))
+      Rect)))
 
-
+ 
 #+cocotron
 (objc:defmethod (#/hasMainMenu :<BOOL>) ((self native-window))
   #$YES)
