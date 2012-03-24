@@ -1275,7 +1275,7 @@
      (multiple-value-bind (New-Red New-Green New-Blue New-Alpha) (pen-color Self)
        (with-glcontext Self
        (flood-fill Self Col Row New-Red New-Green New-Blue New-Alpha
-                   :tolerance (tolerance Self) :tolerance-function #'absolute-color-difference-ignore-alpha))))
+                   :tolerance (tolerance Self) :tolerance-function #'absolute-color-difference))))
     ;; MAGIC WAND
     (magic-wand
      ;; When not holding shift, clear the selection
