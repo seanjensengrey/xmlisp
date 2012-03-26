@@ -2879,7 +2879,7 @@
          (g #>CGFloat)
          (b #>CGFloat)
          (a #>CGFloat))
-    (#/getRed:green:blue:alpha:  (#/color (Native-View self)) r g b a)
+    (#/getRed:green:blue:alpha:  (#/colorUsingColorSpaceName: (#/color (Native-View self)) #$NSCalibratedRGBColorSpace) r g b a)
     (truncate (* (pref r #>CGFloat) 255))))
 
 
@@ -2888,7 +2888,7 @@
          (g #>CGFloat)
          (b #>CGFloat)
          (a #>CGFloat))
-    (#/getRed:green:blue:alpha:  (#/color (Native-View self)) r g b a)
+    (#/getRed:green:blue:alpha:  (#/colorUsingColorSpaceName: (#/color (Native-View self)) #$NSCalibratedRGBColorSpace) r g b a)
     (truncate (* (pref g #>CGFloat) 255))))
 
 
@@ -2897,7 +2897,7 @@
          (g #>CGFloat)
          (b #>CGFloat)
          (a #>CGFloat))
-    (#/getRed:green:blue:alpha:  (#/color (Native-View self)) r g b a)
+    (#/getRed:green:blue:alpha:  (#/colorUsingColorSpaceName: (#/color (Native-View self)) #$NSCalibratedRGBColorSpace) r g b a)
     (truncate (* (pref b #>CGFloat) 255))))
 
 
@@ -2906,7 +2906,7 @@
          (g #>CGFloat)
          (b #>CGFloat)
          (a #>CGFloat))
-    (#/getRed:green:blue:alpha:  (#/color (Native-View self)) r g b a)
+    (#/getRed:green:blue:alpha:  (#/colorUsingColorSpaceName: (#/color (Native-View self)) #$NSCalibratedRGBColorSpace) r g b a)
     (truncate (* (pref a #>CGFloat) 255))))
 
 
