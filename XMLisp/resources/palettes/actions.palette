@@ -54,6 +54,6 @@
    </category>
    <category tooltip="Camera control actions" title="Camera Control" disclosed="true">
      <switch-to-first-person-camera/> 
-     <switch-to-third-person-camera/> 
+     <switch-to-birds-eye-camera/> 
    </category>
 </palette>
