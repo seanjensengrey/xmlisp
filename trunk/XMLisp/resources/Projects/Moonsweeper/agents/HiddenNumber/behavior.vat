@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <behavior comments="I am user controlled">
-  <method disclosed="true">
+  <method disclosed="true" comments="Your comments">
     <on-hand-tool/>
     <rule>
       <if>
@@ -145,6 +145,7 @@
         <change shape="NUMBER1 Hiddennumber">
           <direction/>
         </change>
+        <rotate-by disclosed="true" dpitch="360" duration="1.0"/>
       </then>
     </rule>
     <rule>
@@ -155,6 +156,7 @@
         <change shape="NUMBER2 Hiddennumber">
           <direction/>
         </change>
+        <rotate-by disclosed="true" dpitch="360" duration="1.0"/>
       </then>
     </rule>
     <rule>
@@ -297,8 +299,9 @@
         <current-world world="Level1"/>
       </if>
       <then>
-        <switch-to-world world="Level2"/>
+        <set attribute="@GAME_STARTED" value="0"/>
         <show-message disclosed="true" text="You Win!!" subtext="This moon is safe"/>
+        <switch-to-world world="Level2"/>
       </then>
     </rule>
     <rule>
@@ -306,8 +309,9 @@
         <current-world world="Level2"/>
       </if>
       <then>
-        <switch-to-world world="Level3"/>
+        <set attribute="@GAME_STARTED" value="0"/>
         <show-message disclosed="true" text="You Win!!" subtext="This moon is safe"/>
+        <switch-to-world world="Level3"/>
       </then>
     </rule>
     <rule>
