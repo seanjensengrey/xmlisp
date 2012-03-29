@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
-<world width="2024" height="528">
+<world width="1740" height="592">
   <light-source x="5.0" y="12.0" z="7.0" name="glare">
     <ambient red="0.0" green="0.0" blue="0.0"/>
     <diffuse red="1.0" green="1.0" blue="1.0"/>
     <specular red="1.5" green="1.5" blue="1.5"/>
   </light-source>
   <background-color red="0.0" green="0.0" blue="0.0"/>
-  <camera eye-x="10.0" eye-y="7.299999892711639" eye-z="15.249999884516" center-x="10.0" center-y="7.299999892711639" center-z="0.0" up-x="0.0" up-y="1.0" up-z="0.0" fovy="60.0" aspect="3.8333333333333335" near="0.005" far="2000.0" azimuth="0.0" zenith="0.0"/>
+  <camera eye-x="9.015999976545572" eye-y="7.299999892711639" eye-z="15.249999884516" center-x="9.015999976545572" center-y="7.299999892711639" center-z="0.0" up-x="0.0" up-y="1.0" up-z="0.0" fovy="60.0" aspect="2.939189189189189" near="0.005" far="2000.0" azimuth="0.0" zenith="0.0"/>
   <agent-matrix name="AGENT-MATRIX11508" rows="15" columns="15" layers="1">
     <hiddennumber_agent shape-name="HIDDENNUMBER" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <hiddennumber_agent col="1" shape-name="HIDDENNUMBER" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
@@ -234,4 +234,5 @@
     <hiddennumber_agent row="14" col="13" shape-name="HIDDENNUMBER" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <hiddennumber_agent row="14" col="14" shape-name="HIDDENNUMBER" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
   </agent-matrix>
+  <sky-dome size="100.0" texture="spaceClowd.png"/>
 </world>
