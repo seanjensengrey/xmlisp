@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="BLANK" relative-texture-path="Tiling">
+  <cube texture="Carved Tiles.jpg"/>
+</shape-manager>
