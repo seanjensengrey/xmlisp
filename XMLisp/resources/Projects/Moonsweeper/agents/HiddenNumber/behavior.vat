@@ -1,0 +1,319 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true" comments="Your comments">
+    <on-hand-tool/>
+    <rule>
+      <if>
+        <test expression1="@game_started" operator="!=" expression2="1"/>
+      </if>
+      <then>
+        <set attribute="@GAME_STARTED" value="1"/>
+        <broadcast class-name="Hiddennumber" selector="Randomize"/>
+        <set attribute="B" value="0"/>
+        <message selector="Flip">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="HIDDENNUMBER Hiddennumber">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <message selector="Flip">
+          <direction/>
+        </message>
+        <message selector="Check_For_Win">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Check_For_Win"/>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="@NUM_BOMBS" value="0"/>
+        <set attribute="@NUM_BLANKS" value="0"/>
+        <broadcast class-name="Hiddennumber" selector="Count_Bombs"/>
+        <broadcast class-name="Hiddennumber" selector="Count_Blanks"/>
+        <message selector="Test_For_Win">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on-hand-tool selector="option/alt"/>
+    <rule>
+      <if>
+        <see shape="HIDDENNUMBER Hiddennumber">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <change shape="MARKEDTILE HIDDENNUMBER">
+          <direction/>
+        </change>
+        <message selector="Check_For_Win">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="MARKEDTILE HIDDENNUMBER">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <change shape="HIDDENNUMBER Hiddennumber">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Randomize"/>
+    <rule>
+      <if>
+        <percent-chance expression="10"/>
+      </if>
+      <then>
+        <set attribute="B" value="1"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Flip"/>
+    <rule>
+      <if>
+        <test expression1="B" expression2="1"/>
+      </if>
+      <then>
+        <change shape="BOMB Hiddennumber">
+          <direction/>
+        </change>
+        <broadcast class-name="Hiddennumber" selector="Explode"/>
+        <show-message disclosed="true" text="Game Over!" subtext=""/>
+        <reload-world/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="HIDDENNUMBER Hiddennumber">
+          <direction/>
+        </see>
+        <test expression1="B[left]+B[down]+B[right]+B[up]+B[1,1]+B[1,-1]+B[-1,1]+B[-1,-1]" expression2="0"/>
+      </if>
+      <then>
+        <change shape="BLANK Hiddennumber">
+          <direction/>
+        </change>
+        <message selector="Flip">
+          <direction dcol="1"/>
+        </message>
+        <message selector="Flip">
+          <direction drow="-1" dcol="1"/>
+        </message>
+        <message selector="Flip">
+          <direction drow="-1"/>
+        </message>
+        <message selector="Flip">
+          <direction drow="-1" dcol="-1"/>
+        </message>
+        <message selector="Flip">
+          <direction dcol="-1"/>
+        </message>
+        <message selector="Flip">
+          <direction drow="1" dcol="-1"/>
+        </message>
+        <message selector="Flip">
+          <direction drow="1"/>
+        </message>
+        <message selector="Flip">
+          <direction drow="1" dcol="1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="B[left]+B[down]+B[right]+B[up]+B[1,1]+B[1,-1]+B[-1,1]+B[-1,-1]" expression2="1"/>
+      </if>
+      <then>
+        <change shape="NUMBER1 Hiddennumber">
+          <direction/>
+        </change>
+        <rotate-by disclosed="true" dpitch="360" duration="1.0"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="B[left]+B[down]+B[right]+B[up]+B[1,1]+B[1,-1]+B[-1,1]+B[-1,-1]" expression2="2"/>
+      </if>
+      <then>
+        <change shape="NUMBER2 Hiddennumber">
+          <direction/>
+        </change>
+        <rotate-by disclosed="true" dpitch="360" duration="1.0"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="B[left]+B[down]+B[right]+B[up]+B[1,1]+B[1,-1]+B[-1,1]+B[-1,-1]" expression2="3"/>
+      </if>
+      <then>
+        <change shape="NUMBER3 Hiddennumber">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="B[left]+B[down]+B[right]+B[up]+B[1,1]+B[1,-1]+B[-1,1]+B[-1,-1]" expression2="4"/>
+      </if>
+      <then>
+        <change shape="NUMBER4 Hiddennumber">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="B[left]+B[down]+B[right]+B[up]+B[1,1]+B[1,-1]+B[-1,1]+B[-1,-1]" expression2="5"/>
+      </if>
+      <then>
+        <change shape="NUMBER5 Hiddennumber">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="B[left]+B[down]+B[right]+B[up]+B[1,1]+B[1,-1]+B[-1,1]+B[-1,-1]" expression2="6"/>
+      </if>
+      <then>
+        <change shape="NUMBER6 Hiddennumber">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="B[left]+B[down]+B[right]+B[up]+B[1,1]+B[1,-1]+B[-1,1]+B[-1,-1]" expression2="7"/>
+      </if>
+      <then>
+        <change shape="NUMBER7 Hiddennumber">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="B[left]+B[down]+B[right]+B[up]+B[1,1]+B[1,-1]+B[-1,1]+B[-1,-1]" expression2="8"/>
+      </if>
+      <then>
+        <change shape="NUMBER8 Hiddennumber">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Explode"/>
+    <rule>
+      <if>
+        <test expression1="B" expression2="1"/>
+      </if>
+      <then>
+        <change shape="BOMB Hiddennumber">
+          <direction/>
+        </change>
+        <play-sound ref="Explode.mp3"/>
+        <wait duration=".2"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Count_Bombs"/>
+    <rule>
+      <if>
+        <test expression1="B" expression2="1"/>
+      </if>
+      <then>
+        <set attribute="@NUM_BOMBS" value="@num_bombs  + 1"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Count_Blanks"/>
+    <rule>
+      <if>
+        <see shape="HIDDENNUMBER Hiddennumber">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <set attribute="@NUM_BLANKS" value="@num_blanks  + 1"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="MARKEDTILE HIDDENNUMBER">
+          <direction/>
+        </see>
+        <test expression1="B" operator="!=" expression2="1"/>
+      </if>
+      <then>
+        <set attribute="@NUM_BLANKS" value="@num_blanks  + 1"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Test_For_Win"/>
+    <rule>
+      <if>
+        <test expression1="@num_blanks" expression2="@num_bombs"/>
+      </if>
+      <then>
+        <message selector="Next_Level">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Next_Level"/>
+    <rule>
+      <if>
+        <current-world world="Level1"/>
+      </if>
+      <then>
+        <set attribute="@GAME_STARTED" value="0"/>
+        <show-message disclosed="true" text="You Win!!" subtext="This moon is safe"/>
+        <switch-to-world world="Level2"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <current-world world="Level2"/>
+      </if>
+      <then>
+        <set attribute="@GAME_STARTED" value="0"/>
+        <show-message disclosed="true" text="You Win!!" subtext="This moon is safe"/>
+        <switch-to-world world="Level3"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <current-world world="Level3"/>
+      </if>
+      <then>
+        <show-message disclosed="true" text="Congratulations!" subtext="You have saved the final moon!  You are a winner!"/>
+      </then>
+    </rule>
+  </method>
+</behavior>
