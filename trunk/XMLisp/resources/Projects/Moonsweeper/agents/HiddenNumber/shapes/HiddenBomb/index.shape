@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<shape-manager name="HIDDENBOMB" relative-texture-path="Futuristic">
-  <cube texture="Lunar Target.jpg"/>
-</shape-manager>
