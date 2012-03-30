@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<shape-manager name="NUMBER5" relative-texture-path="Numbers">
-  <cube texture="5.png"/>
-</shape-manager>
