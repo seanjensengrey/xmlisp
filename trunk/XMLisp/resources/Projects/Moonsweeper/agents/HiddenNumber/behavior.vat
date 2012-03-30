@@ -265,7 +265,6 @@
         <see shape="MARKEDTILE HIDDENNUMBER">
           <direction/>
         </see>
-        <test expression1="B" operator="!=" expression2="1"/>
       </if>
       <then>
         <set attribute="@NUM_BLANKS" value="@num_blanks  + 1"/>
