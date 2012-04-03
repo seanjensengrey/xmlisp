@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <behavior>
-  <method disclosed="true" comments="synchronize trees: tell all the trees to determine whether they should be burning in one step/at the same time (perceive message); then tell all the trees to act what they decided to do in the perceive message at the same time">
+  <method disclosed="true" comments="synchronize trees: tell all the trees to determine whether they should be burning in one step/at&#10; the same time (perceive message); then tell all the trees to act what they decided to do in the p&#10;erceive message at the same time">
     <while-running/>
     <rule>
       <if/>
@@ -11,7 +11,7 @@
     </rule>
   </method>
   <method disclosed="true" comments="create new forests">
-    <on-mouse-click/>
+    <on-hand-tool/>
     <rule>
       <if/>
       <then>

@@ -54,7 +54,7 @@
     </rule>
   </method>
   <method disclosed="true" comments="start a fire by changing myself to the burning tree">
-    <on-mouse-click modifier="control"/>
+    <on-hand-tool/>
     <rule>
       <if>
         <see shape="TREE TREE">
