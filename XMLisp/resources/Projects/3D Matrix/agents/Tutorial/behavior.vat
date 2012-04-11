@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <before-running/>
+    <rule>
+      <if/>
+      <then>
+        <switch-to-world world="Maze"/>
+      </then>
+    </rule>
+  </method>
+</behavior>
