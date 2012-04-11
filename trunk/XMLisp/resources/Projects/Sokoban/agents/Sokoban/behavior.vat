@@ -1,0 +1,359 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true" comments="navigate camera dependent">
+    <while-running/>
+    <rule>
+      <if>
+        <first-person-view/>
+      </if>
+      <then>
+        <message selector="NAVIGATE-FIRST-PERSON">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <message selector="NAVIGATE-WORLD">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method comments="rotate and push in direction">
+    <on selector="NAVIGATE-WORLD"/>
+    <rule>
+      <if>
+        <key label="right arrow"/>
+      </if>
+      <then>
+        <set attribute="DIRECTION" value="2"/>
+        <rotate-to roll-angle="direction * 90"/>
+        <message selector="PUSH">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <key label="left arrow"/>
+      </if>
+      <then>
+        <set attribute="DIRECTION" value="0"/>
+        <rotate-to roll-angle="direction * 90"/>
+        <message selector="PUSH">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <key label="up arrow"/>
+      </if>
+      <then>
+        <set attribute="DIRECTION" value="3"/>
+        <rotate-to roll-angle="direction * 90"/>
+        <message selector="PUSH">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <key label="down arrow"/>
+      </if>
+      <then>
+        <set attribute="DIRECTION" value="1"/>
+        <rotate-to roll-angle="direction * 90"/>
+        <message selector="PUSH">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="cursor up = push forward, else turn">
+    <on selector="NAVIGATE-FIRST-PERSON"/>
+    <rule>
+      <if>
+        <key label="up arrow"/>
+      </if>
+      <then>
+        <rotate-to roll-angle="direction * 90"/>
+        <message selector="PUSH">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <key label="right arrow"/>
+      </if>
+      <then>
+        <set attribute="DIRECTION" value="(direction - 1) % 4"/>
+        <rotate-to roll-angle="direction * 90"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <key label="left arrow"/>
+      </if>
+      <then>
+        <set attribute="DIRECTION" value="(direction + 1) % 4"/>
+        <rotate-to roll-angle="direction * 90"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <key label="down arrow"/>
+      </if>
+      <then>
+        <set attribute="DIRECTION" value="(direction + 2) % 4"/>
+        <rotate-to roll-angle="direction * 90"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="push in current direction">
+    <on selector="PUSH"/>
+    <rule>
+      <if>
+        <test expression1="direction" expression2="0"/>
+      </if>
+      <then>
+        <message selector="PUSH_LEFT">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="direction" expression2="1"/>
+      </if>
+      <then>
+        <message selector="PUSH_DOWN">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="direction" expression2="2"/>
+      </if>
+      <then>
+        <message selector="PUSH_RIGHT">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="direction" expression2="3"/>
+      </if>
+      <then>
+        <message selector="PUSH_UP">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="push stuff to the right">
+    <on selector="PUSH_RIGHT"/>
+    <rule>
+      <if>
+        <see shape="FLOOR_TILE Ground">
+          <direction dcol="1"/>
+        </see>
+      </if>
+      <then>
+        <move>
+          <direction dcol="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="GOAL_TILE Ground">
+          <direction dcol="1"/>
+        </see>
+      </if>
+      <then>
+        <move>
+          <direction dcol="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="CRATE Crate">
+          <direction dcol="1"/>
+        </see>
+      </if>
+      <then>
+        <message selector="PUSH_RIGHT">
+          <direction dcol="1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="push stuff to the left">
+    <on selector="PUSH_LEFT"/>
+    <rule>
+      <if>
+        <see shape="FLOOR_TILE Ground">
+          <direction dcol="-1"/>
+        </see>
+      </if>
+      <then>
+        <move>
+          <direction dcol="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="GOAL_TILE Ground">
+          <direction dcol="-1"/>
+        </see>
+      </if>
+      <then>
+        <move>
+          <direction dcol="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="CRATE Crate">
+          <direction dcol="-1"/>
+        </see>
+      </if>
+      <then>
+        <message selector="PUSH_LEFT">
+          <direction dcol="-1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method comments="push stuff up">
+    <on selector="PUSH_UP"/>
+    <rule>
+      <if>
+        <see shape="FLOOR_TILE Ground">
+          <direction drow="1"/>
+        </see>
+      </if>
+      <then>
+        <move disclosed="true">
+          <direction drow="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="GOAL_TILE Ground">
+          <direction drow="1"/>
+        </see>
+      </if>
+      <then>
+        <move disclosed="true">
+          <direction drow="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="CRATE Crate">
+          <direction drow="1"/>
+        </see>
+      </if>
+      <then>
+        <message selector="PUSH_UP">
+          <direction drow="1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method comments="push stuff down">
+    <on selector="PUSH_DOWN"/>
+    <rule>
+      <if>
+        <see shape="FLOOR_TILE Ground">
+          <direction drow="-1"/>
+        </see>
+      </if>
+      <then>
+        <move disclosed="true">
+          <direction drow="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="GOAL_TILE Ground">
+          <direction drow="-1"/>
+        </see>
+      </if>
+      <then>
+        <move disclosed="true">
+          <direction drow="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="CRATE Crate">
+          <direction drow="-1"/>
+        </see>
+      </if>
+      <then>
+        <message selector="PUSH_DOWN">
+          <direction drow="-1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method>
+    <on selector="MOVE_RIGHT"/>
+    <rule>
+      <if/>
+      <then>
+        <move disclosed="true" duration="Slider()">
+          <direction dcol="1"/>
+        </move>
+      </then>
+    </rule>
+  </method>
+  <method>
+    <on selector="MOVE_LEFT"/>
+    <rule>
+      <if/>
+      <then>
+        <move disclosed="true" duration="Slider()">
+          <direction dcol="-1"/>
+        </move>
+      </then>
+    </rule>
+  </method>
+  <method>
+    <on selector="MOVE_UP"/>
+    <rule>
+      <if/>
+      <then>
+        <move disclosed="true" duration="Slider()">
+          <direction drow="1"/>
+        </move>
+      </then>
+    </rule>
+  </method>
+  <method>
+    <on selector="MOVE_DOWN"/>
+    <rule>
+      <if/>
+      <then>
+        <move disclosed="true" duration="Slider()">
+          <direction drow="-1"/>
+        </move>
+      </then>
+    </rule>
+  </method>
+</behavior>

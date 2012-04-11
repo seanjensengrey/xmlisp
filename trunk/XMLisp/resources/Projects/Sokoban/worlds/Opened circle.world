@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<world width="956" height="300">
+  <light-source x="10.0" y="10.4" z="10.0" name="NIL">
+    <ambient red="0.0" green="0.0" blue="0.0"/>
+    <diffuse red="1.0" green="1.0" blue="1.0"/>
+    <specular red="1.0" green="1.0" blue="1.0"/>
+  </light-source>
+  <background-color red="0.0" green="0.0" blue="0.0"/>
+  <camera eye-x="5.46819931858591" eye-y="4.644355510326015" eye-z="10.593925114452453" center-x="5.481428442811873" center-y="5.967221893762012" center-z="-3.7451772946428106" up-x="0.12673895026746257" up-y="12.673453957877975" up-z="-5.478442974776062" fovy="60.0" aspect="3.1866666666666665" near="0.004999999888241291" far="2000.0" azimuth="0.010000014677643776" zenith="0.09200003929436207"/>
+  <agent-matrix name="AGENT-MATRIX11508" columns="9" layers="1" is-grid-visible="false">
+    <wall_agent col="4" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent col="5" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent col="6" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent col="7" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="1" col="1" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="1" col="2" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="1" col="3" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="1" col="4" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="1" col="5" shape-name="FLOOR_TILE" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent row="1" col="6" shape-name="FLOOR_TILE" x-turn="0.5" y-turn="0.5"/>
+    <wall_agent row="1" col="7" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" col="1" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="2" col="2" shape-name="FLOOR_TILE" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent row="2" col="3" shape-name="FLOOR_TILE" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent row="2" col="4" shape-name="FLOOR_TILE" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent row="2" col="5" shape-name="FLOOR_TILE" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent row="2" col="6" shape-name="FLOOR_TILE" x-turn="0.5" y-turn="0.5"/>
+    <wall_agent row="2" col="7" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="3" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="3" col="1" shape-name="FLOOR_TILE" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent row="3" col="2" shape-name="FLOOR_TILE" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent row="3" col="3" shape-name="GOAL_TILE" x-turn="0.5" y-turn="0.5"/>
+    <crate_agent row="3" col="3" shape-name="CRATE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="3" col="4" shape-name="GOAL_TILE" x-turn="0.5" y-turn="0.5"/>
+    <crate_agent row="3" col="4" shape-name="CRATE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="3" col="5" shape-name="GOAL_TILE" x-turn="0.5" y-turn="0.5"/>
+    <crate_agent row="3" col="5" shape-name="CRATE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="3" col="6" shape-name="FLOOR_TILE" x-turn="0.5" y-turn="0.5"/>
+    <wall_agent row="3" col="7" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="4" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="4" col="1" shape-name="FLOOR_TILE" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent row="4" col="2" shape-name="FLOOR_TILE" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent row="4" col="3" shape-name="GOAL_TILE" x-turn="0.5" y-turn="0.5"/>
+    <crate_agent row="4" col="3" shape-name="CRATE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="4" col="4" shape-name="FLOOR_TILE" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent row="4" col="5" shape-name="GOAL_TILE" x-turn="0.5" y-turn="0.5"/>
+    <crate_agent row="4" col="5" shape-name="CRATE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="4" col="6" shape-name="FLOOR_TILE" x-turn="0.5" y-turn="0.5"/>
+    <wall_agent row="4" col="7" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="5" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="5" col="1" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="5" col="2" shape-name="FLOOR_TILE" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent row="5" col="3" shape-name="GOAL_TILE" x-turn="0.5" y-turn="0.5"/>
+    <crate_agent row="5" col="3" shape-name="CRATE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="5" col="4" shape-name="FLOOR_TILE" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent row="5" col="5" shape-name="GOAL_TILE" x-turn="0.5" y-turn="0.5"/>
+    <crate_agent row="5" col="5" shape-name="CRATE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="5" col="6" shape-name="FLOOR_TILE" x-turn="0.5" y-turn="0.5"/>
+    <wall_agent row="5" col="7" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="5" col="8" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="6" col="1" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="6" col="2" shape-name="FLOOR_TILE" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent row="6" col="3" shape-name="GOAL_TILE" x-turn="0.5" y-turn="0.5"/>
+    <crate_agent row="6" col="3" shape-name="CRATE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="6" col="4" shape-name="GOAL_TILE" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent row="6" col="5" shape-name="GOAL_TILE" x-turn="0.5" y-turn="0.5"/>
+    <crate_agent row="6" col="5" shape-name="CRATE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="6" col="6" shape-name="FLOOR_TILE" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent row="6" col="7" shape-name="FLOOR_TILE" x-turn="0.5" y-turn="0.5"/>
+    <wall_agent row="6" col="8" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="7" col="1" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="7" col="2" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="7" col="3" shape-name="FLOOR_TILE" x-turn="0.5" y-turn="0.5"/>
+    <sokoban_agent row="7" col="3" shape-name="SOKOBAN" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent row="7" col="4" shape-name="FLOOR_TILE" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent row="7" col="5" shape-name="FLOOR_TILE" x-turn="0.5" y-turn="0.5"/>
+    <crate_agent row="7" col="5" shape-name="CRATE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="7" col="6" shape-name="FLOOR_TILE" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent row="7" col="7" shape-name="FLOOR_TILE" x-turn="0.5" y-turn="0.5"/>
+    <wall_agent row="7" col="8" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="8" col="2" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="8" col="3" shape-name="FLOOR_TILE" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent row="8" col="4" shape-name="FLOOR_TILE" x-turn="0.5" y-turn="0.5"/>
+    <wall_agent row="8" col="5" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="8" col="6" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="8" col="7" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="8" col="8" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="9" col="2" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="9" col="3" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="9" col="4" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="9" col="5" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+  </agent-matrix>
+  <sky-dome size="100.0" texture="Dusk.png"/>
+</world>
