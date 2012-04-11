@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <behavior comments="I am user controlled">
-  <method disclosed="true" comments="navigate with the arrow keys (depending on the camera) and remove mat&#10;rix cubes to m  ake a maze using space bar (for same layer), shift-space (&#10;for layer above), and option/alt  -space (for layer below)">
+  <method disclosed="true" comments="navigate with the arrow keys (depending on the camera) and remove mat&#10; rix cubes to m  ake a maze using space bar (for same layer), shift-space &#10;( for layer above), and option/alt  -space (for layer below)">
     <while-running/>
     <rule>
       <if>
@@ -84,7 +84,7 @@
       </then>
     </rule>
   </method>
-  <method comments="navigate when camera is in world-view: rotate and move in direction">
+  <method disclosed="true" comments="navigate when camera is in world-view: rotate and move in direction">
     <on selector="NAVIGATE-WORLD"/>
     <rule>
       <if>
@@ -366,7 +366,7 @@
       </then>
     </rule>
   </method>
-  <method comments="remove the piece of the matrix in layer below">
+  <method disclosed="true" comments="remove the piece of the matrix in layer below">
     <on selector="REMOVE-BELOW"/>
     <rule>
       <if>
