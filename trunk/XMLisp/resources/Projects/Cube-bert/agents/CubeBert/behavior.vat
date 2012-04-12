@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if>
+        <stacked adjacency="Above Or Below" shape="GHOST GHOST"/>
+      </if>
+      <then>
+        <show-message disclosed="true" text="Sorry Bud..." subtext="The Ghost Got You!"/>
+        <reload-world/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <stacked negated="true" adjacency="Somewhere Above" shape="CUBE Cube"/>
+      </if>
+      <then>
+        <show-message disclosed="true" text="Sorry Bud..." subtext="You&#39;Ve Fallen Off The World!"/>
+        <reload-world/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <key label="7"/>
+      </if>
+      <then>
+        <move>
+          <direction dcol="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <key label="9"/>
+      </if>
+      <then>
+        <move>
+          <direction drow="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <key label="1"/>
+      </if>
+      <then>
+        <move>
+          <direction drow="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <key label="3"/>
+      </if>
+      <then>
+        <move>
+          <direction dcol="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="P" value="1000"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <when-creating-new-agent/>
+    <rule>
+      <if/>
+      <then>
+        <rotate-to roll-angle="45"/>
+      </then>
+    </rule>
+  </method>
+</behavior>
