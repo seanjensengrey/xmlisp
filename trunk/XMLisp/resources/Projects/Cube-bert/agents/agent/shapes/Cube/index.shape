@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<shape-manager name="CUBE">
-  <box front-texture="black.png" back-texture="black.png" left-texture="black.png" right-texture="black.png" top-texture="white.png" bottom-texture="black.png"/>
-</shape-manager>
