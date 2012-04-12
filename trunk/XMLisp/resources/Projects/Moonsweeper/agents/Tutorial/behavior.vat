@@ -5,7 +5,7 @@
     <rule>
       <if/>
       <then>
-        <switch-to-world/>
+        <switch-to-world world="Level1"/>
       </then>
     </rule>
   </method>
