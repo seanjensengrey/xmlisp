@@ -603,6 +603,7 @@ Call with most important parameters. Make other paramters accessible through *Cu
     #+cocotron (show-main-menu-on-windows :accessor show-main-menu-on-windows :initform nil :initarg :show-main-menu-on-windows :documentation "Should this window should a main menu on Windows?")
    (is-modal-p :accessor is-modal-p :initform nil :documentation "True if this window is currently running modally")
    (720p-mode-p :accessor 720p-mode-p :initform nil :documentation "If true this window will configured to be displayed well for high res video.")
+   (window-shutting-down-p :accessor window-shutting-down-p :initform nil :documentation "If true the window has begun the process of closing")
    )
   (:documentation "a window that can contain views, coordinate system: topleft = 0, 0")
   (:default-initargs 
