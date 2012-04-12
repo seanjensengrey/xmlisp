@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if>
+        <once-every seconds="0.1"/>
+      </if>
+      <then>
+        <set attribute="@CUBES_NOT_CUBERTED" value="0"/>
+        <broadcast class-name="Cube" selector="Check_For_Win"/>
+        <message selector="Check_For_Win">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Check_For_Win"/>
+    <rule>
+      <if>
+        <test expression1="@Cubes_Not_Cuberted" expression2="3"/>
+      </if>
+      <then>
+        <show-message disclosed="true" text="You Win!" subtext="Good Job!"/>
+        <reload-world/>
+      </then>
+    </rule>
+  </method>
+</behavior>
