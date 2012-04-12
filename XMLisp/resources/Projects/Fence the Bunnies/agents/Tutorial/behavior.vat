@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <before-running/>
+    <rule>
+      <if/>
+      <then>
+        <switch-to-world world="level 0"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

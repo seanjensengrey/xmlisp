@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true" comments="if simulation is running AI will be executing constantly (not necessary)">
+    <while-running/>
+    <rule>
+      <if/>
+      <then>
+        <message selector="Diffuse">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="put down a fence, run the AI and make the bunnies move">
+    <on-hand-tool/>
+    <rule>
+      <if/>
+      <then>
+        <new shape="FENCE Fence">
+          <direction/>
+        </new>
+        <set attribute="DIFFUSION_CYCLES" value="100"/>
+        <message selector="Diffusion_All">
+          <direction/>
+        </message>
+        <broadcast class-name="Bunny" selector="Advance"/>
+        <broadcast class-name="Bunny" selector="Advance"/>
+        <finish-animations/>
+        <broadcast class-name="Bunny" selector="Game_Over"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="make all grass diffuse">
+    <on selector="Diffusion_All"/>
+    <rule>
+      <if>
+        <test expression1="Diffusion_Cycles" operator="&gt;" expression2="0"/>
+      </if>
+      <then>
+        <broadcast class-name="Grass" selector="Diffuse"/>
+        <set attribute="DIFFUSION_CYCLES" value="Diffusion_Cycles - 1"/>
+        <message selector="Diffusion_All">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Diffuse"/>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="F" value="0.25 * (F[Left] + F[Right] + F[Up] + F[Down])"/>
+      </then>
+    </rule>
+  </method>
+</behavior>
