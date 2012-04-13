@@ -522,12 +522,33 @@
 
 
 (objc:defmethod (#/textDidChange: :void) ((self mouse-detection-text-field) Notification) 
-  (setf (text-is-being-editted-p self) t)
-  (let ((width (calculate-width-for-text-field self)))
-    (ns:with-ns-size (Size  width (NS:NS-RECT-HEIGHT (#/frame self)))
-      (#/setFrameSize: self Size )))
-  (call-next-method Notification))
+  (cond
+   ((not (validate-text-change self  (ccl::lisp-string-from-nsstring  (#/stringValue self))))
+    (#_NSBeep)
+    (#/setStringValue: self (native-string  (if (stringp (name-storage self)) (name-storage self) (write-to-string (name-storage self)))))
+    ;(display lui-view)
+    )
+   (t
+    (setf (text-is-being-editted-p self) t)
+    (let ((width (calculate-width-for-text-field self)))
+      (ns:with-ns-size (Size  width (NS:NS-RECT-HEIGHT (#/frame self)))
+        (#/setFrameSize: self Size )))
+    (call-next-method Notification))))
 
+
+;; Sadly since all of the classes in this file are not part of generalized lui structure we cannot use our normal type interactors so we had to duplciate that code here
+;; very sad :(
+(defmethod VALIDATE-TEXT-CHANGE ((self mouse-detection-text-field) text)
+  "This Method is called whenever this editable-text-control's text changes, if this change is not acceptable this method should return nil and the old value will be restored"
+  (let ((valid-chars "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_0123456789"))
+    (when (> (length text) 255)
+      (return-from validate-text-change nil))
+    (unless (or (equal (length text) 0)  (xml::letterp (elt text 0)) )
+      (return-from validate-text-change nil))
+    (dotimes (i (length text))
+      (unless (find (elt text i) valid-chars)
+        (return-from validate-text-change nil)))
+    t))
 
 ;;*********************************
 ;; GROUP DISCLOSURE BUTTON        *
