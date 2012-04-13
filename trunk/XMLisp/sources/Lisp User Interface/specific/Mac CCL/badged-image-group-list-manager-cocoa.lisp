@@ -501,22 +501,22 @@
 
 (objc:defmethod (#/textDidEndEditing: :void) ((Self mouse-detection-text-field) Notification)
    (when (group self)
-    (if (item self)
-      (progn
-        (setf (item-name (#/superview self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
-        (if (item-name-changed (container self) (group-name (group self)) (item-name (item self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
-          (progn
-            (#/setEditable: self #$NO)
-            (#/setDrawsBackground:  self #$NO))
-          (#/setStringValue: self (native-string (name-storage self))))
-        (setf (item-name (item self)) (String-capitalize (ccl::lisp-string-from-nsstring (#/stringValue self)))))
-      (progn
-        (if (group-name-changed (container self) (group-name (group self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
-          (progn
-            (#/setEditable: self #$NO)
-            (#/setDrawsBackground:  self #$NO))
-          (#/setStringValue: self (native-string (name-storage self))))
-        (setf (group-name (group self))(ccl::lisp-string-from-nsstring (#/stringValue self))))))
+     (cond 
+      ((validate-final-text-value self (ccl::lisp-string-from-nsstring (#/stringValue self)) )
+       (if (item self)
+         (progn
+           (setf (item-name (#/superview self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
+           (unless (item-name-changed (container self) (group-name (group self)) (item-name (item self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
+             (#/setStringValue: self (native-string (name-storage self))))
+           (setf (item-name (item self)) (String-capitalize (ccl::lisp-string-from-nsstring (#/stringValue self)))))
+         (progn
+           (unless (group-name-changed (container self) (group-name (group self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
+             (#/setStringValue: self (native-string (name-storage self))))
+           (setf (group-name (group self))(ccl::lisp-string-from-nsstring (#/stringValue self))))))
+      (t
+       (#/setStringValue: self (native-string (name-storage self)))))
+     (#/setEditable: self #$NO)
+     (#/setDrawsBackground:  self #$NO))
   (setf (text-is-being-editted-p self) nil)
   (call-next-method Notification))
 
@@ -548,6 +548,19 @@
     (dotimes (i (length text))
       (unless (find (elt text i) valid-chars)
         (return-from validate-text-change nil)))
+    t))
+
+(defmethod VALIDATE-FINAL-TEXT-VALUE ((self mouse-detection-text-field) text)
+  (let ((valid-chars "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_0123456789"))
+    (when (> (length text) 255)
+      (standard-alert-dialog "Name to long." :explanation-text (format nil "Agent and shape names cannot exceed 255 characters, you have entered ~A characters for your name, please enter a new name." (length text)))
+      (return-from validate-final-text-value nil))
+    (unless (or (equal (length text) 0)  (xml::letterp (elt text 0)) )
+      (return-from validate-final-text-value nil))
+    (dotimes (i (length text))
+      (unless (find (elt text i) valid-chars)
+        (standard-alert-dialog "Invalid characters in agent/shape name." :explanation-text (format nil "The character ~A is not allowed, please enter a new name." (elt text i)))
+        (return-from validate-final-text-value nil)))
     t))
 
 ;;*********************************
