@@ -32,6 +32,26 @@
     </rule>
     <rule>
       <if>
+        <key label="left arrow"/>
+      </if>
+      <then>
+        <move>
+          <direction dcol="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <key label="up arrow"/>
+      </if>
+      <then>
+        <move>
+          <direction drow="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
         <key label="9"/>
       </if>
       <then>
@@ -52,7 +72,27 @@
     </rule>
     <rule>
       <if>
+        <key label="down arrow"/>
+      </if>
+      <then>
+        <move>
+          <direction drow="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
         <key label="3"/>
+      </if>
+      <then>
+        <move>
+          <direction dcol="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <key label="right arrow"/>
       </if>
       <then>
         <move>
