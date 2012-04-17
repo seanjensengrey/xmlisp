@@ -1,0 +1,181 @@
+<?xml version="1.0"?>
+<behavior comments="I can be pushed around">
+  <method disclosed="true">
+    <on selector="PUSH_RIGHT"/>
+    <rule>
+      <if>
+        <see shape="GOAL Ground">
+          <direction dcol="1"/>
+        </see>
+      </if>
+      <then>
+        <play-sound ref="slide.mp3"/>
+        <message selector="MOVE_RIGHT">
+          <direction dcol="-1"/>
+        </message>
+        <move>
+          <direction dcol="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="GROUND">
+          <direction dcol="1"/>
+        </see>
+      </if>
+      <then>
+        <play-sound ref="slide.mp3"/>
+        <message selector="MOVE_RIGHT">
+          <direction dcol="-1"/>
+        </message>
+        <move>
+          <direction dcol="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <play-sound ref="hey.mp3"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="PUSH_LEFT"/>
+    <rule>
+      <if>
+        <see shape="GOAL">
+          <direction dcol="-1"/>
+        </see>
+      </if>
+      <then>
+        <play-sound ref="slide.mp3"/>
+        <message selector="MOVE_LEFT">
+          <direction dcol="1"/>
+        </message>
+        <move>
+          <direction dcol="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="GROUND">
+          <direction dcol="-1"/>
+        </see>
+      </if>
+      <then>
+        <play-sound ref="slide.mp3"/>
+        <message selector="MOVE_LEFT">
+          <direction dcol="1"/>
+        </message>
+        <move animation="Accelerated">
+          <direction dcol="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <play-sound ref="hey.mp3"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="PUSH_UP"/>
+    <rule>
+      <if>
+        <see shape="GROUND">
+          <direction drow="1"/>
+        </see>
+      </if>
+      <then>
+        <play-sound ref="slide.mp3"/>
+        <message selector="MOVE_UP">
+          <direction drow="-1"/>
+        </message>
+        <move>
+          <direction drow="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="GOAL">
+          <direction drow="1"/>
+        </see>
+      </if>
+      <then>
+        <play-sound ref="slide.mp3"/>
+        <message selector="MOVE_UP">
+          <direction drow="-1"/>
+        </message>
+        <move>
+          <direction drow="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <play-sound ref="hey.mp3"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="PUSH_DOWN"/>
+    <rule>
+      <if>
+        <see shape="GOAL">
+          <direction drow="-1"/>
+        </see>
+      </if>
+      <then>
+        <play-sound ref="slide.mp3"/>
+        <message selector="MOVE_DOWN">
+          <direction drow="1"/>
+        </message>
+        <move>
+          <direction drow="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="GROUND">
+          <direction drow="-1"/>
+        </see>
+      </if>
+      <then>
+        <play-sound ref="slide.mp3"/>
+        <message selector="MOVE_DOWN">
+          <direction drow="1"/>
+        </message>
+        <move>
+          <direction drow="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <play-sound ref="hey.mp3"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Report"/>
+    <rule>
+      <if>
+        <stacked shape="GOAL Ground"/>
+      </if>
+      <then>
+        <change shape="CROWE2 Crowe_T._Robot">
+          <direction/>
+        </change>
+        <set attribute="@FREE_CROWE" value="@Free_Crowe + 1"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

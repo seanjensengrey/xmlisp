@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<agent-manager name="CROWE_T._ROBOT_AGENT">
+  <agent-tracking-camera eye-x="6.11735195359801" eye-y="7.9633441296621665" eye-z="1.6999995708465576" center-x="5.5" center-y="8.5" center-z="1.6999995708465576" up-x="0.0" up-y="0.0" up-z="1.0" fovy="100.0" aspect="2.936902485659656" near="0.005" far="2000.0" azimuth="1.5707963267948966" zenith="-0.7155849974788638" distance="0.81799936" elevation="1.1499996" camera-rotation-offset="-41.0"/>
+</agent-manager>
