@@ -456,7 +456,7 @@
   )
 
 
-(objc:defmethod (#/mouseDown: :void) ((self mouse-detection-text-field) Event)     
+(objc:defmethod (#/mouseDown: :void) ((self mouse-detection-text-field) Event)    
   (remove-background-and-end-editting-for-all-text-fields (native-view (container self)))
   (unless (item-name self)
     (progn
@@ -486,6 +486,7 @@
 
 
 (objc:defmethod (#/textShouldBeginEditing: :<BOOL>) ((Self mouse-detection-text-field) Notification)
+  (setf (text-is-being-editted-p self) t)
   (setf (name-storage self) (ccl::lisp-string-from-nsstring (#/stringValue self)))
   (call-next-method Notification))
 
@@ -500,25 +501,27 @@
 
 
 (objc:defmethod (#/textDidEndEditing: :void) ((Self mouse-detection-text-field) Notification)
-   (when (group self)
-     (cond 
-      ((validate-final-text-value self (ccl::lisp-string-from-nsstring (#/stringValue self)) )
-       (if (item self)
-         (progn
-           (setf (item-name (#/superview self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
-           (unless (item-name-changed (container self) (group-name (group self)) (item-name (item self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
-             (#/setStringValue: self (native-string (name-storage self))))
-           (setf (item-name (item self)) (String-capitalize (ccl::lisp-string-from-nsstring (#/stringValue self)))))
-         (progn
-           (unless (group-name-changed (container self) (group-name (group self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
-             (#/setStringValue: self (native-string (name-storage self))))
-           (setf (group-name (group self))(ccl::lisp-string-from-nsstring (#/stringValue self))))))
-      (t
-       (#/setStringValue: self (native-string (name-storage self)))))
-     (#/setEditable: self #$NO)
-     (#/setDrawsBackground:  self #$NO))
+   (when (and (text-is-being-editted-p self) (group self))
+    (if (item self)
+      (progn
+        (setf (item-name (#/superview self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
+        (if (item-name-changed (container self) (group-name (group self)) (item-name (item self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
+          (progn
+            (#/setEditable: self #$NO)
+            (#/setDrawsBackground:  self #$NO))
+          (#/setStringValue: self (native-string (name-storage self))))
+        (setf (item-name (item self)) (String-capitalize (ccl::lisp-string-from-nsstring (#/stringValue self)))))
+      (progn
+        (if (group-name-changed (container self) (group-name (group self)) (ccl::lisp-string-from-nsstring (#/stringValue self)))
+          (progn
+            (#/setEditable: self #$NO)
+            (#/setDrawsBackground:  self #$NO))
+          (#/setStringValue: self (native-string (name-storage self))))
+        (setf (group-name (group self))(ccl::lisp-string-from-nsstring (#/stringValue self))))))
   (setf (text-is-being-editted-p self) nil)
   (call-next-method Notification))
+
+
 
 
 (objc:defmethod (#/textDidChange: :void) ((self mouse-detection-text-field) Notification) 
@@ -540,7 +543,7 @@
 ;; very sad :(
 (defmethod VALIDATE-TEXT-CHANGE ((self mouse-detection-text-field) text)
   "This Method is called whenever this editable-text-control's text changes, if this change is not acceptable this method should return nil and the old value will be restored"
-  (let ((valid-chars "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_0123456789"))
+  (let ((valid-chars "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_-0123456789"))
     (when (> (length text) 255)
       (return-from validate-text-change nil))
     (unless (or (equal (length text) 0)  (xml::letterp (elt text 0)) )
@@ -551,7 +554,7 @@
     t))
 
 (defmethod VALIDATE-FINAL-TEXT-VALUE ((self mouse-detection-text-field) text)
-  (let ((valid-chars "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_0123456789"))
+  (let ((valid-chars "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_-0123456789"))
     (when (> (length text) 255)
       (standard-alert-dialog "Name to long." :explanation-text (format nil "Agent and shape names cannot exceed 255 characters, you have entered ~A characters for your name, please enter a new name." (length text)))
       (return-from validate-final-text-value nil))
