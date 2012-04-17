@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="DISCO_BALL">
+  <sphere texture="Disco.png"/>
+</shape-manager>
