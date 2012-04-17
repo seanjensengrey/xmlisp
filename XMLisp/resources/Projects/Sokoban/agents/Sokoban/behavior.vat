@@ -273,7 +273,7 @@
       </then>
     </rule>
   </method>
-  <method comments="push stuff down">
+  <method disclosed="true" comments="push stuff down">
     <on selector="PUSH_DOWN"/>
     <rule>
       <if>
