@@ -556,8 +556,8 @@
   (let ((valid-chars "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_-0123456789"))
     (when (equal text "")
        (standard-alert-dialog
-              "Empty agent name. Please enter a name for your new agent." 
-              :explanation-text "Agent names cannot be empty."
+              "Empty name. Please enter a name for your new agent." 
+              :explanation-text "Agent/shape names cannot be empty."
               :yes-text "OK"
               :no-text nil
               :cancel-text nil)
