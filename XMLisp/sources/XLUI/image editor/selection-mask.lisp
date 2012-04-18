@@ -206,7 +206,12 @@
   (dotimes (Row (height Self))
     (dotimes (Col (width Self))
       (unless (equal (+ 1 col) (width self))
-        (setf (aref (pixels Self) (- (width Self) Col) Row) (aref (pixels Self) (+ 1 (- (width Self) Col)) Row))
+        (print  (- (width Self) Col))
+        
+        (print row)
+        (print (+ 1 (- (width Self) Col)))
+        (print row)
+        (setf (aref (pixels Self) Col Row) (aref (pixels Self) (+ Col 1) row))
       ))
     (setf (aref (pixels Self) 31 Row) 0)))
 
