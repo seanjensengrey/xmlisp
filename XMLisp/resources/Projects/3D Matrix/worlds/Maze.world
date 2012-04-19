@@ -1,10 +1,15 @@
 <?xml version="1.0"?>
-<world width="1191" height="461">
+<world width="934" height="306">
+  <light-source x="5.0" y="12.0" z="7.0" name="glare">
+    <ambient red="0.4" green="0.4" blue="0.4"/>
+    <diffuse red="1.0" green="1.0" blue="1.0"/>
+    <specular red="1.5" green="1.5" blue="1.5"/>
+  </light-source>
   <background-color red="0.0" green="0.0" blue="0.0"/>
-  <camera eye-x="2.529904356226325D0" eye-y="-2.9361140727996826D0" eye-z="8.193044662475586D0" center-x="2.529904356226325D0" center-y="5.401068687438965D0" center-z="-0.10086717456579208D0" up-x="4.932008934588339D-8" up-y="10.811670303344727D0" up-z="3.202805280685425D0" fovy="60.0D0" aspect="2.58351409978308D0" near="0.004999999888241291D0" far="2000.0D0" azimuth="0.0D0" zenith="-0.7879999279975891D0"/>
+  <camera eye-x="2.529904356226325" eye-y="-2.9361140727996826" eye-z="8.193044662475586" center-x="2.529904356226325" center-y="5.401068687438965" center-z="-0.10086717456579208" up-x="4.932008934588339E-8" up-y="10.811670303344727" up-z="3.202805280685425" fovy="60.0" aspect="2.58351409978308" near="0.004999999888241291" far="2000.0" azimuth="0.0" zenith="-0.7879999279975891"/>
   <agent-matrix name="AGENT-MATRIX11237" rows="6" columns="5" layers="6" is-grid-visible="false" layer-height="1.0">
     <nebuchadnezzar_agent shape-name="NEBUCHADNEZZAR" x-turn="0.5" y-turn="0.5">
-      <agent-tracking-camera eye-x="0.5075915755913406D0" eye-y="0.15208318220912687D0" eye-z="0.9250001907348633D0" center-x="0.5D0" center-y="0.5D0" center-z="0.9250001907348633D0" up-x="0.0D0" up-y="0.0D0" up-z="1.0D0" fovy="100.0D0" aspect="2.58351409978308D0" near="0.005D0" far="2000.0D0" azimuth="1.5707963267948966D0" zenith="-1.5489797007419974D0" distance="0.34799963" elevation="0.9250002" camera-rotation-offset="-88.75"/>
+      <agent-tracking-camera eye-x="0.5075915755913406" eye-y="0.15208318220912687" eye-z="0.9250001907348633" center-x="0.5" center-y="0.5" center-z="0.9250001907348633" up-x="0.0" up-y="0.0" up-z="1.0" fovy="100.0" aspect="3.052287581699346" near="0.005" far="2000.0" azimuth="1.5707963267948966" zenith="-1.5489797007419974" distance="0.34799963" elevation="0.9250002" camera-rotation-offset="-88.75"/>
     </nebuchadnezzar_agent>
     <counter_agent col="4" layer="5" shape-name="COUNTER" attributes="(VISIBLE 0 COUNTED_INVISIBLE 0 INVISIBLE 0 COUNTED_VISIBLE 1)" x-turn="0.5" y-turn="0.5"/>
     <hole_agent row="1" shape-name="HOLE" color="FFFFFF00" x-turn="0.5" y-turn="0.5"/>
@@ -133,5 +138,6 @@
     <hole_agent row="5" col="4" layer="3" shape-name="HOLE" color="FFFFFF00" x-turn="0.5" y-turn="0.5"/>
     <hole_agent row="5" col="4" layer="4" shape-name="HOLE" color="FFFFFF00" x-turn="0.5" y-turn="0.5"/>
     <goal_agent row="5" col="4" layer="5" shape-name="GOAL" x-turn="0.5" y-turn="0.5"/>
+    <background-color red="0.0" green="0.5" blue="1.0"/>
   </agent-matrix>
 </world>
