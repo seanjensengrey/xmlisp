@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <before-running/>
+    <rule>
+      <if>
+        <current-world world="Tumble"/>
+      </if>
+      <then>
+        <switch-to-world world="400 tumble"/>
+      </then>
+    </rule>
+  </method>
+</behavior>
