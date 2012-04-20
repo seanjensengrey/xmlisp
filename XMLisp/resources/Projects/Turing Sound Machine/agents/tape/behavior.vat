@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Write_Tape"/>
+    <rule>
+      <if>
+        <see shape="TAPE0 Tape">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <broadcast class-name="HEAD" selector="Write_0"/>
+        <message selector="Move_Head">
+          <direction dcol="1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="TAPE Tape">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <broadcast class-name="HEAD" selector="Write_1"/>
+        <message selector="Move_Head">
+          <direction dcol="1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Flip"/>
+    <rule>
+      <if/>
+      <then>
+        <rotate-by dheading="360"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

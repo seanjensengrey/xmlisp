@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <on-hand-tool/>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="SOUND" value="(sound + 1) % 6"/>
+        <message selector="Play_Sound">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Play_Sound"/>
+    <rule>
+      <if>
+        <test expression1="sound" expression2="0"/>
+      </if>
+      <then>
+        <play-sound ref="Clap.mp3"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="sound" expression2="1"/>
+      </if>
+      <then>
+        <play-sound ref="CowBell.mp3"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="sound" expression2="2"/>
+      </if>
+      <then>
+        <play-sound ref="HiHat.mp3"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="sound" expression2="3"/>
+      </if>
+      <then>
+        <play-sound ref="KickDrum1.mp3"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="sound" expression2="4"/>
+      </if>
+      <then>
+        <play-sound ref="Maracas.mp3"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="sound" expression2="5"/>
+      </if>
+      <then>
+        <play-sound ref="SnareDrum.mp3"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

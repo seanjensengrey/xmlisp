@@ -1,0 +1,275 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method disclosed="true" comments="read state and tape if you are on top of tape">
+    <on selector="Read"/>
+    <rule>
+      <if>
+        <see-a class-name="Tape">
+          <direction drow="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <message selector="Read_State">
+          <direction/>
+        </message>
+        <message selector="Read_Tape">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="read the state of the machine">
+    <on selector="Read_State"/>
+    <rule>
+      <if>
+        <see shape="HEAD HEAD">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <set attribute="@STATE" value="0"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="HEAD_B Head">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <set attribute="@STATE" value="1"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="HEAD_B Head">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <set attribute="@STATE" value="2"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="HEAD_H Head">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <set attribute="@STATE" value="9999"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="read tape symbol">
+    <on selector="Read_Tape"/>
+    <rule>
+      <if>
+        <see shape="TAPE0 Tape">
+          <direction drow="-1"/>
+        </see>
+      </if>
+      <then>
+        <set attribute="@TAPE" value="0"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="TAPE Tape">
+          <direction drow="-1"/>
+        </see>
+      </if>
+      <then>
+        <set attribute="@TAPE" value="1"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Write_0"/>
+    <rule>
+      <if>
+        <see shape="TAPE Tape">
+          <direction drow="-1"/>
+        </see>
+      </if>
+      <then>
+        <change shape="TAPE0 Tape">
+          <direction drow="-1"/>
+        </change>
+        <message selector="Flip">
+          <direction drow="-1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Write_1"/>
+    <rule>
+      <if>
+        <see shape="TAPE0 Tape">
+          <direction drow="-1"/>
+        </see>
+      </if>
+      <then>
+        <change shape="TAPE Tape">
+          <direction drow="-1"/>
+        </change>
+        <message selector="Flip">
+          <direction drow="-1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Move_Right"/>
+    <rule>
+      <if>
+        <see-a class-name="Tape">
+          <direction drow="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <move>
+          <direction dcol="1"/>
+        </move>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Move_Left"/>
+    <rule>
+      <if>
+        <see-a class-name="Tape">
+          <direction drow="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <move>
+          <direction dcol="-1"/>
+        </move>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Change_State"/>
+    <rule>
+      <if>
+        <see shape="HEAD Head">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <broadcast class-name="Head" selector="Change_To_A"/>
+        <message selector="Play_Sound">
+          <direction dcol="1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="HEAD_B Head">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <broadcast class-name="Head" selector="Change_To_B"/>
+        <message selector="Play_Sound">
+          <direction dcol="1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="HEAD_C Head">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <broadcast class-name="Head" selector="Change_To_C"/>
+        <message selector="Play_Sound">
+          <direction dcol="1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="HEAD_H Head">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <broadcast class-name="Head" selector="Change_To_H"/>
+        <message selector="Play_Sound">
+          <direction dcol="1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Change_To_A"/>
+    <rule>
+      <if>
+        <see-a class-name="Tape">
+          <direction drow="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <change shape="HEAD HEAD">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Change_To_B"/>
+    <rule>
+      <if>
+        <see-a class-name="Tape">
+          <direction drow="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <change shape="HEAD_B Head">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Change_To_C"/>
+    <rule>
+      <if>
+        <see-a class-name="Tape">
+          <direction drow="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <change shape="HEAD_C Head">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Change_To_H"/>
+    <rule>
+      <if>
+        <see-a class-name="Tape">
+          <direction drow="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <change shape="HEAD_H Head">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+  </method>
+</behavior>
