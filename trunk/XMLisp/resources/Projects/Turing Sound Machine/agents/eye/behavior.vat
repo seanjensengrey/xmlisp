@@ -1,0 +1,200 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if/>
+      <then>
+        <message selector="Match">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on-hand-tool/>
+    <rule>
+      <if/>
+      <then>
+        <message selector="Match">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Match"/>
+    <rule>
+      <if/>
+      <then>
+        <broadcast class-name="HEAD" selector="Read"/>
+        <message selector="Match_Tape">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Match_Tape"/>
+    <rule>
+      <if>
+        <test expression1="@tape" expression2="0"/>
+        <see shape="TAPE0 Tape">
+          <direction dcol="-1"/>
+        </see>
+      </if>
+      <then>
+        <move>
+          <direction dcol="-1"/>
+        </move>
+        <message selector="Match_State">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@tape" expression2="1"/>
+        <see shape="TAPE Tape">
+          <direction dcol="-1"/>
+        </see>
+      </if>
+      <then>
+        <move>
+          <direction dcol="-1"/>
+        </move>
+        <message selector="Match_State">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <message selector="Next_Rule">
+          <direction/>
+        </message>
+        <message selector="Match_Tape">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Match_State"/>
+    <rule>
+      <if>
+        <test expression1="@state" expression2="0"/>
+        <see shape="HEAD Head">
+          <direction dcol="-1"/>
+        </see>
+      </if>
+      <then>
+        <move>
+          <direction dcol="1"/>
+        </move>
+        <message selector="Execute_Rule">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@state" expression2="1"/>
+        <see shape="HEAD_B Head">
+          <direction dcol="-1"/>
+        </see>
+      </if>
+      <then>
+        <move>
+          <direction dcol="1"/>
+        </move>
+        <message selector="Execute_Rule">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@state" expression2="2"/>
+        <see shape="HEAD_C Head">
+          <direction dcol="-1"/>
+        </see>
+      </if>
+      <then>
+        <move>
+          <direction dcol="1"/>
+        </move>
+        <message selector="Execute_Rule">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <move>
+          <direction dcol="1"/>
+        </move>
+        <message selector="Next_Rule">
+          <direction/>
+        </message>
+        <message selector="Match_Tape">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Execute_Rule"/>
+    <rule>
+      <if/>
+      <then>
+        <message selector="Write_Tape">
+          <direction dcol="1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Next_Rule"/>
+    <rule>
+      <if>
+        <see-a class-name="Tape">
+          <direction drow="-1" dcol="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <move>
+          <direction drow="-1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <message selector="Reset">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Reset"/>
+    <rule>
+      <if>
+        <see-a class-name="Tape">
+          <direction drow="1" dcol="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <move>
+          <direction drow="1"/>
+        </move>
+        <message selector="Reset">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+</behavior>

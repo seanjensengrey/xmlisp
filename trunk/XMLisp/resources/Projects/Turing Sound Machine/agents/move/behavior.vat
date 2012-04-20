@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Move_Head"/>
+    <rule>
+      <if>
+        <see shape="MOVE Move">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <broadcast class-name="Head" selector="Move_Right"/>
+        <message selector="Change_State">
+          <direction dcol="1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="MOVE_LEFT Move">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <broadcast class-name="Head" selector="Move_Left"/>
+        <message selector="Change_State">
+          <direction dcol="1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="MOVE_NOT Move">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <message selector="Change_State">
+          <direction dcol="1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+</behavior>

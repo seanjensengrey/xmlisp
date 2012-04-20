@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<world width="1450" height="453">
+  <light-source x="5.0" y="-5.0" z="7.0" name="glare">
+    <ambient red="0.0" green="0.0" blue="0.0"/>
+    <diffuse red="1.0" green="1.0" blue="1.0"/>
+    <specular red="1.0" green="1.0" blue="1.0"/>
+  </light-source>
+  <light-source x="25.0" y="15.0" z="5.0" name="glare">
+    <ambient red="0.0" green="0.0" blue="0.0"/>
+    <diffuse red="1.0" green="1.0" blue="1.0"/>
+    <specular red="1.0" green="1.0" blue="1.0"/>
+  </light-source>
+  <background-color red="0.0" green="0.0" blue="0.0"/>
+  <camera eye-x="15.038790770331186" eye-y="9.501945541071915" eye-z="16.422846867701665" center-x="15.038790744287148" center-y="8.836123050770297" center-z="-0.2138348551992581" up-x="6.43384182882502E-7" up-y="16.44829781485436" up-z="-9.859597065770043" fovy="60.0" aspect="3.2008830022075054" near="0.005" far="2000.0" azimuth="3.91155481338501E-8" zenith="-0.040000004693865776"/>
+  <agent-matrix name="AGENT-MATRIX11508" rows="18" columns="32" layers="1" texture="Turing Sound Machine.jpg" is-grid-visible="false">
+    <tape_agent shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="1" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="2" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="3" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="4" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="5" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="6" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="7" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="8" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="9" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="10" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="11" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="12" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="13" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="14" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="15" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="16" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="17" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="18" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="19" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="20" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="21" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="22" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="23" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="24" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="25" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="26" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="27" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="28" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="29" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="30" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent col="31" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <head_agent row="1" col="6" shape-name="HEAD" x-turn="0.5" y-turn="0.5"/>
+    <head_agent row="10" col="2" shape-name="HEAD_C" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent row="10" col="3" shape-name="TAPE" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent row="10" col="5" shape-name="TAPE" x-turn="0.5" y-turn="0.5"/>
+    <move_agent row="10" col="6" shape-name="MOVE_NOT" x-turn="0.5" y-turn="0.5"/>
+    <head_agent row="10" col="7" shape-name="HEAD_H" x-turn="0.5" y-turn="0.5"/>
+    <sound_agent row="10" col="8" shape-name="SOUND" attributes="(SOUND 3)" x-turn="0.5" y-turn="0.5"/>
+    <head_agent row="11" col="2" shape-name="HEAD_C" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent row="11" col="3" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent row="11" col="5" shape-name="TAPE" x-turn="0.5" y-turn="0.5"/>
+    <move_agent row="11" col="6" shape-name="MOVE" x-turn="0.5" y-turn="0.5"/>
+    <head_agent row="11" col="7" shape-name="HEAD_B" x-turn="0.5" y-turn="0.5"/>
+    <sound_agent row="11" col="8" shape-name="SOUND" attributes="(SOUND 1)" x-turn="0.5" y-turn="0.5"/>
+    <head_agent row="12" col="2" shape-name="HEAD_B" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent row="12" col="3" shape-name="TAPE" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent row="12" col="5" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <move_agent row="12" col="6" shape-name="MOVE_LEFT" x-turn="0.5" y-turn="0.5"/>
+    <head_agent row="12" col="7" shape-name="HEAD_B" x-turn="0.5" y-turn="0.5"/>
+    <sound_agent row="12" col="8" shape-name="SOUND" attributes="(SOUND 1)" x-turn="0.5" y-turn="0.5"/>
+    <head_agent row="13" col="2" shape-name="HEAD_B" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent row="13" col="3" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent row="13" col="5" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <move_agent row="13" col="6" shape-name="MOVE" x-turn="0.5" y-turn="0.5"/>
+    <head_agent row="13" col="7" shape-name="HEAD" x-turn="0.5" y-turn="0.5"/>
+    <sound_agent row="13" col="8" shape-name="SOUND" attributes="(SOUND 3)" x-turn="0.5" y-turn="0.5"/>
+    <head_agent row="14" col="2" shape-name="HEAD" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent row="14" col="3" shape-name="TAPE" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent row="14" col="5" shape-name="TAPE" x-turn="0.5" y-turn="0.5"/>
+    <move_agent row="14" col="6" shape-name="MOVE" x-turn="0.5" y-turn="0.5"/>
+    <head_agent row="14" col="7" shape-name="HEAD_C" x-turn="0.5" y-turn="0.5"/>
+    <sound_agent row="14" col="8" shape-name="SOUND" attributes="(SOUND 1)" x-turn="0.5" y-turn="0.5"/>
+    <head_agent row="15" col="2" shape-name="HEAD" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent row="15" col="3" shape-name="TAPE0" x-turn="0.5" y-turn="0.5"/>
+    <eye_agent row="15" col="4" shape-name="EYE" x-turn="0.5" y-turn="0.5"/>
+    <tape_agent row="15" col="5" shape-name="TAPE" x-turn="0.5" y-turn="0.5"/>
+    <move_agent row="15" col="6" shape-name="MOVE_LEFT" x-turn="0.5" y-turn="0.5"/>
+    <head_agent row="15" col="7" shape-name="HEAD_B" x-turn="0.5" y-turn="0.5"/>
+    <sound_agent row="15" col="8" shape-name="SOUND" attributes="(SOUND 2)" x-turn="0.5" y-turn="0.5"/>
+  </agent-matrix>
+</world>
