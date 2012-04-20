@@ -49,7 +49,7 @@
     </rule>
     <rule>
       <if>
-        <see shape="HEAD_B Head">
+        <see shape="HEAD_C Head">
           <direction/>
         </see>
       </if>
