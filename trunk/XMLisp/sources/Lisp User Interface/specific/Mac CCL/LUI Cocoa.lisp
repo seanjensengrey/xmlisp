@@ -632,17 +632,18 @@
 
 
 (objc:defmethod (#/zoom: :void) ((self native-window) sender)
-  (call-next-method sender)
-  (let ((Content-View (#/contentView (native-window (lui-window Self)))))
-    (setf (width (lui-window Self)) (truncate (pref (#/frame Content-View) <NSR>ect.size.width)))
-    (setf (height (lui-window Self)) (truncate (pref (#/frame Content-View) <NSR>ect.size.height)))
-    (let ((Window (lui-window Self)))
-      (setf (x Window) (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.x)))
-      (setf (y Window) 
-            (- (screen-height (lui-window Self)) 
-               (height (lui-window Self))
-               (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.y)))))    (screen-height nil)
-    (size-changed-event-handler (lui-window Self) (width (lui-window Self)) (height (lui-window Self)))))
+  (when (window-ready-for-zoom (lui-window self))
+    (call-next-method sender)
+    (let ((Content-View (#/contentView (native-window (lui-window Self)))))
+      (setf (width (lui-window Self)) (truncate (pref (#/frame Content-View) <NSR>ect.size.width)))
+      (setf (height (lui-window Self)) (truncate (pref (#/frame Content-View) <NSR>ect.size.height)))
+      (let ((Window (lui-window Self)))
+        (setf (x Window) (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.x)))
+        (setf (y Window) 
+              (- (screen-height (lui-window Self)) 
+                 (height (lui-window Self))
+                 (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.y)))))    (screen-height nil)
+      (size-changed-event-handler (lui-window Self) (width (lui-window Self)) (height (lui-window Self))))))
 
 
 (objc:defmethod (#/close :void) ((self native-window))
@@ -732,6 +733,8 @@
 
 (objc:defmethod (#/windowDidResize: :void) ((self window-delegate) Notification)
   (declare (ignore Notification))
+  ;(print (#/inLiveResize (native-window (lui-window Self))))
+  (print (#/inLiveResize (native-view  (lui-window Self))))
   ;; only the size of the content view
   (let ((Content-View (#/contentView (native-window (lui-window Self)))))
     (setf (width (lui-window Self)) (truncate (pref (#/frame Content-View) <NSR>ect.size.width)))
@@ -742,9 +745,13 @@
             (- (screen-height (lui-window Self)) 
                (height (lui-window Self))
                (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.y)))))    
-    ;; On window we are ging to save this resize for the end
     #-cocotron
-    (size-changed-event-handler (lui-window Self) (width (lui-window Self)) (height (lui-window Self)))))
+    (size-changed-event-handler (lui-window Self) (width (lui-window Self)) (height (lui-window Self)))
+    ;; On window we are ging to save this resize for the end
+    #+cocotron
+    (unless (#/inLiveResize (native-view  (lui-window Self)))
+      (print "INSIDE UNLESS")
+      (size-changed-event-handler (lui-window Self) (width (lui-window Self)) (height (lui-window Self))))))
 
 
 (objc:defmethod (#/windowShouldClose: :<BOOL>) ((self window-delegate) Sender)
@@ -1113,6 +1120,7 @@
 
 
 (objc:defmethod (#/viewDidEndLiveResize :void) ((self native-window-view))
+  (call-next-method)
   (window-did-finish-resize (lui-window self))
   ;;On cocotron do the resize at the end
   #+cocotron
@@ -1837,11 +1845,13 @@
 
 ;; Hack: NSscroller does not automatically deal with scrollWheel events
 (objc:defmethod (#/scrollWheel: :void) ((self native-scroller) Event)
+  (break)
   (#/setDoubleValue: Self (- (#/doubleValue Self) (* 0.005d0 (#/deltaY Event))))
   (#/activateAction (#/target Self)))
 
 
 (defmethod SET-SCROLLER-POSITION ((Self scroller-control) float)
+  
   (#/setFloatValue:knobProportion: (native-view self) float .2))
 
 
