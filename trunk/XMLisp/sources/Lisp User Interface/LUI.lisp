@@ -685,6 +685,10 @@ after any of the window controls calls stop-modal close window and return value.
 (defgeneric MOST-SPECIFIC-VIEW-CONTAINING-POINT (Window window-x window-y)
   (:documentation "in: window, window-x, window-y; out: view, x, y; return the most specific, i.e., view that contains x, y but does not have subviews containing x, y"))
 
+
+(defgeneric WINDOW-READY-FOR-ZOOM (Window)
+  (:documentation "This method will be called to make sure that the window is ready for a zoom."))
+
 ;;_______________________________
 ;; default implementations       |
 ;;_______________________________
@@ -997,6 +1001,10 @@ after any of the window controls calls stop-modal close window and return value.
 (defmethod WINDOW-DID-FINISH-RESIZE ((Self window))
   ;;Do nothing
   )
+
+
+(defmethod WINDOW-READY-FOR-ZOOM ((Self window))
+  t)
 
 
 (defmethod GET-TOOLTIP ((Self window) x y)
