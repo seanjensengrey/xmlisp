@@ -43,7 +43,7 @@
     <while-running/>
     <rule>
       <if>
-        <stacked shape="goal_tile"/>
+        <stacked shape="GOAL_TILE Ground"/>
       </if>
       <then>
         <set-color-to color="1.0 1.0 1.0 0.5"/>
