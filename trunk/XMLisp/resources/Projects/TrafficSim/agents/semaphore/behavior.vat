@@ -24,7 +24,7 @@
       </if>
       <then>
         <set attribute="SMART" value="1.0"/>
-        <change shape="cross_street_smart">
+        <change shape="CROSS_STREET_SMART Semaphore">
           <direction/>
         </change>
       </then>
@@ -35,7 +35,7 @@
       </if>
       <then>
         <set attribute="SMART" value="0.0"/>
-        <change shape="cross_street">
+        <change shape="CROSS_STREET Semaphore">
           <direction/>
         </change>
       </then>
@@ -69,7 +69,7 @@
       <if>
         <test expression1="greenDirection" operator="&lt;=" expression2="0.0"/>
         <test expression1="Smart" expression2="1.0"/>
-        <see shape="small_car">
+        <see shape="SMALL_CAR Car">
           <direction dcol="1"/>
         </see>
         <once-every seconds="3"/>
@@ -97,7 +97,7 @@
       <if>
         <test expression1="greenDirection" operator="&gt;" expression2="0.0"/>
         <test expression1="Smart" expression2="1.0"/>
-        <see shape="small_car">
+        <see shape="SMALL_CAR Car">
           <direction drow="-1"/>
         </see>
         <once-every seconds="3"/>
@@ -111,7 +111,7 @@
       <if>
         <test expression1="greenDirection" operator="&gt;" expression2="0.0"/>
         <test expression1="Smart" expression2="1.0"/>
-        <see shape="small_car">
+        <see shape="SMALL_CAR Car">
           <direction drow="1"/>
         </see>
         <once-every seconds="3"/>
