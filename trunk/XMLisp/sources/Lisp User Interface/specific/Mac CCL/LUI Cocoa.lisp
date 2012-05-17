@@ -647,7 +647,7 @@
 
 
 (objc:defmethod (#/close :void) ((self native-window))
-  (if (is-modal-p (lui-window self))
+  (if (and (not (%null-ptr-p self)) (is-modal-p (lui-window self)))
     (cancel-modal (lui-window self))
     (call-next-method)))
   
@@ -733,8 +733,6 @@
 
 (objc:defmethod (#/windowDidResize: :void) ((self window-delegate) Notification)
   (declare (ignore Notification))
-  ;(print (#/inLiveResize (native-window (lui-window Self))))
-  (print (#/inLiveResize (native-view  (lui-window Self))))
   ;; only the size of the content view
   (let ((Content-View (#/contentView (native-window (lui-window Self)))))
     (setf (width (lui-window Self)) (truncate (pref (#/frame Content-View) <NSR>ect.size.width)))
@@ -750,7 +748,6 @@
     ;; On window we are ging to save this resize for the end
     #+cocotron
     (unless (#/inLiveResize (native-view  (lui-window Self)))
-      (print "INSIDE UNLESS")
       (size-changed-event-handler (lui-window Self) (width (lui-window Self)) (height (lui-window Self))))))
 
 
@@ -760,7 +757,6 @@
   ;; Sometimes causes problems if the window is already in the process of being closed.  
   (window-close (lui-window self))
   #$NO)
-  
 
 (objc:defmethod (#/windowDidMove: :void) ((self window-delegate) Notification)
   (declare (ignore Notification))  
