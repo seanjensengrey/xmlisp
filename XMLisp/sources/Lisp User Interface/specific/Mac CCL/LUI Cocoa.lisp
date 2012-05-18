@@ -745,10 +745,13 @@
                (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.y)))))    
     #-cocotron
     (size-changed-event-handler (lui-window Self) (width (lui-window Self)) (height (lui-window Self)))
+    #|
     ;; On window we are ging to save this resize for the end
     #+cocotron
     (unless (#/inLiveResize (native-view  (lui-window Self)))
-      (size-changed-event-handler (lui-window Self) (width (lui-window Self)) (height (lui-window Self))))))
+      (size-changed-event-handler (lui-window Self) (width (lui-window Self)) (height (lui-window Self))))
+    |#
+    ))
 
 
 (objc:defmethod (#/windowShouldClose: :<BOOL>) ((self window-delegate) Sender)
