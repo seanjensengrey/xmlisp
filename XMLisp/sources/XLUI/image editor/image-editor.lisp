@@ -461,26 +461,33 @@
 (defmethod DRAW-PIXEL ((Self image-editor) Col Row)
   "Paints the specified pixel with the current pen color."
   (multiple-value-bind (Red Green Blue Alpha) (pen-color Self)
-    (if (selection-active-p Self)
-      (when (pixel-selected-p (selection-mask Self) Col Row)
-        (set-rgba-color-at Self Col Row Red Green Blue Alpha))
-      (set-rgba-color-at Self Col Row Red Green Blue Alpha)))
-  ;; mirroring
-  (mirror-pixel Self Col Row)
-  (display Self))
+    ;; Try and avoid flicker by not drawing a pixel that is alaready set to the pen-color
+    (multiple-value-bind (Current-Red Current-Green Current-Blue Current-Alpha) (get-rgba-color-at Self Col Row)
+      (when (and (equal Current-Red Red) (equal Current-Blue Blue) (equal Current-Green Green) (equal Current-Alpha Alpha))
+        (return-from draw-pixel))
+      (if (selection-active-p Self)
+        (when (pixel-selected-p (selection-mask Self) Col Row)
+          (set-rgba-color-at Self Col Row Red Green Blue Alpha))
+        (set-rgba-color-at Self Col Row Red Green Blue Alpha)))
+    ;; mirroring
+    (mirror-pixel Self Col Row)
+    (display Self)))
 
 
 (defmethod ERASE-PIXEL ((Self image-editor) Col Row)
   "Paints the specified pixel with the current background color."
-  
   (multiple-value-bind (Red Green Blue Alpha) (bg-color Self)
+    ;; Try and avoid flicker by not drawing a pixel that is alaready set to the pen-color
+    (multiple-value-bind (Current-Red Current-Green Current-Blue Current-Alpha) (get-rgba-color-at Self Col Row)
+      (when (and (equal Current-Red Red) (equal Current-Blue Blue) (equal Current-Green Green) (equal Current-Alpha Alpha))
+        (return-from erase-pixel))
     (if (selection-active-p Self)
         (when (pixel-selected-p (selection-mask Self) Col Row)
           (set-rgba-color-at Self Col Row Red Green Blue Alpha))
       (set-rgba-color-at Self Col Row Red Green Blue Alpha)))
   ;; mirroring
   (mirror-pixel Self Col Row)
-  (display Self))
+  (display Self)))
 
 
 (defmethod FILL-SELECTED-PIXELS ((Self image-editor))
