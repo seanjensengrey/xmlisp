@@ -1844,7 +1844,6 @@
 
 ;; Hack: NSscroller does not automatically deal with scrollWheel events
 (objc:defmethod (#/scrollWheel: :void) ((self native-scroller) Event)
-  (break)
   (#/setDoubleValue: Self (- (#/doubleValue Self) (* 0.005d0 (#/deltaY Event))))
   (#/activateAction (#/target Self)))
 
