@@ -1279,11 +1279,16 @@
     ;(window-save Window)
     (setf (shape shape-manager) (inflatable-icon Model-Editor)) 
     ;  (lui::dump-buffer (image (shape shape-manager)) 32 32)
+     (lui::save-frame-buffer-as-image Model-Editor
+                                      ;(format nil "~Athumbnail.png"  (pathname-directory (file window)))
+                                      (namestring (make-pathname :name "thumbnail" :type "png"  :directory (pathname-directory (file window))))
+                                      )
     (save shape-manager))
   (let ((Model-Editor (view-named Window 'model-editor)))
     ;; finalize geometry
     (when (save-button-closure-action window)
       (funcall (save-button-closure-action window) (inflatable-icon Model-Editor))))  
+ 
   (when close-window 
     (window-close window)))
 
