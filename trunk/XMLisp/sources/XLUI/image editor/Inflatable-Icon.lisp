@@ -60,7 +60,9 @@
    (connectors :accessor connectors :initform nil :documentation "connectors are polygons connecting inner and outer edges of the symetric sides")
    (visible-alpha-threshold :accessor visible-alpha-threshold :initform 64 :allocation :class :documentation "8 bit alpha value used as visible/invisible threshold")
    (texture-id :accessor texture-id :initform nil :documentation "OpenGL texture name")
-   (is-flat :accessor is-flat :initform nil :type boolean :documentation "speed optimized rendering if flat"))
+   (is-flat :accessor is-flat :initform nil :type boolean :documentation "speed optimized rendering if flat")
+   (thumbnail-name :accessor thumbnail-name :initform nil :documentation "The name of this icon's thumbnail file")
+   )
   (:documentation "High polygon count 3D object made from inflated icon")
   (:default-initargs 
       :depth 1.0))
@@ -88,7 +90,7 @@
 ;********************************************************
 
 (defmethod PRINT-SLOTS ((Self inflatable-icon))  
-  `(icon rows columns depth pressure ceiling-value smooth steps noise max-value is-upright surfaces altitudes  #| colors |#  distance dz is-flat ))
+  `(icon rows columns depth pressure ceiling-value smooth steps noise max-value is-upright surfaces altitudes  #| colors |#  distance dz is-flat thumbnail-name))
 
 
 (defmethod FINISHED-READING :after ((Self inflatable-icon) Stream)
