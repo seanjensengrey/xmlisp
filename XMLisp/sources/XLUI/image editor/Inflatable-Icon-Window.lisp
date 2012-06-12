@@ -1281,7 +1281,8 @@
     ;  (lui::dump-buffer (image (shape shape-manager)) 32 32)
      (lui::save-frame-buffer-as-image Model-Editor
                                       ;(format nil "~Athumbnail.png"  (pathname-directory (file window)))
-                                      (namestring (make-pathname :name "thumbnail" :type "png"  :directory (pathname-directory (file window))))
+                                      ;(namestring (make-pathname :name "thumbnail" :type "png"  :directory (pathname-directory (file window))))
+                                      (native-path (native-pathname-directory (file window)) "thumbnail.png")
                                       )
     (save shape-manager))
   (let ((Model-Editor (view-named Window 'model-editor)))
