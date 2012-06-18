@@ -639,7 +639,7 @@
        (+ y (window-y Self) (y (window Self))))))
    ;; NOT dragging (probably camera control)
    (t
-    ;(call-next-method)
+    (call-next-method)
     )
    ))
 
