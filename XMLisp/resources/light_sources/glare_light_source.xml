@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<light-source name="glare" x="5.0" y="12.0" z="7.0">
+<light-source name="glare" x="5.0" y="-2.0" z="7.0">
     <ambient red="0.0" green="0.0" blue="0.0"/>
     <diffuse red="1.0" green="1.0" blue="1.0"/>
     <specular red="1.5" green="1.5" blue="1.5"/>
