@@ -273,6 +273,9 @@
       (subseq Pathname-String 0 (- (length Pathname-String) 
                                    (length (format nil "~A.~A" (pathname-name Native-Path) (pathname-type Native-Path))))))))
 
+(defun LUI::PROGRAM-DATA-PATH ()
+  (format nil "~A/AgentCubes" (lui::get-common-app-folder-path)))
+  
 ;;___________________________________________
 ;;  OS Version Management                     |
 ;;___________________________________________
