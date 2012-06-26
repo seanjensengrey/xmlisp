@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<light-source name="red" x="5.0" y="-2.0" z="7.0">
+    <ambient red="0.0" green="0.0" blue="0.0"/>
+    <diffuse red="1.0" green="0.0" blue="0.0"/>
+    <specular red="1.5" green="0.0" blue="0.0"/>
+</light-source>
