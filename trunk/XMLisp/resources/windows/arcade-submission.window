@@ -46,7 +46,7 @@
       <spacer height="8"/>
       <row align="stretch" valign="stretch" height="85" width="320">
           <column align="right" valign="stretch" width="104"> 
-            <label text="Login:" width="44" size="10" bold="true"/>
+            <label text="Username:" width="44" size="10" bold="true"/>
             <spacer height="16"/>
             <label text="Password:" width="64" size="10" bold="true"/>
             <spacer height="16"/>
@@ -62,6 +62,8 @@
          <spacer width="20"/>
          <column align="stretch" valign="stretch" width="320" >
             <link url="http://scalablegamedesign.cs.colorado.edu/arcade/?q=user/register" text="If you do not already have an account, please click here to visit the arcade and create one." width="250" size="10"/>
+            <spacer width="0" height="35"/>
+            <label text="optional: needed only for class projects" width="44" size="10" bold="true"/>
          </column>
          <spacer width="20"/>
       </row>
