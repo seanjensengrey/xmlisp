@@ -18,8 +18,6 @@
       <row align="stretch" valign="stretch" flex="1" width="320" height="210">
          <spacer width="23"/>
          <column align="right" valign="stretch" width="80">
-            <label text="Author:" width="50" size="10" bold="true" />
-            <spacer height="16"/>
             <label text="Title:" width="38" size="10" bold="true" />
             <spacer height="16"/>
             <label text="Description:" width="72" size="10" bold="true" />
@@ -27,8 +25,6 @@
             <label text="Tags:" width="38" size="10" bold="true" />
          </column>
          <column align="stretch" valign="stretch" flex="1" vflex="1"> 
-            <editable-text text="enter your name" name="author" flex="1" size="10" />
-            <spacer height="8"/>
             <editable-text name="title" text="" flex="1" size="10" />
             <spacer height="8"/>
             <editable-text text="describe your project" name="project description" size="10" height="120" flex="1"/>
@@ -65,7 +61,7 @@
          </column>
          <spacer width="20"/>
          <column align="stretch" valign="stretch" width="320" >
-            <link url="http://scalablegamedesign.cs.colorado.edu/sgda/login/register" text="If you do not already have an account, please click here to visit the arcade and create one." width="250" size="10"/>
+            <link url="http://scalablegamedesign.cs.colorado.edu/arcade/?q=user/register" text="If you do not already have an account, please click here to visit the arcade and create one." width="250" size="10"/>
          </column>
          <spacer width="20"/>
       </row>
