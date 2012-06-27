@@ -41,7 +41,9 @@
       <row align="stretch" valign="stretch" flex="1" vflex="1">
          <spacer width="20"/>
          <label text="Arcade Login Information" size="14" bold="true" flex="1" />
-         <spacer width="20"/>
+         <spacer height="0" width="120"/>
+         <bevel-button height="25" text="Create Arcade Account..." bezel-style="square" action="create-arcade-account-action" width="160" /> 
+         <spacer width="180"/>
       </row>
       <spacer height="8"/>
       <row align="stretch" valign="stretch" height="85" width="320">
@@ -61,9 +63,9 @@
          </column>
          <spacer width="20"/>
          <column align="stretch" valign="stretch" width="320" >
-            <link url="http://scalablegamedesign.cs.colorado.edu/arcade/?q=user/register" text="If you do not already have an account, please click here to visit the arcade and create one." width="250" size="10"/>
-            <spacer width="0" height="35"/>
-            <label text="optional: needed only for class projects" width="44" size="10" bold="true"/>
+            <spacer width="0" height="60"/>
+            
+            <label text="optional: needed only for class projects" width="40" size="10" bold="true"/>
          </column>
          <spacer width="20"/>
       </row>
