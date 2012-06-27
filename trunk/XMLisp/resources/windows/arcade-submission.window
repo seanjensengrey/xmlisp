@@ -46,7 +46,7 @@
       <spacer height="8"/>
       <row align="stretch" valign="stretch" height="85" width="320">
           <column align="right" valign="stretch" width="104"> 
-            <label text="Username:" width="44" size="10" bold="true"/>
+            <label text="Username:" width="64" size="10" bold="true"/>
             <spacer height="16"/>
             <label text="Password:" width="64" size="10" bold="true"/>
             <spacer height="16"/>
