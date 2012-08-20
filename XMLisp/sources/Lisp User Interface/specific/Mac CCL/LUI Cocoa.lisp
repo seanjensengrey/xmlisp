@@ -749,7 +749,8 @@
     ;; On window we are ging to save this resize for the end
     #+cocotron
     (unless (#/inLiveResize (native-view  (lui-window Self)))
-      (size-changed-event-handler (lui-window Self) (width (lui-window Self)) (height (lui-window Self))))
+      (size-changed-event-handler (lui-window Self) (width (lui-window Self)) (height (lui-window Self)))
+      )
     |#
     ))
 
@@ -850,12 +851,18 @@
 
 
 (defmethod SHOW ((Self window))
-  (in-main-thread ()
-    ;; (let ((y (truncate (- (pref (#/frame (#/mainScreen ns:ns-screen)) <NSR>ect.size.height) (y Self) (height Self)))))
-    ;;   (ns:with-ns-rect (Frame (x Self) y (width Self) (height Self))
-    ;;   (#/setFrame:display: (native-window Self) Frame t)))
-    (#/orderFront: (native-window Self) nil)
-    (#/makeKeyWindow (native-window self))))
+  (let ((minimum-window-start-position (title-bar-height self)))
+    #-cocotron (setf minimum-window-start-position (+ minimum-window-start-position (#/menuBarHeight (#/mainMenu (#/sharedApplication ns:ns-application)))))
+    (when (< (y self) minimum-window-start-position)
+      (set-position self (x self) minimum-window-start-position))
+    (when (< (x self) 0)
+      (set-position self 0 (y self)))
+    (in-main-thread ()
+      ;; (let ((y (truncate (- (pref (#/frame (#/mainScreen ns:ns-screen)) <NSR>ect.size.height) (y Self) (height Self)))))
+      ;;   (ns:with-ns-rect (Frame (x Self) y (width Self) (height Self))
+      ;;   (#/setFrame:display: (native-window Self) Frame t)))
+      (#/orderFront: (native-window Self) nil)
+      (#/makeKeyWindow (native-window self)))))
 
 
 (defmethod CENTER ((Self window))
