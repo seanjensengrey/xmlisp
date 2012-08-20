@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <behavior comments="I am user controlled">
-  <method disclosed="true" comments="navigate with the arrow keys (depending on the camera) and remove mat&#10; rix cubes to m  ake a maze using space bar (for same layer), shift-space &#10;( for layer above), and option/alt  -space (for layer below)">
+  <method disclosed="true" comments="navigate with the arrow keys (depending on the camera) and remove mat  rix cubes to m  ake a maze using space bar (for same layer), shift-space  ( for layer above), and option/alt  -space (for layer below)">
     <while-running/>
     <rule>
       <if>
@@ -143,7 +143,7 @@
       </then>
     </rule>
   </method>
-  <method comments="navigate in first-person: cursor up = move forward (in whatever direction i&#39;m pointing), &#10;else turn">
+  <method disclosed="true" comments="navigate in first-person: cursor up = move forward (in whatever direction i&#39;m pointing),  else turn">
     <on selector="NAVIGATE-FIRST-PERSON"/>
     <rule>
       <if>
@@ -161,7 +161,7 @@
         <key label="right arrow"/>
       </if>
       <then>
-        <set attribute="DIRECTION" value="(direction - 1) % 4"/>
+        <set attribute="DIRECTION" value="(direction + 3) % 4"/>
         <rotate-to roll-angle="direction * 90"/>
       </then>
     </rule>
@@ -192,7 +192,7 @@
       </then>
     </rule>
   </method>
-  <method comments="move in current direction">
+  <method disclosed="true" comments="move in current direction">
     <on selector="Move-In-Direction"/>
     <rule>
       <if>
@@ -276,7 +276,7 @@
       </then>
     </rule>
   </method>
-  <method comments="remove the piece of the matrix ahead">
+  <method disclosed="true" comments="remove the piece of the matrix ahead">
     <on selector="REMOVE-AHEAD"/>
     <rule>
       <if>
@@ -347,7 +347,7 @@
       </then>
     </rule>
   </method>
-  <method comments="remove the piece of the matrix in layer above">
+  <method disclosed="true" comments="remove the piece of the matrix in layer above">
     <on selector="REMOVE-ABOVE"/>
     <rule>
       <if>
@@ -385,7 +385,7 @@
       </then>
     </rule>
   </method>
-  <method comments="add a piece of the matrix ahead">
+  <method disclosed="true" comments="add a piece of the matrix ahead">
     <on selector="ADD-AHEAD"/>
     <rule>
       <if>
@@ -456,7 +456,7 @@
       </then>
     </rule>
   </method>
-  <method comments="add a piece of the matrix in layer above">
+  <method disclosed="true" comments="add a piece of the matrix in layer above">
     <on selector="ADD-ABOVE"/>
     <rule>
       <if>
@@ -475,7 +475,7 @@
       </then>
     </rule>
   </method>
-  <method comments="add a piece of the matrix in layer below">
+  <method disclosed="true" comments="add a piece of the matrix in layer below">
     <on selector="ADD-BELOW"/>
     <rule>
       <if>
