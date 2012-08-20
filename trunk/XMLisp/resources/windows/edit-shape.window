@@ -22,15 +22,17 @@
             <node node-name="Tile" node-path="lui:resources;Shape Textures;"  image-path="lui:resources;images;tile.gif" allowed-file-types="directories">
               <node node-name="Custom Texture..."/>
             </node>
-            <node node-name="Inflatable Icon" node-path="lui:resources;templates;shapes;inflatable icons;" image-path="lui:resources;images;ladybug.gif" allowed-file-types="directories"/>
+            <node node-name="Inflatable Icon" node-path="lui:resources;templates;shapes;inflatable icons;" image-path="lui:resources;images;ladybug.gif" allowed-file-types="directories">
+              <node node-name="Import Icon..."/>
+            </node>
           </browser>
         </column>
       </column>
       <spacer/>
       <column flex="1" vflex="1" align="stretch" valign="stretch" >
         <label align="center" width="100" name="Shape Preview" text="Preview"/>
-        <3d-agent-preview-view vflex="1"  name="shape-preview">
-        </3d-agent-preview-view>
+        <3d-agent-preview-view vflex="1"  name="shape-preview"/>
+      
       </column>
       <spacer width="4"/>
       <image-button-cluster>

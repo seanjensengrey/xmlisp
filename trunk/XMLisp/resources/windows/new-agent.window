@@ -26,7 +26,9 @@
             <node node-name="Tile" node-path="lui:resources;Shape Textures;"   image-path="lui:resources;images;tile.gif" allowed-file-types="directories">
               <node node-name="Custom Texture..."/>
             </node>         
-            <node node-name="Inflatable Icon" node-path="lui:resources;templates;shapes;inflatable icons;"   image-path="lui:resources;images;ladybug.gif" allowed-file-types="directories"/>
+            <node node-name="Inflatable Icon" node-path="lui:resources;templates;shapes;inflatable icons;"   image-path="lui:resources;images;ladybug.gif" allowed-file-types="directories">
+              <node node-name="Import Icon..."/>
+            </node>
           </browser>
         </column>
       </column>
