@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <behavior comments="I am user controlled">
-  <method disclosed="true" comments="use the I=invisible and V=visible keyboard input to toggle between seein&#10;g the matrix and seeing the pat h you created. Use F=flat to flatten out th&#10;e path (to be able to see Nebuchadnezzar)">
+  <method disclosed="true" comments="use the I=invisible and V=visible keyboard input to toggle between seein&#10;  g the matrix and seeing the pat h you created. Use F=flat to flatten out t&#10; h e path (to be able to see Nebuchadnezzar)">
     <while-running/>
     <rule>
       <if>
         <key label="I"/>
       </if>
       <then>
-        <change shape="hole_box">
+        <change shape="HOLE_BOX Hole">
           <direction/>
         </change>
         <set-color-to/>
@@ -19,7 +19,7 @@
         <key label="V"/>
       </if>
       <then>
-        <change shape="hole">
+        <change shape="HOLE Hole">
           <direction/>
         </change>
         <set-color-to color="1.0 1.0 1.0 0.0"/>
@@ -31,7 +31,7 @@
         <key label="F"/>
       </if>
       <then>
-        <change shape="hole">
+        <change shape="HOLE Hole">
           <direction/>
         </change>
         <set-color-to/>
