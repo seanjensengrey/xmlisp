@@ -9,6 +9,7 @@
    (title :accessor title :initarg :title :initform "Progress" :documentation "the title of this window")
    )
   (:default-initargs 
+    :floating-p t
     :do-show-immediately nil
     :resizable nil
     :minimizable nil
