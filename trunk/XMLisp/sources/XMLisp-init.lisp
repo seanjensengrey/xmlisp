@@ -289,6 +289,11 @@
                              :end (position #\. string :start (1+ 1st-.))))))
 
 
+(defun GET-OS-VERSION-NUMBER ()
+  (let ((version-string (software-version)))
+    (read-from-string version-string)))
+
+
 (defvar LUI::*OS-Name* #-:cocotron :osx #+:cocotron :windows "Keyword indicating operating system: :osx or :windows")
 
 
@@ -314,6 +319,12 @@
   (and (eq lui::*Os-name* :osx)
        (>= lui::*os-version-major* 10)
        (>= lui::*os-version-minor* 6)))
+
+
+(defun lui::Mac-OS-X-10.8-and-later ()
+  (and (eq lui::*Os-name* :osx)
+       (>= lui::*os-version-major* 10)
+       (>= lui::*os-version-minor* 8)))
 
 
 #-:cocotron
