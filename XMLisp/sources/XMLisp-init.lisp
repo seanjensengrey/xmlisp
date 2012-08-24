@@ -300,6 +300,9 @@
 
 (defvar lui::*OS-VERSION-MAINTENANCE* 0 "maintenance OS version number")
 
+(defun OS-VERSION ()
+  (read-from-string (format nil "~A.~A" lui::*OS-VERSION-MAJOR* lui::*OS-VERSION-MINOR*)))
+
 
 (defun lui::Mac-OS-X-10.5-and-later ()
   (and (eq lui::*Os-name* :osx)
