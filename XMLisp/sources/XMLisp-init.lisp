@@ -322,9 +322,13 @@
 
 
 (defun lui::Mac-OS-X-10.8-and-later ()
-  (and (eq lui::*Os-name* :osx)
-       (>= lui::*os-version-major* 10)
-       (>= lui::*os-version-minor* 8)))
+  (multiple-value-bind (Minor Maintenance)
+                       (os-version-values)
+    (declare (ignore Maintenance))
+    (and
+     (eq lui::*Os-name* :osx)
+     (>= Minor 8))))
+
 
 
 #-:cocotron
