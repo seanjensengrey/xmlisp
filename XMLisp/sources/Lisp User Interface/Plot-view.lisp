@@ -20,7 +20,7 @@
    (max-value :accessor max-value :initform 0.0d0 :initarg :max-value)
    (min-time :accessor min-time :initform 0)
    (max-time :accessor max-time :initform 0.0)
-   (value-array :accessor value-array :initform (make-array 5 :fill-pointer 0 :adjustable t))
+   ;(value-array :accessor value-array :initform (make-array 5 :fill-pointer 0 :adjustable t))
    (plot-color :accessor plot-color :initform (red-color-vector))
    (min-data-points-to-end-of-screen :accessor min-data-points-to-end-of-screen :initform 10)
    (plot-list :accessor plot-list :initform () :documentation "This list of lists.  Each sublist contains first, the name of the representation, second, the color and third the vector of values and the fourth is ther starting time of the plot element")
@@ -100,6 +100,14 @@
       (dotimes (i (round (length (third plot-sublist)) increment-value))
         (glVertex2f (+ (fourth plot-sublist) (* i  1.0)) (* 1.0 (aref (third plot-sublist) (* increment-value i)))))      
       (glEnd))))
+
+(defmethod RESET ((self plot-view))
+  (setf (lui::min-value self) 0.0d0)
+  (setf (lui::max-value self) 0.0d0)
+  (setf (lui::max-time self) 0.0)
+  (setf (lui::plot-list self) nil))
+
+
 
 
 #| Examples:
