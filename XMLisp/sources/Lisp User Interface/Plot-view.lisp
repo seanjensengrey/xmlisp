@@ -55,6 +55,8 @@
     (setf (min-value self) value))
   (let ((plot-list (find representing (plot-list self) :key #'first :test 'equal)))
     (unless plot-list   
+      #+cocotron(display (xlui::view-named (window self) "export-button"))
+      #+cocotron(display (xlui::view-named (window self) "reset-button"))
       (setf (plot-list self) (append (plot-list self) (list (list  representing  color  (make-array 5 :fill-pointer 0 :adjustable t) (max-time self))))))
     (when plot-list
       (unless (equal color (second plot-list))
