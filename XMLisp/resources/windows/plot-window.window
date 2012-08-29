@@ -1,9 +1,9 @@
 <plot-window title="Plot Window" margin="0">
   <column align="stretch" valign="stretch">
     <plot-box flex="1" vflex="1" name="plot-view"/>
-    <row minimize="vertical" align="center">
-      <button  width="75" text="Reset" action="reset-plot-view-action"/>
-      <button  width="175" text="Export to Spreadsheet..." action="export-to-spreadsheet-action"/>
+    <row minimize="vertical" align="center" valign="bottom">
+      <button  name="reset-button" width="75" text="Reset" action="reset-plot-view-action"/>
+      <button  name="export-button" width="175" text="Export to Spreadsheet..." action="export-to-spreadsheet-action"/>
     </row>
   </column>
 </plot-window>
