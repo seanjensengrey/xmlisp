@@ -117,19 +117,24 @@
     (when prompt
       (setf prompt (ccl::%make-nsstring prompt))
       (#/setMessage: panel  prompt))
-    (#/setCanChooseDirectories: panel nil)
-    (#/setCanChooseFiles: panel nil)
+    #-cocotron (#/setCanChooseDirectories: panel nil)
+    #-cocotron (#/setCanChooseFiles: panel nil)
     ;(#/setNameFieldLabel: panel (native-string "hello:"))
     (#/setFrameOrigin: panel window-position)
     #-cocotron (#/setAllowedFileTypes:  panel file-types)
     ;#-cocotron (#/makeKeyAndOrderFront: panel +null-ptr+)
     #-cocotron (#/orderFront: panel +null-ptr+)
+    #|
     (when (eql (#/runModalForDirectory:file:types: panel
 						   (native-string directory)
 						   +null-ptr+
 						   file-types)
 	       #$NSOKButton)
-      (pathname (ccl::lisp-string-from-nsstring (#/objectAtIndex: (#/filenames Panel) 0))))))
+      (pathname (ccl::lisp-string-from-nsstring (#/objectAtIndex: (#/filenames Panel) 0))))
+    |#
+    (when (and (equal (#/runModal  panel) #$NSOKButton)  (not (equal (#/filename Panel) +null-ptr+)))
+      (ccl::lisp-string-from-nsstring (#/filename Panel)))
+    ))
 
 
 (defun choose-directory-dialog (&key 
