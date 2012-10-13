@@ -6,9 +6,9 @@
 ;*********************************************************************
    ;* Author    : Alexander Repenning (alexander@agentsheets.com)    *
    ;*             http://www.agentsheets.com                         *
-   ;* Copyright : (c) 1996-2008, AgentSheets Inc.                    *
+   ;* Copyright : (c) 1996-2012, AgentSheets Inc.                    *
    ;* Filename  : anticipatory-symbol-complete.lisp                  *
-   ;* Updated   : 12/30/08                                           *
+   ;* Updated   : 10/13/12                                           *
    ;* Version   :                                                    *
    ;*   1.0     : 06/19/04                                           *
    ;*   1.0.1   : 07/04/04 Peter Paine: custom -color*, nil wait     *
@@ -30,7 +30,8 @@
    ;*   2.0.1   : 04/25/08 auto enabled, release pool, process fix   *
    ;*   2.0.2   : 12/30/08 kill processes when typing fast           *
    ;*   3.0     : 05/15/09 dropped MCL, API names, insertion point   *
-   ;* HW/SW     : G4,  CCL 1.3, OS X 10.5.6                          *
+   ;*   3.0.1   : 10/13/12 compatible wih CCL 1.9                    *
+   ;* HW/SW     : MacBook Pro, CCL 1.9, OS X 10.6.8                  *
    ;* Abstract  : Attempt symbol completion while user is typing.    *
    ;*             #\tab to complete, show arglist if possible        *
    ;*             #\esc to cancel                                    *
@@ -226,9 +227,8 @@
 
 (defmethod COMPLETION-SCREEN-POSITION ((Self completion-request))
   (let* ((view (fred-instance Self))
-         (charpos (mark-absolute-position (buffer-point (hemlock-view-buffer view))))
          (tv (gui::text-pane-text-view (hi::hemlock-view-pane view))))
-    (multiple-value-bind (x y) (gui::charpos-xy tv charpos)
+    (multiple-value-bind (x y) (gui::charpos-xy tv (fred-buffer-end Self))
       (ns:with-ns-point (pt x (+ y (gui::text-view-line-height tv)))
         (#/convertBaseToScreen: (#/window tv)
                                 (#/convertPoint:toView: tv pt gui::+null-ptr+))))))
