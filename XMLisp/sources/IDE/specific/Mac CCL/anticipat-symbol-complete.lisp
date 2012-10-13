@@ -252,12 +252,11 @@
            (Symbols (matching-prefix-symbols (completion-name Self) Local-Symbols)))
       ;;; (lui::speak (write-to-string (length Symbols)))
       (cond
-      ;; proactive typo alert
-       ((and *Zero-Completion-Hook*
-             (= (length Symbols) 0)
+       ;; proactive typo alert
+       ((and (= (length Symbols) 0)
              (promising-prefix  (completion-name Self)))
         (#/setInsertionPointColor: (native-text-view Self) (#/redColor ns:ns-color))
-        (funcall *Zero-Completion-Hook*))  ;; beep when the number has dropped to zero: usually a sign of a typo
+        (when *Zero-Completion-Hook* (funcall *Zero-Completion-Hook*)))  ;; beep when the number has dropped to zero: usually a sign of a typo
        (t
         ;; some matches
         (#/setInsertionPointColor: (native-text-view Self) (#/greenColor ns:ns-color))))
