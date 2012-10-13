@@ -463,22 +463,29 @@
   (when (or (not (equal (type-of Key) 'hi::key-event))
             (not (numberp (hi::key-event-keysym Key))))
     (return-from hi::execute-hemlock-key))
-  (case (code-char (hi::key-event-keysym Key))
-    ;; delete key
-    (#\Rubout
-     (begin-symbol-complete))
-    ;; symbol is done
-    ((#\return #\space #\( #\))
-     (#/setInsertionPointColor: 
-      (gui::text-pane-text-view (hi::hemlock-view-pane View))
-      (#/blackColor ns:ns-color))
-     ;; check first if symbol exists?
-     (current-function-arglist-command nil))
-    (#\tab )
-    ;; any other key that could trigger a completion
-    (t 
-     (when *Anticipatory-Symbol-Completion-Enabled-p*
-       (begin-symbol-complete)))))
+  (let ((Char (code-char (hi::key-event-keysym Key))))
+    (case Char
+      ;; delete key
+      (#\Rubout
+       (when *Anticipatory-Symbol-Completion-Enabled-p*
+         (begin-symbol-complete)))
+      ;; symbol is done
+      ((#\return #\space #\( #\))
+       (#/setInsertionPointColor: 
+        (gui::text-pane-text-view (hi::hemlock-view-pane View))
+        (#/blackColor ns:ns-color))
+       ;; check first if symbol exists?
+       (current-function-arglist-command nil))
+      (#\tab )
+      ;; any other key or even mouse event
+      (t 
+       (if Char
+         (when *Anticipatory-Symbol-Completion-Enabled-p*
+           (begin-symbol-complete))
+         ;; probably a mouse event: better not to start completion and just to reset cursor color
+         (#/setInsertionPointColor: 
+          (gui::text-pane-text-view (hi::hemlock-view-pane View))
+          (#/blackColor ns:ns-color)))))))
 
 ;___________________________________ 
 ; save-application support          |
