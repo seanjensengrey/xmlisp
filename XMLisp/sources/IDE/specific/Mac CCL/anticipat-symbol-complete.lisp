@@ -469,14 +469,18 @@
       (#\Rubout
        (when *Anticipatory-Symbol-Completion-Enabled-p*
          (begin-symbol-complete)))
-      ;; symbol is done
-      ((#\return #\space #\( #\))
+      ;; symbol is done, do not show args (would otherwise read next form, xml)
+      ((#\( #\tab  #\>)
+       (#/setInsertionPointColor: 
+        (gui::text-pane-text-view (hi::hemlock-view-pane View))
+        (#/blackColor ns:ns-color)))
+      ;; symbol is done, show args
+      ((#\return #\space #\))
        (#/setInsertionPointColor: 
         (gui::text-pane-text-view (hi::hemlock-view-pane View))
         (#/blackColor ns:ns-color))
        ;; check first if symbol exists?
-       (current-function-arglist-command nil))
-      (#\tab )
+      (current-function-arglist-command nil))
       ;; any other key or even mouse event
       (t 
        (if Char
