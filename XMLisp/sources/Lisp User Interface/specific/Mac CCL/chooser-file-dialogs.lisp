@@ -54,10 +54,11 @@
     (#/setAllowsMultipleSelection: panel allow-multiple-files)
     (#/setCanChooseDirectories: panel nil)
     (#/setCanChooseFiles: panel t)
-    (#/setFrameOrigin: panel window-position)
+    ;(#/setFrameOrigin: panel window-position)
     ;#-cocotron (#/setAllowedFileTypes:  panel (#/arrayWithObject: ns:ns-array (native-string "lisp")))
     ;#-cocotron (#/makeKeyAndOrderFront: panel +null-ptr+)
-    #-cocotron (#/orderFront: panel +null-ptr+)
+    ;#-cocotron (#/orderFront: panel +null-ptr+)
+    ;#-cocotron (#/beginWithCompletionHandler: panel +null-ptr+)
     (when (eql (#/runModalForDirectory:file:types: panel
 						   (native-string directory)
 						   +null-ptr+
@@ -166,9 +167,11 @@
     (when button-string
       (setf button-string (ccl::%make-nsstring button-string))
       (#/setPrompt: panel button-string))
+    
     (when window-title
       (setf window-title (ccl::%make-nsstring window-title))
       (#/setTitle: panel window-title))
+    
     (when prompt
       (setf prompt (ccl::%make-nsstring prompt))
       (#/setMessage: panel  prompt))
@@ -178,17 +181,17 @@
     (#/setAllowsMultipleSelection: panel nil)
     (#/setCanChooseDirectories: panel t)
     (#/setCanChooseFiles: panel nil)
-    (#/setFrameOrigin: panel window-position)
-    (#/setMaxSize: panel (ns:make-ns-size 800.0 619.0))
-    ; #-cocotron (#/setAllowedFileTypes:  panel (#/arrayWithObject: ns:ns-array (native-string "lisp")))
-    ;#-cocotron (#/makeKeyAndOrderFront: panel +null-ptr+)
-    #-cocotron (#/orderFront: panel +null-ptr+)
+    ;(#/setFrameOrigin: panel window-position)
     (when (eql (#/runModalForDirectory:file:types: panel
 						   (native-string directory) ;(#/valueForKey: values (native-string directory))
 						   +null-ptr+
 						   +null-ptr+)
 	       #$NSOKButton)
-      (native-path (ccl::lisp-string-from-nsstring (#/objectAtIndex: (#/filenames Panel) 0)) ""))))
+      (format nil "~A/" (native-path (ccl::lisp-string-from-nsstring (#/objectAtIndex: (#/filenames Panel) 0)) "")))))
+
+
+
+
 
 
 (defun choose-new-directory-dialog (&key 
@@ -221,9 +224,11 @@
     (when button-string
       (setf button-string (ccl::%make-nsstring button-string))
       (#/setPrompt: panel button-string))
+    
     (when window-title
       (setf window-title (ccl::%make-nsstring window-title))
       (#/setTitle: panel window-title))
+    
     (when prompt
       (setf prompt (ccl::%make-nsstring prompt))
       (#/setMessage: panel  prompt))
@@ -235,11 +240,11 @@
     ;(#/setCanChooseFiles: panel nil)
     ;(#/setNameFieldLabel: panel (native-string "hello:"))
     (#/setDirectory: panel (native-string directory))
-    (#/setFrameOrigin: panel window-position)
+    ;(#/setFrameOrigin: panel window-position)
     ;#-cocotron (#/setAllowedFileTypes:  panel (#/arrayWithObject: ns:ns-array (native-string "lisp")))
     ; #-cocotron (#/makeKeyAndOrderFront: panel +null-ptr+)
     ;(#/makeKeyWindow panel)
-    #-cocotron (#/orderFront: panel +null-ptr+)
+    ;#-cocotron (#/orderFront: panel +null-ptr+)
     #|
     (when (eql (#/runModalForDirectory:file:types: panel
 						   (native-string directory)

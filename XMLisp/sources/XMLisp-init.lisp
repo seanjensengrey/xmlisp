@@ -366,7 +366,7 @@
 (load "lui:sources;Lisp User Interface;OpenGL-view")
 (load "lui:sources;Lisp User Interface;browser-view")
 (load "lui:sources;Lisp User Interface;table-view")
-(load "lui:sources;Lisp User Interface;plot-view")
+
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;LUI Cocoa")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;image-import")
 (load "lui:sources;Lisp User Interface;specific;Mac CCL;OpenGL-view Cocoa")
@@ -455,6 +455,8 @@
 (load "lui:sources;XLUI;image editor;Inflatable-Icon-Window")
 
 
+(load "lui:sources;Lisp User Interface;plot-view")
+
 ;;___________________________________________
 ;;  File Management                          |
 ;;___________________________________________
@@ -504,7 +506,7 @@
   )
 
 
-(defclass XMLISP-APPLICATION (gui::cocoa-application)
+(defclass XMLISP-APPLICATION (#-cocotron gui::cocoa-ide #+cocotron gui::cocoa-application)
   ())
 
 
@@ -591,8 +593,8 @@
 
 ;; If we find AgentCubes lets just load it unless user indicates no by holding down shift key
 (unless (lui::shift-key-p)
-  (when (probe-file "lui:sources;AgentCubes;AgentCubes-init.lisp")
-    (load "lui:sources;AgentCubes;AgentCubes-init")))
+  (when (probe-file "lui:sources;AgentCubes-release;AgentCubes-init.lisp")
+    (load "lui:sources;AgentCubes-release;AgentCubes-init")))
 
 
 #| 
