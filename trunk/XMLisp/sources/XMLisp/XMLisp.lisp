@@ -1470,10 +1470,13 @@
           (cond
            ;; escape character that needs decoding?
            ((and Escape-Char (char= Char Escape-Char) Decode-Function)
-            (vector-push-extend (funcall Decode-Function Stream) String))
+            (vector-push-extend (funcall Decode-Function Stream) String)
+
+            )
            ;; legit part of string
            (t
-            (vector-push-extend Char String)))))))))
+            (vector-push-extend Char String)
+            ))))))))
 
 
 (defun DECODE-XML-ENTITY-REFERENCE (Stream) "
