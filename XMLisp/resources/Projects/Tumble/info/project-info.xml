@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<agentcubesproject>
+  <projectinfo project-title="Tumble" description="Tumble is a demo of massively parallel animation. It includes random movement and rotation to illustrate AgentCubes animation capabilities. It also shows how even very small programs when executed in parallel can do amazing things. For instance, this project has a grand total of one rule with 2 actions." tags="enter comma-separated keywords" uuid="1006552C-F0D8-49C9-9710-9C6ED8967606" assignment-key=""/>
+</agentcubesproject>
