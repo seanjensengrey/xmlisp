@@ -448,9 +448,8 @@
 
 
 (defmethod MAKE-NATIVE-OBJECT ((Self scroll-view))
-  (let ((Native-Control (make-instance 'native-scroll-view :lui-view Self)))
-    (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
-      (#/initWithFrame: Native-Control Frame)
+  (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
+    (let ((Native-Control (make-instance 'native-scroll-view :with-frame Frame :lui-view Self)))
       (#/setHasHorizontalScroller: Native-Control (has-horizontal-scroller Self))
       (#/setHasVerticalScroller: Native-Control (has-vertical-scroller Self))
       #-cocotron (#/setAutohidesScrollers: Native-Control #$YES)
@@ -807,6 +806,8 @@
                                               (if (minimizable Self) #$NSMiniaturizableWindowMask 0)))
                         :backing #$NSBackingStoreBuffered
                         :defer t)))
+        (when  (and (window-can-go-full-screen-in-mountain-lion self) (lui::Mac-OS-X-10.8-and-later))
+          (#/setCollectionBehavior: window 128))
         (#/disableCursorRects Window) ;; HACK: http://www.mail-archive.com/cocoa-dev@lists.apple.com/msg27510.html
         (setf (native-window Self) Window)  ;; need to have this reference for the delegate to be in place
         (setf (native-view Self) (make-instance 'native-window-view :lui-window Self))
@@ -2762,6 +2763,23 @@
   "Setf the image of this image view to the ns-image provided ns-image MUST be an ns-image NOT an image-control"
   (#/setImage: (Native-view self) ns-Image))
 
+(defmethod SET-COLOR ((self image-control) &key (Red 0.0) (Green 0.0) (Blue 0.0) (Alpha 1.0))
+  ;; keep a native color instead of creating a new one for each display
+  (when (native-color Self) (#/release (native-color Self)))
+  (setf (native-color Self) (#/colorWithCalibratedRed:green:blue:alpha: ns:ns-color Red Green Blue Alpha))
+  (#/retain (native-color Self)))
+
+
+(defmethod DRAW ((self image-control))
+  (when (native-color Self)
+    (#/set (native-color Self))
+    (ns:with-ns-rect (Frame 0.0 0.0 (width Self) (height Self))
+      (#/fillRect: ns:ns-bezier-path Frame))))
+
+
+(objc:defmethod (#/drawRect: :void) ((self native-image) (rect :<NSR>ect))
+  (draw (lui-view self))
+  (call-next-method rect))
 ;__________________________________
 ; IMAGE                            |
 ;__________________________________/
