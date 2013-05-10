@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<agentcubesproject>
+  <projectinfo project-title="Bubble Sort" description="This project is an implementation of one-, two- and three- dimensional Bubble Sort. Bubble sort is a simple sort algorithm in which adjacent numbers (represented as colors) get swapped if they are in the wrong order. AgentCubes is used in this case to visualize how the algorithm works. Please note that there is no centralized control in this implementation. Every bubble at each moment in time is ready to swap itself. A simple generalization of this approach leads to the 2D version of bubble sort in which numbers bubble horizontally as well as vertically." tags="enter comma-separated keywords" uuid="6ED6892C-5DFE-4D0A-9DAD-FF43EC21AE5B" assignment-key=""/>
+</agentcubesproject>
