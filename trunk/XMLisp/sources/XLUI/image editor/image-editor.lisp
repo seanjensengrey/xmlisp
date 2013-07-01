@@ -279,7 +279,7 @@
     ;;;  (clear-selection Self)
     ;;; replace with new user feedback? (with-cursor *Watch-Cursor*
     (multiple-value-bind (Name Width Height Depth)
-                         (create-texture-from-file From-Pathname :mag-filter GL_NEAREST :forced-depth 32)
+                         (create-texture-from-file From-Pathname :mag-filter GL_NEAREST :forced-depth 32 :anisotropy 1.0)
       ;; image
       (setf (img-texture Self) Name)
       (setf (img-width Self) Width)
