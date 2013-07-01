@@ -604,6 +604,7 @@ Call with most important parameters. Make other paramters accessible through *Cu
    (is-modal-p :accessor is-modal-p :initform nil :documentation "True if this window is currently running modally")
    (720p-mode-p :accessor 720p-mode-p :initform nil :documentation "If true this window will configured to be displayed well for high res video.")
    (window-shutting-down-p :accessor window-shutting-down-p :initform nil :documentation "If true the window has begun the process of closing")
+   (window-can-go-full-screen-in-mountain-lion :accessor window-can-go-full-screen-in-mountain-lion :initform nil :initarg :window-can-go-full-screen-in-mountain-lion :documentation "If true when the window is created, this will add the full screen arrows to the window")
    )
   (:documentation "a window that can contain views, coordinate system: topleft = 0, 0")
   (:default-initargs 
@@ -1127,6 +1128,7 @@ after any of the window controls calls stop-modal close window and return value.
    (user-action :accessor user-action :initform nil)
    (selected-in-cluster :accessor selected-in-cluster :initform nil)
    (key-equivalent :accessor key-equivalent :initform "")
+   (hide-border :accessor hide-border :initform nil :type boolean)
    )
   (:default-initargs
       :text "")
@@ -1554,9 +1556,11 @@ after any of the window controls calls stop-modal close window and return value.
 (defclass IMAGE-CONTROL (control)
   ((src :accessor src :initform nil :initarg :src :documentation "URL: so far only filename")
    (scale-proportionally :accessor scale-proportionally :initarg :scale-proportionally :type boolean :initform nil :documentation "If true the image will scale proportionally instead of scale to fit")
+   (crop-to-fit :accessor crop-to-fit :initarg :crop-to-fit :type boolean :initform nil)
    (image-path :accessor image-path :initform nil :initarg :image-path :documentation "if this accesor is nil then the image-control will look for 
    the image in the resources;images directory, if not it will look for the src image at the location specified by this accessor")
-   (downsample :accessor downsample :initform nil :type boolean :initarg :downsample :documentation "If true, downsample the actual Image file to the size of this image-control"))
+   (downsample :accessor downsample :initform nil :type boolean :initarg :downsample :documentation "If true, downsample the actual Image file to the size of this image-control")
+   (native-color :accessor native-color :initform nil))
   (:documentation "image. If size is 0,0 use original image size")
   (:default-initargs 
     :width 0
