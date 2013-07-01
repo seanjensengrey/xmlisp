@@ -32,7 +32,7 @@
 
 #-cocotron
 (setf (logical-pathname-translations "lui")
-      '(("**;*.*" "home:working copies;XMLISP-RELEASE;XMLisp;**;")))
+      '(("**;*.*" "home:working copies;Xmlisp svn;trunk;XMLisp;**;")))
 
 
 #+cocotron
@@ -47,7 +47,7 @@
 
 #+cocotron
 (setf (logical-pathname-translations "lui")
-      '(("**;*.*" "mac-home:XMLISP-RELEASE;XMLisp;**;")))
+      '(("**;*.*" "mac-home:Xmlisp svn;trunk;XMLisp;**;")))
 
 
 
