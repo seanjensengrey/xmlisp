@@ -1886,6 +1886,8 @@
           (#/setImagePosition: Native-Control #$NSImageOnly)
           (#/setImage: Native-Control NS-Image)
           (#/setBezelStyle: Native-Control #$NSShadowlessSquareBezelStyle)
+          (when (hide-border self)
+            (#/setBordered: native-control #$NO))
           (#/setTitle: Native-Control (native-string (text Self)))))
       Native-Control)))
 
@@ -2736,7 +2738,14 @@
                 (#/setImage: Native-Control image))))
             (if (scale-proportionally self)
               (#/setImageScaling: Native-Control #$NSScaleProportionally)
-              (#/setImageScaling: Native-Control #$NSScaleToFit)))))
+              (#/setImageScaling: Native-Control #$NSScaleToFit))
+            (when (crop-to-fit self)
+              (let* ((image-size (#/size (#/image native-control)))
+                      (height-ratio (/ (height self)(ns:ns-size-height image-size) )))
+                     (ns:with-ns-size (new-size (* height-ratio (ns:ns-size-width image-size)) (* height-ratio (ns:ns-size-height image-size)))
+                       (#/setSize: (#/image Native-Control) new-size))
+              ))
+            )))
      (t
       (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
         (#/initWithFrame: Native-Control Frame))))
@@ -2778,8 +2787,18 @@
 
 
 (objc:defmethod (#/drawRect: :void) ((self native-image) (rect :<NSR>ect))
+  
   (draw (lui-view self))
-  (call-next-method rect))
+  (if (crop-to-fit (lui-view self))
+    (let* ((image-size (#/size (#/image self)))
+           (height-ratio (/ (ns:ns-rect-height (#/frame self)) (ns:ns-size-height image-size))))
+      (setf image-size  (#/size (#/image self)))
+      (setf height-ratio (/ (ns:ns-rect-height (#/frame self)) (ns:ns-size-height image-size)))
+      (ns:with-ns-rect (from-rect (/ (- (ns:ns-size-width image-size)  (ns:ns-rect-width (#/frame self))) 2) 0 (* height-ratio (width (lui-view self))) (ns:ns-size-height image-size))
+        ;(#/drawInRect:fromRect:operation:fraction: (#/image self)  (#/frame self) from-rect #$NSCompositeCopy 1.0)
+        (#/drawInRect:fromRect:operation:fraction:respectFlipped:hints: (#/image self)  (#/bounds self) from-rect #$NSCompositeCopy 1 #$YES nil)
+        ))
+    (call-next-method rect)))
 ;__________________________________
 ; IMAGE                            |
 ;__________________________________/
