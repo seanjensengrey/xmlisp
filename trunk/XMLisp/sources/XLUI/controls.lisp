@@ -76,7 +76,9 @@
 (defclass NODE (node-item xml-serializer)
   ((nodes :accessor nodes :initform nil :initarg :nodes)
    (node-path :accessor node-path :initform nil :initarg :node-path )
-   (allowed-file-types :accessor allowed-file-types :initform nil :initarg :allowed-file-types ))
+   (allowed-file-types :accessor allowed-file-types :initform nil :initarg :allowed-file-types )
+   (mac-only :accessor mac-only :initform nil :type boolean)
+   )
    (:documentation ""))
 
 
@@ -86,10 +88,19 @@
     ;; Should use native-path instead of make-pathname
     (if (equal (allowed-file-types self) "directories")
       (dolist (node (reverse (ccl::directory #| (make-pathname :directory (pathname-directory (truename (node-path self))):name :wild)|# (native-path (truename (node-path self)) "*")  :directories t :directory-pathnames nil)))
-        (Setf (nodes self) (append (list (make-instance 'node :node-name  #-cocotron (first (last (pathname-directory node))) #+cocotron (pathname-name node) )) (nodes self) )))
+        ;; Hack: CCL is not returning 
+        (unless (or (equal (elt (namestring (first (last (pathname-directory node)))) 0) #\.) (search  ".DS_Store" (namestring node) ))
+          (Setf (nodes self) (append (list (make-instance 'node :node-name  #-cocotron (first (last (pathname-directory node))) #+cocotron (pathname-name node) )) (nodes self) ))))
       (dolist (node (reverse (directory (native-path (node-path self) "*.*" ) )))
         (when (or (not (allowed-file-types self)) (find (string-upcase (pathname-type node)) (read-from-string (allowed-file-types self)) :test 'equal :key 'string))
           (Setf (nodes self) (append (list (concatenate 'string (pathname-name node) "." (pathname-type node))) (nodes self) )))))))
+
+
+(defmethod ADD-SUBOBJECT :around ((Self xml-serializer) (node Node))
+  (let ((mac-only nil))
+    #+cocotron (when (mac-only node) (setf mac-only t))
+    (unless mac-only
+      (call-next-method))))
 
 ;________________________________________________
 ;Table                                           |
