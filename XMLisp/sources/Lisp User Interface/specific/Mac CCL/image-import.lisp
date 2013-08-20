@@ -146,6 +146,35 @@
            (#/bitmapFormat Image-Representation))))))
 
 
+(defun CREATE-IMAGE-DATA-OF-SIZE-FROM-FILE (Path width height )
+  (let* ((ns-image (#/initByReferencingFile: (#/alloc ns:ns-image) (native-string (namestring (translate-logical-pathname Path))))))
+      (create-image-data-of-size-from-image ns-image width height)))
+
+
+(defun CREATE-IMAGE-DATA-OF-SIZE-FROM-IMAGE (ns-image width height )
+  (ccl::with-autorelease-pool
+      (ns:with-ns-size (new-image-size width height)
+        (let ((resized-image (#/initWithSize: (#/alloc ns:ns-image) new-image-size))
+              (original-size (#/size ns-image)))
+          (#/lockFocusFlipped: resized-image #$YES)
+          (ns:with-ns-rect (new-rect 0 0 width height)
+            (ns:with-ns-rect (from-rect 0 0 (ns:ns-size-width original-size) (ns:ns-size-height original-size))
+              (#/drawInRect:fromRect:operation:fraction: ns-image new-rect from-rect #$NSCompositeSourceOver 1.0)))
+          (#/unlockFocus resized-image)
+          (let ((image-rep (#/initWithData: (#/alloc ns:ns-bitmap-image-rep) (#/TIFFRepresentation resized-image))))
+            (write-rgba-image-to-file (#/bitmapData image-rep) 32 32 (format nil "~Aderp.png" (truename "home:")))
+            (values
+             (copy-vector (#/bitmapData image-rep)
+                          (* (#/pixelsWide image-rep)
+                             (#/pixelsHigh image-rep)
+                             (ecase (#/bitsPerPixel image-rep)
+                               (32 4)
+                               (24 3))))
+             (#/pixelsWide image-rep)
+             (#/pixelsHigh image-rep)
+             (/ (#/bitsPerPixel image-rep) 8)))))))
+
+
 (defun RGBA-IMAGE-RED (Image X Y Width) "
   in:  Image {RGBAimage}, x, y, Width {fixnum}.
   out: Byte {byte}."
