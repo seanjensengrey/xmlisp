@@ -351,7 +351,8 @@
     (with-rgba-byte-vector &color (Red Green Blue Alpha)
       (with-glcontext Self
         (glBindTexture GL_TEXTURE_2D (img-texture Self))
-        (glTexSubImage2D GL_TEXTURE_2D 0 Col (- (img-height Self) Row 1) 1 1 GL_RGBA GL_UNSIGNED_BYTE &color)))) 
+        (glTexSubImage2D GL_TEXTURE_2D 0 Col (- (img-height Self) Row 1) 1 1 GL_RGBA GL_UNSIGNED_BYTE &color)
+        ))) 
   ;; update pixel buffer
   (when (pixel-buffer Self)
     (let ((Byte-Offset (image-byte-offset Self Col Row)))
@@ -1447,8 +1448,10 @@
 
 (defmethod LOAD-IMAGE-FROM-FILE ((Self image-editor-window) Pathname)
   "Loads the specified image file into the editor window."
-  (load-image (image-editor-view Self) Pathname)
-  (setf (file Self) Pathname))
+  ;(load-image (image-editor-view Self) Pathname)
+  ;(setf (file Self) Pathname)
+  
+  )
 
 
 (defmethod SAVE-IMAGE-TO-FILE ((Self image-editor-window) Pathname)
