@@ -84,13 +84,14 @@
         (#/release Bitmap)))))
 
 
-(defmethod SAVE-FRAME-BUFFER-AS-IMAGE ((Self opengl-view) To-Pathname)
+
+(defmethod SAVE-FRAME-BUFFER-AS-IMAGE ((Self opengl-view) To-Pathname &key (Image-Type :png))
   (let ((Depth 4))
     (with-glcontext Self
       (with-vector-of-size (&buffer (* (height Self) (width Self) Depth))
         (glReadPixels 0 0 (width Self) (height Self) GL_RGBA GL_UNSIGNED_BYTE &buffer)
         (flip-vertical-buffer &buffer (* (width Self) (height Self) Depth) (* (width Self) Depth))
-        (write-rgba-image-to-file &buffer (height Self) (width Self) To-Pathname :depth Depth)))))
+        (write-rgba-image-to-file &buffer (height Self) (width Self) To-Pathname :depth Depth :Image-Type Image-Type)))))
       
 
 
