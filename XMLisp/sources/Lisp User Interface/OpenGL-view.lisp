@@ -116,10 +116,7 @@
 ;* default implementation *
 ;**************************
 
-(defmethod INITIALIZE-INSTANCE :after ((Self opengl-view) &rest Args)
-  (declare (ignore Args))
-  (unless (camera Self)
-    (setf (camera Self) (make-instance (camera-type self) :view Self))))
+
 
 
 (defmethod CLEAR-BACKGROUND ((Self opengl-view))
