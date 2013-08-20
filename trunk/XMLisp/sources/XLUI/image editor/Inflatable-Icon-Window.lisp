@@ -122,9 +122,15 @@
          (invert-selection Icon-Editor))))
    ((lui::alt-key-p)
     (case (key-code Event)
-      #|
+      
       (37
       (load-image-from-file Self (lui::choose-file-dialog :directory "lui:resources;textures;")))
+      #|
+      (37
+       (lui::in-main-thread ()
+       (setup-icon-editor-with-image-at-path self (namestring (lui::choose-file-dialog :directory "lui:resources;textures;")) :shape-filename "index"))
+       (inspect self)
+       )
       |#
       (#.(key-name->code "delete")
        (fill-selected-pixels icon-editor))))
@@ -310,9 +316,53 @@
 
 (defmethod LOAD-IMAGE-FROM-FILE ((Self inflatable-icon-editor-window) Pathname)
   "Loads the specified image file into the editor window."
-  (load-image (view-named Self 'icon-editor) Pathname)
-  (setf (file Self) Pathname))
 
+    (multiple-value-bind (image-data #|height width bytes-per-pixel|#)
+                         (lui::CREATE-IMAGE-DATA-OF-SIZE-FROM-FILE Pathname 32 32)    
+      (load-image-from-data self image-data)))
+
+
+(defmethod CAMERA-BUTTON-ACTION ((Self inflatable-icon-editor-window) button)
+  (get-image-from-camera-for-window (get-picture-taker) self 'load-image-from-camera :return-ns-image-instead-of-file-path t))
+
+
+(defmethod LOAD-IMAGE-FROM-DATA ((self inflatable-icon-editor-window) image-data)
+  (let ((image-editor  (view-named self 'icon-editor)))
+    (with-glcontext image-editor
+      ; (setf (pixel-buffer image-editor) image-data)
+      (dotimes (i 32)
+        (dotimes (j 32)
+          (let* ((offset (image-byte-offset image-editor i j))
+                 (red  (get-byte image-data offset))
+                 (green  (get-byte image-data (+ 1 offset)))
+                 (blue  (get-byte image-data (+ 2 offset)))
+                 (alpha  (get-byte image-data (+ 3 offset))))
+            (set-rgba-color-at-without-gl-context image-editor i j red green blue alpha)
+            ;(with-rgba-byte-vector &color (Red Green Blue Alpha)
+            ;(glBindTexture GL_TEXTURE_2D (img-texture image-editor))
+            ;(glTexSubImage2D GL_TEXTURE_2D 0 j (- (img-height image-editor) i 1) 1 1 GL_RGBA GL_UNSIGNED_BYTE &color)
+            
+            #|
+            (let ((Byte-Offset (image-byte-offset image-editor i j)))
+            (when (> Byte-Offset (sizeof (pixel-buffer image-editor))) (error "out of range"))
+            (set-byte (pixel-buffer image-editor) Red Byte-Offset)
+            (set-byte (pixel-buffer image-editor) Green (+ Byte-Offset 1))
+            (set-byte (pixel-buffer image-editor) Blue (+ Byte-Offset 2))
+            (set-byte (pixel-buffer image-editor) Alpha (+ Byte-Offset 3)))
+            |#
+            
+            ;)
+            )))
+      
+      (display self)
+      )))
+
+
+(defmethod LOAD-IMAGE-FROM-CAMERA ((Self inflatable-icon-editor-window) image)
+  (multiple-value-bind (image-data #|height width bytes-per-pixel|#)
+                       (lui::CREATE-IMAGE-DATA-OF-SIZE-FROM-IMAGE image 32 32)   
+    (load-image-from-data self image-data)
+  ))
 
 (defmethod SAVE-IMAGE-TO-FILE ((Self inflatable-icon-editor-window) Pathname)
   "Saves the current image in the editor window to the specified file."
@@ -1261,9 +1311,10 @@
   (set-document-editted window :mark-as-editted nil)
   (setf  (window-needs-saving-p window) nil)
   (window-save Window)
-  (let ((shape-manager (load-object (make-pathname :name "index" :type "shape"  :directory (pathname-directory (file window))):package (find-package :xlui)))
+  (let* ((shape-manager (load-object (make-pathname :name "index" :type "shape"  :directory (pathname-directory (file window))):package (find-package :xlui)))
         (Model-Editor (view-named Window 'model-editor))
-        (thumbnail-name "thumbnail.png"))
+        (thumbnail-name #-cocotron "thumbnail.jpeg" #+cocotron "thumbnail.png")
+        (thumbnail-path (native-path (native-pathname-directory (file window)) thumbnail-name)))
     (compute-depth (inflatable-icon Model-Editor))
     (let ((image-editor (view-named window 'icon-editor))
           (colors  ""))
@@ -1279,11 +1330,18 @@
     ;(window-save Window)
     (setf (shape shape-manager) (inflatable-icon Model-Editor)) 
     ;  (lui::dump-buffer (image (shape shape-manager)) 32 32)
-    (lui::save-frame-buffer-as-image Model-Editor
-                                     ;(format nil "~Athumbnail.png"  (pathname-directory (file window)))
-                                     ;(namestring (make-pathname :name "thumbnail" :type "png"  :directory (pathname-directory (file window))))
-                                     (native-path (native-pathname-directory (file window)) thumbnail-name)
-                                     )
+    (print (not (is-flat (inflatable-icon Model-Editor))))
+    (cond
+     ((not (is-flat (inflatable-icon Model-Editor)))
+      (lui::save-frame-buffer-as-image Model-Editor
+                                       ;(format nil "~Athumbnail.png"  (pathname-directory (file window)))
+                                       ;(namestring (make-pathname :name "thumbnail" :type "png"  :directory (pathname-directory (file window))))
+                                       thumbnail-path
+                                       #-cocotron :Image-Type :jpeg2000
+                                       ))
+     ((probe-file (native-path (native-pathname-directory (file window)) thumbnail-name))
+      (ccl::delete-file thumbnail-path)
+      ))
     (setf (thumbnail-name (inflatable-icon (view-named Window 'model-editor))) thumbnail-name)
     (save shape-manager))
   (let ((Model-Editor (view-named Window 'model-editor)))
@@ -1359,7 +1417,6 @@
   (catch-errors-nicely 
    ("Editting Inflatable Icon")
    (let* ((Window #-cocotron (load-object "lui:resources;windows;inflatable-icon-editor.window" :package (find-package :xlui)) #+cocotron (load-object "lui:resources;windows;inflatable-icon-editor-windows.window" :package (find-package :xlui)))
-          (Icon-Editor (view-named Window "icon-editor"))
           (Inflated-Icon-Editor (view-named Window "model-editor")))
      (setf (save-button-closure-action window) save-button-closure-action)
     (if shape-name
@@ -1369,7 +1426,16 @@
        (setf (alert-close-action window) alert-close-action))
      (if alert-close-target 
        (setf (alert-close-target window) alert-close-target))
-     ;; 2D
+     (setup-icon-editor-with-image-at-path window pathname :shape-filename shape-filename)
+
+     
+     (initialize-gui-components Window (inflatable-icon Inflated-Icon-Editor))
+     window)))
+
+(defmethod SETUP-ICON-EDITOR-WITH-IMAGE-AT-PATH ((Window inflatable-icon-editor-window) pathname &key (shape-filename nil))
+  (let ((Icon-Editor (view-named Window "icon-editor"))
+        (Inflated-Icon-Editor (view-named Window "model-editor")))
+       ;; 2D
      (load-image Icon-Editor Pathname)
      (center-canvas Icon-Editor)
      (get-rgba-color-at Icon-Editor 0 0) ;;; HACK!! make sure buffer is allocated 
@@ -1415,10 +1481,8 @@
      (setf (file window) pathname)
      (display Window)
      (display (view-named Window "icon-editor"))
-     (make-key-window Window )
-     (initialize-gui-components Window (inflatable-icon Inflated-Icon-Editor))
-     window)))
-
+    (make-key-window Window )))
+           
 
 (defmethod INITIALIZE-GUI-COMPONENTS ((Self inflatable-icon-editor-window) Inflatable-Icon)
   (setf (value (view-named self "distance-slider")) (distance inflatable-icon))
