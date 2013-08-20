@@ -58,6 +58,20 @@
          (#/clearCurrentContext ns:ns-opengl-context)
          (#_CGLUnlockContext  ,CGLContext))))))
 
+#-cocotron
+(defmethod UNLOCK-VSYNC-ON-MAC ((self opengl-view))
+  (with-glcontext self
+    (ccl::rlet ((&intervalValue :int))
+      (setf (ccl::%get-byte &intervalValue) 0)
+      (#_CGLSetParameter (#_CGLGetCurrentContext) #$kCGLCPSwapInterval &intervalValue))))
+
+
+(defmethod INITIALIZE-INSTANCE :after ((Self opengl-view) &rest Args)
+  (declare (ignore Args))
+  (unless (camera Self)
+    (setf (camera Self) (make-instance (camera-type self) :view Self)))
+  #-cocotron
+  (unlock-vsync-on-mac self))
 
 (objc:defmethod (#/drawRect: :void) ((Self native-opengl-view) (rect :<NSR>ect))
   (with-simple-restart (abandon-drawing "Stop trying OpenGL to draw in ~s" Self)
@@ -541,6 +555,19 @@
           (glGetShaderInfoLog Object Max-Size &size &Chars)
           (dotimes (I (ccl::%get-long &size))
             (princ (code-char (ccl::%get-byte &Chars i)) String)))))))
+
+
+;; OpenGL Helper functions
+
+(defun GET-OPENGL-INFO (Type)
+  (with-glcontext (shared-opengl-view)
+    (let ((&bytes (glGetString Type)))
+      (with-output-to-string (Info)
+        (dotimes (i 10000)
+          (let ((Byte (ccl::%get-byte &bytes i)))
+            (when (zerop Byte) (return))
+            (princ (code-char Byte) Info)))))))
+
 
 
 #| Examples:
