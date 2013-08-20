@@ -245,7 +245,12 @@
 
 (expand "age[left]")
 
+(expand "age{left}")
+
+(expand "age#left")
+
 (expand "age[-1, 1]")
+
 
 (expand "age[2, 3, 4] + height[right]")
 
