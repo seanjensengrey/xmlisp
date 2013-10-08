@@ -124,7 +124,9 @@
     (case (key-code Event)
       
       (37
-      (load-image-from-file Self (lui::choose-file-dialog :directory "lui:resources;textures;")))
+       (let ((path  (lui::choose-file-dialog :directory "lui:resources;textures;")))
+         (when path 
+           (load-image-from-file Self path))))
       #|
       (37
        (lui::in-main-thread ()
@@ -353,16 +355,27 @@
             
             ;)
             )))
-      
+      (compute-connectors (inflatable-icon (view-named self 'model-editor)))
       (display self)
       )))
 
 
 (defmethod LOAD-IMAGE-FROM-CAMERA ((Self inflatable-icon-editor-window) image)
-  (multiple-value-bind (image-data #|height width bytes-per-pixel|#)
-                       (lui::CREATE-IMAGE-DATA-OF-SIZE-FROM-IMAGE image 32 32)   
-    (load-image-from-data self image-data)
-  ))
+  (when image
+    (multiple-value-bind (image-data #|height width bytes-per-pixel|#)
+                         (lui::CREATE-IMAGE-DATA-OF-SIZE-FROM-IMAGE image 32 32)   
+      
+      (load-image-from-data self image-data)
+      (let* ((model-editor (view-named self 'model-editor))
+             (inflatable-icon (inflatable-icon model-editor)))
+        (compute-connectors inflatable-icon) 
+        
+        (when (and (is-flat inflatable-icon) (texture-id inflatable-icon))
+          ;; Force the creation of a new texture
+          (update-texture-from-image inflatable-icon))
+        
+        (display  model-editor)
+        ))))
 
 (defmethod SAVE-IMAGE-TO-FILE ((Self inflatable-icon-editor-window) Pathname)
   "Saves the current image in the editor window to the specified file."
@@ -1146,7 +1159,8 @@
     (let ((Model-Editor (view-named Window 'model-editor)))
       (setf (distance (inflatable-icon Model-Editor)) Distance)
       (unless do-not-display
-        (display Model-Editor)))))
+        (display Model-Editor)
+        ))))
 
 
 (defmethod CHANGE-ICON-ACTION ((Window inflatable-icon-editor-window) (Icon-Editor icon-editor))
@@ -1330,7 +1344,6 @@
     ;(window-save Window)
     (setf (shape shape-manager) (inflatable-icon Model-Editor)) 
     ;  (lui::dump-buffer (image (shape shape-manager)) 32 32)
-    (print (not (is-flat (inflatable-icon Model-Editor))))
     (cond
      ((not (is-flat (inflatable-icon Model-Editor)))
       (lui::save-frame-buffer-as-image Model-Editor
@@ -1340,7 +1353,7 @@
                                        #-cocotron :Image-Type :jpeg2000
                                        ))
      ((probe-file (native-path (native-pathname-directory (file window)) thumbnail-name))
-      (ccl::delete-file thumbnail-path)
+     (ccl::delete-file thumbnail-path)
       ))
     (setf (thumbnail-name (inflatable-icon (view-named Window 'model-editor))) thumbnail-name)
     (save shape-manager))

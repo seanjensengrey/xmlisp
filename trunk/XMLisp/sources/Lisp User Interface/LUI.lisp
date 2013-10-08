@@ -1100,6 +1100,7 @@ after any of the window controls calls stop-modal close window and return value.
 
 (defclass BEVEL-BUTTON-CONTROL (control)
   ((bezel-style :accessor bezel-style :initform nil :documentation "the bezel style of this button, if this is nil we will use rounded by default")
+   (default-button :accessor default-button :initform nil :type boolean :documentation "if true button is selectable with return key")
    (color :accessor color :initform nil :initarg :color :documentation "A hex repsentation of the background color of this button")
    )
   (:documentation "Bevel Button: any height and width")
@@ -1129,6 +1130,7 @@ after any of the window controls calls stop-modal close window and return value.
    (selected-in-cluster :accessor selected-in-cluster :initform nil)
    (key-equivalent :accessor key-equivalent :initform "")
    (hide-border :accessor hide-border :initform nil :type boolean)
+   (button-type :accessor button-type :initform "on-off" :documentation "Can be either on-off or push-in")
    )
   (:default-initargs
       :text "")

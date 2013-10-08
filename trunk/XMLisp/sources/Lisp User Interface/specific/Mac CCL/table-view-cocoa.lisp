@@ -69,7 +69,8 @@
 
 
 (defmethod RELOAD-DATA ((Self table-view))
-  (#/reloadData (native-view self)))
+  (#/reloadData (native-view self))
+  (display self))
 
 
 (defmethod SET-COLOR-OF-CELL-AT-ROW-COLUMN ((Self table-view) row column red green blue)
