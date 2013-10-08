@@ -321,7 +321,8 @@
        (Acceptable
         (when (drag-proxy-window Self)
           (window-close (drag-proxy-window Self)))
-        (receive-drop (destination-agent Self) (source-agent Self)))
+        (receive-drop (destination-agent Self) (source-agent Self))
+        (drag-and-drop-did-finish (view (source-agent self))))
        ;; problems
        (t
         (snap-back Self)))))
@@ -330,6 +331,9 @@
     (snap-back Self)))
   ;; cleanup
   (set-cursor "ArrowCursor"))
+
+
+
 
 ;*******************************
 ;* AGENT 3D VIEW               *
@@ -680,6 +684,10 @@
           (setf (is-hovered Agent) t)
           (mouse-hover-enter-event-handler Agent)
           (setf (agent-hovered Self) Agent))))))
+
+(defmethod DRAG-AND-DROP-DID-FINISH ((Self agent-3d-view))
+  ;; Do nothing
+  )
 
 
 ;****************************************
@@ -1294,6 +1302,7 @@ Return true if <Agent2> could be dropped onto <Agent1>. Provide optional explana
   (setf (agents Agent) (append (agents Agent) (list Sub-Agent)))
   (setf (part-of Sub-Agent) Agent)
   (setf (view Sub-Agent) (view Agent)))
+
 
 
 

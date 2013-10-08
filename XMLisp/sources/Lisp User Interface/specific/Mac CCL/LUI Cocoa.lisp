@@ -1312,6 +1312,8 @@
       (#/initWithFrame: Native-Control Frame)
       (#/setButtonType: Native-Control #$NSMomentaryPushInButton)
       (#/setImagePosition: Native-Control #$NSNoImage)
+      (when (default-button Self)
+        (#/setKeyEquivalent: Native-Control  #@#.(string #\return)))
       (when (color self)
         (#/setBackgroundColor: (#/cell native-control) (#/redColor ns:ns-color))
         (#/setBordered: native-control #$NO))
@@ -1882,7 +1884,11 @@
           (unless (probe-file Path) (error "no such image file for button ~A" (image Self)))
           (#/initWithContentsOfFile: NS-Image  (native-string (native-path "lui:resources;buttons;" (image Self))))
           (#/initWithFrame: Native-Control Frame)
-          (#/setButtonType: Native-Control #$NSOnOffButton)   
+          (cond 
+           ((equal (button-type self) "on-off")
+            (#/setButtonType: Native-Control #$NSOnOffButton))
+           (t
+            (#/setButtonType: Native-Control #$NSMomentaryPushInButton)))
           (#/setImagePosition: Native-Control #$NSImageOnly)
           (#/setImage: Native-Control NS-Image)
           (#/setBezelStyle: Native-Control #$NSShadowlessSquareBezelStyle)
@@ -2020,13 +2026,17 @@
 
 (defmethod GET-SELECTED-ACTION ((Self popup-button-control))
   ;; -1 implies a that nothing is selected on Windows
+  (print (#/indexOfSelectedItem (native-view self)))
   (unless (equal -1 (#/indexOfSelectedItem (native-view self)))
     (elt (actions self)  (#/indexOfSelectedItem (native-view self)))))
 
 
 (defmethod POPUP-ACTION ((window window) (self popup-Button-Control))
+  (print "GET")
+  (print (get-selected-action self))
   (unless (eql (get-selected-action self) NIL)
     (let ((action (get-selected-action self)))
+      (print action)
       (funcall action Window Self))))
 
 
@@ -2035,11 +2045,19 @@
 
 
 (defmethod ADD-ITEM ((Self popup-button-control) Text Action )
+  (print "ADD ITEM")
+  (print Text)
+  (print Action)
   (if (equal (#/indexOfItemWithTitle: (native-view Self) (native-string Text)) -1)
     (progn 
       (#/addItemWithTitle: (native-view Self) (native-string Text))
       (setf (actions Self) (append (actions Self) (list Action))))
     (warn "Cannot add item with the same title (~S)" Text)))
+
+
+(defmethod ADD-SEPERATOR ((self popup-button-control))
+  (#/addItem: (#/menu (native-view self)) (#/separatorItem ns:ns-menu-item))
+  (setf (actions Self) (append (actions Self) (list nil))))
 
 
 (defmethod REMOVE-ITEM ((Self popup-button-control) Title)
@@ -2743,7 +2761,9 @@
               (let* ((image-size (#/size (#/image native-control)))
                       (height-ratio (/ (height self)(ns:ns-size-height image-size) )))
                      (ns:with-ns-size (new-size (* height-ratio (ns:ns-size-width image-size)) (* height-ratio (ns:ns-size-height image-size)))
-                       (#/setSize: (#/image Native-Control) new-size))
+                       (#/setSize: (#/image Native-Control) new-size)
+                       (#/setFlipped: (#/image Native-Control) #$YES)
+                      )
               ))
             )))
      (t
@@ -2787,16 +2807,15 @@
 
 
 (objc:defmethod (#/drawRect: :void) ((self native-image) (rect :<NSR>ect))
-  
   (draw (lui-view self))
   (if (crop-to-fit (lui-view self))
     (let* ((image-size (#/size (#/image self)))
            (height-ratio (/ (ns:ns-rect-height (#/frame self)) (ns:ns-size-height image-size))))
       (setf image-size  (#/size (#/image self)))
       (setf height-ratio (/ (ns:ns-rect-height (#/frame self)) (ns:ns-size-height image-size)))
-      (ns:with-ns-rect (from-rect (/ (- (ns:ns-size-width image-size)  (ns:ns-rect-width (#/frame self))) 2) 0 (* height-ratio (width (lui-view self))) (ns:ns-size-height image-size))
-        ;(#/drawInRect:fromRect:operation:fraction: (#/image self)  (#/frame self) from-rect #$NSCompositeCopy 1.0)
-        (#/drawInRect:fromRect:operation:fraction:respectFlipped:hints: (#/image self)  (#/bounds self) from-rect #$NSCompositeCopy 1 #$YES nil)
+      (ns:with-ns-rect (from-rect (/ (- (ns:ns-size-width image-size)  (ns:ns-rect-width (#/frame self))) 2) 0 (* height-ratio (width (lui-view self))) (* 1 (ns:ns-size-height image-size)))        
+        (#/drawInRect:fromRect:operation:fraction: (#/image self)  (#/bounds self) from-rect #$NSCompositeCopy 1.0)
+        ;(#/drawInRect:fromRect:operation:fraction:respectFlipped:hints: (#/image self)  (#/bounds self) from-rect #$NSCompositeCopy 1 #$YES nil)
         ))
     (call-next-method rect)))
 ;__________________________________
@@ -3275,16 +3294,19 @@
       (when (> (length string) (length longest-string))
         (setf longest-string string)))
     (let ((Pop-up (make-instance 'popup-button-control  :container container :width (+ text-buffer (truncate (ns:ns-size-width (#/sizeWithAttributes: (lui::native-string longest-string) nil)))) :height 1 :x   (- (rational (NS:NS-POINT-X (#/mouseLocation ns:ns-event)))(x window))  :y   (-  (- (NS:NS-RECT-HEIGHT (#/frame (#/mainScreen ns:ns-screen)))(NS:NS-POINT-Y (#/mouseLocation ns:ns-event)))(y window))  )))
-    (dolist (String list)
-      (add-item Pop-Up String nil))
-      (if item-addition-action-string-list
+      (dolist (String list)
+        (cond 
+         ((equal string "seperator")
+          (add-seperator Pop-Up))
+         (t
+          (add-item Pop-Up String nil))))
+      (when item-addition-action-string-list
         (add-item Pop-Up (first item-addition-action-string-list) (second item-addition-action-string-list)))
-    (add-subviews window Pop-up)
-    (if selected-item
-      (#/selectItemWithTitle: (native-view pop-up) (native-string selected-item))
-      (#/selectItemWithTitle: (native-view pop-up) nil))
-    ;(#/setTransparent: (native-view Pop-Up) #$YES)
-    (#/performClick:  (native-view Pop-up) +null-ptr+)
+      (add-subviews window Pop-up)
+      (if selected-item
+        (#/selectItemWithTitle: (native-view pop-up) (native-string selected-item))
+        (#/selectItemWithTitle: (native-view pop-up) nil))      
+      (#/performClick:  (native-view Pop-up) +null-ptr+)
       (let ((title (#/titleOfSelectedItem (native-view Pop-Up))))
         (#/removeFromSuperview (native-view Pop-up))
         (unless (%null-ptr-p title)

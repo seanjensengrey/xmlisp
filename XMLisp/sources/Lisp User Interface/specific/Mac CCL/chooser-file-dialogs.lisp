@@ -191,8 +191,38 @@
 
 
 
+(defun choose-directory-dialog2 (&key directory window-title)
+  (gui::execute-in-gui #'(lambda ()
+                      (let ((op (#/openPanel ns:ns-open-panel)))
+                        (when window-title
+                          (setf window-title (ccl::%make-nsstring window-title))
+                          (#/setTitle: op window-title))
+                        (#/setAllowsMultipleSelection: op nil)
+                        (#/setCanChooseDirectories: op t)
+                        (#/setCanChooseFiles: op nil)
+                        #-cocotron
+                        (#/setShowsHiddenFiles: op #$YES)
+                        (when (eql (#/runModal op (native-string directory) +null-ptr+  +null-ptr+) #$NSOKButton)
+                          ;; #/stringByStandardizingPath seems to strip trailing slashes
+                         (let* ((path (#/retain (#/stringByAppendingString:
+                                        (#/stringByStandardizingPath
+                                         (#/objectAtIndex: (#/filenames op) 0))
+                                        #@"/"))))
+                            (ccl::lisp-string-from-nsstring path)))))))
 
 
+
+(defun choose-directory-dialog3 (&key directory window-title)
+                        (let ((op (#/init (#/alloc ns:ns-open-panel))))
+                       
+       
+                        (when (eql (#/runModal op ) #$NSOKButton)
+                          ;; #/stringByStandardizingPath seems to strip trailing slashes
+                         (let* ((path (#/retain (#/stringByAppendingString:
+                                        (#/stringByStandardizingPath
+                                         (#/objectAtIndex: (#/filenames op) 0))
+                                        #@"/"))))
+                            (ccl::lisp-string-from-nsstring path)))))
 
 (defun choose-new-directory-dialog (&key 
                                     directory 
