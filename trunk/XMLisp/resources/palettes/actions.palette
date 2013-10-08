@@ -31,6 +31,7 @@
   <category tooltip="Attribute actions" title="attributes and properties" disclosed="true">
     <set value="value + 1 + value[right]"/>
     <set attribute="@Score" value="@Score + 1"/>
+    <hill-climb />
   </category>
   <category tooltip="Visualization actions" title="visualization" disclosed="true">
     <set-color-to/>
