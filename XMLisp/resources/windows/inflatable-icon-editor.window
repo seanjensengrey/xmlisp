@@ -89,10 +89,19 @@
     </image-button-cluster>
   </row>
   <spacer height="15"/>
-  <row minimize="vertical" align="right">
-    <button text="Cancel" action="edit-icon-cancel-action"/>
-    <button tooltip="Save the inflatable icon and close the editor. This will also update shapes of this type in the world, if any." text="Save" width="70" action="EDIT-ICON-SAVE-ACTION" default-button="true"/>
-    <spacer width="22"/>
+  <row minimize="vertical" align="right"> 
+    <row  minimize="vertical">
+      <spacer width="185"/>
+  
+      <image-button height="29" width="29" image="camera2.png" action="camera-button-action" x="50"/>
+  
+    </row>
+    <row align="right" minimize="vertical">
+   
+      <button text="Cancel" action="edit-icon-cancel-action"/>
+      <button tooltip="Save the inflatable icon and close the editor. This will also update shapes of this type in the world, if any." text="Save" width="70" action="EDIT-ICON-SAVE-ACTION" default-button="true"/>
+      <spacer width="22"/>
+    </row>
   </row>
   </column>
 </inflatable-icon-editor-window>
