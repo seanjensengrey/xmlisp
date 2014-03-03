@@ -660,6 +660,7 @@
     <building_agent row="19" col="19" shape-name="SKYSCRAPER" attributes="(DESTINATION 0 TRAFFIC 0.37877607)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <building_agent row="19" col="19" shape-name="SKYSCRAPER" attributes="(DESTINATION 0 TRAFFIC 0.37877607)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <trafficplotter_agent row="19" col="19" shape-name="BALL" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <background-color red="0.0" green="0.5" blue="1.0"/>
   </agent-matrix>
   <sky-dome size="100.0" texture="sky_and_clouds.jpg"/>
 </world>

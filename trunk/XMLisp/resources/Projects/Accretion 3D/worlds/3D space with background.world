@@ -8202,5 +8202,6 @@
     <background_agent row="19" col="19" layer="17" shape-name="BACKGROUND" x-turn="0.5" y-turn="0.5"/>
     <background_agent row="19" col="19" layer="18" shape-name="BACKGROUND" x-turn="0.5" y-turn="0.5"/>
     <background_agent row="19" col="19" layer="19" shape-name="BACKGROUND" x-turn="0.5" y-turn="0.5"/>
+    <background-color red="0.0" green="0.5" blue="1.0"/>
   </agent-matrix>
 </world>

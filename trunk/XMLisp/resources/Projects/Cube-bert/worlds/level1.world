@@ -172,5 +172,6 @@
     <cube_agent row="9" col="18" shape-name="CUBE" color="E60000FF" attributes="(P 2.3459232)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cube_agent row="9" col="19" shape-name="CUBE" color="E60000FF" attributes="(P 0.61997616)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <ghost_agent row="9" col="19" shape-name="GHOST" x-turn="0.5" y-turn="0.5"/>
+    <background-color red="0.0" green="0.5" blue="1.0"/>
   </agent-matrix>
 </world>

@@ -205,6 +205,7 @@
     <carpet_agent row="19" col="11" shape-name="CARPET" attributes="(E 0.0 F 8.8883814E-4)" x-turn="0.5" y-turn="0.5"/>
     <carpet_agent row="19" col="12" shape-name="CARPET" attributes="(E 0.0 F 4.6989342E-4)" x-turn="0.5" y-turn="0.5"/>
     <carpet_agent row="19" col="13" shape-name="CARPET" attributes="(E 0.0 F 2.1686351E-4)" x-turn="0.5" y-turn="0.5"/>
+    <background-color red="0.0" green="0.5" blue="1.0"/>
   </agent-matrix>
   <sky-dome size="100.0" texture="DarkClouds.png"/>
 </world>

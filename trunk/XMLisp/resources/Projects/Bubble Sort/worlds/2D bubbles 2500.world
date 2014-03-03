@@ -2508,5 +2508,6 @@
     <two_d_bubble_agent row="49" col="47" shape-name="TWO_D_BUBBLE" color="18A800FF" attributes="(GREEN 0.66088104 RED 0.09696431)" x-turn="0.5" y-turn="0.5"/>
     <two_d_bubble_agent row="49" col="48" shape-name="TWO_D_BUBBLE" color="253F00FF" attributes="(GREEN 0.24722898 RED 0.14712471)" x-turn="0.5" y-turn="0.5"/>
     <two_d_bubble_agent row="49" col="49" shape-name="TWO_D_BUBBLE" color="9EB000FF" attributes="(GREEN 0.69179255 RED 0.62074715)" x-turn="0.5" y-turn="0.5"/>
+    <background-color red="0.0" green="0.5" blue="1.0"/>
   </agent-matrix>
 </world>

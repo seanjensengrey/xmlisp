@@ -2503,5 +2503,6 @@
     <agent_agent row="49" col="47" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="49" col="48" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <agent_agent row="49" col="49" shape-name="AGENT-CUBE" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <background-color red="0.0" green="0.5" blue="1.0"/>
   </agent-matrix>
 </world>

@@ -2713,5 +2713,6 @@
     <background_agent row="49" col="48" shape-name="BACKGROUND" x-turn="0.5" y-turn="0.5"/>
     <background_agent row="49" col="49" shape-name="BACKGROUND" x-turn="0.5" y-turn="0.5"/>
     <background_agent row="49" col="50" shape-name="BACKGROUND" x-turn="0.5" y-turn="0.5"/>
+    <background-color red="0.0" green="0.5" blue="1.0"/>
   </agent-matrix>
 </world>
