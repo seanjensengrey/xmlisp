@@ -808,5 +808,6 @@
     <bubble_agent row="19" col="37" shape-name="BUBBLE" color="8E6E70FF" attributes="(VALUE 440)" x-turn="0.5" y-turn="0.5"/>
     <bubble_agent row="19" col="38" shape-name="BUBBLE" color="728A8CFF" attributes="(VALUE 552)" x-turn="0.5" y-turn="0.5"/>
     <bubble_agent row="19" col="39" shape-name="BUBBLE" color="8A7174FF" attributes="(VALUE 455)" x-turn="0.5" y-turn="0.5"/>
+    <background-color red="0.0" green="0.5" blue="1.0"/>
   </agent-matrix>
 </world>

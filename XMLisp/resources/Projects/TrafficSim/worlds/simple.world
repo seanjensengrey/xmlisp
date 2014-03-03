@@ -719,6 +719,7 @@
     <building_agent row="19" col="18" shape-name="GARDEN" attributes="(DESTINATION 0 TRAFFIC 9.17274E-4)" x-turn="0.5" y-turn="0.5"/>
     <street_agent row="19" col="19" shape-name="FLOOR_TILE" attributes="(DESTINATION 0.0 TRAFFIC 3.9259164E-4)" x-turn="0.5" y-turn="0.5"/>
     <building_agent row="19" col="19" shape-name="GARDEN" attributes="(DESTINATION 0 TRAFFIC 3.9259164E-4)" x-turn="0.5" y-turn="0.5"/>
+    <background-color red="0.0" green="0.5" blue="1.0"/>
   </agent-matrix>
   <sky-dome size="100.0" texture="sky_and_clouds.jpg"/>
 </world>

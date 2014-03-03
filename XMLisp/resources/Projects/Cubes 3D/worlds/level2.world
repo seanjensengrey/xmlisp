@@ -6,7 +6,7 @@
     <specular red="1.0" green="1.0" blue="1.0"/>
   </light-source>
   <background-color red="0.0" green="0.0" blue="0.0"/>
-  <camera eye-x="-9.0576160488681D0" eye-y="7.495702109602138D0" eye-z="16.78747106441116D0" center-x="4.79840087890625D0" center-y="7.08078145980835D0" center-z="6.453897953033447D0" up-x="6.649459568029306D0" up-y="14.35410527016585D0" up-z="-4.959049700613927D0" fovy="60.0D0" aspect="3.5317460317460316D0" near="0.005D0" far="2000.0D0" azimuth="-0.9299999717622995D0" zenith="0.024000028148293495D0"/>
+  <camera eye-x="-9.0576160488681" eye-y="7.495702109602138" eye-z="16.78747106441116" center-x="4.79840087890625" center-y="7.08078145980835" center-z="6.453897953033447" up-x="6.649459568029306" up-y="14.35410527016585" up-z="-4.959049700613927" fovy="60.0" aspect="3.5317460317460316" near="0.005" far="2000.0" azimuth="-0.9299999717622995" zenith="0.024000028148293495"/>
   <agent-matrix name="AGENT-MATRIX37" rows="13" layers="3" is-grid-visible="false">
     <background_agent shape-name="BACKGROUND" color="FFFFFFFF" attributes="(INVISIBLE 0)" x-turn="0.5" y-turn="0.5"/>
     <border_agent shape-name="BORDER" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
@@ -488,6 +488,7 @@
     <cube_agent row="11" col="9" shape-name="CUBE" color="FBFE2EFF" attributes="(COLOR 4)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <background_agent row="11" col="9" layer="2" shape-name="BACKGROUND" color="FFFFFFFF" attributes="(INVISIBLE 0)" x-turn="0.5" y-turn="0.5"/>
     <cube_agent row="11" col="9" layer="2" shape-name="CUBE" color="397EEAFF" attributes="(COLOR 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <background-color red="0.0" green="0.5" blue="1.0"/>
   </agent-matrix>
-  <sky-dome size="100.0D0" texture="sky_and_clouds.jpg" texture-path="/Users/andri/Work Documents/agencubes workspace/agentcubes projects/working on/in progress/Cubes 3D/Resources/"/>
+  <sky-dome size="100.0" texture="sky_and_clouds.jpg"/>
 </world>

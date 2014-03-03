@@ -183,5 +183,6 @@
     <wall_agent row="11" col="9" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <carpet_agent row="11" col="10" shape-name="CARPET" attributes="(F 0.010699984)" x-turn="0.5" y-turn="0.5"/>
     <wall_agent row="11" col="10" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <background-color red="0.0" green="0.5" blue="1.0"/>
   </agent-matrix>
 </world>

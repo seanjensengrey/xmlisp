@@ -8,7 +8,7 @@
   <background-color red="0.0" green="0.0" blue="0.0"/>
   <camera eye-x="1.003999721467495" eye-y="0.5399998498559002" eye-z="0.9999998137354851" center-x="1.003999721467495" center-y="0.5399998498559002" center-z="-1.0500000305473804" up-x="0.0" up-y="1.0" up-z="0.0" fovy="60.0" aspect="3.6206896551724137" near="0.005" far="2000.0" azimuth="0.0" zenith="0.0"/>
   <agent-matrix name="AGENT-MATRIX11508" rows="1" columns="2" layers="1" texture="Making Waves.jpg" is-grid-visible="false">
-    <tutorial_agent shape-name="TUTORIAL" x-turn="0.5" y-turn="0.5"/>
+    <making_waves_tutorial_agent shape-name="TUTORIAL" x-turn="0.5" y-turn="0.5"/>
     <background-color red="0.0" green="0.5" blue="1.0"/>
   </agent-matrix>
 </world>

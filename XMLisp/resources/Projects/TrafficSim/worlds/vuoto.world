@@ -418,6 +418,7 @@
     <street_agent row="19" col="17" shape-name="FLOOR_TILE" attributes="(DESTINATION 1.5705829E-6 TRAFFIC 0.0)" x-turn="0.5" y-turn="0.5"/>
     <street_agent row="19" col="18" shape-name="FLOOR_TILE" attributes="(DESTINATION 1.1235919E-6 TRAFFIC 0.0)" x-turn="0.5" y-turn="0.5"/>
     <street_agent row="19" col="19" shape-name="FLOOR_TILE" attributes="(DESTINATION 5.4558745E-7 TRAFFIC 0.0)" x-turn="0.5" y-turn="0.5"/>
+    <background-color red="0.0" green="0.5" blue="1.0"/>
   </agent-matrix>
   <sky-dome size="100.0" texture="sky_and_clouds.jpg"/>
 </world>

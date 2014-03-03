@@ -8,7 +8,7 @@
   <background-color red="0.0" green="0.0" blue="0.0"/>
   <camera eye-x="0.9999995777159953" eye-y="0.495999863371253" eye-z="0.999999538064003" center-x="0.9999995777159953" center-y="0.495999863371253" center-z="0.0" up-x="0.0" up-y="1.0" up-z="0.0" fovy="60.0" aspect="3.6206896551724137" near="0.005" far="2000.0" azimuth="0.0" zenith="0.0"/>
   <agent-matrix name="AGENT-MATRIX11508" rows="1" columns="2" layers="1" texture="Moonsweeper.jpg" is-grid-visible="false">
-    <tutorial_agent shape-name="TUTORIAL" x-turn="0.5" y-turn="0.5"/>
+    <moonsweeper_tutorial_agent shape-name="TUTORIAL" x-turn="0.5" y-turn="0.5"/>
     <background-color red="0.0" green="0.5" blue="1.0"/>
   </agent-matrix>
 </world>

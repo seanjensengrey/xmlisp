@@ -89,6 +89,7 @@
     <wall_agent row="9" col="4" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <wall_agent row="9" col="5" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <wall_agent row="9" col="6" shape-name="BRICK" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <background-color red="0.0" green="0.5" blue="1.0"/>
   </agent-matrix>
   <sky-dome size="100.0" texture="Dusk.png"/>
 </world>

@@ -765,5 +765,6 @@
     <grass_agent row="19" col="18" shape-name="GRASS" x-turn="0.5" y-turn="0.5"/>
     <dirt_agent row="19" col="19" shape-name="DIRT" x-turn="0.5" y-turn="0.5"/>
     <grass_agent row="19" col="19" shape-name="GRASS" x-turn="0.5" y-turn="0.5"/>
+    <background-color red="0.0" green="0.5" blue="1.0"/>
   </agent-matrix>
 </world>

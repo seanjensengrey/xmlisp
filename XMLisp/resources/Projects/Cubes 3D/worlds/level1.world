@@ -248,6 +248,7 @@
     <cube_agent row="11" col="8" shape-name="CUBE" color="DE002BFF" attributes="(DELETE 0 COLOR 1)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <background_agent row="11" col="9" shape-name="BACKGROUND" color="FFFFFF00" attributes="(INVISIBLE 1)" x-turn="0.5" y-turn="0.5"/>
     <cube_agent row="11" col="9" shape-name="CUBE" color="397EEAFF" attributes="(DELETE 0 COLOR 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <background-color red="0.0" green="0.5" blue="1.0"/>
   </agent-matrix>
   <sky-dome size="100.0" texture="Dusk.png"/>
 </world>

@@ -9,98 +9,98 @@
   <camera eye-x="6.158254214153727" eye-y="4.452134036667256" eye-z="1.880306265886103" center-x="6.15135441902747" center-y="4.450354425231645" center-z="1.870987563774835" up-x="-0.010764747697018434" up-y="-0.002776469120100987" up-z="0.0017122006200259825" fovy="60.0" aspect="3.119047619047619" near="0.005" far="2000.0" azimuth="10.74315329734236" zenith="6.936000429093838"/>
   <agent-matrix name="AGENT-MATRIX11508" rows="8" columns="8" layers="2" is-grid-visible="false" layer-height="2.032258">
     <cyrstal_agent shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <keep_agent shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <keep_agent shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent col="1" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <keep_agent col="1" shape-name="WALL" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent col="1" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent col="1" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <keep_agent col="1" shape-name="WALL" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent col="1" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent col="1" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent col="2" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <keep_agent col="2" shape-name="WALL" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent col="2" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent col="2" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <keep_agent col="2" shape-name="WALL" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent col="2" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent col="2" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent col="3" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <keep_agent col="3" shape-name="WALL" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent col="3" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent col="3" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <keep_agent col="3" shape-name="WALL" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent col="3" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent col="3" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent col="4" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <keep_agent col="4" shape-name="WALL" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent col="4" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent col="4" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <keep_agent col="4" shape-name="WALL" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent col="4" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent col="4" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent col="5" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <keep_agent col="5" shape-name="WALL" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent col="5" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent col="5" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <keep_agent col="5" shape-name="WALL" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent col="5" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent col="5" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent col="6" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <keep_agent col="6" shape-name="WALL" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent col="6" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent col="6" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <keep_agent col="6" shape-name="WALL" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent col="6" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent col="6" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent col="7" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <keep_agent col="7" shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent col="7" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent col="7" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <keep_agent col="7" shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent col="7" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent col="7" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="1" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <keep_agent row="1" shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="1" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="1" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <keep_agent row="1" shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="1" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="1" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="1" col="1" shape-name="CYSTALFLOOR1" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="1" col="1" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <cyrstal_agent row="1" col="1" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="1" col="2" shape-name="CYSTALFLOOR1" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="1" col="3" shape-name="CYSTALFLOOR1" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="1" col="4" shape-name="CYSTALFLOOR1" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="1" col="5" shape-name="CYSTALFLOOR1" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="1" col="6" shape-name="CYSTALFLOOR1" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="1" col="7" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <keep_agent row="1" col="7" shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="1" col="7" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="1" col="7" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <keep_agent row="1" col="7" shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="1" col="7" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="1" col="7" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="2" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <keep_agent row="2" shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="2" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="2" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <keep_agent row="2" shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="2" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="2" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="2" col="1" shape-name="CYSTALFLOOR1" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="2" col="1" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <cyrstal_agent row="2" col="1" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="2" col="2" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="2" col="3" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="2" col="3" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <cyrstal_agent row="2" col="3" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <spire_agent row="2" col="3" layer="1" shape-name="SPIRE" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="2" col="4" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="2" col="4" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <cyrstal_agent row="2" col="4" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <spire_agent row="2" col="4" layer="1" shape-name="SPIRE" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="2" col="5" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="2" col="5" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <cyrstal_agent row="2" col="5" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="2" col="6" shape-name="CYSTALFLOOR1" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="2" col="7" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="2" col="7" shape-name="CYSTALWALL6" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="2" col="7" shape-name="CYSTALWALL6" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="2" col="7" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <cyrstal_agent row="2" col="7" shape-name="CYSTALWALL6" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="2" col="7" shape-name="CYSTALWALL6" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="2" col="7" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="3" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <keep_agent row="3" shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="3" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="3" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <keep_agent row="3" shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="3" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="3" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="3" col="1" shape-name="CYSTALFLOOR1" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="3" col="1" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <cyrstal_agent row="3" col="1" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="3" col="2" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="3" col="3" shape-name="CYSTALFLOOR1" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="3" col="3" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <cyrstal_agent row="3" col="3" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <spire_agent row="3" col="3" layer="1" shape-name="SPIRE" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="3" col="4" shape-name="CYSTALFLOOR1" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="3" col="4" shape-name="CYSTALWALL6" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="3" col="4" shape-name="CYSTALWALL6" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="3" col="4" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <cyrstal_agent row="3" col="4" shape-name="CYSTALWALL6" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="3" col="4" shape-name="CYSTALWALL6" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="3" col="4" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <spire_agent row="3" col="4" layer="1" shape-name="SPIRE" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="3" col="5" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="3" col="5" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <cyrstal_agent row="3" col="5" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="3" col="6" shape-name="CYSTALFLOOR1" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="3" col="7" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="3" col="7" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <cyrstal_agent row="3" col="7" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="4" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <keep_agent row="4" shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="4" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="4" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <keep_agent row="4" shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="4" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="4" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="4" col="1" shape-name="CYSTALFLOOR1" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="4" col="1" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <cyrstal_agent row="4" col="1" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="4" col="2" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="4" col="3" shape-name="CYSTALFLOOR1" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="4" col="4" shape-name="CYSTALFLOOR1" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
@@ -108,41 +108,41 @@
     <player_agent row="4" col="5" shape-name="PLAYER" roll="-990.0" attributes="(LAYER 8 DIRP 3)" x-turn="0.5" y-turn="0.5">
       <agent-tracking-camera eye-x="5.5379868732525726" eye-y="4.499005293901529" eye-z="1.119999885559082" center-x="5.5" center-y="4.5" center-z="1.119999885559082" up-x="0.0" up-y="0.0" up-z="1.0" fovy="100.0" aspect="3.119047619047619" near="0.005" far="2000.0" azimuth="1.5707963267948966" zenith="-0.02617953930574808" distance="0.037999894" elevation="1.0999999" camera-rotation-offset="-91.5"/>
     </player_agent>
-    <cyrstal_agent row="4" col="5" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <cyrstal_agent row="4" col="5" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="4" col="6" shape-name="CYSTALFLOOR1" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="4" col="7" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="4" col="7" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <cyrstal_agent row="4" col="7" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="5" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <keep_agent row="5" shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="5" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="5" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <keep_agent row="5" shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="5" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="5" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="5" col="1" shape-name="CYSTALFLOOR1" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="5" col="1" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <cyrstal_agent row="5" col="1" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="5" col="2" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="5" col="2" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <cyrstal_agent row="5" col="2" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="5" col="3" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="5" col="3" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <cyrstal_agent row="5" col="3" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="5" col="4" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="5" col="4" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <cyrstal_agent row="5" col="4" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="5" col="5" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="5" col="5" shape-name="CYSTALWALL6" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="5" col="5" shape-name="CYSTALWALL6" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="5" col="5" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <cyrstal_agent row="5" col="5" shape-name="CYSTALWALL6" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="5" col="5" shape-name="CYSTALWALL6" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="5" col="5" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="5" col="6" shape-name="CYSTALFLOOR1" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="5" col="7" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="5" col="7" shape-name="CYSTALWALL6" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="5" col="7" shape-name="CYSTALWALL6" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="5" col="7" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <cyrstal_agent row="5" col="7" shape-name="CYSTALWALL6" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="5" col="7" shape-name="CYSTALWALL6" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="5" col="7" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="6" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <keep_agent row="6" shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="6" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="6" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <keep_agent row="6" shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="6" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="6" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="6" col="1" shape-name="CYSTALFLOOR1" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <keep_agent row="6" col="1" shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <keep_agent row="6" col="1" shape-name="WALL2" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
+    <keep_agent row="6" col="1" shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <keep_agent row="6" col="1" shape-name="WALL2" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <stairs_agent row="6" col="1" layer="1" shape-name="STAIRS" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="6" col="2" shape-name="CYSTALFLOOR1" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <keep_agent row="6" col="2" shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <keep_agent row="6" col="2" shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <stairs_agent row="6" col="2" shape-name="STAIRS" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="6" col="3" shape-name="CYSTALFLOOR1" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
     <stairs_agent row="6" col="3" shape-name="STAIRS" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
@@ -150,40 +150,41 @@
     <cyrstal_agent row="6" col="5" shape-name="CYSTALFLOOR1" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="6" col="6" shape-name="CYSTALFLOOR1" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
     <cyrstal_agent row="6" col="7" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <keep_agent row="6" col="7" shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="6" col="7" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="6" col="7" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <keep_agent row="6" col="7" shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="6" col="7" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="6" col="7" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="7" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <keep_agent row="7" shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="7" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="7" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <keep_agent row="7" shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="7" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="7" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="7" col="1" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <keep_agent row="7" col="1" shape-name="WALL" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="7" col="1" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="7" col="1" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <keep_agent row="7" col="1" shape-name="WALL" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="7" col="1" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="7" col="1" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="7" col="2" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <keep_agent row="7" col="2" shape-name="WALL" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="7" col="2" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="7" col="2" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <keep_agent row="7" col="2" shape-name="WALL" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="7" col="2" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="7" col="2" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="7" col="3" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <keep_agent row="7" col="3" shape-name="WALL" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="7" col="3" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="7" col="3" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <keep_agent row="7" col="3" shape-name="WALL" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="7" col="3" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="7" col="3" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="7" col="4" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <keep_agent row="7" col="4" shape-name="WALL" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="7" col="4" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="7" col="4" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <keep_agent row="7" col="4" shape-name="WALL" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="7" col="4" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="7" col="4" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="7" col="5" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <keep_agent row="7" col="5" shape-name="WALL" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="7" col="5" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="7" col="5" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <keep_agent row="7" col="5" shape-name="WALL" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="7" col="5" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="7" col="5" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="7" col="6" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <keep_agent row="7" col="6" shape-name="WALL" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="7" col="6" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="7" col="6" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <keep_agent row="7" col="6" shape-name="WALL" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="7" col="6" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="7" col="6" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
     <cyrstal_agent row="7" col="7" shape-name="CRYSTALFLOOR2" attributes="(HEIGHT 0.0)" x-turn="0.5" y-turn="0.5"/>
-    <keep_agent row="7" col="7" shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="7" col="7" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5"/>
-    <cyrstal_agent row="7" col="7" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5"/>
+    <keep_agent row="7" col="7" shape-name="WALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="7" col="7" shape-name="CRYSTALWALL1" attributes="(HEIGHT 2.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <cyrstal_agent row="7" col="7" layer="1" shape-name="CRYSTALWALL2" attributes="(HEIGHT 1.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <background-color red="0.0" green="0.5" blue="1.0"/>
   </agent-matrix>
 </world>
