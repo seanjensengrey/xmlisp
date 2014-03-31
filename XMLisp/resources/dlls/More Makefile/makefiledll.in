@@ -1,0 +1,18 @@
+BASSPATH = .
+BASSLIB = $(BASSPATH)/bass.lib
+OUTDIR = ../
+FLAGS = -Os -I$(BASSPATH) -s -shared
+
+CC = gcc
+RM = rm
+RES = windres
+
+%.dll: %.c %.rc
+	$(RES) -i $*.rc -o rsrc.obj
+	$(CC) $(FLAGS) $*.c rsrc.obj $(BASSLIB) $(LIBS) -o $(OUTDIR)\$@
+	$(RM) rsrc.obj
+
+%.dll: %.c
+	$(CC) $(FLAGS) $*.c $(BASSLIB) $(LIBS) -o $(OUTDIR)\$@ 
+
+.PHONY: all clean
