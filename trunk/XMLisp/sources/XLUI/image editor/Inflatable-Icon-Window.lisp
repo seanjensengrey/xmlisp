@@ -325,7 +325,7 @@
 
 
 (defmethod CAMERA-BUTTON-ACTION ((Self inflatable-icon-editor-window) button)
-  (get-image-from-camera-for-window (get-picture-taker) self 'load-image-from-camera :return-ns-image-instead-of-file-path t))
+  (ccl::get-image-from-camera-for-window (ccl::get-picture-taker) self 'load-image-from-camera :return-ns-image-instead-of-file-path t))
 
 
 (defmethod LOAD-IMAGE-FROM-DATA ((self inflatable-icon-editor-window) image-data)
