@@ -60,10 +60,11 @@
 
 #-cocotron
 (defmethod UNLOCK-VSYNC-ON-MAC ((self opengl-view))
-  (with-glcontext self
-    (ccl::rlet ((&intervalValue :int))
-      (setf (ccl::%get-byte &intervalValue) 0)
-      (#_CGLSetParameter (#_CGLGetCurrentContext) #$kCGLCPSwapInterval &intervalValue))))
+  (when (native-view self)
+    (with-glcontext self
+      (ccl::rlet ((&intervalValue :int))
+        (setf (ccl::%get-byte &intervalValue) 0)
+        (#_CGLSetParameter (#_CGLGetCurrentContext) #$kCGLCPSwapInterval &intervalValue)))))
 
 
 (defmethod INITIALIZE-INSTANCE :after ((Self opengl-view) &rest Args)
