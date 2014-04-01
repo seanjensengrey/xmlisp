@@ -32,7 +32,7 @@
 
 #-cocotron
 (setf (logical-pathname-translations "lui")
-      '(("**;*.*" "home:working copies;Xmlisp svn;trunk;XMLisp;**;")))
+      '(("**;*.*" "home:working copies;XMLISP-RELEASE;XMLisp;**;")))
 
 
 #+cocotron
@@ -47,7 +47,7 @@
 
 #+cocotron
 (setf (logical-pathname-translations "lui")
-      '(("**;*.*" "mac-home:Xmlisp svn;trunk;XMLisp;**;")))
+      '(("**;*.*" "mac-home:XMLISP-RELEASE;XMLisp;**;")))
 
 
 
@@ -174,7 +174,7 @@
    "IMAGE-CONTROL" "CLICKABLE-IMAGE-CONTROL" "SRC" "SOURCE" "IN-CLUSTER"  "IMAGE-PATH" "CHANGE-IMAGE" "SCALE-PROPORTIONALLY";; "FILE"->"SOURCE"
    "DOWNSAMPLE"
    "RADIO-BUTTON-CONTROL" 
-   "IMAGE-BUTTON-CLUSTER-CONTROL" "SELECTED-IN-CLUSTER"
+   "IMAGE-BUTTON-CLUSTER-CONTROL" "SELECTED-IN-CLUSTER" "BUTTON-TYPE"
    "IMAGE-BUTTON-CLUSTER" "CHANGE-CLUSTER-SELECTIONS"
    "DEFAULT-ACTION"
    "CHECKBOX-CONTROL" "START-CHECKED" "IMAGE-ON-RIGHT"
