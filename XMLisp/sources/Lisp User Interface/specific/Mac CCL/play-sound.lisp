@@ -9,6 +9,8 @@
 
 (defparameter *Sounds* (make-hash-table :test #'equal) "Sound handles")
 
+#+cocotron
+(defparameter *BASS-SOUNDED-INITIALIZED-P* nil)
 
 (defvar *Secondary-Sound-File-Directory-Hook* nil "lambda () ->  directory-pathname")
 
@@ -31,6 +33,13 @@
 
 (defmethod PLAY-SOUND ((Name string) &key Loops (path nil))
   #+cocotron (declare (ignore Loops))
+  
+
+  
+  #+cocotron
+  (play-sound-from-dll Name :path path)
+  
+  #-cocotron
   (ccl::with-autorelease-pool
     (let ((Sound (or (gethash Name *Sounds*)
                      (let ((New-Sound
@@ -45,6 +54,28 @@
       #-cocotron
       (#/setLoops: Sound (if Loops #$YES #$NO))
       (#/play Sound))))
+
+
+
+
+#+cocotron
+(defmethod PLAY-SOUND-FROM-DLL ((Name string) &key (path nil))
+  (unless  *BASS-SOUNDED-INITIALIZED-P*
+    
+    (open-shared-library (concatenate 'string (namestring (truename "lui:resources;dlls;"))  "dsptest.dll"))
+    (external-call "initBASS")
+    (setf  *BASS-SOUNDED-INITIALIZED-P* t))
+  (let ((sound-path (if path path (native-path "lui:resources;sounds;" Name))))
+    (ccl::with-cstr (c-string-sound-path sound-path)
+      
+      (let ((Sound (or (gethash Name *Sounds*)
+                       (let ((New-Sound
+                              (External-call "initBASSSound" :address c-string-sound-path :address)))
+                         (unless (%null-ptr-p New-Sound)
+                           (setf (gethash Name *Sounds*) New-Sound))))))
+        (external-call "playBASSSound" :address Sound)
+      )
+  )))
 
 
 (defmethod SET-VOLUME ((Name string) Volume)
@@ -64,7 +95,9 @@
 
 (defmethod STOP-SOUND (Name)
   (let ((Sound (gethash Name *Sounds*)))
-    (when Sound (#/stop Sound))))
+    (when Sound #-cocotron (#/stop Sound)
+      #+cocotron (external-call "stopBASSSound" :address Sound)
+      )))
 
 
 (defun SOUND-FILES-IN-SOUND-FILE-DIRECTORY () "
