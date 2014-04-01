@@ -2032,8 +2032,6 @@
 
 
 (defmethod POPUP-ACTION ((window window) (self popup-Button-Control))
-  (print "GET")
-  (print (get-selected-action self))
   (unless (eql (get-selected-action self) NIL)
     (let ((action (get-selected-action self)))
       (print action)
@@ -2045,9 +2043,6 @@
 
 
 (defmethod ADD-ITEM ((Self popup-button-control) Text Action )
-  (print "ADD ITEM")
-  (print Text)
-  (print Action)
   (if (equal (#/indexOfItemWithTitle: (native-view Self) (native-string Text)) -1)
     (progn 
       (#/addItemWithTitle: (native-view Self) (native-string Text))
@@ -2718,7 +2713,8 @@
 ;__________________________________/
 
 (defclass native-image (ns:ns-image-view)
-  ((lui-view :accessor lui-view :initarg :lui-view))
+  ((lui-view :accessor lui-view :initarg :lui-view)
+   (original-ns-image :accessor original-ns-image))
   (:metaclass ns:+ns-object))
 
 
@@ -2733,6 +2729,7 @@
       (ccl::with-autorelease-pool
           (let ((Image #-cocotron (#/autorelease (#/initByReferencingFile: (#/alloc ns:ns-image) (native-string (source Self))))
                        #+cocotron (#/initWithContentsOfFile: (#/alloc ns:ns-image) (native-string (source Self)))))
+            (Setf (original-ns-image native-control) Image)
             (unless #-cocotron (#/isValid Image)
               #+cocotron (not (ccl:%null-ptr-p Image))
               (error "cannot create image from file ~S" (source Self)))
@@ -2757,14 +2754,16 @@
             (if (scale-proportionally self)
               (#/setImageScaling: Native-Control #$NSScaleProportionally)
               (#/setImageScaling: Native-Control #$NSScaleToFit))
+           
             (when (crop-to-fit self)
               (let* ((image-size (#/size (#/image native-control)))
                       (height-ratio (/ (height self)(ns:ns-size-height image-size) )))
                      (ns:with-ns-size (new-size (* height-ratio (ns:ns-size-width image-size)) (* height-ratio (ns:ns-size-height image-size)))
-                       (#/setSize: (#/image Native-Control) new-size)
+                      ; (#/setSize: (#/image Native-Control) new-size)
                        (#/setFlipped: (#/image Native-Control) #$YES)
                       )
               ))
+            
             )))
      (t
       (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
@@ -2809,15 +2808,18 @@
 (objc:defmethod (#/drawRect: :void) ((self native-image) (rect :<NSR>ect))
   (draw (lui-view self))
   (if (crop-to-fit (lui-view self))
-    (let* ((image-size (#/size (#/image self)))
-           (height-ratio (/ (ns:ns-rect-height (#/frame self)) (ns:ns-size-height image-size))))
-      (setf image-size  (#/size (#/image self)))
-      (setf height-ratio (/ (ns:ns-rect-height (#/frame self)) (ns:ns-size-height image-size)))
-      (ns:with-ns-rect (from-rect (/ (- (ns:ns-size-width image-size)  (ns:ns-rect-width (#/frame self))) 2) 0 (* height-ratio (width (lui-view self))) (* 1 (ns:ns-size-height image-size)))        
-        (#/drawInRect:fromRect:operation:fraction: (#/image self)  (#/bounds self) from-rect #$NSCompositeCopy 1.0)
-        ;(#/drawInRect:fromRect:operation:fraction:respectFlipped:hints: (#/image self)  (#/bounds self) from-rect #$NSCompositeCopy 1 #$YES nil)
-        ))
-    (call-next-method rect)))
+    (let* ((aspect-ratio-of-view (/ (ns:ns-rect-width (#/frame self))  (ns:ns-rect-height (#/frame self))))
+          (aspect-ratio-of-original-image (/ (ns:ns-size-width (#/size (original-ns-image self))) (ns:ns-size-height (#/size (original-ns-image self))))))
+      (cond 
+       ((>= aspect-ratio-of-original-image aspect-ratio-of-view)
+        (let ((crop-width (* aspect-ratio-of-view (ns:ns-size-height (#/size (original-ns-image self))))))
+          (ns:with-ns-rect (from-rect    (/ (- (ns:ns-size-width (#/size (original-ns-image self)))  crop-width) 2) 0 crop-width  (ns:ns-size-height (#/size (original-ns-image self))))
+            (#/drawInRect:fromRect:operation:fraction: (#/image self)  (#/bounds self) from-rect #$NSCompositeCopy 1.0))))
+       (t
+        (call-next-method rect))))
+    (call-next-method rect))) 
+
+
 ;__________________________________
 ; IMAGE                            |
 ;__________________________________/
