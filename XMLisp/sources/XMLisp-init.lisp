@@ -32,7 +32,7 @@
 
 #-cocotron
 (setf (logical-pathname-translations "lui")
-      '(("**;*.*" "home:working copies;XMLISP-RELEASE;XMLisp;**;")))
+      '(("**;*.*" "home:working copies;Xmlisp svn;trunk;XMLisp;**;")))
 
 
 #+cocotron
@@ -47,7 +47,7 @@
 
 #+cocotron
 (setf (logical-pathname-translations "lui")
-      '(("**;*.*" "mac-home:XMLISP-RELEASE;XMLisp;**;")))
+      '(("**;*.*" "mac-home:Xmlisp svn;trunk;XMLisp;**;")))
 
 
 
@@ -356,6 +356,11 @@
 ;;___________________________________________
 ;;  Load LUI                                 |
 ;;___________________________________________
+(load "lui:sources;quicklisp")
+(let ((setup-file (probe-file "home:quicklisp;setup.lisp")))
+  (if (and setup-file (probe-file setup-file))
+    (load setup-file)
+    (quicklisp-quickstart:install)))
 
 (load "lui:sources;Lisp User Interface;color conversion")
 (load "lui:sources;Lisp User Interface;in-main-thread")
@@ -400,9 +405,9 @@
 (defpackage :XLUI
   (:use :common-lisp :XML :LUI :opengl)
   ;; import MOP
-  (:import-from "CCL"
+  (:import-from "CCL" 
                 "SLOT-DEFINITION-NAME" "SLOT-DEFINITION-TYPE" "HTTP-POST" "HTTP-GET" "HTTP-STATUS-CODE-EXPLANATION")
-  (:import-from "XML" "FILE")
+  (:import-from "XML"  "FILE")
   (:import-from "CCL" "WITH-CSTR")
   (:export "INFLATABLE-ICON"
            "SAVE-THE-WORLD"
@@ -595,8 +600,8 @@
 
 ;; If we find AgentCubes lets just load it unless user indicates no by holding down shift key
 (unless (lui::shift-key-p)
-  (when (probe-file "lui:sources;AgentCubes-release;AgentCubes-init.lisp")
-    (load "lui:sources;AgentCubes-release;AgentCubes-init")))
+  (when (probe-file "lui:sources;agentcubes;AgentCubes-init.lisp")
+    (load "lui:sources;agentcubes;AgentCubes-init")))
 
 
 #| 
