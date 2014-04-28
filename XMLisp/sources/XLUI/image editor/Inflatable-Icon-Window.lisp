@@ -1321,7 +1321,7 @@
 
 
 (defmethod EDIT-ICON-SAVE-ACTION ((Window inflatable-icon-editor-window) (Button button) &key (close-window t))
-  (declare (ftype function shape project-window display-world project-manager-reference save shape lui::save-button-pressed lui::apply-button-pressed))  ;; this file is in the wrong place: should move into AgentCubes
+  (declare (ftype function shape project-window display-world save shape lui::save-button-pressed lui::apply-button-pressed))  ;; this file is in the wrong place: should move into AgentCubes
   (set-document-editted window :mark-as-editted nil)
   (setf  (window-needs-saving-p window) nil)
   (window-save Window)
