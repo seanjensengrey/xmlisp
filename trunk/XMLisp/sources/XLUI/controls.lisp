@@ -90,7 +90,7 @@
       (dolist (node (reverse (ccl::directory #| (make-pathname :directory (pathname-directory (truename (node-path self))):name :wild)|# (native-path (truename (node-path self)) "*")  :directories t :directory-pathnames nil)))
         ;; Hack: CCL is not returning 
         (unless (or (equal (elt (namestring (first (last (pathname-directory node)))) 0) #\.) (search  ".DS_Store" (namestring node) ))
-          (Setf (nodes self) (append (list (make-instance 'node :node-name  #-cocotron (first (last (pathname-directory node))) #+cocotron (pathname-name node) )) (nodes self) ))))
+          (Setf (nodes self) (append (list (make-instance 'node :node-name   (first (last (pathname-directory node))) #+cwocotron (pathname-name node) )) (nodes self) ))))
       (dolist (node (reverse (directory (native-path (node-path self) "*.*" ) )))
         (when (or (not (allowed-file-types self)) (find (string-upcase (pathname-type node)) (read-from-string (allowed-file-types self)) :test 'equal :key 'string))
           (Setf (nodes self) (append (list (concatenate 'string (pathname-name node) "." (pathname-type node))) (nodes self) )))))))
