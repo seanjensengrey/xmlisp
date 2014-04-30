@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="3_three">
+  <tile texture="3-three.png"/>
+</shape-manager>

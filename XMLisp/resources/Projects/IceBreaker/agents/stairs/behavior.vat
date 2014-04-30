@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if>
+        <once-every seconds="31"/>
+      </if>
+      <then>
+        <message>
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see-a negated="true" disclosed="true" class-name="Stairs_Helper" dlayer="2">
+          <direction/>
+        </see-a>
+      </if>
+      <then>
+        <new disclosed="true" shape="STAIRS_HELPER Stairs_Helper" dlayer="2">
+          <direction/>
+        </new>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="set up steps">
+    <before-running/>
+    <rule>
+      <if/>
+      <then>
+        <message selector="Initate Level">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="Plays Music">
+    <on selector="Bark"/>
+    <rule>
+      <if/>
+      <then>
+        <stop-all-sounds/>
+        <play-sound ref="cave_ambience_loop.mp3"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Initate Level"/>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="@TOTALSTEPS" value="0"/>
+        <message>
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+</behavior>

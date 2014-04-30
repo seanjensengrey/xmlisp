@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="2_two">
+  <tile texture="2-two.png"/>
+</shape-manager>

@@ -1,0 +1,475 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if/>
+      <then>
+        <message selector="Calculate_Numbers" dlayer="0" disclosed="false">
+          <direction dcol="0" drow="0"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Set_Score_Ones"/>
+    <rule>
+      <if>
+        <test expression1="@steps" operator="=" expression2="9"/>
+      </if>
+      <then>
+        <change shape="9_NINE Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@steps" operator="=" expression2="8"/>
+      </if>
+      <then>
+        <change shape="8_EIGHT Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@steps" operator="=" expression2="7"/>
+      </if>
+      <then>
+        <change shape="7_SEVEN Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@steps" operator="=" expression2="6"/>
+      </if>
+      <then>
+        <change shape="6_SIX Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@steps" operator="=" expression2="5"/>
+      </if>
+      <then>
+        <change shape="5_FIVE Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@steps" operator="=" expression2="4"/>
+      </if>
+      <then>
+        <change shape="4_FOUR Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@steps" operator="=" expression2="3"/>
+      </if>
+      <then>
+        <change shape="3_THREE Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@steps" operator="=" expression2="2"/>
+      </if>
+      <then>
+        <change shape="2_TWO Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@steps" operator="=" expression2="1"/>
+      </if>
+      <then>
+        <change shape="1_ONE Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@steps" operator="=" expression2="0"/>
+      </if>
+      <then>
+        <change shape="0_ZERO Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Set_Score_Tens"/>
+    <rule>
+      <if>
+        <test expression1="@tens" operator="=" expression2="9"/>
+      </if>
+      <then>
+        <change shape="9_NINE Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@tens" operator="=" expression2="8"/>
+      </if>
+      <then>
+        <change shape="8_EIGHT Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@tens" operator="=" expression2="7"/>
+      </if>
+      <then>
+        <change shape="7_SEVEN Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@tens" operator="=" expression2="6"/>
+      </if>
+      <then>
+        <change shape="6_SIX Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@tens" operator="=" expression2="5"/>
+      </if>
+      <then>
+        <change shape="5_FIVE Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@tens" operator="=" expression2="4"/>
+      </if>
+      <then>
+        <change shape="4_FOUR Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@tens" operator="=" expression2="3"/>
+      </if>
+      <then>
+        <change shape="3_THREE Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@tens" operator="=" expression2="2"/>
+      </if>
+      <then>
+        <change shape="2_TWO Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@tens" operator="=" expression2="1"/>
+      </if>
+      <then>
+        <change shape="1_ONE Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@tens" operator="=" expression2="0"/>
+      </if>
+      <then>
+        <change shape="0_ZERO Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Set_Score_Hundreds"/>
+    <rule>
+      <if>
+        <test expression1="@hundreds" operator="=" expression2="9"/>
+      </if>
+      <then>
+        <change shape="9_NINE Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@hundreds" operator="=" expression2="8"/>
+      </if>
+      <then>
+        <change shape="8_EIGHT Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@hundreds" operator="=" expression2="7"/>
+      </if>
+      <then>
+        <change shape="7_SEVEN Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@hundreds" operator="=" expression2="6"/>
+      </if>
+      <then>
+        <change shape="6_SIX Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@hundreds" operator="=" expression2="5"/>
+      </if>
+      <then>
+        <change shape="5_FIVE Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@hundreds" operator="=" expression2="4"/>
+      </if>
+      <then>
+        <change shape="4_FOUR Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@hundreds" operator="=" expression2="3"/>
+      </if>
+      <then>
+        <change shape="3_THREE Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@hundreds" operator="=" expression2="2"/>
+      </if>
+      <then>
+        <change shape="2_TWO Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@hundreds" operator="=" expression2="1"/>
+      </if>
+      <then>
+        <change shape="1_ONE Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@hundreds" operator="=" expression2="0"/>
+      </if>
+      <then>
+        <change shape="0_ZERO Bit_Font">
+          <direction dcol="0" drow="0"/>
+        </change>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Calculate_Numbers"/>
+    <rule>
+      <if>
+        <test expression1="@steps" operator="&gt;" expression2="9"/>
+      </if>
+      <then>
+        <set attribute="@TENS" value="@tens + 1"/>
+        <set attribute="@STEPS" value="@steps - 10"/>
+        <message selector="Create_Tens_Number" dlayer="0" disclosed="false">
+          <direction dcol="0" drow="0"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@tens" operator="&gt;" expression2="9"/>
+      </if>
+      <then>
+        <set attribute="@HUNDREDS" value="@hundreds + 1"/>
+        <set attribute="@TENS" value="@tens - 10"/>
+        <message selector="Create_Hundreds_Number" dlayer="0" disclosed="false">
+          <direction dcol="0" drow="0"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="this_hundreds" operator="=" expression2="1"/>
+      </if>
+      <then>
+        <message selector="Set_Score_Hundreds" dlayer="0" disclosed="false">
+          <direction dcol="0" drow="0"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="this_tens" operator="=" expression2="1"/>
+      </if>
+      <then>
+        <message selector="Set_Score_Tens" dlayer="0" disclosed="false">
+          <direction dcol="0" drow="0"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <message selector="Set_Score_Ones" dlayer="0" disclosed="false">
+          <direction dcol="0" drow="0"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Create_Tens_Number"/>
+    <rule>
+      <if>
+        <see-a class-name="Numbers" dlayer="0" disclosed="false">
+          <direction dcol="-1" drow="0"/>
+        </see-a>
+      </if>
+      <then/>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="this_tens" operator="=" expression2="1"/>
+      </if>
+      <then/>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <new shape="0_ZERO Bit_Font" dlayer="0" disclosed="false">
+          <direction dcol="-1" drow="0"/>
+        </new>
+        <message selector="Set_Ten" dlayer="0" disclosed="false">
+          <direction dcol="-1" drow="0"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <before-running/>
+    <rule>
+      <if/>
+      <then>
+        <message selector="Initate Level" dlayer="0" disclosed="false">
+          <direction dcol="0" drow="0"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Initate Level"/>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="@STEPS" value="0"/>
+        <set attribute="@TENS" value="0"/>
+        <set attribute="@HUNDREDS" value="0"/>
+        <set attribute="@TOTALSTEPS" value="0"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Create_Hundreds_Number"/>
+    <rule>
+      <if>
+        <see-a class-name="Numbers" dlayer="0" disclosed="false">
+          <direction dcol="-1" drow="0"/>
+        </see-a>
+      </if>
+      <then/>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="this_hundreds" operator="=" expression2="1"/>
+      </if>
+      <then/>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <new shape="0_ZERO Bit_Font" dlayer="0" disclosed="false">
+          <direction dcol="-1" drow="0"/>
+        </new>
+        <message selector="Set_Hundred" dlayer="0" disclosed="false">
+          <direction dcol="-1" drow="0"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Set_Ten"/>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="THIS_TENS" value="1"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Set_Hundred"/>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="THIS_HUNDREDS" value="1"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

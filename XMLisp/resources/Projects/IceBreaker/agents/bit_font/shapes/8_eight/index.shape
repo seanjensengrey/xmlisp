@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="8_eight">
+  <tile texture="8-eight.png"/>
+</shape-manager>

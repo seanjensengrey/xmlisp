@@ -1,0 +1,139 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if/>
+      <then>
+        <rotate-by droll="20"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Pick_Up"/>
+    <rule>
+      <if>
+        <stacked shape="GROUND Ground"/>
+        <see-a disclosed="true" class-name="Torch" dlayer="1">
+          <direction drow="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <play-sound ref="bomb_sound_effect.mp3"/>
+        <message disclosed="true" selector="Explode_Delete">
+          <direction/>
+        </message>
+        <message disclosed="true" selector="Delete" dlayer="1">
+          <direction drow="-1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Pick_Down"/>
+    <rule>
+      <if>
+        <stacked shape="GROUND Ground"/>
+        <see-a disclosed="true" class-name="Torch" dlayer="1">
+          <direction drow="1"/>
+        </see-a>
+      </if>
+      <then>
+        <play-sound ref="bomb_sound_effect.mp3"/>
+        <message disclosed="true" selector="Explode_Delete">
+          <direction/>
+        </message>
+        <message disclosed="true" selector="Delete" dlayer="1">
+          <direction drow="1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Pick_Left"/>
+    <rule>
+      <if>
+        <stacked shape="GROUND Ground"/>
+        <see-a disclosed="true" class-name="Torch" dlayer="1">
+          <direction dcol="1"/>
+        </see-a>
+      </if>
+      <then>
+        <play-sound ref="bomb_sound_effect.mp3"/>
+        <message disclosed="true" selector="Explode_Delete">
+          <direction/>
+        </message>
+        <message disclosed="true" selector="Delete" dlayer="1">
+          <direction dcol="1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Pick_Right"/>
+    <rule>
+      <if>
+        <stacked shape="GROUND Ground"/>
+        <see-a disclosed="true" class-name="Torch" dlayer="1">
+          <direction dcol="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <play-sound ref="bomb_sound_effect.mp3"/>
+        <message disclosed="true" selector="Explode_Delete">
+          <direction/>
+        </message>
+        <message disclosed="true" selector="Delete" dlayer="1">
+          <direction dcol="-1"/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="This method will be called after the bomb detects a torch. Now it determines what color torch and sends out a broadcast.">
+    <on selector="Explode_Delete"/>
+    <rule>
+      <if>
+        <next-to disclosed="true" number="1" shape="BLUETORCH Torch" dlayer="1"/>
+      </if>
+      <then>
+        <broadcast class-name="Blueice" selector="Explode_Delete"/>
+        <erase disclosed="true" duration="1">
+          <direction/>
+        </erase>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <next-to disclosed="true" number="1" shape="REDTORCH Torch" dlayer="1"/>
+      </if>
+      <then>
+        <broadcast class-name="Redice" selector="Explode_Delete"/>
+        <erase disclosed="true" duration="1">
+          <direction/>
+        </erase>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <next-to disclosed="true" number="1" shape="GREENTORCH Torch" dlayer="1"/>
+      </if>
+      <then>
+        <broadcast class-name="Greenice" selector="Explode_Delete"/>
+        <erase disclosed="true" duration="1">
+          <direction/>
+        </erase>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <next-to disclosed="true" number="1" shape="YELLOWTORCH Torch" dlayer="1"/>
+      </if>
+      <then>
+        <broadcast class-name="Yellowice" selector="Explode_Delete"/>
+        <erase disclosed="true" duration="1">
+          <direction/>
+        </erase>
+      </then>
+    </rule>
+  </method>
+</behavior>

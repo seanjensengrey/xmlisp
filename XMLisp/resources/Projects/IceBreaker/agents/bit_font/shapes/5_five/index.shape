@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="5_five">
+  <tile texture="5-five.png"/>
+</shape-manager>

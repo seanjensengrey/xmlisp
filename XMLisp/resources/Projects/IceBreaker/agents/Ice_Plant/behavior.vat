@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if>
+        <test expression1="@Maxice" operator="=" expression2="@Icemelted"/>
+      </if>
+      <then>
+        <new shape="ICE_FLOWER Ice_Flower" dlayer="0" disclosed="true">
+          <direction dcol="0" drow="0"/>
+        </new>
+        <set attribute="@TOTALSCORE" value="@totalscore + @totalsteps"/>
+        <show-message text="Congratulations, you have found the Ice Flower!" subtext="You have completed this game your score is: ~@totalscore" disclosed="true"/>
+        <switch-to-world world="credits"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <before-running/>
+    <rule>
+      <if/>
+      <then>
+        <show-message text="The Hero looks at the dead plant, surrounding by ice, the hero gets an idea." subtext="Melt all the ice!" disclosed="true"/>
+        <set attribute="@MAXICE" value="0"/>
+        <set attribute="@ICEMELTED" value="0"/>
+        <broadcast class-name="Blueice" selector="Calculate_Numbers"/>
+        <broadcast class-name="Greenice" selector="Calculate_Numbers"/>
+        <broadcast class-name="Redice" selector="Calculate_Numbers"/>
+        <broadcast class-name="Yellowice" selector="Calculate_Numbers"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

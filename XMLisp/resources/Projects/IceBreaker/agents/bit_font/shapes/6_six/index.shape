@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="6_six">
+  <tile texture="6-six.png"/>
+</shape-manager>

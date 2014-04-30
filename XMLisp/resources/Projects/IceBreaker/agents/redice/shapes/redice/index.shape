@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="REDICE" relative-texture-path="Tiling">
+  <cube texture="Disco Tile magenta.png"/>
+</shape-manager>

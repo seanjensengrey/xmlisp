@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="GROUND" relative-texture-path="Stone">
+  <cube texture="Dead Caves.jpg"/>
+</shape-manager>
