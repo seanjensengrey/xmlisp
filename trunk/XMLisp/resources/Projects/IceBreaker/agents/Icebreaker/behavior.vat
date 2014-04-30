@@ -1,0 +1,546 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if>
+        <key label="R"/>
+      </if>
+      <then>
+        <reload-world disclosed="true" reload-properties="false"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <stacked-a class-name="Stairs"/>
+      </if>
+      <then>
+        <play-sound ref="Stairs_Sound_Effect.mp3"/>
+        <broadcast class-name="Icebreaker" selector="Next_Level"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@up_movement" expression2="1"/>
+      </if>
+      <then>
+        <message selector="Move_Up">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@right_movement" expression2="1"/>
+      </if>
+      <then>
+        <message selector="Move_Right">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@down_movement" expression2="1"/>
+      </if>
+      <then>
+        <message selector="Move_Down">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@left_movement" expression2="1"/>
+      </if>
+      <then>
+        <message selector="Move_Left">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="ICEBREAKER Icebreaker">
+          <direction/>
+        </see>
+        <see-a disclosed="true" class-name="Torch" dlayer="1">
+          <direction/>
+        </see-a>
+      </if>
+      <then>
+        <change shape="HOLDING_TORCH Icebreaker">
+          <direction/>
+        </change>
+        <broadcast class-name="Ground" selector="Change_Color"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Move_Up"/>
+    <rule>
+      <if>
+        <see-a class-name="Ground">
+          <direction drow="1"/>
+        </see-a>
+      </if>
+      <then>
+        <message selector="Go_Up">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see-a class-name="Stairs">
+          <direction drow="1"/>
+        </see-a>
+      </if>
+      <then>
+        <message selector="Go_Up">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see-a class-name="torch">
+          <direction drow="1"/>
+        </see-a>
+      </if>
+      <then>
+        <message selector="Pick_Up">
+          <direction drow="1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see-a class-name="Bomb">
+          <direction drow="1"/>
+        </see-a>
+      </if>
+      <then>
+        <message selector="Pick_Up">
+          <direction drow="1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="@UP_MOVEMENT" value="0"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Move_Down"/>
+    <rule>
+      <if>
+        <see-a class-name="Ground">
+          <direction drow="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <message selector="Go_Down">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see-a class-name="Stairs">
+          <direction drow="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <message selector="Go_Down">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see-a class-name="torch">
+          <direction drow="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <message selector="Pick_Down">
+          <direction drow="-1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see-a class-name="Bomb">
+          <direction drow="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <message selector="Pick_Down">
+          <direction drow="-1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="@DOWN_MOVEMENT" value="0"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Move_Left"/>
+    <rule>
+      <if>
+        <see-a class-name="Ground">
+          <direction dcol="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <message selector="Go_Left">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see-a class-name="Stairs">
+          <direction dcol="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <message selector="Go_Left">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see-a class-name="torch">
+          <direction dcol="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <message selector="Pick_Left">
+          <direction dcol="-1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see-a class-name="Bomb">
+          <direction dcol="-1"/>
+        </see-a>
+      </if>
+      <then>
+        <message selector="Pick_Left">
+          <direction dcol="-1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="@LEFT_MOVEMENT" value="0"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Move_Right"/>
+    <rule>
+      <if>
+        <see-a class-name="Ground">
+          <direction dcol="1"/>
+        </see-a>
+      </if>
+      <then>
+        <message selector="Go_Right">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see-a class-name="Stairs">
+          <direction dcol="1"/>
+        </see-a>
+      </if>
+      <then>
+        <message selector="Go_Right">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see-a class-name="torch">
+          <direction dcol="1"/>
+        </see-a>
+      </if>
+      <then>
+        <message selector="Pick_Right">
+          <direction dcol="1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see-a class-name="Bomb">
+          <direction dcol="1"/>
+        </see-a>
+      </if>
+      <then>
+        <message selector="Pick_Right">
+          <direction dcol="1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="@RIGHT_MOVEMENT" value="0"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Go_Left"/>
+    <rule>
+      <if/>
+      <then>
+        <message disclosed="true" selector="Go_Left" dlayer="1">
+          <direction/>
+        </message>
+        <move>
+          <direction dcol="-1"/>
+        </move>
+        <rotate-to roll-angle="90"/>
+        <set attribute="@TOTALSTEPS" value="@TotalSteps + 1"/>
+        <set attribute="@STEPS" value="@steps + 1"/>
+        <broadcast class-name="Ground" selector="Change_Color"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Go_Right"/>
+    <rule>
+      <if/>
+      <then>
+        <message disclosed="true" selector="Go_Right" dlayer="1">
+          <direction/>
+        </message>
+        <move>
+          <direction dcol="1"/>
+        </move>
+        <rotate-to roll-angle="270"/>
+        <set attribute="@TOTALSTEPS" value="@TotalSteps + 1"/>
+        <set attribute="@STEPS" value="@steps + 1"/>
+        <broadcast class-name="Ground" selector="Change_Color"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Go_Up"/>
+    <rule>
+      <if/>
+      <then>
+        <message disclosed="true" selector="Go_Up" dlayer="1">
+          <direction/>
+        </message>
+        <move>
+          <direction drow="1"/>
+        </move>
+        <rotate-to/>
+        <set attribute="@TOTALSTEPS" value="@TotalSteps + 1"/>
+        <set attribute="@STEPS" value="@steps + 1"/>
+        <broadcast class-name="Ground" selector="Change_Color"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Go_Down"/>
+    <rule>
+      <if/>
+      <then>
+        <message disclosed="true" selector="Go_Down" dlayer="1">
+          <direction/>
+        </message>
+        <move>
+          <direction drow="-1"/>
+        </move>
+        <rotate-to roll-angle="180"/>
+        <set attribute="@TOTALSTEPS" value="@TotalSteps + 1"/>
+        <set attribute="@STEPS" value="@steps + 1"/>
+        <broadcast class-name="Ground" selector="Change_Color"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="Animation, adding variables, and a wait message for next world.">
+    <on selector="Next_Level"/>
+    <rule>
+      <if/>
+      <then>
+        <broadcast class-name="Redice" selector="Explode_Delete"/>
+        <broadcast class-name="Blueice" selector="Explode_Delete"/>
+        <broadcast class-name="Greenice" selector="Explode_Delete"/>
+        <broadcast class-name="Grayice" selector="Explode_Delete"/>
+        <broadcast class-name="Yellowice" selector="Explode_Delete"/>
+        <set attribute="@TOTALSCORE" value="@totalscore + @totalsteps"/>
+        <message selector="Change_Level">
+          <direction/>
+        </message>
+        <set attribute="@ICEMELTED" value="0"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="Shows a message and changes the world.">
+    <on selector="Change_Level"/>
+    <rule>
+      <if>
+        <current-world world="title_screen"/>
+      </if>
+      <then>
+        <show-message disclosed="true" text="Use the torches to melt ice blocking your path." subtext="Number of steps : ~@totalsteps"/>
+        <broadcast class-name="Bit_Font" selector="Initate Level"/>
+        <broadcast class-name="Stairs" selector="Initate Level"/>
+        <switch-to-world world="Level 1"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <current-world world="Level 1"/>
+      </if>
+      <then>
+        <show-message disclosed="true" text="If your stuck, press &quot;r&quot; to reset the map." subtext="Number of steps : ~@totalsteps"/>
+        <broadcast class-name="Bit_Font" selector="Initate Level"/>
+        <broadcast class-name="Stairs" selector="Initate Level"/>
+        <switch-to-world world="Level 2"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <current-world world="Level 2"/>
+      </if>
+      <then>
+        <show-message disclosed="true" text="You can hold only one torch at a time." subtext="Number of steps : ~@totalsteps"/>
+        <broadcast class-name="Stairs" selector="Initate Level"/>
+        <broadcast class-name="Bit_Font" selector="Initate Level"/>
+        <switch-to-world world="Level 3"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <current-world world="Level 3"/>
+      </if>
+      <then>
+        <show-message disclosed="true" text="You must melt the ice to get the torches in reach." subtext="Number of steps : ~@totalsteps"/>
+        <broadcast class-name="Stairs" selector="Initate Level"/>
+        <broadcast class-name="Bit_Font" selector="Initate Level"/>
+        <switch-to-world world="Level 4"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <current-world world="Level 4"/>
+      </if>
+      <then>
+        <show-message disclosed="true" text="Using torches to light up bombs will destory all blocks of that torche&#39;s color." subtext="Number of steps : ~@totalsteps"/>
+        <broadcast class-name="Stairs" selector="Initate Level"/>
+        <broadcast class-name="Bit_Font" selector="Initate Level"/>
+        <switch-to-world world="Level 5"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <current-world world="Level 5"/>
+      </if>
+      <then>
+        <show-message disclosed="true" text="Look out for the yellow arrow if the stairs are hidden." subtext="Number of steps : ~@totalsteps"/>
+        <broadcast class-name="Bit_Font" selector="Initate Level"/>
+        <broadcast class-name="Stairs" selector="Initate Level"/>
+        <switch-to-world world="Level 6"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <current-world world="Level 6"/>
+      </if>
+      <then>
+        <show-message disclosed="true" text="There can be multiple stairs." subtext="Number of steps : ~@totalsteps"/>
+        <broadcast class-name="Stairs" selector="Initate Level"/>
+        <broadcast class-name="Bit_Font" selector="Initate Level"/>
+        <switch-to-world world="Level 7"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <current-world world="Level 7"/>
+      </if>
+      <then>
+        <show-message disclosed="true" text="current score: ~@totalscore" subtext="Number of steps : ~@totalsteps"/>
+        <broadcast class-name="Bit_Font" selector="Initate Level"/>
+        <broadcast class-name="Stairs" selector="Initate Level"/>
+        <switch-to-world world="Level 8"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <current-world world="Level 8"/>
+      </if>
+      <then>
+        <show-message disclosed="true" text="current score: ~@totalscore" subtext="Number of steps : ~@totalsteps"/>
+        <broadcast class-name="Stairs" selector="Initate Level"/>
+        <broadcast class-name="Bit_Font" selector="Initate Level"/>
+        <switch-to-world world="Level 9"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <current-world world="Level 9"/>
+      </if>
+      <then>
+        <show-message disclosed="true" text="current score: ~@totalscore" subtext="Number of steps : ~@totalsteps"/>
+        <broadcast class-name="Stairs" selector="Initate Level"/>
+        <broadcast class-name="Bit_Font" selector="Initate Level"/>
+        <switch-to-world world="Level 10"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <current-world world="Level 10"/>
+      </if>
+      <then>
+        <show-message disclosed="true" text="current score: ~@totalscore" subtext="Number of steps : ~@totalsteps"/>
+        <broadcast class-name="Stairs" selector="Initate Level"/>
+        <broadcast class-name="Bit_Font" selector="Initate Level"/>
+        <switch-to-world world="Level 11"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <current-world world="Level 11"/>
+      </if>
+      <then>
+        <show-message disclosed="true" text="The last level, you must melt all the ice." subtext="Number of steps : ~@totalsteps"/>
+        <broadcast class-name="Stairs" selector="Initate Level"/>
+        <broadcast class-name="Bit_Font" selector="Initate Level"/>
+        <switch-to-world world="Level 12"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Delete_Old_Torch"/>
+    <rule>
+      <if/>
+      <then>
+        <message disclosed="true" selector="Delete" dlayer="1">
+          <direction/>
+        </message>
+        <change shape="ICEBREAKER Icebreaker">
+          <direction/>
+        </change>
+      </then>
+    </rule>
+  </method>
+</behavior>

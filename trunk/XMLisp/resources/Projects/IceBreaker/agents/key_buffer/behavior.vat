@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if>
+        <key label="up arrow"/>
+      </if>
+      <then>
+        <set attribute="@RIGHT_MOVEMENT" value="0"/>
+        <set attribute="@DOWN_MOVEMENT" value="0"/>
+        <set attribute="@LEFT_MOVEMENT" value="0"/>
+        <set attribute="@UP_MOVEMENT" value="1"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <key label="right arrow"/>
+      </if>
+      <then>
+        <set attribute="@RIGHT_MOVEMENT" value="1"/>
+        <set attribute="@UP_MOVEMENT" value="0"/>
+        <set attribute="@LEFT_MOVEMENT" value="0"/>
+        <set attribute="@DOWN_MOVEMENT" value="0"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <key label="down arrow"/>
+      </if>
+      <then>
+        <set attribute="@DOWN_MOVEMENT" value="1"/>
+        <set attribute="@RIGHT_MOVEMENT" value="0"/>
+        <set attribute="@UP_MOVEMENT" value="0"/>
+        <set attribute="@LEFT_MOVEMENT" value="0"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <key label="left arrow"/>
+      </if>
+      <then>
+        <set attribute="@DOWN_MOVEMENT" value="0"/>
+        <set attribute="@LEFT_MOVEMENT" value="1"/>
+        <set attribute="@RIGHT_MOVEMENT" value="0"/>
+        <set attribute="@UP_MOVEMENT" value="0"/>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="@UP_MOVEMENT" value="0"/>
+        <set attribute="@DOWN_MOVEMENT" value="0"/>
+        <set attribute="@LEFT_MOVEMENT" value="0"/>
+        <set attribute="@RIGHT_MOVEMENT" value="0"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <before-running/>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="@UP_MOVEMENT" value="0"/>
+        <set attribute="@DOWN_MOVEMENT" value="0"/>
+        <set attribute="@LEFT_MOVEMENT" value="0"/>
+        <set attribute="@RIGHT_MOVEMENT" value="0"/>
+      </then>
+    </rule>
+  </method>
+  <method>
+    <on selector="clear_buffer"/>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="@RIGHT_MOVEMENT" value="0"/>
+        <set attribute="@LEFT_MOVEMENT" value="0"/>
+        <set attribute="@DOWN_MOVEMENT" value="0"/>
+        <set attribute="@UP_MOVEMENT" value="0"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

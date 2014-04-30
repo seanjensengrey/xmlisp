@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="0_zero">
+  <tile texture="0-zero.png"/>
+</shape-manager>

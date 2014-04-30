@@ -1,0 +1,166 @@
+<?xml version="1.0"?>
+<world width="1116" height="288">
+  <light-source x="5.0" y="-2.0" z="7.0" name="glare">
+    <ambient red="0.0" green="0.0" blue="0.0"/>
+    <diffuse red="1.0" green="1.0" blue="1.0"/>
+    <specular red="1.5" green="1.5" blue="1.5"/>
+  </light-source>
+  <background-color red="0.0" green="0.0" blue="0.0"/>
+  <camera eye-x="4.759999871253968" eye-y="-0.5250842268678904" eye-z="11.743527598157476" center-x="4.759999871253967" center-y="4.439999997615814" center-z="0.0" up-x="-1.4896449069769714E-15" up-y="12.164275502305916" up-z="-1.2204982458164029" fovy="60.0" aspect="3.875" near="0.005" far="2000.0" azimuth="0.0" zenith="0.40000002831220627"/>
+  <agent-matrix name="AGENT-MATRIX11508" columns="8" layers="3" is-grid-visible="false" layer-height="1.5316918">
+    <ground_agent shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <key_buffer_agent layer="2" shape-name="KEY_BUFFER" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent col="1" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <torch_agent col="1" shape-name="BLUETORCH" roll="-4641.3726" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent col="2" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <torch_agent col="2" shape-name="BLUETORCH" roll="-4641.3726" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent col="3" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <torch_agent col="3" shape-name="BLUETORCH" roll="-4641.3726" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent col="4" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent col="5" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent col="6" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <icebreaker_agent col="6" shape-name="ICEBREAKER" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent col="7" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <bit_font_agent col="7" layer="2" shape-name="0_ZERO" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent row="1" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="1" col="1" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="1" col="2" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="1" col="3" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="1" col="4" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="1" col="5" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="1" col="6" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="1" col="7" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="2" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <blueice_agent row="2" shape-name="BLUEICE" color="9292FFFF" attributes="(VALUE 0.57303417 TIMEPASSED 41.0 BLUE_VALUE 0.6261791 BLUE_ALPHA 76.05283)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="2" col="1" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <blueice_agent row="2" col="1" shape-name="BLUEICE" color="9292FFFF" attributes="(VALUE 0.57303417 TIMEPASSED 41.0 BLUE_VALUE 0.44942626 BLUE_ALPHA 80.12788)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="2" col="2" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <blueice_agent row="2" col="2" shape-name="BLUEICE" color="9292FFFF" attributes="(VALUE 0.57303417 TIMEPASSED 41.0 BLUE_VALUE 0.7602203 BLUE_ALPHA 77.128174)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="2" col="3" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <blueice_agent row="2" col="3" shape-name="BLUEICE" color="9292FFFF" attributes="(VALUE 0.57303417 TIMEPASSED 41.0 BLUE_VALUE 0.68302935 BLUE_ALPHA 82.69167)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="2" col="4" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <blueice_agent row="2" col="4" shape-name="BLUEICE" color="9292FFFF" attributes="(VALUE 0.57303417 TIMEPASSED 41.0 BLUE_VALUE 0.5105407 BLUE_ALPHA 79.59398)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="2" col="5" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <blueice_agent row="2" col="5" shape-name="BLUEICE" color="9292FFFF" attributes="(VALUE 0.57303417 TIMEPASSED 41.0 BLUE_VALUE 0.435786 BLUE_ALPHA 80.87226)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="2" col="6" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <blueice_agent row="2" col="6" shape-name="BLUEICE" color="9292FFFF" attributes="(VALUE 0.57303417 TIMEPASSED 41.0 BLUE_VALUE 0.7235345 BLUE_ALPHA 78.22635)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="2" col="7" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <blueice_agent row="2" col="7" shape-name="BLUEICE" color="9292FFFF" attributes="(VALUE 0.57303417 TIMEPASSED 41.0 BLUE_VALUE 0.49398834 BLUE_ALPHA 81.50807)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="3" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <redice_agent row="3" shape-name="REDICE" color="FFC7C7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0 BLUE_VALUE 0.65)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="3" col="1" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <yellowice_agent row="3" col="1" shape-name="YELLOWICE" color="FFC7C7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="3" col="2" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <yellowice_agent row="3" col="2" shape-name="YELLOWICE" color="FFC7C7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="3" col="3" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <yellowice_agent row="3" col="3" shape-name="YELLOWICE" color="FFC7C7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="3" col="4" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <yellowice_agent row="3" col="4" shape-name="YELLOWICE" color="FFC7C7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="3" col="5" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <yellowice_agent row="3" col="5" shape-name="YELLOWICE" color="FFC7C7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="3" col="6" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <redice_agent row="3" col="6" shape-name="REDICE" color="FFC7C7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0 BLUE_VALUE 0.65)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <torch_agent row="3" col="6" shape-name="GREENTORCH" roll="6963.349" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent row="3" col="7" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <blueice_agent row="3" col="7" shape-name="BLUEICE" color="9292FFFF" attributes="(VALUE 0.57303417 TIMEPASSED 41.0 BLUE_VALUE 0.5730431 BLUE_ALPHA 79.19906)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="4" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <blueice_agent row="4" shape-name="BLUEICE" color="9292FFFF" attributes="(VALUE 0.57303417 TIMEPASSED 41.0 BLUE_VALUE 0.48441535 BLUE_ALPHA 81.43377)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="4" col="1" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <blueice_agent row="4" col="1" shape-name="BLUEICE" color="9292FFFF" attributes="(VALUE 0.57303417 TIMEPASSED 41.0 BLUE_VALUE 0.7521432 BLUE_ALPHA 84.21466)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="4" col="2" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <blueice_agent row="4" col="2" shape-name="BLUEICE" color="9292FFFF" attributes="(VALUE 0.57303417 TIMEPASSED 41.0 BLUE_VALUE 0.70741993 BLUE_ALPHA 84.63902)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="4" col="3" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <blueice_agent row="4" col="3" shape-name="BLUEICE" color="9292FFFF" attributes="(VALUE 0.57303417 TIMEPASSED 41.0 BLUE_VALUE 0.7552253 BLUE_ALPHA 84.1722)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="4" col="4" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <blueice_agent row="4" col="4" shape-name="BLUEICE" color="9292FFFF" attributes="(VALUE 0.57303417 TIMEPASSED 41.0 BLUE_VALUE 0.76845604 BLUE_ALPHA 77.6039)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <torch_agent row="4" col="4" shape-name="GREENTORCH" roll="6964.6567" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent row="4" col="5" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <greenice_agent row="4" col="5" shape-name="GREENICE" color="C7FFC7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <torch_agent row="4" col="5" shape-name="REDTORCH" roll="-6964.812" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent row="4" col="6" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <yellowice_agent row="4" col="6" shape-name="YELLOWICE" color="FFC7C7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="4" col="7" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <blueice_agent row="4" col="7" shape-name="BLUEICE" color="9292FFFF" attributes="(VALUE 0.57303417 TIMEPASSED 41.0 BLUE_VALUE 0.432051 BLUE_ALPHA 80.766106)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="5" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <yellowice_agent row="5" shape-name="YELLOWICE" color="FFC7C7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="5" col="1" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <yellowice_agent row="5" col="1" shape-name="YELLOWICE" color="FFC7C7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="5" col="2" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <yellowice_agent row="5" col="2" shape-name="YELLOWICE" color="FFC7C7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="5" col="3" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <redice_agent row="5" col="3" shape-name="REDICE" color="FFC7C7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0 BLUE_VALUE 0.65)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="5" col="4" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <redice_agent row="5" col="4" shape-name="REDICE" color="FFC7C7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0 BLUE_VALUE 0.65)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="5" col="5" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <greenice_agent row="5" col="5" shape-name="GREENICE" color="C7FFC7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="5" col="6" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <yellowice_agent row="5" col="6" shape-name="YELLOWICE" color="FFC7C7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="5" col="7" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <blueice_agent row="5" col="7" shape-name="BLUEICE" color="9292FFFF" attributes="(VALUE 0.57303417 TIMEPASSED 41.0 BLUE_VALUE 0.7682424 BLUE_ALPHA 83.608284)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="6" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <blueice_agent row="6" shape-name="BLUEICE" color="9292FFFF" attributes="(VALUE 0.57303417 TIMEPASSED 41.0 BLUE_VALUE 0.7551596 BLUE_ALPHA 84.17315)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="6" col="1" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <blueice_agent row="6" col="1" shape-name="BLUEICE" color="9292FFFF" attributes="(VALUE 0.57303417 TIMEPASSED 41.0 BLUE_VALUE 0.7164118 BLUE_ALPHA 76.65252)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="6" col="2" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <blueice_agent row="6" col="2" shape-name="BLUEICE" color="9292FFFF" attributes="(VALUE 0.57303417 TIMEPASSED 41.0 BLUE_VALUE 0.57503587 BLUE_ALPHA 85.47038)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="6" col="3" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <blueice_agent row="6" col="3" shape-name="BLUEICE" color="9292FFFF" attributes="(VALUE 0.57303417 TIMEPASSED 41.0 BLUE_VALUE 0.76998425 BLUE_ALPHA 83.76583)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="6" col="4" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <redice_agent row="6" col="4" shape-name="REDICE" color="FFC7C7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0 BLUE_VALUE 0.65)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="6" col="5" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <greenice_agent row="6" col="5" shape-name="GREENICE" color="C7FFC7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="6" col="6" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <yellowice_agent row="6" col="6" shape-name="YELLOWICE" color="FFC7C7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="6" col="7" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <blueice_agent row="6" col="7" shape-name="BLUEICE" color="9292FFFF" attributes="(VALUE 0.57303417 TIMEPASSED 41.0 BLUE_VALUE 0.6663847 BLUE_ALPHA 84.92183)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <torch_agent row="6" col="7" shape-name="REDTORCH" roll="-6969.001" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent row="7" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="7" col="1" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <yellowice_agent row="7" col="1" shape-name="YELLOWICE" color="FFC7C7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="7" col="2" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="7" col="3" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <blueice_agent row="7" col="3" shape-name="BLUEICE" color="9292FFFF" attributes="(VALUE 0.57303417 TIMEPASSED 41.0 BLUE_VALUE 0.43040103 BLUE_ALPHA 80.67931)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="7" col="4" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <yellowice_agent row="7" col="4" shape-name="YELLOWICE" color="FFC7C7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="7" col="5" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <greenice_agent row="7" col="5" shape-name="GREENICE" color="C7FFC7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="7" col="6" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <yellowice_agent row="7" col="6" shape-name="YELLOWICE" color="FFC7C7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="7" col="7" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <blueice_agent row="7" col="7" shape-name="BLUEICE" color="9292FFFF" attributes="(VALUE 0.57303417 TIMEPASSED 41.0 BLUE_VALUE 0.7669011 BLUE_ALPHA 83.560974)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="8" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <yellowice_agent row="8" shape-name="YELLOWICE" color="FFC7C7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <stairs_agent row="8" col="1" shape-name="STAIRS" x-turn="0.5" y-turn="0.5"/>
+    <yellowice_agent row="8" col="1" shape-name="YELLOWICE" color="FFFFFF7F" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <stairs_helper_agent row="8" col="1" layer="2" shape-name="STAIRS_HELPER" roll="11565.0" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent row="8" col="2" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <yellowice_agent row="8" col="2" shape-name="YELLOWICE" color="FFC7C7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="8" col="3" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <blueice_agent row="8" col="3" shape-name="BLUEICE" color="9292FFFF" attributes="(VALUE 0.57303417 TIMEPASSED 41.0 BLUE_VALUE 0.7699974 BLUE_ALPHA 83.757744)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="8" col="4" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <yellowice_agent row="8" col="4" shape-name="YELLOWICE" color="FFC7C7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="8" col="5" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <greenice_agent row="8" col="5" shape-name="GREENICE" color="C7FFC7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="8" col="6" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <yellowice_agent row="8" col="6" shape-name="YELLOWICE" color="FFC7C7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="8" col="7" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <blueice_agent row="8" col="7" shape-name="BLUEICE" color="9292FFFF" attributes="(VALUE 0.57303417 TIMEPASSED 41.0 BLUE_VALUE 0.66361153 BLUE_ALPHA 84.93948)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="9" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="9" col="1" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <yellowice_agent row="9" col="1" shape-name="YELLOWICE" color="FFC7C7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="9" col="2" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="9" col="3" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <blueice_agent row="9" col="3" shape-name="BLUEICE" color="9292FFFF" attributes="(VALUE 0.57303417 TIMEPASSED 41.0 BLUE_VALUE 0.45964947 BLUE_ALPHA 81.21016)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="9" col="4" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <yellowice_agent row="9" col="4" shape-name="YELLOWICE" color="FFC7C7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="9" col="5" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <blueice_agent row="9" col="5" shape-name="BLUEICE" color="9292FFFF" attributes="(VALUE 0.57303417 TIMEPASSED 41.0 BLUE_VALUE 0.4478371 BLUE_ALPHA 81.07281)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <torch_agent row="9" col="5" shape-name="YELLOWTORCH" roll="4646.784" x-turn="0.5" y-turn="0.5"/>
+    <ground_agent row="9" col="6" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <greenice_agent row="9" col="6" shape-name="GREENICE" color="C7FFC7FF" attributes="(VALUE 0.7841377 TIMEPASSED 41.0)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <ground_agent row="9" col="7" shape-name="GROUND" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <blueice_agent row="9" col="7" shape-name="BLUEICE" color="9292FFFF" attributes="(VALUE 0.57303417 TIMEPASSED 41.0 BLUE_VALUE 0.4364507 BLUE_ALPHA 87.17016)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <background-color red="0.0" green="0.5" blue="1.0"/>
+  </agent-matrix>
+  <sky-dome size="100.0" texture="red_ice.jpg"/>
+</world>

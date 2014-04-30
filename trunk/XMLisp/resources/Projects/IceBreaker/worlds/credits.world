@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<world width="1116" height="289">
+  <light-source x="5.0" y="-2.0" z="7.0" name="glare">
+    <ambient red="0.0" green="0.0" blue="0.0"/>
+    <diffuse red="1.0" green="1.0" blue="1.0"/>
+    <specular red="1.5" green="1.5" blue="1.5"/>
+  </light-source>
+  <background-color red="0.0" green="0.0" blue="0.0"/>
+  <camera eye-x="10.460000097751617" eye-y="8.100000143051147" eye-z="15.250000100582838" center-x="10.460000097751617" center-y="8.100000143051147" center-z="0.0" up-x="0.0" up-y="1.0" up-z="0.0" fovy="60.0" aspect="3.86159169550173" near="0.005" far="2000.0" azimuth="0.0" zenith="0.0"/>
+  <agent-matrix name="AGENT-MATRIX11508" rows="16" columns="16" layers="1" texture="credits.jpg" is-grid-visible="false">
+    <background-color red="0.0" green="0.5" blue="1.0"/>
+  </agent-matrix>
+  <sky-dome size="100.0" texture="sky_and_clouds.jpg"/>
+</world>

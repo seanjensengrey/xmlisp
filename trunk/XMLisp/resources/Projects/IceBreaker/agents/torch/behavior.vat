@@ -1,0 +1,177 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if>
+        <see shape="BLUETORCH Torch">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <rotate-by droll="-10"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="REDTORCH Torch">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <rotate-by droll="-15"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="GREENTORCH Torch">
+          <direction/>
+        </see>
+      </if>
+      <then>
+        <rotate-by droll="15"/>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <rotate-by droll="10"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Go_Left"/>
+    <rule>
+      <if/>
+      <then>
+        <move disclosed="true">
+          <direction dcol="-1"/>
+        </move>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Go_Up"/>
+    <rule>
+      <if/>
+      <then>
+        <move disclosed="true">
+          <direction drow="1"/>
+        </move>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Go_Right"/>
+    <rule>
+      <if/>
+      <then>
+        <move disclosed="true">
+          <direction dcol="1"/>
+        </move>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Go_Down"/>
+    <rule>
+      <if/>
+      <then>
+        <move disclosed="true">
+          <direction drow="-1"/>
+        </move>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Delete"/>
+    <rule>
+      <if/>
+      <then>
+        <erase disclosed="true" duration=".3">
+          <direction/>
+        </erase>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Pick_Left"/>
+    <rule>
+      <if>
+        <stacked shape="GROUND Ground"/>
+      </if>
+      <then>
+        <message selector="Delete_Old_Torch">
+          <direction dcol="1"/>
+        </message>
+        <message selector="Go_Left">
+          <direction dcol="1"/>
+        </message>
+        <play-sound ref="Torch_Sound_Effect.mp3"/>
+        <move disclosed="true" dlayer="1">
+          <direction/>
+        </move>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Pick_Right"/>
+    <rule>
+      <if>
+        <stacked shape="GROUND Ground"/>
+      </if>
+      <then>
+        <message selector="Delete_Old_Torch">
+          <direction dcol="-1"/>
+        </message>
+        <play-sound ref="Torch_Sound_Effect.mp3"/>
+        <message selector="Go_Right">
+          <direction dcol="-1"/>
+        </message>
+        <move disclosed="true" dlayer="1">
+          <direction/>
+        </move>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Pick_Up"/>
+    <rule>
+      <if>
+        <stacked shape="GROUND Ground"/>
+      </if>
+      <then>
+        <message selector="Delete_Old_Torch">
+          <direction drow="-1"/>
+        </message>
+        <play-sound ref="Torch_Sound_Effect.mp3"/>
+        <message selector="Go_Up">
+          <direction drow="-1"/>
+        </message>
+        <move disclosed="true" dlayer="1">
+          <direction/>
+        </move>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Pick_Down"/>
+    <rule>
+      <if>
+        <stacked shape="GROUND Ground"/>
+      </if>
+      <then>
+        <message selector="Delete_Old_Torch">
+          <direction drow="1"/>
+        </message>
+        <play-sound ref="Torch_Sound_Effect.mp3"/>
+        <message selector="Go_Down">
+          <direction drow="1"/>
+        </message>
+        <move disclosed="true" dlayer="1">
+          <direction/>
+        </move>
+      </then>
+    </rule>
+  </method>
+</behavior>

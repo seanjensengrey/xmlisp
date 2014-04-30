@@ -1,0 +1,179 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if>
+        <next-to disclosed="true" number="1" shape="GREENTORCH Torch" dlayer="1"/>
+      </if>
+      <then>
+        <broadcast class-name="key_buffer" selector="clear_buffer"/>
+        <move disclosed="true" dlayer="1" duration=".25">
+          <direction/>
+        </move>
+        <rotate-to disclosed="true" roll-angle="random(720)" pitch-angle="random(720)" heading-angle="random(720)" duration=".5"/>
+        <move-random disclosed="true" distance="5" duration=".5" selected="true"/>
+        <erase disclosed="true" duration=".15">
+          <direction/>
+        </erase>
+        <set attribute="@ICEMELTED" value="@Icemelted + 1"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Explode_Delete"/>
+    <rule>
+      <if/>
+      <then>
+        <move disclosed="true" dlayer="1" duration=".5">
+          <direction/>
+        </move>
+        <move-random disclosed="true" distance="5" duration="1" selected="true"/>
+        <rotate-to disclosed="true" roll-angle="random(720)" pitch-angle="random(720)" heading-angle="random(720)" duration="1"/>
+        <erase disclosed="true" duration="1">
+          <direction/>
+        </erase>
+        <set attribute="@ICEMELTED" value="@Icemelted + 1"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <when-creating-new-agent/>
+    <rule>
+      <if/>
+      <then>
+        <message selector="Set_Random">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="To randomly set the color shade.">
+    <on selector="Set_Random"/>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="TIMEPASSED" value="random(9.99)"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="Change colors/alpha">
+    <on selector="Change_Color"/>
+    <rule>
+      <if>
+        <stacked shape="GROUND Ground"/>
+      </if>
+      <then>
+        <set attribute="TIMEPASSED" value="Timepassed + .5"/>
+        <set attribute="VALUE" value="(sin(Timepassed)*.1)+.80"/>
+        <set-rgba-color red="Value" green="1" blue="Value" alpha="1"/>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <set-rgba-color red="1" green="1" blue="1" alpha=".5"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="broadcast response, adds to global variable.">
+    <on selector="Calculate_Numbers"/>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="@MAXICE" value="@Maxice + 1"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Pick_Up"/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Pick_Down"/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Pick_Left"/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Pick_Right"/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Move_Up"/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Move_Right"/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Move_Down"/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Move_Left"/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Go_Up"/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Go_Down"/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Go_Left"/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Go_Right"/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Delete"/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+</behavior>

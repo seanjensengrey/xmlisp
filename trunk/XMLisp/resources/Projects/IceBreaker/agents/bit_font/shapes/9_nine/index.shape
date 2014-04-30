@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="9_nine">
+  <tile texture="9-nine.png"/>
+</shape-manager>

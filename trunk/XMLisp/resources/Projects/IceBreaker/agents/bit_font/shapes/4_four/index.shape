@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="4_four">
+  <tile texture="4-four.png"/>
+</shape-manager>

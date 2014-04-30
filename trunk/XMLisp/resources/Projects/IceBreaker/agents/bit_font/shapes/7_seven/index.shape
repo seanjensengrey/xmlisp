@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="7_seven">
+  <tile texture="7-seven.png"/>
+</shape-manager>
