@@ -412,7 +412,7 @@
         <current-world world="Level 1"/>
       </if>
       <then>
-        <show-message disclosed="true" text="If your stuck, press &quot;r&quot; to reset the map." subtext="Number of steps : ~@totalsteps"/>
+        <show-message disclosed="true" text="If you&#39;re stuck, press &quot;r&quot; to reset the map." subtext="Number of steps : ~@totalsteps"/>
         <broadcast class-name="Bit_Font" selector="Initate Level"/>
         <broadcast class-name="Stairs" selector="Initate Level"/>
         <switch-to-world world="Level 2"/>
@@ -445,7 +445,7 @@
         <current-world world="Level 4"/>
       </if>
       <then>
-        <show-message disclosed="true" text="Using torches to light up bombs will destory all blocks of that torche&#39;s color." subtext="Number of steps : ~@totalsteps"/>
+        <show-message disclosed="true" text="Using torches to light up bombs will destory all blocks of that torches color." subtext="Number of steps : ~@totalsteps"/>
         <broadcast class-name="Stairs" selector="Initate Level"/>
         <broadcast class-name="Bit_Font" selector="Initate Level"/>
         <switch-to-world world="Level 5"/>
