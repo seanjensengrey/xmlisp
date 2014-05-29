@@ -1,4 +1,4 @@
 <?xml version="1.0"?>
 <agentcubesproject>
-  <projectinfo project-title="Cube-bert" description="Game inspired by the Q*bert arcade video game developed by Cottlieb in the 80s. Our version uses Collaborative Diffusion for the &quot;snakes&quot; to track Cube-bert." tags="enter comma-separated keywords" uuid="B8A9E1B4-D32F-4246-83F3-CED54F692AC8" assignment-key=""/>
+  <projectinfo project-title="Cube-bert" description="Game inspired by the Q*bert arcade video game developed by Gottlieb in the 80s. Our version uses Collaborative Diffusion for the &quot;snakes&quot; to track Cube-bert." tags="enter comma-separated keywords" uuid="B8A9E1B4-D32F-4246-83F3-CED54F692AC8" assignment-key=""/>
 </agentcubesproject>
