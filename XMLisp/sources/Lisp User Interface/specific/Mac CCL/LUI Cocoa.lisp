@@ -2767,18 +2767,20 @@
 
 (defmethod change-image ((self image-control) image-name)
   (setf (src self) image-name)
-  (let ((Image #-cocotron (#/initByReferencingFile: (#/alloc ns:ns-image) (native-string (source Self)))
-               #+cocotron (#/initWithContentsOfFile: (#/alloc ns:ns-image) (native-string (source Self)))))
-    (unless #-cocotron (#/isValid Image)
-      #+cocotron (not (ccl:%null-ptr-p Image))
-      (error "cannot create image from file ~S" (source Self)))
-    ;; if size 0,0 use original size
-    (when (and (zerop (width Self)) (zerop (height Self)))
-      (let ((Size (#/size Image)))
-        (setf (width Self) (rref Size <NSS>ize.width))
-        (setf (height Self) (rref Size <NSS>ize.height))))
-    (#/setImage: (Native-view self) Image)
-    (#/setNeedsDisplay: (native-view self) #$YES)))
+  (when (probe-file (source self))
+    (let ((Image #-cocotron (#/initByReferencingFile: (#/alloc ns:ns-image) (native-string (source Self)))
+                 #+cocotron (#/initWithContentsOfFile: (#/alloc ns:ns-image) (native-string (source Self)))))
+      (unless #-cocotron (#/isValid Image)
+        #+cocotron (not (ccl:%null-ptr-p Image))
+        (error "cannot create image from file ~S" (source Self)))
+      (Setf (original-ns-image  (native-view self)) Image)
+      ;; if size 0,0 use original size
+      (when (and (zerop (width Self)) (zerop (height Self)))
+        (let ((Size (#/size Image)))
+          (setf (width Self) (rref Size <NSS>ize.width))
+          (setf (height Self) (rref Size <NSS>ize.height))))
+      (#/setImage: (Native-view self) Image)
+      (#/setNeedsDisplay: (native-view self) #$YES))))
 
 
 (defmethod SET-IMAGE-FROM-IMAGE ((self image-control) ns-image)
@@ -2801,6 +2803,7 @@
 
 (objc:defmethod (#/drawRect: :void) ((self native-image) (rect :<NSR>ect))
   (draw (lui-view self))
+
   (if (and  (original-ns-image self) (crop-to-fit (lui-view self)))
     (let* ((aspect-ratio-of-view (/ (ns:ns-rect-width (#/frame self))  (ns:ns-rect-height (#/frame self))))
           (aspect-ratio-of-original-image (/ (ns:ns-size-width (#/size (original-ns-image self))) (ns:ns-size-height (#/size (original-ns-image self))))))
