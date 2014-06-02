@@ -2026,7 +2026,6 @@
 
 (defmethod GET-SELECTED-ACTION ((Self popup-button-control))
   ;; -1 implies a that nothing is selected on Windows
-  (print (#/indexOfSelectedItem (native-view self)))
   (unless (equal -1 (#/indexOfSelectedItem (native-view self)))
     (elt (actions self)  (#/indexOfSelectedItem (native-view self)))))
 
@@ -2034,7 +2033,6 @@
 (defmethod POPUP-ACTION ((window window) (self popup-Button-Control))
   (unless (eql (get-selected-action self) NIL)
     (let ((action (get-selected-action self)))
-      (print action)
       (funcall action Window Self))))
 
 
@@ -2714,7 +2712,7 @@
 
 (defclass native-image (ns:ns-image-view)
   ((lui-view :accessor lui-view :initarg :lui-view)
-   (original-ns-image :accessor original-ns-image))
+   (original-ns-image :initform nil :accessor original-ns-image))
   (:metaclass ns:+ns-object))
 
 
@@ -2760,11 +2758,7 @@
                       (height-ratio (/ (height self)(ns:ns-size-height image-size) )))
                      (ns:with-ns-size (new-size (* height-ratio (ns:ns-size-width image-size)) (* height-ratio (ns:ns-size-height image-size)))
                       ; (#/setSize: (#/image Native-Control) new-size)
-                       (#/setFlipped: (#/image Native-Control) #$YES)
-                      )
-              ))
-            
-            )))
+                       (#/setFlipped: (#/image Native-Control) #$YES)))))))
      (t
       (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
         (#/initWithFrame: Native-Control Frame))))
@@ -2807,7 +2801,7 @@
 
 (objc:defmethod (#/drawRect: :void) ((self native-image) (rect :<NSR>ect))
   (draw (lui-view self))
-  (if (crop-to-fit (lui-view self))
+  (if (and  (original-ns-image self) (crop-to-fit (lui-view self)))
     (let* ((aspect-ratio-of-view (/ (ns:ns-rect-width (#/frame self))  (ns:ns-rect-height (#/frame self))))
           (aspect-ratio-of-original-image (/ (ns:ns-size-width (#/size (original-ns-image self))) (ns:ns-size-height (#/size (original-ns-image self))))))
       (cond 
@@ -3307,7 +3301,7 @@
       (add-subviews window Pop-up)
       (if selected-item
         (#/selectItemWithTitle: (native-view pop-up) (native-string selected-item))
-        (#/selectItemWithTitle: (native-view pop-up) nil))      
+        (#/selectItemWithTitle: (native-view pop-up) nil))
       (#/performClick:  (native-view Pop-up) +null-ptr+)
       (let ((title (#/titleOfSelectedItem (native-view Pop-Up))))
         (#/removeFromSuperview (native-view Pop-up))
