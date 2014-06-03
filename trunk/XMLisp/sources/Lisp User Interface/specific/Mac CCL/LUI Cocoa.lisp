@@ -2774,12 +2774,19 @@
         #+cocotron (not (ccl:%null-ptr-p Image))
         (error "cannot create image from file ~S" (source Self)))
       (Setf (original-ns-image  (native-view self)) Image)
+     
       ;; if size 0,0 use original size
       (when (and (zerop (width Self)) (zerop (height Self)))
         (let ((Size (#/size Image)))
           (setf (width Self) (rref Size <NSS>ize.width))
           (setf (height Self) (rref Size <NSS>ize.height))))
       (#/setImage: (Native-view self) Image)
+       (when (crop-to-fit self)
+        (let* ((image-size (#/size (#/image (native-view self))))
+               (height-ratio (/ (height self)(ns:ns-size-height image-size) )))
+          (ns:with-ns-size (new-size (* height-ratio (ns:ns-size-width image-size)) (* height-ratio (ns:ns-size-height image-size)))
+            ; (#/setSize: (#/image Native-Control) new-size)
+            (#/setFlipped: (#/image (native-view self)) #$YES))))
       (#/setNeedsDisplay: (native-view self) #$YES))))
 
 
