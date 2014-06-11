@@ -235,7 +235,8 @@
   - This function must be called with active AGL context, e.g., inside OpenGL-Window INIT method."
   (declare (ftype function create-image-from-file))
   (rlet ((&texName :long))
-    (multiple-value-bind (&Image Width Height Depth) (create-image-from-file Filename :verbose Verbose :flip-vertical t :forced-depth Forced-Depth)
+    (multiple-value-bind (&Image Width Height Depth) #-cocotron (create-image-from-file Filename :verbose Verbose :flip-vertical t :forced-depth Forced-Depth)
+      #+cocotron (lui::create-image-from-file-with-free-image Filename)
       (unless &Image (return-from create-texture-from-file nil))
       (glPixelStorei GL_UNPACK_ROW_LENGTH Width)  ; Set proper unpacking row length for image
       (glPixelStorei GL_UNPACK_ALIGNMENT 1)       ; Set byte aligned unpacking (needed for 3-byte-per-pixel image)
@@ -257,9 +258,11 @@
         (glTexImage2D GL_TEXTURE_2D 0 InternalFormat width height 0 PixelFormat GL_UNSIGNED_BYTE &Image)
         (when Build-Mipmaps
           (when Verbose (format t "~%Building Mipmaps~%"))
-          (unless 
-              (zerop (gluBuild2DMipmaps GL_TEXTURE_2D InternalFormat width height PixelFormat GL_UNSIGNED_BYTE &Image))
-            (error "could not create mipmaps"))
+          (let ((mipmap-return-value (gluBuild2DMipmaps GL_TEXTURE_2D InternalFormat width height PixelFormat GL_UNSIGNED_BYTE &Image)))
+            (unless 
+                (zerop mipmap-return-value)
+             
+              (error (format nil "could not create mipmaps ~A" mipmap-return-value))))
           (when Verbose (format t "Completed Mipmaps~%"))))
       ;; OpenGL should have copied now the image data into texture memory: release
       (dispose-vector &Image)
