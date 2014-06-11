@@ -145,6 +145,32 @@
            (#/hasAlpha Image-Representation)
            (#/bitmapFormat Image-Representation))))))
 
+(defun CREATE-IMAGE-FROM-FILE-WITH-FREE-IMAGE (path)
+  (setf path (namestring (truename path)))
+  (ccl::with-cstr (c-string-image-path path)
+    
+    (let* ((type (external-call "_FreeImage_GetFileType@8" :address c-string-image-path :unsigned-byte 0 :unsigned-byte))
+           (imagen (external-call "_FreeImage_Load@12" :unsigned-byte type :address c-string-image-path :unsigned-byte 0 :address))
+           (width (external-call "_FreeImage_GetWidth@4" :address imagen :integer))
+           (height (external-call "_FreeImage_GetHeight@4" :address imagen :integer))
+           (imagen32 (external-call "_FreeImage_ConvertTo32Bits@4" :address imagen :address))
+           (bit-data (external-call "_FreeImage_GetBits@4" :address imagen32 :address))
+           (pixel-buffer  (make-vector-of-size (* width  height  4)))
+           )
+      ; not flipped
+      (dotimes (i width)
+        (dotimes (j height)
+
+          (let ((offset (* (+ (* j width) i) 4)))
+            (set-byte pixel-buffer (%get-byte bit-data (+ offset 2)) offset)
+            (set-byte pixel-buffer (%get-byte bit-data (+ offset 1)) (+ offset 1))
+            (set-byte pixel-buffer (%get-byte bit-data offset ) (+ offset 2))
+            (set-byte pixel-buffer (%get-byte bit-data (+ offset 3)) (+ offset 3)))))
+      (values 
+       (copy-vector pixel-buffer (* width height 4))
+       width 
+       height 
+       32))))
 
 (defun CREATE-IMAGE-DATA-OF-SIZE-FROM-FILE (Path width height )
   (let* ((ns-image (#/initByReferencingFile: (#/alloc ns:ns-image) (native-string (namestring (translate-logical-pathname Path))))))
