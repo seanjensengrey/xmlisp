@@ -1254,11 +1254,6 @@
   (#/setAction: (native-view Self) (objc::@selector #/activateAction)))
 
 
-(objc:defmethod (#/isFlipped :<BOOL>) ((self ns:ns-control))
-  ;; ALL controls: Flip to coordinate system to 0, 0 = upper left corner
-  #$YES)
-
-
 (defmethod IS-ENABLED ((Self control))
   (when (#/isEnabled (native-view self))
     t))
@@ -1270,6 +1265,11 @@
 (defclass native-button (ns:ns-button)
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
+
+
+(objc:defmethod (#/isFlipped :<BOOL>) ((self native-button))
+  ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
 
 
 (defmethod make-native-object ((Self button-control))
@@ -1297,6 +1297,8 @@
 
 (defmethod TURN-OFF ((self button-control))
   (#/setState: (Native-View self) #$NSOffState))
+
+
 ;__________________________________
 ; BEVEL BUTTON                      |
 ;__________________________________/
@@ -1304,6 +1306,11 @@
 (defclass native-bevel-button (ns:ns-button)
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
+
+
+(objc:defmethod (#/isFlipped :<BOOL>) ((self native-button))
+  ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
 
 
 (defmethod make-native-object ((Self bevel-button-control))
@@ -1413,6 +1420,11 @@
 (defclass native-checkbox (ns:ns-button)
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
+
+
+(objc:defmethod (#/isFlipped :<BOOL>) ((self native-checkbox))
+  ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
 
 
 (defmethod make-native-object ((Self checkbox-control))
@@ -1603,6 +1615,11 @@
 (defclass NATIVE-attribute-editor-view (ns:ns-text-field)
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
+
+
+(objc:defmethod (#/isFlipped :<BOOL>) ((self native-attribute-editor-view))
+  ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
 
 
 (defmethod MAKE-NATIVE-OBJECT ((self attribute-editor-view))
@@ -1837,6 +1854,11 @@
   (:metaclass ns:+ns-object))
 
 
+
+(objc:defmethod (#/isFlipped :<BOOL>) ((self native-scroller))
+  ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
+
 (defmethod MAKE-NATIVE-OBJECT ((Self scroller-control))
   (let ((Native-Control (make-instance 'native-scroller :lui-view Self)))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
@@ -1874,6 +1896,11 @@
 (defclass native-button-image (ns:ns-button)
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
+
+
+(objc:defmethod (#/isFlipped :<BOOL>) ((self native-button-image))
+  ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
 
 
 (defmethod make-native-object ((Self image-button-control))
@@ -1937,6 +1964,11 @@
 (defclass native-radio-button (ns:ns-matrix)
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
+
+
+(objc:defmethod (#/isFlipped :<BOOL>) ((self native-radio-button))
+  ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
 
 
 (defmethod make-native-object ((Self radio-button-control))
@@ -2006,6 +2038,11 @@
 (defclass NATIVE-POPUP-BUTTON (ns:ns-pop-up-button)
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
+
+
+(objc:defmethod (#/isFlipped :<BOOL>) ((self native-pop-up-button))
+  ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
 
 
 (defmethod MAKE-NATIVE-OBJECT ((Self popup-button-control))
@@ -2112,6 +2149,11 @@
 (defclass native-popup-image-button (ns:ns-button)
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
+
+
+(objc:defmethod (#/isFlipped :<BOOL>) ((self native-popup-image-button))
+  ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
 
 
 (defmethod make-native-object ((Self popup-image-button-control))
@@ -2241,6 +2283,11 @@
   (:metaclass ns:+ns-object))
 
 
+(objc:defmethod (#/isFlipped :<BOOL>) ((self native-choice-button))
+  ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
+
+
 (defmethod make-native-object ((Self choice-button-control))
   (let ((Native-Control (make-instance 'native-choice-button :lui-view Self)))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
@@ -2278,6 +2325,11 @@
   (:metaclass ns:+ns-object))
 
 
+(objc:defmethod (#/isFlipped :<BOOL>) ((self native-seperator))
+  ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
+
+
 (defmethod make-native-object ((Self seperator-control))
   (let ((Native-Control (make-instance 'native-seperator :lui-view Self)))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
@@ -2297,6 +2349,11 @@
 (defclass native-slider (ns:ns-slider)
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
+
+
+(objc:defmethod (#/isFlipped :<BOOL>) ((self native-slider))
+  ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
 
 
 (defmethod make-native-object ((Self slider-control))
@@ -2325,6 +2382,11 @@
 (defclass NATIVE-JOG-SLIDER (native-slider)
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
+
+
+(objc:defmethod (#/isFlipped :<BOOL>) ((self native-jog-slider))
+  ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
 
 
 (defmethod MAKE-NATIVE-OBJECT ((Self jog-slider-control))
@@ -2435,6 +2497,12 @@
   (:metaclass ns:+ns-object))
 
 
+
+(objc:defmethod (#/isFlipped :<BOOL>) ((self native-label))
+  ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
+
+
 (defmethod MAKE-NATIVE-OBJECT ((Self label-control))
   (let ((Native-Control (make-instance 'native-label :lui-view Self)))  ;; NSText is not actually a control, would NSTextField be better?
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
@@ -2474,10 +2542,20 @@
   (:metaclass ns:+ns-object))
 
 
+(objc:defmethod (#/isFlipped :<BOOL>) ((self native-editable-text))
+  ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
+
+
 (defclass NATIVE-SECURE-EDITABLE-TEXT (ns:ns-secure-text-field)
   ((lui-view :accessor lui-view :initarg :lui-view)
    (text-before-edit :accessor text-before-edit :initform "" :documentation "sometimes it will be nescisary to remember the value of the text field before a text field is editted and restore this value if a bad value is entered"))
   (:metaclass ns:+ns-object))
+
+
+(objc:defmethod (#/isFlipped :<BOOL>) ((self native-secure-editable-text))
+  ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
 
 
 (defmethod MAKE-NATIVE-OBJECT ((Self editable-text-control))
@@ -2523,6 +2601,11 @@
     (unless (validate-final-text-value lui-view (value lui-view)) 
       (setf (value lui-view) (text-before-edit self))))
   (call-next-method Notification))
+
+
+(objc:defmethod (#/isFlipped :<BOOL>) ((self native-editable-text))
+  ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
 
 
 (defmethod (setf text) :after (Text (Self editable-text-control))
@@ -2612,6 +2695,11 @@
   (:metaclass ns:+ns-object))
 
 
+(objc:defmethod (#/isFlipped :<BOOL>) ((self native-status-bar))
+  ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
+
+
 (defmethod make-native-object ((Self status-bar-control))
   (let ((Native-Control (make-instance 'native-status-bar :lui-view Self)))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
@@ -2659,6 +2747,11 @@
   (:metaclass ns:+ns-object))
 
 
+(objc:defmethod (#/isFlipped :<BOOL>) ((self native-progressindicator-control))
+  ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
+
+
 (defmethod MAKE-NATIVE-OBJECT ((Self progress-indicator-control))
   (let ((Native-Control (make-instance 'native-progress-indicator-control :lui-view Self)))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
@@ -2686,6 +2779,11 @@
 (defclass NATIVE-DETERMINATE-PROGRESS-INDICATOR-CONTROL (ns:ns-progress-indicator)
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
+
+
+(objc:defmethod (#/isFlipped :<BOOL>) ((self native-determinate-progress-indicator-control))
+  ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
 
 
 (defmethod MAKE-NATIVE-OBJECT ((Self determinate-progress-indicator-control))
@@ -2930,6 +3028,12 @@
   (unless (#/isActive self)
     (#/activate: self #$YES)))
 
+
+(objc:defmethod (#/isFlipped :<BOOL>) ((self native-color-well))
+  ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
+
+
 (defmethod MAKE-NATIVE-OBJECT ((Self color-well-control))
   (let ((Native-Control (make-instance 'native-color-well :lui-view Self)))
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
@@ -3006,6 +3110,11 @@
   (ns:with-ns-rect (Frame (+ (NS:NS-RECT-X rect)  (* .25 (NS:NS-RECT-WIDTH rect))) (+ (NS:NS-RECT-Y rect)  (* .25 (NS:NS-RECT-HEIGHT rect))) (* .5 (NS:NS-RECT-WIDTH rect)) (* .5 (NS:NS-RECT-HEIGHT rect)))
     (#/set (native-color self))
     (#/fillRect: ns:ns-bezier-path frame)))
+
+
+(objc:defmethod (#/isFlipped :<BOOL>) ((self native-color-well-button))
+  ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
 
 
 (defmethod MAKE-NATIVE-OBJECT ((Self color-well-button-control))
