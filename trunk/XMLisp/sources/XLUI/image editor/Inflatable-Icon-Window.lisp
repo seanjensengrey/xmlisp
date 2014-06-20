@@ -247,6 +247,7 @@
 
 (defmethod UPDATE-INFLATION ((Self inflatable-icon-editor-window))
   ;; need to update model editor
+  (ccl::with-autorelease-pool
   (let ((Icon-Editor (or (view-named Self 'icon-editor) (error "icon editor missing")))
         (Model-Editor (or (view-named Self 'model-editor) (error "model editor missing"))))
     (let ((Inflatable-Icon (inflatable-icon Model-Editor)))
@@ -314,6 +315,7 @@
                      (update-ceiling-transparency self)))
                  (sleep .04)))
              (when (ceiling-process-should-stop-and-close-window-p self) (close-with-no-questions-asked self))))))))))
+  )
 
 
 (defmethod LOAD-IMAGE-FROM-FILE ((Self inflatable-icon-editor-window) Pathname)
@@ -1350,11 +1352,10 @@
                                        ;(format nil "~Athumbnail.png"  (pathname-directory (file window)))
                                        ;(namestring (make-pathname :name "thumbnail" :type "png"  :directory (pathname-directory (file window))))
                                        thumbnail-path
-                                       #-cocotron :Image-Type :jpeg2000
+                                       #-cocotron :Image-Type #-cocotron :jpeg
                                        ))
      ((probe-file (native-path (native-pathname-directory (file window)) thumbnail-name))
-     (ccl::delete-file thumbnail-path)
-      ))
+     (ccl::delete-file thumbnail-path)))
     (setf (thumbnail-name (inflatable-icon (view-named Window 'model-editor))) thumbnail-name)
     (save shape-manager))
   (let ((Model-Editor (view-named Window 'model-editor)))
