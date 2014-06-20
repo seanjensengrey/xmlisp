@@ -2040,7 +2040,7 @@
   (:metaclass ns:+ns-object))
 
 
-(objc:defmethod (#/isFlipped :<BOOL>) ((self native-pop-up-button))
+(objc:defmethod (#/isFlipped :<BOOL>) ((self native-popup-button))
   ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
   #$YES)
 
@@ -2463,6 +2463,7 @@
   (process-run-function
    '(:name "Jog Button Thread" )
    #'(lambda ()
+       (ccl::with-autorelease-pool
        ;; start jog in separate thread to avoid delay of slider knob move
        (start-jog (lui-view Self))
        ;; as long as mouse is down keep running control action at interval frequency
@@ -2475,7 +2476,7 @@
              (#/activateAction (#/target Self))
                               
                               
-           (sleep (action-interval (lui-view Self))))))))
+           (sleep (action-interval (lui-view Self)))))))))
   ;; this actually does the mouse tracking until mouse up
   ;(call-next-method Event)
   ;; mouse is up
@@ -2747,7 +2748,7 @@
   (:metaclass ns:+ns-object))
 
 
-(objc:defmethod (#/isFlipped :<BOOL>) ((self native-progressindicator-control))
+(objc:defmethod (#/isFlipped :<BOOL>) ((self native-progress-indicator-control))
   ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
   #$YES)
 
@@ -2812,6 +2813,11 @@
   ((lui-view :accessor lui-view :initarg :lui-view)
    (original-ns-image :initform nil :accessor original-ns-image))
   (:metaclass ns:+ns-object))
+
+
+(objc:defmethod (#/isFlipped :<BOOL>) ((self native-image))
+  ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
+  #$YES)
 
 
 (defmethod make-native-object ((Self image-control))
