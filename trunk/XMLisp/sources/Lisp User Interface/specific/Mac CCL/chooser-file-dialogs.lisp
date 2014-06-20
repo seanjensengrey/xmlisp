@@ -23,53 +23,54 @@
                            (window-position (ns:make-ns-point 100 100))
                            file-type-string-list 
                            )
-  (let* ((panel (#/openPanel ns:ns-open-panel))
-	 ;(dc (#/sharedUserDefaultsController ns:ns-user-defaults-controller))
-         ;(values (#/values dc))
-	 ;(key #@"cclDirectory")
-         (file-types +null-ptr+)
-         )
-    ;; Kind of nasty code just to change the title of the cancel button, need to go through two layers of subviews to find the button and change its title.  
-    (if cancel-button-string
-      (let ((subviews (gui::list-from-ns-array (#/subviews (#/contentView panel)))))
-        (dolist (subview subviews)
-          (if (equal (type-of subview) 'NS:NS-VIEW)
-            (let ((subviews2 (gui::list-from-ns-array (#/subviews subview))))
-              (dolist (subview2 subviews2)
-                (if (equal (type-of subview2) 'NS:NS-BUTTON )
-                  (if (equal (#/title subview2) (native-string "Cancel"))
-                    (#/setTitle: subview2 (native-string cancel-button-string))))))))))
-    (when file-type-string-list
-      (setf file-type-string-list (mapcar #'native-string file-type-string-list))
-      (setf file-types (ns-array-from-list file-type-string-list)))
-    (when button-string
-      (setf button-string (ccl::%make-nsstring button-string))
-      (#/setPrompt: panel button-string))
-    (when window-title
-      (setf window-title (ccl::%make-nsstring window-title))
-      (#/setTitle: panel window-title))
-    (when prompt
-      (setf prompt (ccl::%make-nsstring prompt))
-      (#/setMessage: panel  prompt))
-    (#/setAllowsMultipleSelection: panel allow-multiple-files)
-    (#/setCanChooseDirectories: panel nil)
-    (#/setCanChooseFiles: panel t)
-    ;(#/setFrameOrigin: panel window-position)
-    ;#-cocotron (#/setAllowedFileTypes:  panel (#/arrayWithObject: ns:ns-array (native-string "lisp")))
-    ;#-cocotron (#/makeKeyAndOrderFront: panel +null-ptr+)
-    ;#-cocotron (#/orderFront: panel +null-ptr+)
-    ;#-cocotron (#/beginWithCompletionHandler: panel +null-ptr+)
-    (when (eql (#/runModalForDirectory:file:types: panel
-						   (native-string directory)
-						   +null-ptr+
-						   file-types)
-	       #$NSOKButton)
-      (if allow-multiple-files
-        (let ((filenames (gui::list-from-ns-array (#/filenames Panel))))
-          (dotimes (i (length filenames))
-            (setf (elt filenames i) (pathname (ccl::lisp-string-from-nsstring (elt filenames i)))))
-          filenames)
-        (pathname (ccl::lisp-string-from-nsstring (#/objectAtIndex: (#/filenames Panel) 0)))))))
+  (lui::in-main-thread ()
+    (let* ((panel (#/openPanel ns:ns-open-panel))
+           ;(dc (#/sharedUserDefaultsController ns:ns-user-defaults-controller))
+           ;(values (#/values dc))
+           ;(key #@"cclDirectory")
+           (file-types +null-ptr+)
+           )
+      ;; Kind of nasty code just to change the title of the cancel button, need to go through two layers of subviews to find the button and change its title.  
+      (if cancel-button-string
+        (let ((subviews (gui::list-from-ns-array (#/subviews (#/contentView panel)))))
+          (dolist (subview subviews)
+            (if (equal (type-of subview) 'NS:NS-VIEW)
+              (let ((subviews2 (gui::list-from-ns-array (#/subviews subview))))
+                (dolist (subview2 subviews2)
+                  (if (equal (type-of subview2) 'NS:NS-BUTTON )
+                    (if (equal (#/title subview2) (native-string "Cancel"))
+                      (#/setTitle: subview2 (native-string cancel-button-string))))))))))
+      (when file-type-string-list
+        (setf file-type-string-list (mapcar #'native-string file-type-string-list))
+        (setf file-types (ns-array-from-list file-type-string-list)))
+      (when button-string
+        (setf button-string (ccl::%make-nsstring button-string))
+        (#/setPrompt: panel button-string))
+      (when window-title
+        (setf window-title (ccl::%make-nsstring window-title))
+        (#/setTitle: panel window-title))
+      (when prompt
+        (setf prompt (ccl::%make-nsstring prompt))
+        (#/setMessage: panel  prompt))
+      (#/setAllowsMultipleSelection: panel allow-multiple-files)
+      (#/setCanChooseDirectories: panel nil)
+      (#/setCanChooseFiles: panel t)
+      ;(#/setFrameOrigin: panel window-position)
+      ;#-cocotron (#/setAllowedFileTypes:  panel (#/arrayWithObject: ns:ns-array (native-string "lisp")))
+      ;#-cocotron (#/makeKeyAndOrderFront: panel +null-ptr+)
+      ;#-cocotron (#/orderFront: panel +null-ptr+)
+      ;#-cocotron (#/beginWithCompletionHandler: panel +null-ptr+)
+      (when (eql (#/runModalForDirectory:file:types: panel
+                                                     (native-string directory)
+                                                     +null-ptr+
+                                                     file-types)
+                 #$NSOKButton)
+        (if allow-multiple-files
+          (let ((filenames (gui::list-from-ns-array (#/filenames Panel))))
+            (dotimes (i (length filenames))
+              (setf (elt filenames i) (pathname (ccl::lisp-string-from-nsstring (elt filenames i)))))
+            filenames)
+          (pathname (ccl::lisp-string-from-nsstring (#/objectAtIndex: (#/filenames Panel) 0))))))))
 
 
 (defun choose-new-file-dialog (&key 
