@@ -10,7 +10,7 @@
 (in-package :hemlock)
 
 (export '(time-to-run time-to-run-milli))
-#-cocotro
+#-cocotron
 (defvar *mach-time-unit-ratio*
  (ccl::rlet ((info #>mach_timebase_info))
    (#_mach_timebase_info info)
