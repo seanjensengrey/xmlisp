@@ -87,7 +87,7 @@
                                   (format Log "~%##############################################~%")
                                   ;; produce a basic stack trace
                                   (format Log "~% ______________Exception in thread \"~A\"___(backtrace)___" (slot-value *Current-Process* 'ccl::name))
-                                  (ccl:print-call-history :start-frame-number 1 :detailed-p nil :stream Log)
+                                  (print-nice-call-history :start-frame-number 1 :detailed-p nil :stream Log)
                                   (format Log "~%~%~%")))
                              ;; show minmalist message to end-user
                              (in-main-thread () ;; OS X 10.7 is really insisting on using NSAlerts only in the mmain thread
@@ -104,7 +104,37 @@
        ,@Forms))))
 
 
-
+(defun print-nice-call-history (&key context
+                                     process
+                                     origin
+                                     (detailed-p t)
+                                     (count target::target-most-positive-fixnum)
+                                     (start-frame-number 0)
+                                     (stream *debug-io*)
+                                     (print-level *backtrace-print-level*)
+                                     (print-length *backtrace-print-length*)
+                                     (show-internal-frames *backtrace-show-internal-frames*)
+                                     (format *backtrace-format*))
+  (let ((*backtrace-print-level* print-level)
+        (*backtrace-print-length* print-length)
+        (*backtrace-format* format)
+        (*standard-output* stream)
+        (*print-circle* nil)
+        (frame-number (or start-frame-number 0)))
+    (format t "~%Call stack (good luck):~%")
+    (map-call-frames (lambda (p context)
+                       (multiple-value-bind (lfun ) (ccl::cfp-lfun p)
+                         (unless (and (typep detailed-p 'fixnum)
+                                      (not (= (the fixnum detailed-p) frame-number)))
+                           (format t "  ~a :: ~a~%" frame-number (function-name lfun))
+                           (incf frame-number))))
+                     :context context
+                     :process process
+                     :origin origin
+                     :count count
+                     :start-frame-number start-frame-number
+                     :test (and (not show-internal-frames) 'ccl::function-frame-p))
+    (values)))
 
 #| Examples:
 
