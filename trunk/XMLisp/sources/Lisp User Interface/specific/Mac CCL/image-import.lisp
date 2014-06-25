@@ -145,7 +145,13 @@
            (#/hasAlpha Image-Representation)
            (#/bitmapFormat Image-Representation))))))
 
-(defun CREATE-IMAGE-FROM-FILE-WITH-FREE-IMAGE (path)
+
+#+cocotron (defparameter *FREE-IMAGE-HAS-BEEN-LOADED* nil)
+#+cocotron (defun CREATE-IMAGE-FROM-FILE-WITH-FREE-IMAGE (path)
+  (unless *FREE-IMAGE-HAS-BEEN-LOADED*
+    (Setf *FREE-IMAGE-HAS-BEEN-LOADED* t)
+    (open-shared-library (namestring (truename "lui:resources;dlls;FreeImage.dll"))) 
+    )
   (setf path (namestring (truename path)))
   (ccl::with-cstr (c-string-image-path path)
     
