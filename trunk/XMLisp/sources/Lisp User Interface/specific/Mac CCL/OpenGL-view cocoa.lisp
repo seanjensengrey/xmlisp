@@ -103,8 +103,6 @@
 (objc:defmethod (#/retain :id) ((Self native-opengl-view))
   (print "retain")
   (print (type-of (lui-view self)))
-  ;(ccl:print-call-history :start-frame-number 1 :detailed-p nil)
-  (print (ccl:print-call-history :start-frame-number 1 :detailed-p nil))
   (prog1
       (call-next-method)
     (print (#/retainCount self)))
