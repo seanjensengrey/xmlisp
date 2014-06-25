@@ -47,7 +47,6 @@
                          (print-condition-understandably Condition (format nil "~A error, " ,Situation))
                          ;; produce a basic stack trace
                          (format t "~% ______________Exception in thread \"~A\"___(backtrace)___" (slot-value *Current-Process* 'ccl::name))
-                         (ccl:print-call-history :start-frame-number 1 :detailed-p nil)
                          (standard-alert-dialog 
                           (with-output-to-string (Out)
                             (print-condition-understandably Condition "Error: " Out))
