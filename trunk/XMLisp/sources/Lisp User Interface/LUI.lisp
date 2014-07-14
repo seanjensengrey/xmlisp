@@ -675,6 +675,9 @@ after any of the window controls calls stop-modal close window and return value.
 (defgeneric WINDOW-SHOULD-CLOSE (Window)
   (:documentation "This method will be called by the window delegate when the user clicks the close button or a perfomClose action is issued. Return non-nil value to have window closed"))
 
+(defgeneric WINDOW-WILL-ZOOM (Window)
+  (:documentation "This method will be called when the window is about to zoom"))
+
 
 (defgeneric WINDOW-LOST-FOCUS (Window)
   (:documentation "This method will be called by the window delegate when the window is no longer the key window"))
