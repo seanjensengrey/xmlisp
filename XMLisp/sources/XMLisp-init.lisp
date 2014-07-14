@@ -70,7 +70,7 @@
 ;;  Load IDE extensions                       |
 ;;___________________________________________
   
-#-cocotron (load "lui:sources;IDE;specific;Mac CCL;anticipat-symbol-complete")
+;#-cocotron (load "lui:sources;IDE;specific;Mac CCL;anticipat-symbol-complete")
 (load "lui:sources;IDE;specific;Mac CCL;ns timer")
 #-cocotron (load "lui:sources;IDE;specific;Mac CCL;GLDocs")
 #-cocotron (load "lui:sources;IDE;specific;Mac CCL;hemlock extensions")
@@ -171,8 +171,8 @@
    "PROGRESS-INDICATOR-CONTROL" "START-ANIMATION" "STOP-ANIMATION" "ANIMATION-ABORTED" "ANIMATION-CYCLE-ABORTED" "WITH-ANIMATION-LOCKED" "WITH-ANIMATION-UNLOCKED" "GRAB-ANIMATION-LOCK" "RELEASE-ANIMATION-LOCK"
    "DETERMINATE-PROGRESS-INDICATOR-CONTROL" "MAX-VALUE" "MIN-VALUE" "INCREMENT-BY"
    "VALUE"
-   "IMAGE-CONTROL" "CLICKABLE-IMAGE-CONTROL" "SRC" "SOURCE" "IN-CLUSTER"  "IMAGE-PATH" "CHANGE-IMAGE" "SCALE-PROPORTIONALLY";; "FILE"->"SOURCE"
-   "DOWNSAMPLE"
+   "IMAGE-CONTROL" "CLICKABLE-IMAGE-CONTROL" "SRC" "SOURCE" "IN-CLUSTER"  "IMAGE-PATH" "CHANGE-IMAGE" "SCALE-PROPORTIONALLY";; "FILE"->"SOURCE" 
+   "DOWNSAMPLE" "original-ns-image"
    "RADIO-BUTTON-CONTROL" 
    "IMAGE-BUTTON-CLUSTER-CONTROL" "SELECTED-IN-CLUSTER" "BUTTON-TYPE"
    "IMAGE-BUTTON-CLUSTER" "CHANGE-CLUSTER-SELECTIONS"
@@ -239,6 +239,8 @@
    )
   (:import-from "XML"
                 "FILE" "*XMLISP-PRINT-SYNOPTIC*"))
+
+
 
 (defun LUI::NATIVE-TRANSLATED-PATH (namestring) "
   in: a string representation of a path
@@ -342,6 +344,9 @@
 
 (export '(lui::Mac-OS-X-10.5-and-later lui::Mac-OS-X-10.6-and-later LUI::*OS-Name* lui::*OS-VERSION-MAJOR* lui::*OS-VERSION-MINOR* lui::*OS-VERSION-MAINTENANCE*) :lui)
 
+;;___________________________________________
+;;  Helper Functions                         |
+;;___________________________________________
 
 ;; Helper function to avoid copying SVN folders in application, project, agent, shape, or world folders
 (defun ccl::recursive-copy-directory-without-svn (source-path dest-path &key test (if-exists :error))
@@ -352,7 +357,55 @@
                                  :if-exists if-exists))
 
 
+(defun ccl::print-nice-call-history (&key context
+                                     process
+                                     origin
+                                     (detailed-p t)
+                                     (count target::target-most-positive-fixnum)
+                                     (start-frame-number 0)
+                                     (stream *debug-io*)
+                                     (print-level *backtrace-print-level*)
+                                     (print-length *backtrace-print-length*)
+                                     (show-internal-frames *backtrace-show-internal-frames*)
+                                     (format *backtrace-format*))
+  (let ((*backtrace-print-level* print-level)
+        (*backtrace-print-length* print-length)
+        (*backtrace-format* format)
+        (*standard-output* stream)
+        (*print-circle* nil)
+        (frame-number (or start-frame-number 0)))
+    (format t "~%Call stack (good luck):~%")
+    (map-call-frames (lambda (p context)
+                       (multiple-value-bind (lfun ) (ccl::cfp-lfun p)
+                         (unless (and (typep detailed-p 'fixnum)
+                                      (not (= (the fixnum detailed-p) frame-number)))
+                           (format t "  ~a :: ~a~%" frame-number (function-name lfun))
+                           (incf frame-number))))
+                     :context context
+                     :process process
+                     :origin origin
+                     :count count
+                     :start-frame-number start-frame-number
+                     :test (and (not show-internal-frames) 'ccl::function-frame-p))
+    (values)))
 
+
+(defun get-temp-directory () 
+  #-cocotron (ccl::lisp-string-from-nsstring (#_NSTemporaryDirectory))
+  #+cocotron (get-win32-temp-path)
+  )
+
+#+cocotron
+(defun get-win32-temp-path ()
+  (let ((vector-size 100)
+	(temp-path-string nil)
+	(i 0))
+    (lui::with-vector-of-size (path vector-size)
+      (external-call "GetTempPathW" :integer vector-size :address path :integer)
+      (loop while (not (equal (code-char (lui::%get-byte path (* i 2))) #\null)) do
+	   (setf temp-path-string (concatenate 'string temp-path-string (string (code-char (lui::%get-byte path (* i 2))))))
+	   (incf i)))))
+      
 ;;___________________________________________
 ;;  Load LUI                                 |
 ;;___________________________________________
@@ -599,6 +652,7 @@
 
 
 ;; If we find AgentCubes lets just load it unless user indicates no by holding down shift key
+
 (unless (lui::shift-key-p)
   (when (probe-file "lui:sources;agentcubes;AgentCubes-init.lisp")
     (load "lui:sources;agentcubes;AgentCubes-init")))
