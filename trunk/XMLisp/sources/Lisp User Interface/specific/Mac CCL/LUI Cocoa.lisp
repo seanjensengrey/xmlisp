@@ -287,6 +287,7 @@
 
 
 (defmethod EXIT-FULL-SCREEN-MODE ((Self view))
+  (when (full-screen-p self)
   (ccl::with-autorelease-pool
     (setf (full-screen-p self) nil)
     (switch-to-window-mode (window self))
@@ -294,7 +295,7 @@
       (set-frame-with-frame self frame))
     (show-all-views (window self))
     (display self)
-    (display (window self))))
+    (display (window self)))))
 
 
 (defmethod RECURSIVELY-MAXIMIZE-SUPERVIEWS ((self view))
@@ -384,7 +385,10 @@
 
 
 (objc:defmethod (#/description :id) ((self tooltip-delegate) )
-  (native-string (get-tooltip-of-most-specific-view-at-screen-position (lui-view Self) (ns:ns-point-x (#/mouseLocation ns:ns-event )) (ns:ns-point-y (#/mouseLocation ns:ns-event )))))
+  (let ((tooltip (get-tooltip-of-most-specific-view-at-screen-position (lui-view Self) (ns:ns-point-x (#/mouseLocation ns:ns-event )) (ns:ns-point-y (#/mouseLocation ns:ns-event )))))
+    (unless tooltip 
+      (Setf tooltip "No tooltip available"))
+    (native-string tooltip)))
 
 
 (defmethod ENABLE-TOOLTIPS ((Self view))
@@ -518,6 +522,9 @@
   (map-subviews Self #'(lambda (View) (set-size View (width View) (height View)))))
       
 
+#+cocotron
+(objc:defmethod (#/isFlipped :<BOOL>) ((Self ns:ns-control))
+  #$YES)
 
 ;**********************************
 ;* SCROLL-VIEW-ADJUSTING-CONTENTS *
@@ -632,6 +639,7 @@
 
 (objc:defmethod (#/zoom: :void) ((self native-window) sender)
   (when (window-ready-for-zoom (lui-window self))
+    (window-will-zoom (lui-window self))
     (call-next-method sender)
     (let ((Content-View (#/contentView (native-window (lui-window Self)))))
       (setf (width (lui-window Self)) (truncate (pref (#/frame Content-View) <NSR>ect.size.width)))
@@ -853,9 +861,10 @@
 
 (defmethod SHOW ((Self window))
   (let ((minimum-window-start-position (title-bar-height self)))
-    #-cocotron (setf minimum-window-start-position (+ minimum-window-start-position (#/menuBarHeight (#/mainMenu (#/sharedApplication ns:ns-application)))))
+    #-cocotron (setf minimum-window-start-position (+ minimum-window-start-position (#/menuBarHeight (#/mainMenu (#/sharedApplication ns:ns-application)))  ))
+    ; #+cocotron  (setf minimum-window-start-position (+ minimum-window-start-position 5))
     (when (< (y self) minimum-window-start-position)
-      (set-position self (x self) minimum-window-start-position))
+      (set-position self (x self) minimum-window-start-position ))
     (when (< (x self) 0)
       (set-position self 0 (y self)))
     (in-main-thread ()
@@ -993,7 +1002,7 @@
   (set-size-and-position-ensuring-window-will-fit-on-screen
    self
    0
-   (title-bar-height self)
+   0
    (pref (#/frame (#/screen (native-window Self))) <NSR>ect.size.width)
    (+ (pref (#/frame (#/screen (native-window Self))) <NSR>ect.size.height)))
   (setf (full-screen Self) t)
@@ -1219,7 +1228,11 @@
          :y (truncate (- (height (lui-window Self)) (pref mouse-loc :<NSP>oint.y)))
          :native-event Event)))))
 
+(objc:defmethod (#/isFlipped :<BOOL>) ((Self native-window-view))
 
+  ;; Flip to coordinate system to 0, 0 = upper left corner
+
+  #$YES)
 
 ;****************************************************
 ; Orientation of coordinates                        *
