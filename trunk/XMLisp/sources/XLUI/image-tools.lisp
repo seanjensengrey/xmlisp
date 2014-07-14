@@ -75,8 +75,19 @@
 (defun POWER-OF-2-P (number)
   (when (equal (- (truncate (/ (log number) (log 2)))  (/ (log number) (log 2))) 0.0)
     t))
-    
+   
+(defun PRINT-IMAGE-BUFFER (Image height width &key (has-alpha nil))
+  (dotimes (i (* height width))
+    (print (get-byte Image i))))
 
+(defun GET-RGBA-VALUE-AT-ROW-COL (pixel-buffer row col &key (img-height 32) (img-width 32)  (img-depth 32))
+  (let ((Byte-offset (* (+ Col (* (- img-height Row 1) img-width))  (truncate img-depth 8))))
+    (values
+     (get-byte pixel-buffer  Byte-Offset)
+     (get-byte pixel-buffer (+ Byte-Offset 1))
+     (get-byte  pixel-buffer (+ Byte-Offset 2))
+     (get-byte pixel-buffer (+ Byte-Offset 3)))))
+  
 #| Example:
 
 (convert-image-file "/Users/Mike/working copies/XMLisp svn/trunk/XMLisp/resources/images/logo_active.gif" "/Users/Mike/working copies/XMLisp svn/trunk/XMLisp/resources/images/logo_active.png" :width 64 :height 64)
