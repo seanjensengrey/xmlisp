@@ -1010,6 +1010,9 @@ after any of the window controls calls stop-modal close window and return value.
 (defmethod WINDOW-READY-FOR-ZOOM ((Self window))
   t)
 
+(defmethod WINDOW-WILL-ZOOM ((Self window))
+  ;; Do nothing
+  )
 
 (defmethod GET-TOOLTIP ((Self window) x y)
   (declare (ignore x y))
