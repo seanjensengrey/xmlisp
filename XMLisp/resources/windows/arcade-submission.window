@@ -59,7 +59,7 @@
            <spacer height="8"/>
            <editable-text text="" secure="true" name="password" size="10" flex="1" />
            <spacer height="8"/>
-           <editable-text name="assignment-key" size="10" flex="1" />
+           <integer-type name="assignment-key" size="10" flex="1" text="0"/>
          </column>
          <spacer width="20"/>
          <column align="stretch" valign="stretch" width="320" >
@@ -72,7 +72,7 @@
       <spacer height="24"/>
       <row align="right" valign="stretch" flex="1" vflex="1">
          <spacer width="20"/>
-         <button text="Cancel" action="cancel-submit-to-arcade-action" />
+         <button text="Cancel" action="cancel-submit-to-arcade-action" escape-button="true"/>
          <button text="Submit" action="submit-to-arcade-action"/>
          <spacer width="20"/>
       </row>

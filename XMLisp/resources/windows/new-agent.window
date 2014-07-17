@@ -56,7 +56,7 @@
       <spacer width="85"/>
       <label align="left" name="explanation-text" width="350" text=""/>
       <spacer width="378"/>
-      <button text="Cancel" action="cancel-action"/>
+      <button text="Cancel" action="cancel-action" escape-button="true"/>
       <button text="OK" action="OK-action" default-button="true" start-disabled="true" name="ok-button"/>
     </row>
   </column>

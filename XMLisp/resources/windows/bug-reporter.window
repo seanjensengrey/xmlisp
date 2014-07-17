@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<bug-reporter title="Submit AgentCubes bug" margin="0" width="600" height="650" background-color="EDEDEDFF">
+<bug-reporter y="25" title="Submit AgentCubes bug" margin="0" width="600" height="650" background-color="EDEDEDFF">
     <column align="stretch" valign="stretch">
       <spacer height="24" />
       <row align="left" height="20">
@@ -26,7 +26,7 @@
          <spacer width="20"/>
          <button text="Copy to Clipboard" action="COPY-BUG-TO-CLIPBOARD-ACTION" default-button="false" width="140"/>
          <button text="Email" action="EMAIL-BUG-ACTION" default-button="false"/>
-         <button text="Close" action="CLOSE-BUG-REPORTER-ACTION" default-button="false"/>
+         <button text="Close" action="CLOSE-BUG-REPORTER-ACTION" default-button="false" escape-button="true"/>
          <spacer width="20"/>
       </row>
    </column>

@@ -1292,6 +1292,8 @@
       (#/setButtonType: Native-Control #$NSMomentaryPushInButton)
       (when (default-button Self)
         (#/setKeyEquivalent: Native-Control  #@#.(string #\return)))
+      (when (escape-button self)
+        (#/setKeyEquivalent: Native-Control  #@#.(string #\ESC)))
       (#/setImagePosition: Native-Control #$NSNoImage)
       ;; Until Cocotron issue 366 is fixed, don't set the bezel style
       ;; as it causes the button to be invisible
