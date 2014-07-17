@@ -21,7 +21,8 @@ returned when the modal interaction is finished, e.g., when user hits an OK butt
 
 (defmethod SHOW ((Self dialog-window))
   ;; overwrite regular show: need to run this window modal and return values
-  (show-and-run-modal Self))
+  (catch :cancel
+    (show-and-run-modal Self)))
 
 
 (defmethod READ-RETURN-VALUE ((Self dialog-window))
