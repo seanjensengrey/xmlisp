@@ -22,7 +22,7 @@
     </row>
     <spacer height="0"/>
     <row align="right" valign="bottom" height="40">
-      <button text="Cancel" action="cancel-adding-world-action" />
+      <button text="Cancel" action="cancel-adding-world-action" escape-button="true" />
       <button text="OK" action="add-new-world-action" name="ok-button" default-button="true"/>
     </row>
   </column>

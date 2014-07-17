@@ -1097,7 +1097,8 @@ after any of the window controls calls stop-modal close window and return value.
 
 
 (defclass BUTTON-CONTROL (control)
-  ((default-button :accessor default-button :initform nil :type boolean :documentation "if true button is selectable with return key"))
+  ((default-button :accessor default-button :initform nil :type boolean :documentation "if true button is selectable with return key")
+   (escape-button :accessor escape-button :initform nil :type boolean :documentation "if true button is selectable with escape key"))
   (:documentation "Button: fixed height")
   (:default-initargs 
     :width 72
