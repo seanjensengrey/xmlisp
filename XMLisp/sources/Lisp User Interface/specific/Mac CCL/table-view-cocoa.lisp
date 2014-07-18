@@ -46,6 +46,12 @@
   (should-end-editing-notificaiton (lui-view self))
   (call-next-method textObject))
 
+#|
+(objc:defmethod (#/drawRect: :void) ((self native-table-view) (rect :<NSR>ect))
+  (lui::in-main-thread ()
+  (call-next-method rect)) )
+|#
+
 
 (defmethod make-native-object ((Self table-view))
   (let ((Native-Control (make-instance 'native-table-view :lui-view Self)))
@@ -69,9 +75,16 @@
 
 
 (defmethod RELOAD-DATA ((Self table-view))
-  (#/reloadData (native-view self))
-  (display self))
+  (lui::in-main-thread ()
+    (#/reloadData (native-view self))
+    (display self)))
 
+#|
+(defmethod DISPLAY ((Self table-view))
+  (print "DISPLAY")
+  (call-next-method)
+  )
+|#
 
 (defmethod SET-COLOR-OF-CELL-AT-ROW-COLUMN ((Self table-view) row column red green blue)
   (#/setTextColor: (#/preparedCellAtColumn:row: (lui::native-view self) column row ) (#/colorWithCalibratedRed:green:blue:alpha: ns:ns-color red green blue 1.0)))
