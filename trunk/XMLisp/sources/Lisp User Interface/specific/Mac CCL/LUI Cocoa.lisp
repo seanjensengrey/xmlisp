@@ -3449,3 +3449,11 @@
           (ccl::lisp-string-from-nsstring  title))))))
 
 
+;__________________________________
+; Cocotron Hacks                   |
+;__________________________________/
+
+#+cocotron (objc:defmethod (#/abortModal :void) ((self ns:ns-application))
+  (let ((modal-window (#/modalWindow self)))
+    (When (and modal-window (slot-exists-p modal-window 'lui::lui-window))
+      (lui::Cancel-modal (lui::lui-window modal-window)))))
