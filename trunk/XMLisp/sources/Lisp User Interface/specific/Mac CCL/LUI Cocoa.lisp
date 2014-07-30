@@ -2554,7 +2554,9 @@
 
 (defclass NATIVE-EDITABLE-TEXT (ns:ns-text-field)
   ((lui-view :accessor lui-view :initarg :lui-view)
-   (text-before-edit :accessor text-before-edit :initform "" :documentation "sometimes it will be nescisary to remember the value of the text field before a text field is editted and restore this value if a bad value is entered"))
+   (text-before-edit :accessor text-before-edit :initform "" :documentation "sometimes it will be nescisary to remember the value of the text field before a text field is editted and restore this value if a bad value is entered")
+   
+   )
   (:metaclass ns:+ns-object))
 
 
@@ -2565,13 +2567,18 @@
 
 (defclass NATIVE-SECURE-EDITABLE-TEXT (ns:ns-secure-text-field)
   ((lui-view :accessor lui-view :initarg :lui-view)
-   (text-before-edit :accessor text-before-edit :initform "" :documentation "sometimes it will be nescisary to remember the value of the text field before a text field is editted and restore this value if a bad value is entered"))
+   (text-before-edit :accessor text-before-edit :initform "" :documentation "sometimes it will be nescisary to remember the value of the text field before a text field is editted and restore this value if a bad value is entered")
+   (String-buffer :accessor string-buffer :initform ""))
   (:metaclass ns:+ns-object))
+
 
 
 (objc:defmethod (#/isFlipped :<BOOL>) ((self native-secure-editable-text))
   ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
   #$YES)
+
+(objc:defmethod (#/setStringValue: :void) ((self native-secure-editable-text) string)
+  (call-next-method string))
 
 
 (defmethod MAKE-NATIVE-OBJECT ((Self editable-text-control))
@@ -2604,20 +2611,47 @@
         (#_NSBeep)
         (#/setStringValue: self (native-string  (if (stringp (validation-text-storage lui-view)) (validation-text-storage lui-view) (write-to-string (validation-text-storage lui-view)))))
         (display lui-view)))))
- 
+
+;;Cocotron hacks to get around some strange behavior in Cocotron, we simulation the secure text field by hiding the real value in the buffer
+#+cocotron
+(objc:defmethod (#/textDidChange: :void) ((self native-secure-editable-text) Notification) 
+  (call-next-method Notification)
+  (let ((lisp-string (ccl::lisp-string-from-nsstring (#/stringValue self))))
+    (Cond
+      (
+       (and 
+	(equal (length lisp-string) 1)
+	(not (Equal (elt lisp-string 0) #\U+2022)))
+       (echo-bullets self))	      
+      ((> (+ 1(length (string-buffer self))) (length lisp-string))
+	  (setf (value (lui-view self)) "")
+	  (setf (String-buffer self) ""))
+    (t
+     (echo-bullets self)))))
+
+#+cocotron
+(defmethod ECHO-BULLETS ((self native-secure-editable-text))
+  (let ((lisp-string (ccl::lisp-string-from-nsstring (#/stringValue self)))
+	(bullet-string ""))
+    (dotimes (i (length lisp-string))
+      (Setf bullet-string (concatenate 'string bullet-string "•"))
+      (unless (equal (elt lisp-string i) #\•)
+	(if (>= i (length (string-buffer self)))
+            (setf (string-buffer self) (concatenate 'string (String-buffer self)  (string (elt lisp-string i))))
+            (Setf (String-buffer self)  (format nil "~A~A~A" (subseq (String-buffer self) 0 i) (elt lisp-string i) (subseq (string-buffer self) i))))))
+    (#/setStringValue: self (native-string bullet-string))))
+
+;; This hack prevent Cocotron from deselecting the text field everytime you call setStringValue:
+#+cocotron
+(objc:defmethod (#/setStringValue: :void) ((self native-secure-editable-text) string)
+  (#/setStringValue: (#/selectedCell self) string)			        
+  (#/setNeedsDisplay: self #$YES)
+  (#/setString: (#/currentEditor self) string))
 
 (objc:defmethod (#/textShouldBeginEditing: :<BOOL>) ((self native-editable-text) Notification)
   (setf (validation-text-storage (lui-view self)) (value (lui-view Self)))
   (setf (text-before-edit self) (ccl::lisp-string-from-nsstring (#/stringValue self)))
   (call-next-method Notification))
-
-
-(objc:defmethod (#/textShouldEndEditing: :<BOOL>) ((self native-editable-text) Notification)
-  (let ((lui-view (lui-view self)))
-    (unless (validate-final-text-value lui-view (value lui-view)) 
-      (setf (value lui-view) (text-before-edit self))))
-  (call-next-method Notification))
-
 
 (objc:defmethod (#/isFlipped :<BOOL>) ((self native-editable-text))
   ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
@@ -2626,12 +2660,16 @@
 
 (defmethod (setf text) :after (Text (Self editable-text-control))
   (#/setStringValue: (native-view Self) (native-string text))
+  (when (secure self)
+    (echo-bullets (native-view self)))
   (setf (validation-text-storage self) (value Self)))
 
 
 (defmethod VALUE ((Self editable-text-control))
-  (ccl::lisp-string-from-nsstring 
-   (#/stringValue (native-view Self))))
+  (if (secure self)
+    (string-buffer (native-view self))
+    (ccl::lisp-string-from-nsstring 
+     (#/stringValue (native-view Self)))))
 
 
 (defmethod (setf VALUE)  (Text (Self editable-text-control))
