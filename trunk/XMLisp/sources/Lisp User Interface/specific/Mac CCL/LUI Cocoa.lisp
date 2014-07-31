@@ -2660,12 +2660,16 @@
 
 (defmethod (setf text) :after (Text (Self editable-text-control))
   (#/setStringValue: (native-view Self) (native-string text))
-  (when (secure self)
+  #+cocotron (when (secure self)
     (echo-bullets (native-view self)))
   (setf (validation-text-storage self) (value Self)))
 
 
 (defmethod VALUE ((Self editable-text-control))
+  #-cocotron
+  (ccl::lisp-string-from-nsstring 
+   (#/stringValue (native-view Self)))
+  #+cocotron
   (if (secure self)
     (string-buffer (native-view self))
     (ccl::lisp-string-from-nsstring 
