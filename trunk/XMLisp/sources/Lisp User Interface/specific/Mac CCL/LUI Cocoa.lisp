@@ -2512,15 +2512,12 @@
   ((lui-view :accessor lui-view :initarg :lui-view))
   (:metaclass ns:+ns-object))
 
-
-
 (objc:defmethod (#/isFlipped :<BOOL>) ((self native-label))
   ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
   #$YES)
 
-
 (defmethod MAKE-NATIVE-OBJECT ((Self label-control))
-  (let ((Native-Control (make-instance 'native-label :lui-view Self)))  ;; NSText is not actually a control, would NSTextField be better?
+  (let ((Native-Control (make-instance 'native-label :lui-view Self)))  
     (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
       (#/initWithFrame: Native-Control Frame))
     (#/setDrawsBackground: Native-Control nil)
@@ -2538,15 +2535,12 @@
                                    (#/systemFontOfSize: ns:ns-font (size self)))))
     Native-Control))
 
-
 (defmethod (SETF TEXT) :after (Text (Self label-control))
   (#/setString: (native-view Self) (native-string Text)))
-
 
 (defmethod (SETF WIDTH) :after (Width (Self label-control))
    (ns:with-ns-size (Size Width (height Self))
      (#/setFrameSize: (native-view Self) Size)))
-
 
 ;__________________________________
 ; Editable TEXT                    |
@@ -2554,16 +2548,12 @@
 
 (defclass NATIVE-EDITABLE-TEXT (ns:ns-text-field)
   ((lui-view :accessor lui-view :initarg :lui-view)
-   (text-before-edit :accessor text-before-edit :initform "" :documentation "sometimes it will be nescisary to remember the value of the text field before a text field is editted and restore this value if a bad value is entered")
-   
-   )
+   (text-before-edit :accessor text-before-edit :initform "" :documentation "sometimes it will be nescisary to remember the value of the text field before a text field is editted and restore this value if a bad value is entered"))
   (:metaclass ns:+ns-object))
-
 
 (objc:defmethod (#/isFlipped :<BOOL>) ((self native-editable-text))
   ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
   #$YES)
-
 
 (defclass NATIVE-SECURE-EDITABLE-TEXT (ns:ns-secure-text-field)
   ((lui-view :accessor lui-view :initarg :lui-view)
@@ -2571,15 +2561,12 @@
    (String-buffer :accessor string-buffer :initform ""))
   (:metaclass ns:+ns-object))
 
-
-
 (objc:defmethod (#/isFlipped :<BOOL>) ((self native-secure-editable-text))
   ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
   #$YES)
 
 (objc:defmethod (#/setStringValue: :void) ((self native-secure-editable-text) string)
   (call-next-method string))
-
 
 (defmethod MAKE-NATIVE-OBJECT ((Self editable-text-control))
   (let ((Native-Control (if (secure self)  (make-instance 'native-secure-editable-text :lui-view Self) (make-instance 'native-editable-text :lui-view Self))))
@@ -2589,18 +2576,11 @@
       (#/setStringValue: Native-Control (native-string (text Self)))
       (#/setEditable: Native-Control #$YES)
       (unless (zerop (size Self))
-        (#/setFont: Native-Control (#/systemFontOfSize: ns:ns-font (size self))))
-      #| (ecase (align Self)
-        (:left (#/alignLeft: Native-Control Native-Control))
-        (:center (#/alignCenter: Native-Control Native-Control))
-        (:right (#/alignRight: Native-Control Native-Control))
-        (:justified (#/alignJustified: Native-Control Native-Control))) |# )
+        (#/setFont: Native-Control (#/systemFontOfSize: ns:ns-font (size self)))))
     Native-Control))
-
 
 (objc:defmethod (#/becomeFirstResponder  :<BOOL>) ((self native-editable-text))
   (call-next-method))
-
 
 (objc:defmethod (#/textDidChange: :void) ((self native-editable-text) Notification) 
   (call-next-method Notification)
@@ -2612,7 +2592,7 @@
         (#/setStringValue: self (native-string  (if (stringp (validation-text-storage lui-view)) (validation-text-storage lui-view) (write-to-string (validation-text-storage lui-view)))))
         (display lui-view)))))
 
-;;Cocotron hacks to get around some strange behavior in Cocotron, we simulation the secure text field by hiding the real value in the buffer
+;;Cocotron hacks to get around some strange behavior in Cocotron, we simulate the secure text field by hiding the real value in the buffer
 #+cocotron
 (objc:defmethod (#/textDidChange: :void) ((self native-secure-editable-text) Notification) 
   (call-next-method Notification)
@@ -2657,13 +2637,11 @@
   ;; ALL Cocoa controls need to flip to coordinate system to 0, 0 = upper left corner
   #$YES)
 
-
 (defmethod (setf text) :after (Text (Self editable-text-control))
   (#/setStringValue: (native-view Self) (native-string text))
   #+cocotron (when (secure self)
     (echo-bullets (native-view self)))
   (setf (validation-text-storage self) (value Self)))
-
 
 (defmethod VALUE ((Self editable-text-control))
   #-cocotron
@@ -2675,16 +2653,13 @@
     (ccl::lisp-string-from-nsstring 
      (#/stringValue (native-view Self)))))
 
-
 (defmethod (setf VALUE)  (Text (Self editable-text-control))
   (#/setStringValue: (native-view Self) (native-string Text)))
-
 
 (defmethod MAP-SUBVIEWS ((Self editable-text-control) Function &rest Args)
   (declare (ignore Function Args))
   ;; no Cocoa digging
   )
-
 
 (defmethod SUBVIEWS ((Self editable-text-control))
   ;; no Cocoa digging
