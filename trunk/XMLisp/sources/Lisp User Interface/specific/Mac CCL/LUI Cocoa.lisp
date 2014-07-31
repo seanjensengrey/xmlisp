@@ -454,6 +454,7 @@
 (defmethod MAKE-NATIVE-OBJECT ((Self scroll-view))
   (ns:with-ns-rect (Frame (x self) (y Self) (width Self) (height Self))
     (let ((Native-Control (make-instance 'native-scroll-view :with-frame Frame :lui-view Self)))
+      (#/setVerticalLineScroll: Native-Control (vertical-line-scroll self))
       (#/setHasHorizontalScroller: Native-Control (has-horizontal-scroller Self))
       (#/setHasVerticalScroller: Native-Control (has-vertical-scroller Self))
       #-cocotron (#/setAutohidesScrollers: Native-Control #$YES)

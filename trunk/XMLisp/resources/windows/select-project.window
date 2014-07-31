@@ -2,7 +2,7 @@
 <open-project-dialog y="0" x="0" title="Project Chooser" width="700" height="682" margin="0" >
   <column x="0" align="stretch" valign="stretch">
     <row x="0" align="stretch" valign="stretch" vflex="1">
-      <scroll-box x="0" vflex="1" name="scroll-box" flex="1">
+      <scroll-box x="0" vflex="1" name="scroll-box" flex="1" vertical-line-scroll="73.0">
         <rectangle x="0" y="0" color="FFFFFF" name="project-content" flex="1" />
       </scroll-box>
     </row>
