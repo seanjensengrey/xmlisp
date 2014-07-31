@@ -43,7 +43,8 @@
          <label text="Arcade Login Information" size="14" bold="true" flex="1" />
          <spacer height="0" width="120"/>
          <bevel-button height="25" text="Create Arcade Account..." bezel-style="square" action="create-arcade-account-action" width="160" /> 
-         <spacer width="180"/>
+         <bevel-button height="25" text="Export Arcade File..." bezel-style="square" action="export-arcade-file-action" width="160" /> 
+         <spacer width="21"/>
       </row>
       <spacer height="8"/>
       <row align="stretch" valign="stretch" height="85" width="320">
