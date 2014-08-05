@@ -64,7 +64,7 @@
       (when plot-list
         (when (xlui::set-this-cycle-p plot-list)
           (xlui::new-cycle (window self))
-          (error "Can't print to the same \"Representing\" in the same plot window twice in one simulation cycle. Please look at all of the \"plot to window\" actions in the selected agent before running this simulation agian.")
+          (error "Can't print to the same \"Representing\" in the same plot window twice in one simulation cycle. Please look at all of the \"plot to window\" actions in the selected agent before running this simulation again.")
          
           )
         (setf (xlui::set-this-cycle-p plot-list) t)
