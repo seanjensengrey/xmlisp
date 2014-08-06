@@ -2590,7 +2590,12 @@
       (setf (validation-text-storage lui-view) (value lui-view))
       (progn 
         (#_NSBeep)
-        (#/setStringValue: self (native-string  (if (stringp (validation-text-storage lui-view)) (validation-text-storage lui-view) (write-to-string (validation-text-storage lui-view)))))
+        (#/setStringValue: self (native-string  
+                                 (if (validation-text-storage lui-view)
+                                   (if (stringp (validation-text-storage lui-view)) 
+                                     (validation-text-storage lui-view) 
+                                     (write-to-string (validation-text-storage lui-view)))
+                                   "")))
         (display lui-view)))))
 
 ;;Cocotron hacks to get around some strange behavior in Cocotron, we simulate the secure text field by hiding the real value in the buffer
