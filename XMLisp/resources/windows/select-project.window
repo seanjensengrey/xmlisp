@@ -10,7 +10,7 @@
     <row valign="bottom" align="right" flex="1" minimize="vertical">
       <image-button height="24" width="24" image="action-button.png" button-type="push-in" action="action-button-action"/>
       <spacer width="10"/>
-      <bevel-button bezel-style="square" height="24" width="100" text="New Project" action="new-project-action" name="new-project-button"/>
+      <bevel-button bezel-style="square" height="24" width="100" text="New Project..." action="new-project-action" name="new-project-button"/>
       <bevel-button bezel-style="square" height="24" width="110" text="Open Project" action="open-selected-project-action"  name="open-project-button" default-button="true"/>
       <spacer width="16"/>
     </row>
