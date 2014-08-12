@@ -522,10 +522,9 @@
         <current-world world="Level 11"/>
       </if>
       <then>
-        <show-message disclosed="true" text="The last level, you must melt all the ice." subtext="Number of steps : ~@totalsteps"/>
-        <broadcast class-name="Stairs" selector="Initate Level"/>
-        <broadcast class-name="Bit_Font" selector="Initate Level"/>
-        <switch-to-world world="Level 12"/>
+        <show-message disclosed="true" text="Congratulations! You have found the Ice Flower and escaped." subtext="Number of steps : ~@totalsteps"/>
+        <stop-simulation/>
+        <switch-to-world world="credits"/>
       </then>
     </rule>
   </method>
