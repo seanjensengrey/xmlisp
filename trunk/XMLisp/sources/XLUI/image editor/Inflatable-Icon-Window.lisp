@@ -1444,6 +1444,8 @@
 
      
      (initialize-gui-components Window (inflatable-icon Inflated-Icon-Editor))
+     (camera-rotate-action window (View-named window "rotate button"))
+     (Set-button-on (View-named window "rotate button"))
      window)))
 
 (defmethod SETUP-ICON-EDITOR-WITH-IMAGE-AT-PATH ((Window inflatable-icon-editor-window) pathname &key (shape-filename nil))
