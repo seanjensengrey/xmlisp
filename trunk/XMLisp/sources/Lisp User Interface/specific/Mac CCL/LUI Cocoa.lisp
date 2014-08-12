@@ -860,10 +860,20 @@
     (#/setFrameTopLeftPoint: (native-window Self) Position)))
 
 
-(defmethod SHOW ((Self window))
+(defmethod SHOW ((Self window)) 
+  ;; ensure the window fits on the screen
   (let ((minimum-window-start-position (title-bar-height self)))
     #-cocotron (setf minimum-window-start-position (+ minimum-window-start-position (#/menuBarHeight (#/mainMenu (#/sharedApplication ns:ns-application)))  ))
     ; #+cocotron  (setf minimum-window-start-position (+ minimum-window-start-position 5))
+    (when (>  (height self) (screen-height self) )
+      (set-size self (width self) 
+                (- 
+                 (screen-height self) 
+                 #-cocotron (#/menuBarHeight (#/mainMenu (#/sharedApplication ns:ns-application))) #+cocotron 0
+                 (title-bar-height self)))
+      (set-position self (x self) 0))
+    (when (> (y self) (- (screen-height self) (title-bar-height self)))
+      (set-position self (x self) 0))
     (when (< (y self) minimum-window-start-position)
       (set-position self (x self) minimum-window-start-position ))
     (when (< (x self) 0)
