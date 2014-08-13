@@ -184,6 +184,9 @@
 
 
 (defun CREATE-IMAGE-DATA-OF-SIZE-FROM-IMAGE (ns-image width height )
+  ;; Adjust for retina display which created NSImages that are twice as big as we want
+  (setf height (/ height (#/backingScaleFactor (#/mainScreen ns:ns-screen))))
+  (setf width  (/ width  (#/backingScaleFactor (#/mainScreen ns:ns-screen))))
   (ccl::with-autorelease-pool
       (ns:with-ns-size (new-image-size width height)
         (let ((resized-image (#/initWithSize: (#/alloc ns:ns-image) new-image-size))
