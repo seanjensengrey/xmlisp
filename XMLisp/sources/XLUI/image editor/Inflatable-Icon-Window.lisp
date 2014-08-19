@@ -1229,7 +1229,7 @@
 
 
 (defmethod EDIT-ICON-FLATTEN-ACTION ((Window inflatable-icon-editor-window) (Button bevel-button))
-  (set-document-editted Window :mark-as-editted t)
+  ;(set-document-editted Window :mark-as-editted t)
   (let ((Model-Editor (view-named Window 'model-editor)))
     (flatten (inflatable-icon Model-Editor))
     (unless (> (distance (inflatable-icon Model-Editor)) 0.0)
@@ -1278,7 +1278,8 @@
     (setf (is-upright inflatable-icon) nil)
     (set-selected-item-with-title (view-named window "surfaces") "front")
     (setf (surfaces (inflatable-icon Model-Editor)) 'front)
-    (execute-command (command-manager window) (make-instance 'pixel-update-command :image-editor (view-named window 'icon-editor) :image-snapeshot (create-image-array (view-named window 'icon-editor))))
+    (execute-command (command-manager window) (make-instance 'pixel-update-command :image-editor (view-named window 'icon-editor) :image-snapeshot (create-image-array (view-named window 'icon-editor))) :set-editted nil)
+    
     (erase-all (view-named window 'icon-editor))
     (dotimes (Row (rows Inflatable-Icon ))
       (dotimes (Column (columns Inflatable-Icon ))
