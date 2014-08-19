@@ -54,7 +54,6 @@
     (setf (max-value self) value))
   (when (< value (min-value self))
     (setf (min-value self) value))
-  (print (plot-lists self))
   (let ((plot-list (find representing (plot-lists self) :key #'xlui::representing :test 'equal)))
     (unless plot-list   
       #+cocotron(display (xlui::view-named (window self) "export-button"))
@@ -103,8 +102,6 @@
   (glVertex3f 0.0 0.0 0.0)
   (glVertex3f (* 1.0 (if (> (max-time self) (width self)) (max-time self) (width self))) 0.0 0.0)
   (glEnd)
-  (print "PLOT LISTS")
-  (print  (plot-lists self))
   (dolist (plot-sublist (plot-lists self))
     (glcolor4f (first (color plot-sublist)) (second (color plot-sublist)) (third (color plot-sublist))  (fourth (color plot-sublist)))
     (glBegin GL_LINE_STRIP)
