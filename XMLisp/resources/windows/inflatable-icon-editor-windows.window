@@ -90,7 +90,7 @@
   </row>
   <spacer height="15"/>
   <row minimize="vertical" align="right">
-    <button text="Cancel" action="edit-icon-cancel-action"/>
+    <button text="Cancel" action="edit-icon-cancel-action" escape-button="true"/>
     <button tooltip="Save the inflatable icon and close the editor. This will also update shapes of this type in the world, if any." text="Save" width="70" action="EDIT-ICON-SAVE-ACTION" default-button="true"/>
     <spacer width="22"/>
   </row>
