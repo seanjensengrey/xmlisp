@@ -1430,7 +1430,7 @@
   (declare (ignore Close-Action Destination-Inflatable-Icon)
            (ftype function shape))
   (catch-errors-nicely 
-   ("Editting Inflatable Icon")
+   ("editing Inflatable Icon")
    (let* ((Window #-cocotron (load-object "lui:resources;windows;inflatable-icon-editor.window" :package (find-package :xlui)) #+cocotron (load-object "lui:resources;windows;inflatable-icon-editor-windows.window" :package (find-package :xlui)))
           (Inflated-Icon-Editor (view-named Window "model-editor")))
      (setf (save-button-closure-action window) save-button-closure-action)
