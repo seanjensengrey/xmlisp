@@ -653,7 +653,7 @@
                  (truncate (pref (#/frame (native-window (lui-window Self))) <NSR>ect.origin.y)))))    (screen-height nil)
       (size-changed-event-handler (lui-window Self) (width (lui-window Self)) (height (lui-window Self))))))
 
-
+                                           
 (objc:defmethod (#/close :void) ((self native-window))
   (if (and (not (%null-ptr-p self)) (is-modal-p (lui-window self)))
     (cancel-modal (lui-window self))
@@ -723,6 +723,19 @@
   ;;Do nothing
   )
 
+;__________________________________
+; ESCAPE-ENABLED-NATIVE-WINDOW     |
+;__________________________________/
+
+(defclass ESCAPE-ENABLED-NATIVE-WINDOW (native-window)
+  ()
+  (:metaclass ns:+ns-object
+	      :documentation "Native window"))
+
+(objc:defmethod (#/cancelOperation: :void) ((self escape-enabled-native-window) id)
+  (declare (ignore id))
+  (window-close (lui-window self))
+)
 
 ;__________________________________
 ; Window-delegate                   |
@@ -803,7 +816,7 @@
   (declare (ftype function window-controller))
   (in-main-thread ()
     (ccl::with-autorelease-pool
-      (let ((Window (make-instance #-cocotron 'native-window #+cocotron (if (show-main-menu-on-windows self) 'native-window 'menuless-native-window )
+      (let ((Window (make-instance #-cocotron (if (close-when-escape-is-pressed-p self) 'escape-enabled-native-window 'native-window) #+cocotron (if (show-main-menu-on-windows self) 'native-window 'menuless-native-window )
                         :lui-window Self
                         #+cocotron :show-main-menu-on-windows #+cocotron (show-main-menu-on-windows self)
                         :with-content-rect (ns:make-ns-rect 0 0 (width Self) (height Self))
@@ -862,6 +875,7 @@
 
 (defmethod SHOW ((Self window)) 
   ;; ensure the window fits on the screen
+  (print "SHOW")
   (let ((minimum-window-start-position (title-bar-height self)))
     #-cocotron (setf minimum-window-start-position (+ minimum-window-start-position (#/menuBarHeight (#/mainMenu (#/sharedApplication ns:ns-application)))  ))
     ; #+cocotron  (setf minimum-window-start-position (+ minimum-window-start-position 5))
@@ -878,6 +892,8 @@
       (set-position self (x self) minimum-window-start-position ))
     (when (< (x self) 0)
       (set-position self 0 (y self)))
+    (When (Center-when-shown self)
+      (center self))
     (in-main-thread ()
       ;; (let ((y (truncate (- (pref (#/frame (#/mainScreen ns:ns-screen)) <NSR>ect.size.height) (y Self) (height Self)))))
       ;;   (ns:with-ns-rect (Frame (x Self) y (width Self) (height Self))

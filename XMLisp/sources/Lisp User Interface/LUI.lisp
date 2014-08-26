@@ -607,6 +607,8 @@ Call with most important parameters. Make other paramters accessible through *Cu
    (720p-mode-p :accessor 720p-mode-p :initform nil :documentation "If true this window will configured to be displayed well for high res video.")
    (window-shutting-down-p :accessor window-shutting-down-p :initform nil :documentation "If true the window has begun the process of closing")
    (window-can-go-full-screen-in-mountain-lion :accessor window-can-go-full-screen-in-mountain-lion :initform nil :initarg :window-can-go-full-screen-in-mountain-lion :documentation "If true when the window is created, this will add the full screen arrows to the window")
+   (close-when-escape-is-pressed-p :accessor close-when-escape-is-pressed-p :initform nil :initarg :close-when-escape-is-pressed-p :documentation "if this is set to true, the window will close when escape is pressed, without beeping")
+   (center-when-shown :accessor center-when-shown :initform nil :initarg :center-when-shown :documentation "if true center the window before we show it")
    )
   (:documentation "a window that can contain views, coordinate system: topleft = 0, 0")
   (:default-initargs 
