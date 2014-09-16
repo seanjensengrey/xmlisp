@@ -42,9 +42,11 @@
 
 
 (objc:defmethod (#/textShouldEndEditing: :<BOOL>) ((self native-table-view) textObject)
-  (setf (elt (elt (columns (lui-view self)) (#/editedColumn self)) (#/editedRow self)) (ccl::lisp-string-from-nsstring (#/string textObject)))
-  (should-end-editing-notificaiton (lui-view self))
-  (call-next-method textObject))
+  (let ((editted-value (ccl::lisp-string-from-nsstring (#/string textObject))))
+    (when (realp (read-from-string editted-value))
+      (setf (elt (elt (columns (lui-view self)) (#/editedColumn self)) (#/editedRow self)) (ccl::lisp-string-from-nsstring (#/string textObject))))
+    (should-end-editing-notificaiton (lui-view self))
+    (call-next-method textObject)))
 
 #|
 (objc:defmethod (#/drawRect: :void) ((self native-table-view) (rect :<NSR>ect))
@@ -52,6 +54,9 @@
   (call-next-method rect)) )
 |#
 
+
+(defmethod end-editting ((self table-view))
+  (#/deselectAll: (native-view self) nil))
 
 (defmethod make-native-object ((Self table-view))
   (let ((Native-Control (make-instance 'native-table-view :lui-view Self)))
