@@ -938,8 +938,7 @@
 
 
 (defmethod (setf TITLE) :after (Title (self window))
-  (when (visible-p self)
-    (#/setTitle: (native-window Self) (native-string Title))))
+  (#/setTitle: (native-window Self) (native-string Title)))
 
 
 (defmethod SET-DOCUMENT-EDITTED ((self window) &key (mark-as-editted t))
