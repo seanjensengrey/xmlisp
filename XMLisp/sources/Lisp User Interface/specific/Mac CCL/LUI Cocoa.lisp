@@ -875,7 +875,6 @@
 
 (defmethod SHOW ((Self window)) 
   ;; ensure the window fits on the screen
-  (print "SHOW")
   (let ((minimum-window-start-position (title-bar-height self)))
     #-cocotron (setf minimum-window-start-position (+ minimum-window-start-position (#/menuBarHeight (#/mainMenu (#/sharedApplication ns:ns-application)))  ))
     ; #+cocotron  (setf minimum-window-start-position (+ minimum-window-start-position 5))
