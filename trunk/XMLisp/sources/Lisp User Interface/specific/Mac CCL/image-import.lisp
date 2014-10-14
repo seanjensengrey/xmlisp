@@ -172,8 +172,11 @@
             (set-byte pixel-buffer (%get-byte bit-data (+ offset 1)) (+ offset 1))
             (set-byte pixel-buffer (%get-byte bit-data offset ) (+ offset 2))
             (set-byte pixel-buffer (%get-byte bit-data (+ offset 3)) (+ offset 3)))))
+      (external-call "_FreeImage_Unload@4" :address imagen :void)
+      (external-call "_FreeImage_Unload@4" :address imagen32 :void)
       (values 
-       (copy-vector pixel-buffer (* width height 4))
+       ;(copy-vector pixel-buffer (* width height 4))
+       pixel-buffer
        width 
        height 
        32))))
