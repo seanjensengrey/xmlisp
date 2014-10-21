@@ -181,7 +181,8 @@
   (ccl::with-autorelease-pool
     (let ((Subviews (#/subviews (native-view Self))))
       (dotimes (i (#/count Subviews))
-        (apply Function (lui-view (#/objectAtIndex: Subviews i)) Args)))))
+        (when (slot-exists-p (#/objectAtIndex: Subviews i) 'lui-view)
+        (apply Function (lui-view (#/objectAtIndex: Subviews i)) Args))))))
 
 
 (defmethod SUBVIEWS ((Self subview-manager-interface))
@@ -618,7 +619,10 @@
   
 (defmethod CLOSE-WITH-NO-QUESTIONS-ASKED ((Self Window))
   (window-will-close self nil)
-  (#/close (native-window Self)))
+  (lui::in-main-thread ()
+  (#/close (native-window Self))
+    )
+  )
 
 
 (defmethod SET-COLOR ((Self Window) &key (Red 1.0) (Green 1.0) (Blue 1.0) (Alpha 1.0))
