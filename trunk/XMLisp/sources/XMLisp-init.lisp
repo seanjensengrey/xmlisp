@@ -633,25 +633,9 @@
 
 
 (defun get-temp-directory () 
-  #-cocotron (ccl::lisp-string-from-nsstring (#_NSTemporaryDirectory))
-  #+cocotron (lui::get-win32-temp-path)
-  )
+  (ccl::lisp-string-from-nsstring (#_NSTemporaryDirectory)))
 
-(in-package :lui)
-#+cocotron (defun get-win32-temp-path ()
-  (let ((vector-size 100)
-	(temp-path-string nil)
-	(i 0)
-        (*Package* (find-package :lui)))
-    (with-vector-of-size (&path 200)
-      (external-call "GetTempPathW" :integer 200 :address &path :integer)
-      (loop while (not (equal (code-char (lui::%get-byte &path (* i 2))) #\null)) do
-	   (setf temp-path-string (concatenate 'string temp-path-string (string (code-char (lui::%get-byte &path (* i 2))))))
-	   (incf i)))
-    temp-path-string
-    ))
 
-(in-package :cl-user)
 ;;___________________________________________
 ;;      Also Load AgentCubes                 |
 ;;___________________________________________
