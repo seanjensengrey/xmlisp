@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<agent-manager name="SOKOBAN_AGENT">
-  <agent-tracking-camera eye-x="11.76999944448471" eye-y="2.5" eye-z="0.6499999761581421" center-x="11.5" center-y="2.5" center-z="0.6499999761581421" up-x="0.0" up-y="0.0" up-z="1.0" fovy="100.0" aspect="2.909090909090909" near="0.005" far="2000.0" azimuth="1.5707963267948966" zenith="0.0" distance="0.26999944" elevation="0.59999996" camera-rotation-offset="0.0"/>
-</agent-manager>
