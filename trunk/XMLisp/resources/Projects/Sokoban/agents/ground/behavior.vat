@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if/>
+      <then/>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Test_For_Empy_Goal"/>
+    <rule>
+      <if>
+        <see shape="GOAL_TILE Ground">
+          <direction/>
+        </see>
+        <stacked-a negated="true" adjacency="immediately below" class-name="Crate"/>
+      </if>
+      <then>
+        <set attribute="@EMPTY_GOALS" value="@empty_goals + 1"/>
+      </then>
+    </rule>
+  </method>
+</behavior>
