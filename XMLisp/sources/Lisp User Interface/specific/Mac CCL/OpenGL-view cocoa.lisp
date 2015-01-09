@@ -399,6 +399,7 @@
            '(:name "OpenGL Animations" :priority 0)
            #'(lambda ()
                (ccl::with-autorelease-pool
+                   (setf *random-state* (make-random-state t))
                    (case (catch :animation-abort
                            (loop
                              ;; allow the current animation cycle to be aborted but keep the thread running
