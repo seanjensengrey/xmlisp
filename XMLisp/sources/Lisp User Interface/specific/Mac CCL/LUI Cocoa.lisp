@@ -227,8 +227,9 @@
 
 
 (defmethod SET-SIZE :after ((Self view) Width Height)
-  (ns:with-ns-size (Size Width Height)
-    (#/setFrameSize: (native-view Self) Size)))
+  (lui::in-main-thread ()
+    (ns:with-ns-size (Size Width Height)
+      (#/setFrameSize: (native-view Self) Size))))
 
 
 (defmethod SET-POSITION :after ((Self view) X Y)
