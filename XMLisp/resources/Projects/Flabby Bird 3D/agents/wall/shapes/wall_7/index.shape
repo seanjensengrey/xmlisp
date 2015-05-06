@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="WALL_7" relative-texture-path="Metal">
+  <cube texture="Corrugated Sharp.jpg"/>
+</shape-manager>

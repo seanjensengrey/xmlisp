@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="WALL_MAKER" relative-texture-path="Metal">
+  <cube texture="Blue Rusted Metal.jpg"/>
+</shape-manager>

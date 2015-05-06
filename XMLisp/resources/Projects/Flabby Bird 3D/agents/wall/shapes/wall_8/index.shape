@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="WALL_8" relative-texture-path="Water and Ice">
+  <cube texture="Azure Waters.jpg"/>
+</shape-manager>

@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<agent-manager name="FLAPPY_AGENT">
+  <agent-tracking-camera eye-x="5.498969667779784" eye-y="-0.679999378514538" eye-z="3.7516764188185334" center-x="5.5" center-y="0.5" center-z="3.7516764188185334" up-x="0.0" up-y="0.0" up-z="1.0" fovy="100.0" aspect="3.5956790447235107" near="0.005" far="2000.0" azimuth="-1.5707963267948966" zenith="-1.5699231636583837" distance="1.1799998" elevation="0.7849997067824006D0" camera-rotation-offset="-90.050026"/>
+</agent-manager>

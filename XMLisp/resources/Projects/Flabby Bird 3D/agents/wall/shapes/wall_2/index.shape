@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="WALL_2" relative-texture-path="Brick">
+  <cube texture="Chipped Bricks.jpg"/>
+</shape-manager>

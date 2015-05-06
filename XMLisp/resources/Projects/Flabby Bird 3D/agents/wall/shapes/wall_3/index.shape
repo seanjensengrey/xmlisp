@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="WALL_3" relative-texture-path="Brick">
+  <cube texture="Ancient Stone Slabs.jpg"/>
+</shape-manager>

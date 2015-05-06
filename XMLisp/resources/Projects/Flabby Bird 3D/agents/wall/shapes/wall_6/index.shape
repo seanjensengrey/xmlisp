@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="WALL_6" relative-texture-path="Futuristic">
+  <cube texture="Battered Robot.jpg"/>
+</shape-manager>

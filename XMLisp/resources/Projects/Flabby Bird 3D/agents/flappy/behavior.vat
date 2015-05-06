@@ -1,0 +1,207 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <on selector="Navigate"/>
+    <rule>
+      <if>
+        <key label="up arrow"/>
+      </if>
+      <then>
+        <move disclosed="true" dlayer="1" animation="constant">
+          <direction/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <key label="down arrow"/>
+      </if>
+      <then>
+        <move disclosed="true" dlayer="-1" animation="constant">
+          <direction/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <key label="right arrow"/>
+      </if>
+      <then>
+        <move disclosed="true">
+          <direction dcol="1"/>
+        </move>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <key label="left arrow"/>
+      </if>
+      <then>
+        <move disclosed="true">
+          <direction dcol="-1"/>
+        </move>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="Navigate through walls and make walls advance ">
+    <while-running/>
+    <rule>
+      <if>
+        <once-every seconds="1"/>
+      </if>
+      <then>
+        <set attribute="TIME" value="time + 1"/>
+        <broadcast class-name="Wall" selector="Advance"/>
+        <message selector="Navigate">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="time" operator="&gt;=" expression2="60"/>
+      </if>
+      <then>
+        <set attribute="TIME" value="0"/>
+        <set attribute="LIVES" value="5"/>
+        <set attribute="@LEVEL" value="@level + 1"/>
+        <show-message disclosed="true" text="Entering Level: ~@Level" subtext="You have ~Lives lives in this level"/>
+        <message selector="Play_Random_Sound">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <broadcast class-name="Wall" selector="Advance"/>
+        <message selector="Navigate">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Collide"/>
+    <rule>
+      <if>
+        <test expression1="lives" expression2="1"/>
+      </if>
+      <then>
+        <set attribute="TIME" value="0"/>
+        <set attribute="LIVES" value="5"/>
+        <say text="No lives left!"/>
+        <set attribute="@LEVEL" value="@level - 1"/>
+        <show-message disclosed="true" text="Level lost!" subtext="dropping you down to level ~@Level"/>
+        <broadcast class-name="Wall" selector="Create_Gap"/>
+        <message selector="Play_Random_Sound">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="LIVES" value="lives - 1"/>
+        <say text="~lives lives left"/>
+        <broadcast class-name="Wall" selector="Create_Gap"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true" comments="reset level info">
+    <before-running/>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="LIVES" value="5"/>
+        <set attribute="@LEVEL" value="1"/>
+        <play-sound ref="Bird Song 1.mp3"/>
+        <show-message disclosed="true" text="8 Levels from BABY to INSANE mode" subtext="use cursor keys to avoid flying into walls"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Play_Random_Sound"/>
+    <rule>
+      <if>
+        <test expression1="@level" expression2="0"/>
+      </if>
+      <then>
+        <stop-all-sounds/>
+        <play-sound ref="Bird Song 1.mp3"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@level" expression2="1"/>
+      </if>
+      <then>
+        <stop-all-sounds/>
+        <play-sound ref="Bird Song 1.mp3"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@level" expression2="2"/>
+      </if>
+      <then>
+        <stop-all-sounds/>
+        <play-sound ref="Bird Song 2.mp3"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@level" expression2="3"/>
+      </if>
+      <then>
+        <stop-all-sounds/>
+        <play-sound ref="Bird Song 3.mp3"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@level" expression2="4"/>
+      </if>
+      <then>
+        <stop-all-sounds/>
+        <play-sound ref="Bird Song 1.mp3"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@level" expression2="5"/>
+      </if>
+      <then>
+        <stop-all-sounds/>
+        <play-sound ref="Bird Song 2.mp3"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@level" expression2="6"/>
+      </if>
+      <then>
+        <stop-all-sounds/>
+        <play-sound ref="Bird Song 3.mp3"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@level" expression2="7"/>
+      </if>
+      <then>
+        <stop-all-sounds/>
+        <play-sound ref="Bird Song 1.mp3"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@level" expression2="8"/>
+      </if>
+      <then>
+        <stop-all-sounds/>
+        <play-sound ref="Bird Song 3.mp3"/>
+      </then>
+    </rule>
+  </method>
+</behavior>
