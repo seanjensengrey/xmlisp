@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<shape-manager name="WALL_9" relative-texture-path="Water and Ice">
+  <cube texture="Chiseled Ice.jpg"/>
+</shape-manager>

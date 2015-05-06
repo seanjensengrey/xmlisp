@@ -1,0 +1,288 @@
+<?xml version="1.0"?>
+<world width="2330" height="648">
+  <light-source x="5.0" y="-2.0" z="7.0" name="glare">
+    <ambient red="0.0" green="0.0" blue="0.0"/>
+    <diffuse red="1.0" green="1.0" blue="1.0"/>
+    <specular red="1.5" green="1.5" blue="1.5"/>
+  </light-source>
+  <background-color red="0.0" green="0.0" blue="0.0"/>
+  <camera eye-x="13.602578118068674" eye-y="-5.572118304326278" eye-z="34.266009793062835" center-x="4.180705251407535" center-y="7.345263269467949" center-z="31.508376110628156" up-x="-5.698648196834244" up-y="7.812842972419385" up-z="12.186136333531463" fovy="60.0" aspect="3.201058201058201" near="0.005" far="2000.0" azimuth="-0.630182933062315" zenith="1.4000000786036253"/>
+  <agent-matrix name="AGENT-MATRIX11508" rows="20" columns="11" layers="11" is-grid-visible="false" layer-height="0.9888922">
+    <flappy_agent col="5" layer="3" shape-name="FLAPPY" attributes="(LIVES 3)" x-turn="0.5" y-turn="0.5">
+      <agent-tracking-camera eye-x="5.499563418487244" eye-y="1.9060345363142162E-7" eye-z="3.7516764188185334" center-x="5.5" center-y="0.5" center-z="3.7516764188185334" up-x="0.0" up-y="0.0" up-z="1.0" fovy="100.0" aspect="3.595679012345679" near="0.005" far="2000.0" azimuth="-1.5707963267948966" zenith="-1.5699231636585107" distance="0.5" elevation="0.7849997067824006D0" camera-rotation-offset="-90.050026"/>
+    </flappy_agent>
+    <wall_agent row="2" layer="1" shape-name="WALL_2" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" layer="3" shape-name="WALL_2" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" layer="6" shape-name="WALL_2" roll="-90.0" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" layer="7" shape-name="WALL_2" roll="-90.0" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" col="1" layer="2" shape-name="WALL_2" roll="-90.0" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" col="2" layer="1" shape-name="WALL_2" roll="-90.0" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" col="2" layer="2" shape-name="WALL_2" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" col="2" layer="3" shape-name="WALL_2" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" col="2" layer="5" shape-name="WALL_2" roll="-270.0" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" col="2" layer="10" shape-name="WALL_2" roll="-270.0" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" col="3" layer="2" shape-name="WALL_2" roll="-180.0" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" col="3" layer="8" shape-name="WALL_2" roll="-90.0" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" col="3" layer="10" shape-name="WALL_2" roll="-180.0" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" col="4" layer="1" shape-name="WALL_2" roll="-90.0" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" col="4" layer="6" shape-name="WALL_2" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" col="4" layer="8" shape-name="WALL_2" roll="-180.0" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" col="5" layer="10" shape-name="WALL_2" roll="180.0" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" col="6" layer="1" shape-name="WALL_2" roll="90.0" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" col="6" layer="2" shape-name="WALL_2" roll="90.0" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" col="6" layer="6" shape-name="WALL_2" roll="360.0" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" col="6" layer="9" shape-name="WALL_2" roll="-90.0" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" col="7" layer="2" shape-name="WALL_2" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" col="8" shape-name="WALL_2" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" col="8" layer="1" shape-name="WALL_2" roll="90.0" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" col="8" layer="4" shape-name="WALL_2" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" col="8" layer="5" shape-name="WALL_2" roll="-180.0" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" col="8" layer="7" shape-name="WALL_2" roll="-90.0" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" col="9" layer="3" shape-name="WALL_2" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="2" col="10" layer="5" shape-name="WALL_2" roll="-180.0" attributes="(ROW 16)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="3" shape-name="WALL_2" roll="180.0" attributes="(ROW 15)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="3" layer="9" shape-name="WALL_2" roll="90.0" attributes="(ROW 15)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="5" col="2" layer="10" shape-name="WALL_2" attributes="(ROW 13)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="5" col="3" layer="1" shape-name="WALL_2" attributes="(ROW 13)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="5" col="3" layer="8" shape-name="WALL_2" roll="90.0" attributes="(ROW 13)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="5" col="3" layer="10" shape-name="WALL_2" roll="90.0" attributes="(ROW 13)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="5" col="4" layer="6" shape-name="WALL_2" roll="-180.0" attributes="(ROW 13)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="5" col="5" layer="7" shape-name="WALL_2" roll="-90.0" attributes="(ROW 13)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="5" col="5" layer="10" shape-name="WALL_2" attributes="(ROW 13)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="5" col="6" layer="3" shape-name="WALL_2" roll="-180.0" attributes="(ROW 13)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="5" col="6" layer="10" shape-name="WALL_2" roll="270.0" attributes="(ROW 13)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="5" col="7" layer="9" shape-name="WALL_2" roll="-90.0" attributes="(ROW 13)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="5" col="7" layer="10" shape-name="WALL_2" roll="-90.0" attributes="(ROW 13)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="5" col="8" layer="1" shape-name="WALL_2" roll="270.0" attributes="(ROW 13)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="5" col="8" layer="4" shape-name="WALL_2" roll="90.0" attributes="(ROW 13)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="5" col="8" layer="5" shape-name="WALL_2" roll="90.0" attributes="(ROW 13)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="5" col="8" layer="9" shape-name="WALL_2" roll="90.0" attributes="(ROW 13)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="5" col="9" layer="9" shape-name="WALL_2" attributes="(ROW 13)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="5" col="10" layer="1" shape-name="WALL_2" roll="90.0" attributes="(ROW 13)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="5" col="10" layer="8" shape-name="WALL_2" roll="-180.0" attributes="(ROW 13)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="6" layer="8" shape-name="WALL_2" roll="90.0" attributes="(ROW 12)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="8" layer="2" shape-name="WALL_2" attributes="(ROW 10)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="8" col="1" layer="2" shape-name="WALL_2" roll="90.0" attributes="(ROW 10)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="8" col="2" layer="5" shape-name="WALL_2" attributes="(ROW 10)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="8" col="3" layer="4" shape-name="WALL_2" attributes="(ROW 10)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="8" col="3" layer="6" shape-name="WALL_2" roll="90.0" attributes="(ROW 10)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="8" col="3" layer="7" shape-name="WALL_2" attributes="(ROW 10)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="8" col="4" layer="2" shape-name="WALL_2" roll="90.0" attributes="(ROW 10)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="8" col="4" layer="10" shape-name="WALL_2" roll="-90.0" attributes="(ROW 10)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="8" col="5" layer="3" shape-name="WALL_2" roll="-180.0" attributes="(ROW 10)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="8" col="5" layer="7" shape-name="WALL_2" roll="90.0" attributes="(ROW 10)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="8" col="6" layer="3" shape-name="WALL_2" roll="90.0" attributes="(ROW 10)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="8" col="6" layer="8" shape-name="WALL_2" attributes="(ROW 10)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="8" col="6" layer="10" shape-name="WALL_2" roll="180.0" attributes="(ROW 10)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="8" col="8" shape-name="WALL_2" roll="-90.0" attributes="(ROW 10)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="8" col="8" layer="7" shape-name="WALL_2" roll="-90.0" attributes="(ROW 10)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="8" col="8" layer="8" shape-name="WALL_2" attributes="(ROW 10)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="8" col="8" layer="10" shape-name="WALL_2" roll="90.0" attributes="(ROW 10)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="8" col="9" layer="7" shape-name="WALL_2" attributes="(ROW 10)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="8" col="10" layer="3" shape-name="WALL_2" roll="-90.0" attributes="(ROW 10)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="8" col="10" layer="4" shape-name="WALL_2" roll="-270.0" attributes="(ROW 10)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="8" col="10" layer="5" shape-name="WALL_2" roll="90.0" attributes="(ROW 10)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="8" col="10" layer="10" shape-name="WALL_2" roll="180.0" attributes="(ROW 10)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="9" layer="4" shape-name="WALL_2" attributes="(ROW 9)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="11" layer="10" shape-name="WALL_2" roll="90.0" attributes="(ROW 7)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="11" col="1" layer="3" shape-name="WALL_2" roll="90.0" attributes="(ROW 7)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="11" col="1" layer="10" shape-name="WALL_2" attributes="(ROW 7)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="11" col="2" layer="9" shape-name="WALL_2" attributes="(ROW 7)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="11" col="3" layer="4" shape-name="WALL_2" roll="90.0" attributes="(ROW 7)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="11" col="3" layer="6" shape-name="WALL_2" attributes="(ROW 7)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="11" col="3" layer="7" shape-name="WALL_2" roll="-90.0" attributes="(ROW 7)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="11" col="4" shape-name="WALL_2" roll="-90.0" attributes="(ROW 7)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="11" col="4" layer="8" shape-name="WALL_2" attributes="(ROW 7)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="11" col="5" layer="2" shape-name="WALL_2" attributes="(ROW 7)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="11" col="5" layer="6" shape-name="WALL_2" roll="-90.0" attributes="(ROW 7)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="11" col="6" layer="3" shape-name="WALL_2" roll="90.0" attributes="(ROW 7)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="11" col="6" layer="6" shape-name="WALL_2" roll="-90.0" attributes="(ROW 7)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="11" col="6" layer="10" shape-name="WALL_2" attributes="(ROW 7)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="11" col="7" layer="3" shape-name="WALL_2" attributes="(ROW 7)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="11" col="7" layer="4" shape-name="WALL_2" roll="90.0" attributes="(ROW 7)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="11" col="7" layer="9" shape-name="WALL_2" attributes="(ROW 7)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="11" col="7" layer="10" shape-name="WALL_2" attributes="(ROW 7)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="11" col="8" layer="3" shape-name="WALL_2" roll="90.0" attributes="(ROW 7)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="11" col="8" layer="5" shape-name="WALL_2" attributes="(ROW 7)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="11" col="8" layer="8" shape-name="WALL_2" attributes="(ROW 7)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="11" col="8" layer="10" shape-name="WALL_2" roll="-90.0" attributes="(ROW 7)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="11" col="9" layer="1" shape-name="WALL_2" roll="-90.0" attributes="(ROW 7)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="11" col="9" layer="7" shape-name="WALL_2" attributes="(ROW 7)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="11" col="9" layer="9" shape-name="WALL_2" roll="-180.0" attributes="(ROW 7)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="11" col="10" shape-name="WALL_2" attributes="(ROW 7)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="12" layer="8" shape-name="WALL_2" roll="90.0" attributes="(ROW 6)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="14" layer="5" shape-name="WALL_2" roll="-90.0" attributes="(ROW 4)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="14" layer="9" shape-name="WALL_2" attributes="(ROW 4)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="14" layer="10" shape-name="WALL_2" attributes="(ROW 4)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="14" col="1" layer="7" shape-name="WALL_2" attributes="(ROW 4)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="14" col="1" layer="8" shape-name="WALL_2" roll="-90.0" attributes="(ROW 4)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="14" col="2" shape-name="WALL_2" attributes="(ROW 4)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="14" col="2" layer="1" shape-name="WALL_2" attributes="(ROW 4)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="14" col="2" layer="5" shape-name="WALL_2" attributes="(ROW 4)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="14" col="2" layer="7" shape-name="WALL_2" attributes="(ROW 4)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="14" col="2" layer="8" shape-name="WALL_2" attributes="(ROW 4)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="14" col="3" shape-name="WALL_2" roll="270.0" attributes="(ROW 4)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="14" col="3" layer="5" shape-name="WALL_2" attributes="(ROW 4)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="14" col="3" layer="10" shape-name="WALL_2" roll="90.0" attributes="(ROW 4)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="14" col="4" layer="6" shape-name="WALL_2" attributes="(ROW 4)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="14" col="4" layer="8" shape-name="WALL_2" attributes="(ROW 4)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="14" col="5" layer="4" shape-name="WALL_2" roll="90.0" attributes="(ROW 4)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="14" col="5" layer="6" shape-name="WALL_2" attributes="(ROW 4)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="14" col="6" layer="2" shape-name="WALL_2" roll="90.0" attributes="(ROW 4)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="14" col="6" layer="5" shape-name="WALL_2" roll="90.0" attributes="(ROW 4)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="14" col="6" layer="9" shape-name="WALL_2" roll="-90.0" attributes="(ROW 4)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="14" col="7" layer="3" shape-name="WALL_2" roll="-90.0" attributes="(ROW 4)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="14" col="8" layer="1" shape-name="WALL_2" roll="90.0" attributes="(ROW 4)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="14" col="8" layer="6" shape-name="WALL_2" roll="90.0" attributes="(ROW 4)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="14" col="9" layer="1" shape-name="WALL_2" attributes="(ROW 4)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="14" col="9" layer="2" shape-name="WALL_2" attributes="(ROW 4)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="14" col="9" layer="7" shape-name="WALL_2" attributes="(ROW 4)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="14" col="10" layer="7" shape-name="WALL_2" attributes="(ROW 4)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="17" layer="2" shape-name="WALL_2" attributes="(ROW 1)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="17" col="1" shape-name="WALL_2" attributes="(ROW 1)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="17" col="1" layer="1" shape-name="WALL_2" attributes="(ROW 1)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="17" col="2" layer="7" shape-name="WALL_2" attributes="(ROW 1)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="17" col="3" shape-name="WALL_2" roll="90.0" attributes="(ROW 1)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="17" col="3" layer="1" shape-name="WALL_2" attributes="(ROW 1)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="17" col="4" layer="1" shape-name="WALL_2" attributes="(ROW 1)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="17" col="4" layer="6" shape-name="WALL_2" attributes="(ROW 1)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="17" col="4" layer="9" shape-name="WALL_2" roll="-90.0" attributes="(ROW 1)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="17" col="5" layer="3" shape-name="WALL_2" attributes="(ROW 1)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="17" col="5" layer="10" shape-name="WALL_2" attributes="(ROW 1)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="17" col="6" layer="4" shape-name="WALL_2" roll="90.0" attributes="(ROW 1)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="17" col="6" layer="10" shape-name="WALL_2" attributes="(ROW 1)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="17" col="7" layer="5" shape-name="WALL_2" attributes="(ROW 1)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="17" col="7" layer="10" shape-name="WALL_2" attributes="(ROW 1)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="17" col="8" layer="3" shape-name="WALL_2" attributes="(ROW 1)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="17" col="9" layer="7" shape-name="WALL_2" attributes="(ROW 1)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="17" col="9" layer="8" shape-name="WALL_2" attributes="(ROW 1)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="17" col="9" layer="10" shape-name="WALL_2" attributes="(ROW 1)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="17" col="10" layer="3" shape-name="WALL_2" attributes="(ROW 1)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="17" col="10" layer="4" shape-name="WALL_2" attributes="(ROW 1)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="17" col="10" layer="9" shape-name="WALL_2" attributes="(ROW 1)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_agent row="17" col="10" layer="10" shape-name="WALL_2" attributes="(ROW 1)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" layer="1" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" layer="2" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" layer="3" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" layer="4" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" layer="5" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" layer="6" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" layer="7" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" layer="8" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" layer="9" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" layer="10" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="1" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="1" layer="1" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="1" layer="2" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="1" layer="3" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="1" layer="4" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="1" layer="5" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="1" layer="6" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="1" layer="7" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="1" layer="8" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="1" layer="9" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="1" layer="10" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="2" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="2" layer="1" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="2" layer="2" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="2" layer="3" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="2" layer="4" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="2" layer="5" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="2" layer="6" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="2" layer="7" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="2" layer="8" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="2" layer="9" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="2" layer="10" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="3" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="3" layer="1" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="3" layer="2" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="3" layer="3" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="3" layer="4" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="3" layer="5" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="3" layer="6" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="3" layer="7" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="3" layer="8" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="3" layer="9" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="3" layer="10" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="4" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="4" layer="1" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="4" layer="2" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="4" layer="3" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="4" layer="4" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="4" layer="5" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="4" layer="6" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="4" layer="7" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="4" layer="8" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="4" layer="9" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="4" layer="10" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="5" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="5" layer="1" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="5" layer="2" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="5" layer="3" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="5" layer="4" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="5" layer="5" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="5" layer="6" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="5" layer="7" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="5" layer="8" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="5" layer="9" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="5" layer="10" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="6" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="6" layer="1" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="6" layer="2" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="6" layer="3" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="6" layer="4" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="6" layer="5" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="6" layer="6" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="6" layer="7" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="6" layer="8" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="6" layer="9" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="6" layer="10" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="7" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="7" layer="1" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="7" layer="2" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="7" layer="3" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="7" layer="4" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="7" layer="5" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="7" layer="6" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="7" layer="7" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="7" layer="8" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="7" layer="9" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="7" layer="10" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="8" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="8" layer="1" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="8" layer="2" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="8" layer="3" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="8" layer="4" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="8" layer="5" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="8" layer="6" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="8" layer="7" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="8" layer="8" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="8" layer="9" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="8" layer="10" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="9" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="9" layer="1" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="9" layer="2" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="9" layer="3" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="9" layer="4" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="9" layer="5" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="9" layer="6" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="9" layer="7" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="9" layer="8" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="9" layer="9" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="9" layer="10" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="10" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="10" layer="1" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="10" layer="2" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="10" layer="3" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="10" layer="4" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="10" layer="5" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="10" layer="6" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="10" layer="7" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="10" layer="8" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="10" layer="9" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <wall_maker_agent row="19" col="10" layer="10" shape-name="WALL_MAKER" attributes="(SPACE 2)" x-turn="0.5" y-turn="0.5" z-turn="0.5"/>
+    <background-color red="0.0" green="0.5" blue="1.0"/>
+  </agent-matrix>
+  <sky-dome size="100.0" texture="sky_and_clouds.jpg"/>
+</world>

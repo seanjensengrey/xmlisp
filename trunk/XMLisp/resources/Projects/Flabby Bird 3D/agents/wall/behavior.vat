@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <on selector="Advance"/>
+    <rule>
+      <if>
+        <test expression1="dead" expression2="1"/>
+      </if>
+      <then>
+        <erase disclosed="true" duration="0.5">
+          <direction/>
+        </erase>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <empty>
+          <direction dcol="1"/>
+        </empty>
+        <empty>
+          <direction drow="-1" dcol="1"/>
+        </empty>
+        <percent-chance expression="2"/>
+      </if>
+      <then>
+        <move disclosed="true" animation="constant">
+          <direction drow="-1" dcol="1"/>
+        </move>
+        <set attribute="ROW" value="row + 1"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <empty>
+          <direction dcol="-1"/>
+        </empty>
+        <empty>
+          <direction drow="-1" dcol="-1"/>
+        </empty>
+        <percent-chance expression="2"/>
+      </if>
+      <then>
+        <move disclosed="true" animation="constant">
+          <direction drow="-1" dcol="-1"/>
+        </move>
+        <set attribute="ROW" value="row + 1"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <empty>
+          <direction drow="-1"/>
+        </empty>
+        <percent-chance expression="10"/>
+      </if>
+      <then>
+        <move animation="constant">
+          <direction drow="-1"/>
+        </move>
+        <rotate-by droll="90"/>
+        <set attribute="ROW" value="row + 1"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <empty>
+          <direction drow="-1"/>
+        </empty>
+        <percent-chance expression="10"/>
+      </if>
+      <then>
+        <move animation="constant">
+          <direction drow="-1"/>
+        </move>
+        <rotate-by droll="-90"/>
+        <set attribute="ROW" value="row + 1"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <empty>
+          <direction drow="-1"/>
+        </empty>
+      </if>
+      <then>
+        <move disclosed="true" animation="constant">
+          <direction drow="-1"/>
+        </move>
+        <set attribute="ROW" value="row + 1"/>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <see shape="FLAPPY FLAPPY">
+          <direction drow="-1"/>
+        </see>
+      </if>
+      <then>
+        <play-sound ref="Glass-On-Stown.mp3"/>
+        <rotate-by droll="200" dpitch="300"/>
+        <finish-animations/>
+        <erase disclosed="true" duration="1">
+          <direction/>
+        </erase>
+        <wait duration="1"/>
+        <message selector="Collide">
+          <direction drow="-1"/>
+        </message>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <erase>
+          <direction/>
+        </erase>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Create_Gap"/>
+    <rule>
+      <if>
+        <test expression1="row" operator="&gt;" expression2="10"/>
+      </if>
+      <then>
+        <set attribute="DEAD" value="1"/>
+      </then>
+    </rule>
+  </method>
+</behavior>

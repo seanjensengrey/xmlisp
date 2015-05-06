@@ -1,0 +1,137 @@
+<?xml version="1.0"?>
+<behavior comments="I am user controlled">
+  <method disclosed="true">
+    <while-running/>
+    <rule>
+      <if>
+        <test expression1="space" expression2="0"/>
+      </if>
+      <then>
+        <message selector="Make_Wall">
+          <direction/>
+        </message>
+        <set attribute="SPACE" value="2"/>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <set attribute="SPACE" value="space - 1"/>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Make_Wall"/>
+    <rule>
+      <if>
+        <percent-chance expression="@level * 10 + 10"/>
+      </if>
+      <then>
+        <message selector="Pick_Brick">
+          <direction/>
+        </message>
+      </then>
+    </rule>
+  </method>
+  <method disclosed="true">
+    <on selector="Pick_Brick"/>
+    <rule>
+      <if>
+        <test expression1="@level" expression2="0"/>
+      </if>
+      <then>
+        <new shape="WALL Wall">
+          <direction drow="-1"/>
+        </new>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@level" expression2="1"/>
+      </if>
+      <then>
+        <new shape="WALL_2 Wall">
+          <direction drow="-1"/>
+        </new>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@level" expression2="2"/>
+      </if>
+      <then>
+        <new shape="WALL_3 Wall">
+          <direction drow="-1"/>
+        </new>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@level" expression2="3"/>
+      </if>
+      <then>
+        <new shape="WALL_4 Wall">
+          <direction drow="-1"/>
+        </new>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@level" expression2="4"/>
+      </if>
+      <then>
+        <new shape="WALL_5 Wall">
+          <direction drow="-1"/>
+        </new>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@level" expression2="5"/>
+      </if>
+      <then>
+        <new shape="WALL_6 Wall">
+          <direction drow="-1"/>
+        </new>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@level" expression2="6"/>
+      </if>
+      <then>
+        <new shape="WALL_7 Wall">
+          <direction drow="-1"/>
+        </new>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@level" expression2="7"/>
+      </if>
+      <then>
+        <new shape="WALL_8 Wall">
+          <direction drow="-1"/>
+        </new>
+      </then>
+    </rule>
+    <rule>
+      <if>
+        <test expression1="@level" expression2="8"/>
+      </if>
+      <then>
+        <new shape="WALL_9 Wall">
+          <direction drow="-1"/>
+        </new>
+      </then>
+    </rule>
+    <rule>
+      <if/>
+      <then>
+        <new shape="WALL_10 Wall">
+          <direction drow="-1"/>
+        </new>
+      </then>
+    </rule>
+  </method>
+</behavior>
