@@ -193,11 +193,16 @@
     `(or ,(expand-vat-formula-aref Formula) 0))
    (t 
     (if (fboundp (first formula))
-      ;; If the function does not exist just return 0.0
-      (cons 
-       (first Formula)
-       (mapcar #'expand-vat-formula (rest Formula)))
-      0.0))))
+        ;; If the function does not exist just return 0.0
+        (if (or (equal (first formula) 'xlui::AGENTS_OF_TYPE) (equal (first formula) 'xlui::AGENTS_WITH_SHAPE))
+            (list
+               (first Formula)
+               (view-named (project-window (active-project-manager)) "the world")
+               (second formula))
+            (cons 
+             (first Formula)
+             (mapcar #'expand-vat-formula (rest Formula))))
+        0.0))))
 
 
 (defmethod EXPAND ((Self string))
