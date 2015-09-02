@@ -21,6 +21,11 @@ spheres. No OpenGL code needs to be written for these. But if you need
 specialized rendering you create subclasses of agents and extend their draw
 method using OpenGL calls from basic polygons to shaders.
 
+## Authors
+
+alex.repenning @ gmail
+pokermike2012 @ gmail
+
 ## License
 
 LGPL - GNU Lesser GPL
