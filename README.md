@@ -40,6 +40,7 @@ brew install clozure-cl
 ```
 alex.repenning @ gmail
 pokermike2012 @ gmail
+Gary Palter https://github.com/gmpalter
 ```
 
 ## License
