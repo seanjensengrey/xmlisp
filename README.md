@@ -10,7 +10,10 @@ This project was imported from http://code.google.com/p/xmlisp
 * Events: mouse, keyboard, multi touch, gestures (OS X 10.6 and later): pinch, rotate, scroll
 * IDE: a simple development environment including symbol completion to edit, run and debug code
 
-XMLisp simulations and animations run as fast compiled code in native threads. Run multiple simulations at the same time, resize windows, move windows, move the camera, browse web pages, .... your simulation continues as smooth as possible.
+XMLisp simulations and animations run as fast compiled code in native threads.
+Run multiple simulations at the same time, resize windows, move windows, move
+the camera, browse web pages, .... your simulation continues as smooth as
+possible.
 
 ## Philosophy
 
@@ -21,10 +24,23 @@ spheres. No OpenGL code needs to be written for these. But if you need
 specialized rendering you create subclasses of agents and extend their draw
 method using OpenGL calls from basic polygons to shaders.
 
+## Clozure Common Lisp
+
+XMLisp is written in Clozure Common Lisp (CCL). CCL is available from
+http://ccl.clozure.com/download.html or from your platform package manager.
+
+### Mac
+
+```
+brew install clozure-cl
+```
+
 ## Authors
 
+```
 alex.repenning @ gmail
 pokermike2012 @ gmail
+```
 
 ## License
 
